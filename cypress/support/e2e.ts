@@ -1,3 +1,5 @@
 // cypress/support/e2e.ts
-// Disable deprecated allowCypressEnv
-Cypress.env('allowCypressEnv', false);
+// Add custom commands and/or overwrite existing commands
+// For more comprehensive examples of custom commands please read more here:
+// https://on.cypress.io/custom-commands
+
