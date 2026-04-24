@@ -1,2 +1,2 @@
-# nordik_csaa_website
+# CSAA Website
 New website for CSAA
