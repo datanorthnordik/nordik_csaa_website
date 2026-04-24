@@ -38,5 +38,5 @@ jobs:
         with:
           install-command: npm ci
           start: npm start
-          wait-on: http://localhost:3000
+          wait-on: http://localhost:5173
           browser: chrome
