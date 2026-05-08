@@ -109,10 +109,10 @@ export function GatheringsPage() {
               {t('gatherings.hero.primaryAction')}
               <span className={styles.arrowIcon} aria-hidden="true" />
             </a>
-            <a className={styles.secondaryAction} href="#upcoming-events">
+            <Link className={styles.secondaryAction} to="/gatherings/calendar">
               <span className={styles.calendarIcon} aria-hidden="true" />
               {t('gatherings.hero.calendarAction')}
-            </a>
+            </Link>
             <a className={styles.secondaryAction} href="#event-archive">
               {t('gatherings.hero.secondaryAction')}
             </a>
