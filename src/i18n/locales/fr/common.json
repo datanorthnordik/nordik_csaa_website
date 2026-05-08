@@ -1,0 +1,48 @@
+{
+  "languageSwitcher": {
+    "label": "Choisir la langue"
+  },
+  "site": {
+    "header": {
+      "eyebrow": "Fondation du site public",
+      "title": "Site Web Nordik CSAA",
+      "tagline": "Infrastructure partagee du site pour les futurs composants publics."
+    },
+    "hero": {
+      "eyebrow": "Pret pour la creation de composants",
+      "title": "L interface bilingue, les toasts partages et la logique API font maintenant partie du site.",
+      "description": "Ce depot suit maintenant la fondation du CMS pour le changement de langue, les messages toast et la gestion API basee sur axios afin que nous puissions creer des composants sur une base stable.",
+      "primaryAction": "Apercu du toast",
+      "secondaryAction": "Voir la fondation",
+      "statusTitle": "Prepare dans ce depot",
+      "statusItems": {
+        "i18n": "i18n avec preference de langue enregistree",
+        "toast": "Notifications toast globales",
+        "api": "Client axios avec reprise apres rafraichissement du jeton",
+        "store": "Persistance Redux de l authentification et de la session pour les futures APIs"
+      }
+    },
+    "section": {
+      "title": "Elements de fondation",
+      "description": "Utilisez ces blocs partages a mesure que de nouveaux composants et pages du site sont ajoutes."
+    },
+    "cards": {
+      "localization": {
+        "title": "Localisation",
+        "description": "Les ressources anglaises et francaises sont chargees par i18next, et la langue selectionnee est conservee entre les visites."
+      },
+      "feedback": {
+        "title": "Systeme de retour",
+        "description": "Un toaster partage est monte a la racine de l application afin que les futurs composants affichent les succes et erreurs de maniere coherente."
+      },
+      "api": {
+        "title": "Fondation API",
+        "description": "Le site inclut maintenant la meme analyse des erreurs, l injection du header d authentification et la reprise apres rafraichissement utilises dans le CMS."
+      }
+    },
+    "apiHint": "Definissez cette variable d environnement lorsque vous serez pret a connecter les endpoints en direct.",
+    "toast": {
+      "previewSuccess": "Le toaster du site est pret pour les retours de composants."
+    }
+  }
+}

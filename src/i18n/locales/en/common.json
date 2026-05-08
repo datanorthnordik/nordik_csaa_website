@@ -1,0 +1,48 @@
+{
+  "languageSwitcher": {
+    "label": "Select language"
+  },
+  "site": {
+    "header": {
+      "eyebrow": "Public website foundation",
+      "title": "Nordik CSAA Website",
+      "tagline": "Shared website infrastructure for future public-facing components."
+    },
+    "hero": {
+      "eyebrow": "Ready for component build-out",
+      "title": "Bilingual UI, shared toasts, and API plumbing are now part of this website.",
+      "description": "This repo now follows the CMS foundation for language switching, toast feedback, and axios-based API handling so we can build components on a stable base.",
+      "primaryAction": "Preview toast",
+      "secondaryAction": "View foundation",
+      "statusTitle": "Prepared in this repo",
+      "statusItems": {
+        "i18n": "i18n with saved language preference",
+        "toast": "Global toast notifications",
+        "api": "Axios client with refresh-token retry handling",
+        "store": "Redux auth and session persistence for future APIs"
+      }
+    },
+    "section": {
+      "title": "Foundation pieces",
+      "description": "Use these shared building blocks as new website components and pages are added."
+    },
+    "cards": {
+      "localization": {
+        "title": "Localization",
+        "description": "English and French resources are loaded through i18next, and the selected language is remembered across visits."
+      },
+      "feedback": {
+        "title": "Feedback system",
+        "description": "A shared toaster is mounted at the app root so future components can surface success and error states consistently."
+      },
+      "api": {
+        "title": "API foundation",
+        "description": "The website now includes the same error parsing, auth header injection, and refresh retry flow used in the CMS."
+      }
+    },
+    "apiHint": "Set this environment variable when you are ready to connect live endpoints.",
+    "toast": {
+      "previewSuccess": "Website toaster is ready for component-level feedback."
+    }
+  }
+}

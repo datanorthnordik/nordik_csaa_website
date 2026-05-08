@@ -1,0 +1,231 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.9fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.heroCopy,
+.statusPanel,
+.card {
+  border: 1px solid rgba(123, 53, 44, 0.12);
+  border-radius: 28px;
+  background: rgba(255, 251, 247, 0.9);
+  box-shadow: 0 18px 46px rgba(92, 69, 52, 0.08);
+}
+
+.heroCopy {
+  padding: 38px;
+}
+
+.eyebrow {
+  margin: 0 0 14px;
+  color: #8b5f45;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.title {
+  max-width: 12ch;
+  margin: 0;
+  color: #36180f;
+  font-size: clamp(2.7rem, 5vw, 4.9rem);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.description {
+  max-width: 60ch;
+  margin: 20px 0 0;
+  color: #694f41;
+  font-size: 1.04rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.primaryAction,
+.secondaryAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.primaryAction {
+  border: 1px solid #7b352c;
+  background: #7b352c;
+  color: #fff7f2;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(123, 53, 44, 0.22);
+}
+
+.primaryAction:hover,
+.secondaryAction:hover {
+  transform: translateY(-1px);
+}
+
+.primaryAction:focus-visible,
+.secondaryAction:focus-visible {
+  outline: 2px solid #7b352c;
+  outline-offset: 3px;
+}
+
+.secondaryAction {
+  border: 1px solid rgba(123, 53, 44, 0.2);
+  background: rgba(255, 255, 255, 0.72);
+  color: #5d382b;
+}
+
+.statusPanel {
+  padding: 28px 24px;
+}
+
+.statusTitle {
+  margin: 0 0 18px;
+  color: #4a2518;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+}
+
+.statusList {
+  display: grid;
+  gap: 14px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.statusList li {
+  position: relative;
+  padding-left: 22px;
+  color: #684d3c;
+}
+
+.statusList li::before {
+  content: '';
+  position: absolute;
+  top: 0.55rem;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #7b352c, #d8935f);
+  box-shadow: 0 0 0 6px rgba(216, 147, 95, 0.12);
+}
+
+.foundation {
+  display: grid;
+  gap: 22px;
+}
+
+.sectionHeader {
+  max-width: 64ch;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  color: #402016;
+  font-size: clamp(1.9rem, 2.6vw, 2.8rem);
+}
+
+.sectionHeader p {
+  margin: 12px 0 0;
+  color: #725a49;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.card {
+  padding: 24px;
+}
+
+.card h3 {
+  margin: 0 0 10px;
+  color: #442118;
+  font-size: 1.22rem;
+}
+
+.card p {
+  margin: 0;
+  color: #695143;
+}
+
+.apiHint {
+  margin: 0;
+  padding: 18px 22px;
+  border-radius: 20px;
+  background: rgba(244, 233, 223, 0.65);
+  color: #6b5143;
+}
+
+.apiHint code {
+  margin-right: 8px;
+}
+
+@media (max-width: 980px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .heroCopy,
+  .statusPanel,
+  .card {
+    border-radius: 22px;
+  }
+
+  .heroCopy {
+    padding: 28px 22px;
+  }
+
+  .title {
+    max-width: none;
+    font-size: clamp(2.3rem, 12vw, 3.4rem);
+  }
+
+  .statusPanel,
+  .card {
+    padding: 22px 18px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .primaryAction,
+  .secondaryAction {
+    width: 100%;
+  }
+}
