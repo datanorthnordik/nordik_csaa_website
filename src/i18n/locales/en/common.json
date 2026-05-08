@@ -4,45 +4,128 @@
   },
   "site": {
     "header": {
-      "eyebrow": "Public website foundation",
-      "title": "Nordik CSAA Website",
-      "tagline": "Shared website infrastructure for future public-facing components."
+      "eyebrow": "CSAA community",
+      "title": "CSAA Community",
+      "tagline": "Community gatherings, resources, and shared stories.",
+      "cta": "Join Us"
     },
-    "hero": {
-      "eyebrow": "Ready for component build-out",
-      "title": "Bilingual UI, shared toasts, and API plumbing are now part of this website.",
-      "description": "This repo now follows the CMS foundation for language switching, toast feedback, and axios-based API handling so we can build components on a stable base.",
-      "primaryAction": "Preview toast",
-      "secondaryAction": "View foundation",
-      "statusTitle": "Prepared in this repo",
-      "statusItems": {
-        "i18n": "i18n with saved language preference",
-        "toast": "Global toast notifications",
-        "api": "Axios client with refresh-token retry handling",
-        "store": "Redux auth and session persistence for future APIs"
+    "nav": {
+      "ariaLabel": "Primary navigation",
+      "directory": "Directory",
+      "gatherings": "Gatherings",
+      "protocols": "Protocols",
+      "sustainability": "Sustainability",
+      "about": "About"
+    },
+    "footer": {
+      "title": "CSAA Community",
+      "copy": "Community gatherings, cultural resources, and shared moments in one place.",
+      "links": {
+        "sustainability": "Sustainability",
+        "protocols": "Cultural Protocols",
+        "guidelines": "Community Guidelines",
+        "contact": "Contact"
       }
-    },
-    "section": {
-      "title": "Foundation pieces",
-      "description": "Use these shared building blocks as new website components and pages are added."
-    },
-    "cards": {
-      "localization": {
-        "title": "Localization",
-        "description": "English and French resources are loaded through i18next, and the selected language is remembered across visits."
-      },
-      "feedback": {
-        "title": "Feedback system",
-        "description": "A shared toaster is mounted at the app root so future components can surface success and error states consistently."
-      },
-      "api": {
-        "title": "API foundation",
-        "description": "The website now includes the same error parsing, auth header injection, and refresh retry flow used in the CMS."
-      }
-    },
-    "apiHint": "Set this environment variable when you are ready to connect live endpoints.",
-    "toast": {
-      "previewSuccess": "Website toaster is ready for component-level feedback."
     }
+  },
+  "gatherings": {
+    "hero": {
+      "eyebrow": "Community events",
+      "title": "Explore the Journey: Our Past & Future Events",
+      "description": "From the wisdom of our Elders to the voices of the next generation — explore our upcoming events and browse our archive of past circles, workshops, and celebrations.",
+      "primaryAction": "View Upcoming",
+      "secondaryAction": "View Archives",
+      "calendarAction": "Events Calendar",
+      "imageAlt": "Circular wooden gathering stage surrounded by green forest",
+      "stats": {
+        "upcoming": "Upcoming events",
+        "archived": "Archived events"
+      },
+      "placeholderLabel": "Display photo pending",
+      "placeholderTitle": "Gatherings are ready for publishing.",
+      "placeholderDescription": "When an event does not have a display image yet, the page still keeps a polished layout with room for teaser copy and event highlights."
+    },
+    "upcoming": {
+      "eyebrow": "Coming soon",
+      "title": "Upcoming events",
+      "description": "Find upcoming gatherings and community programs.",
+      "emptyTitle": "No upcoming events yet",
+      "emptyDescription": "When new gatherings are published, they will appear here automatically."
+    },
+    "archive": {
+      "eyebrow": "Event archive",
+      "title": "Preserving our event archive",
+      "description": "Revisit previous gatherings, documents, and shared moments.",
+      "pagination": "Page {{page}} of {{total}}",
+      "emptyTitle": "No archived events found",
+      "emptyDescription": "Archived gatherings will appear here as soon as published events move into the past."
+    },
+    "card": {
+      "viewDetails": "View Event Details",
+      "viewArchive": "View Event Summary",
+      "placeholderTag": "Community event",
+      "fallbackSummary": "Community details will be shared on the event page."
+    }
+  },
+  "eventDetail": {
+    "invalidId": "This event link is not valid.",
+    "loadError": "We could not load the event details right now.",
+    "loadingTitle": "Loading event details",
+    "errorEyebrow": "Event details",
+    "backToGatherings": "Back to all gatherings",
+    "defaultSummary": "Event details, documents, and shared moments will appear here as they are added through the CMS.",
+    "placeholderLabel": "Display image pending",
+    "overviewEyebrow": "Event story",
+    "overviewTitle": "Overview",
+    "scheduleEyebrow": "Plan ahead",
+    "scheduleTitle": "Dates and venue",
+    "occurrencesTitle": "Scheduled occurrences",
+    "registrationEyebrow": "Attend this gathering",
+    "registrationTitle": "Registration",
+    "registrationStarts": "Registration opens: ",
+    "registrationEnds": "Registration closes: ",
+    "registerNow": "Register now",
+    "contactEyebrow": "Need help",
+    "contactTitle": "Contact",
+    "contactName": "Contact name",
+    "contactEmail": "Email",
+    "contactPhone": "Phone",
+    "mediaEyebrow": "Photos and documents",
+    "mediaTitle": "Documents and gallery",
+    "mediaDescription": "Additional photos, PDFs, and other event documents appear below in a single viewer with navigation and zoom controls.",
+    "mediaLabel": "Viewer",
+    "mediaEmptyTitle": "No documents or additional photos yet",
+    "mediaEmptyDescription": "As more event files are added in the CMS, they will appear in this viewer automatically.",
+    "nonPreviewableMedia": "This file type cannot be previewed inline yet, but it can still be opened in a new tab.",
+    "info": {
+      "start": "Start",
+      "end": "End",
+      "time": "Time",
+      "venue": "Venue",
+      "dateRange": "Date range",
+      "categories": "Categories"
+    }
+  },
+  "common": {
+    "loading": "Loading",
+    "previous": "Previous",
+    "next": "Next",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "openFile": "Open file",
+    "allDay": "All day",
+    "timeTbd": "Time to be announced",
+    "notAvailable": "Not available",
+    "venueToBeAnnounced": "Venue to be announced",
+    "venueSharedLater": "Venue details will be shared later",
+    "noRegistrationRequired": "No registration required",
+    "walkInWelcome": "Visitors can attend without a registration link unless more instructions are added later.",
+    "registrationClosed": "Registration closed",
+    "registrationClosedDetail": "The registration window for this event has already passed.",
+    "registrationOpensSoon": "Registration opens soon",
+    "registrationUnavailableDetail": "A registration window exists, but the signup link is not available at the moment.",
+    "registrationOpen": "Registration open",
+    "registrationOpenUntil": "Open until {{date}}",
+    "registrationOpenDetail": "Registration is currently available through the link below."
   }
 }

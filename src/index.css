@@ -1,18 +1,39 @@
 :root {
-  --font-sans: 'Trebuchet MS', 'Avenir Next', 'Segoe UI', sans-serif;
-  --font-display: Georgia, 'Times New Roman', serif;
+  --color-bg: #f4f4f6;
+  --color-surface: #ffffff;
+  --color-surface-alt: #eef0f3;
+  --color-text: #1f1f23;
+  --color-text-muted: #6b6b73;
+  --color-text-placeholder: #9a9aa3;
+  --color-border: #e5e5e8;
+  --color-border-soft: #ececec;
+  --color-border-input: #d8d8dc;
+  --color-primary: #7a1f24;
+  --color-primary-hover: #65191d;
+  --color-primary-tint: rgba(122, 31, 36, 0.06);
+  --color-primary-tint-strong: rgba(122, 31, 36, 0.08);
+  --color-focus-ring: rgba(122, 31, 36, 0.12);
+  --color-on-primary: #ffffff;
+  --color-error: #d32f2f;
+  --color-error-strong: #b3261e;
+  --color-error-bg: #fee2e2;
+  --color-error-text: #991b1b;
+  --color-error-border: #fecaca;
+  --color-success-bg: #d1fae5;
+  --color-success-text: #065f46;
+  --color-success-border: #a7f3d0;
+  --color-overlay: rgba(0, 0, 0, 0.4);
+  --color-overlay-soft: rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.08),
+    0 6px 10px -2px rgba(0, 0, 0, 0.04);
+  --shadow-drawer: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+  --font-sans: 'Avenir Next', 'Segoe UI', sans-serif;
+  --font-display: 'Avenir Next', 'Segoe UI', sans-serif;
   --font-mono: 'Cascadia Code', Consolas, monospace;
-  --text: #5f4639;
-  --heading: #31150d;
-  --background: #f8f1ea;
-  --panel: rgba(255, 251, 247, 0.88);
-  --code-bg: rgba(123, 53, 44, 0.08);
 
-  color: var(--text);
-  background: var(--background);
-  font-family: var(--font-sans);
-  font-size: 18px;
-  line-height: 1.55;
+  color: var(--color-text);
+  background: var(--color-bg);
+  font: 16px/1.55 var(--font-sans);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -31,9 +52,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(248, 241, 234, 0.98)),
-    #f8f1ea;
+  background: var(--color-bg);
 }
 
 body,
@@ -59,7 +78,7 @@ p {
 h1,
 h2,
 h3 {
-  color: var(--heading);
+  color: var(--color-text);
   font-family: var(--font-display);
 }
 
@@ -76,14 +95,14 @@ code {
   align-items: center;
   padding: 2px 8px;
   border-radius: 999px;
-  background: var(--code-bg);
-  color: var(--heading);
+  background: var(--color-primary-tint);
+  color: var(--color-text);
   font-family: var(--font-mono);
   font-size: 0.9rem;
 }
 
 @media (max-width: 720px) {
   :root {
-    font-size: 16px;
+    font-size: 15px;
   }
 }

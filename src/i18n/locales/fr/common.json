@@ -4,45 +4,128 @@
   },
   "site": {
     "header": {
-      "eyebrow": "Fondation du site public",
-      "title": "Site Web Nordik CSAA",
-      "tagline": "Infrastructure partagee du site pour les futurs composants publics."
+      "eyebrow": "Communaute CSAA",
+      "title": "CSAA Community",
+      "tagline": "Rassemblements, ressources et recits communautaires.",
+      "cta": "Nous joindre"
     },
-    "hero": {
-      "eyebrow": "Pret pour la creation de composants",
-      "title": "L interface bilingue, les toasts partages et la logique API font maintenant partie du site.",
-      "description": "Ce depot suit maintenant la fondation du CMS pour le changement de langue, les messages toast et la gestion API basee sur axios afin que nous puissions creer des composants sur une base stable.",
-      "primaryAction": "Apercu du toast",
-      "secondaryAction": "Voir la fondation",
-      "statusTitle": "Prepare dans ce depot",
-      "statusItems": {
-        "i18n": "i18n avec preference de langue enregistree",
-        "toast": "Notifications toast globales",
-        "api": "Client axios avec reprise apres rafraichissement du jeton",
-        "store": "Persistance Redux de l authentification et de la session pour les futures APIs"
+    "nav": {
+      "ariaLabel": "Navigation principale",
+      "directory": "Repertoire",
+      "gatherings": "Rassemblements",
+      "protocols": "Protocoles",
+      "sustainability": "Durabilite",
+      "about": "A propos"
+    },
+    "footer": {
+      "title": "CSAA Community",
+      "copy": "Rassemblements, ressources culturelles et moments partages au meme endroit.",
+      "links": {
+        "sustainability": "Durabilite",
+        "protocols": "Protocoles culturels",
+        "guidelines": "Lignes directrices",
+        "contact": "Contact"
       }
-    },
-    "section": {
-      "title": "Elements de fondation",
-      "description": "Utilisez ces blocs partages a mesure que de nouveaux composants et pages du site sont ajoutes."
-    },
-    "cards": {
-      "localization": {
-        "title": "Localisation",
-        "description": "Les ressources anglaises et francaises sont chargees par i18next, et la langue selectionnee est conservee entre les visites."
-      },
-      "feedback": {
-        "title": "Systeme de retour",
-        "description": "Un toaster partage est monte a la racine de l application afin que les futurs composants affichent les succes et erreurs de maniere coherente."
-      },
-      "api": {
-        "title": "Fondation API",
-        "description": "Le site inclut maintenant la meme analyse des erreurs, l injection du header d authentification et la reprise apres rafraichissement utilises dans le CMS."
-      }
-    },
-    "apiHint": "Definissez cette variable d environnement lorsque vous serez pret a connecter les endpoints en direct.",
-    "toast": {
-      "previewSuccess": "Le toaster du site est pret pour les retours de composants."
     }
+  },
+  "gatherings": {
+    "hero": {
+      "eyebrow": "Evenements communautaires",
+      "title": "Explorez le parcours : nos evenements passes et futurs",
+      "description": "De la sagesse de nos Aines aux voix de la prochaine generation — decouvrez nos prochains evenements et parcourez nos archives de cercles, d ateliers et de celebrations.",
+      "primaryAction": "Voir a venir",
+      "secondaryAction": "Voir les archives",
+      "calendarAction": "Calendrier des evenements",
+      "imageAlt": "Scene circulaire en bois entouree d une foret verte",
+      "stats": {
+        "upcoming": "Evenements a venir",
+        "archived": "Evenements archives"
+      },
+      "placeholderLabel": "Photo principale en attente",
+      "placeholderTitle": "Les rassemblements sont prets a etre publies.",
+      "placeholderDescription": "Lorsqu un evenement n a pas encore de photo principale, la page conserve tout de meme une presentation soignee avec de l espace pour le texte d accroche et les points forts."
+    },
+    "upcoming": {
+      "eyebrow": "Bientot",
+      "title": "Evenements a venir",
+      "description": "Trouvez les prochains rassemblements et programmes communautaires.",
+      "emptyTitle": "Aucun evenement a venir pour le moment",
+      "emptyDescription": "Lorsque de nouveaux rassemblements seront publies, ils apparaitront ici automatiquement."
+    },
+    "archive": {
+      "eyebrow": "Archives",
+      "title": "Preserver les archives des evenements",
+      "description": "Revoyez les rassemblements precedents, les documents et les moments partages.",
+      "pagination": "Page {{page}} sur {{total}}",
+      "emptyTitle": "Aucun evenement archive trouve",
+      "emptyDescription": "Les rassemblements archives apparaitront ici des que des evenements publies passeront dans le passe."
+    },
+    "card": {
+      "viewDetails": "Voir les details",
+      "viewArchive": "Voir le resume",
+      "placeholderTag": "Evenement communautaire",
+      "fallbackSummary": "Les details communautaires seront affiches sur la page de l evenement."
+    }
+  },
+  "eventDetail": {
+    "invalidId": "Ce lien d evenement n est pas valide.",
+    "loadError": "Impossible de charger les details de l evenement pour le moment.",
+    "loadingTitle": "Chargement des details de l evenement",
+    "errorEyebrow": "Details de l evenement",
+    "backToGatherings": "Retour a tous les rassemblements",
+    "defaultSummary": "Les details, documents et moments partages de l evenement apparaitront ici lorsqu ils seront ajoutes dans le CMS.",
+    "placeholderLabel": "Image principale en attente",
+    "overviewEyebrow": "Recit de l evenement",
+    "overviewTitle": "Apercu",
+    "scheduleEyebrow": "Planifier",
+    "scheduleTitle": "Dates et lieu",
+    "occurrencesTitle": "Occurrences planifiees",
+    "registrationEyebrow": "Participer",
+    "registrationTitle": "Inscription",
+    "registrationStarts": "L inscription ouvre : ",
+    "registrationEnds": "L inscription ferme : ",
+    "registerNow": "S inscrire",
+    "contactEyebrow": "Besoin d aide",
+    "contactTitle": "Contact",
+    "contactName": "Nom du contact",
+    "contactEmail": "Courriel",
+    "contactPhone": "Telephone",
+    "mediaEyebrow": "Photos et documents",
+    "mediaTitle": "Documents et galerie",
+    "mediaDescription": "Les photos additionnelles, PDF et autres documents de l evenement apparaissent ci dessous dans un seul visualiseur avec navigation et zoom.",
+    "mediaLabel": "Visualiseur",
+    "mediaEmptyTitle": "Aucun document ni photo additionnelle pour le moment",
+    "mediaEmptyDescription": "A mesure que d autres fichiers d evenement seront ajoutes dans le CMS, ils apparaitront ici automatiquement.",
+    "nonPreviewableMedia": "Ce type de fichier ne peut pas encore etre previsualise ici, mais il peut etre ouvert dans un nouvel onglet.",
+    "info": {
+      "start": "Debut",
+      "end": "Fin",
+      "time": "Heure",
+      "venue": "Lieu",
+      "dateRange": "Periode",
+      "categories": "Categories"
+    }
+  },
+  "common": {
+    "loading": "Chargement",
+    "previous": "Precedent",
+    "next": "Suivant",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arriere",
+    "openFile": "Ouvrir le fichier",
+    "allDay": "Toute la journee",
+    "timeTbd": "Heure a confirmer",
+    "notAvailable": "Non disponible",
+    "venueToBeAnnounced": "Lieu a annoncer",
+    "venueSharedLater": "Les details du lieu seront partages plus tard",
+    "noRegistrationRequired": "Aucune inscription requise",
+    "walkInWelcome": "Les visiteurs peuvent participer sans lien d inscription sauf si d autres consignes sont ajoutees plus tard.",
+    "registrationClosed": "Inscriptions fermees",
+    "registrationClosedDetail": "La periode d inscription pour cet evenement est deja terminee.",
+    "registrationOpensSoon": "Les inscriptions ouvrent bientot",
+    "registrationUnavailableDetail": "Une periode d inscription existe, mais le lien n est pas disponible pour le moment.",
+    "registrationOpen": "Inscriptions ouvertes",
+    "registrationOpenUntil": "Ouvert jusqu au {{date}}",
+    "registrationOpenDetail": "L inscription est actuellement disponible via le lien ci dessous."
   }
 }
