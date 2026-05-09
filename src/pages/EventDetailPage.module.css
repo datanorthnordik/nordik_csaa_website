@@ -1,12 +1,13 @@
 .page {
   display: grid;
-  gap: 28px;
+  gap: 34px;
 }
 
 .backLink,
 .inlineLink {
+  width: fit-content;
   color: var(--color-primary);
-  font-weight: 700;
+  font-weight: 800;
   text-decoration: none;
 }
 
@@ -15,29 +16,70 @@
   text-decoration: underline;
 }
 
-.hero,
-.panel,
-.loadingPanel,
-.errorPanel {
-  border: 1px solid var(--color-border);
-  border-radius: 32px;
-  background:
-    linear-gradient(180deg, rgba(122, 31, 36, 0.04), rgba(122, 31, 36, 0)),
-    var(--color-surface);
-  box-shadow: var(--shadow-card);
-}
-
 .hero {
-  display: grid;
-  gap: 24px;
-  grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
-  padding: clamp(24px, 4vw, 40px);
+  position: relative;
 }
 
-.heroCopy {
+.heroMedia {
+  position: relative;
+  min-height: 420px;
   display: grid;
-  gap: 18px;
-  align-content: center;
+  align-items: center;
+  justify-items: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--color-surface-alt);
+  box-shadow: 0 18px 42px rgba(31, 31, 35, 0.1);
+}
+
+.heroMedia::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(31, 31, 35, 0.36), rgba(31, 31, 35, 0.74)),
+    radial-gradient(circle at center, rgba(31, 31, 35, 0.1), rgba(31, 31, 35, 0.54));
+}
+
+.heroMedia::after {
+  content: '';
+  position: absolute;
+  left: -4%;
+  right: -4%;
+  bottom: -1px;
+  z-index: 2;
+  height: 58px;
+  background: var(--color-surface);
+  clip-path: ellipse(54% 72% at 50% 100%);
+}
+
+.heroImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.heroOverlay,
+.heroFallback {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  gap: 16px;
+  justify-items: center;
+  width: min(760px, calc(100% - 40px));
+  padding: 52px 20px 76px;
+  text-align: center;
+}
+
+.heroFallback {
+  justify-items: start;
+  width: min(840px, 100%);
+  padding: 28px 0 10px;
+  text-align: left;
 }
 
 .heroEyebrow,
@@ -45,132 +87,102 @@
 .loadingEyebrow {
   margin: 0;
   color: var(--color-primary);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 800;
-  letter-spacing: 0.16em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
 .heroTitle {
   margin: 0;
-  font-size: clamp(2.5rem, 6vw, 4.7rem);
-  line-height: 0.96;
+  font-size: 3.9rem;
+  line-height: 1.04;
+  letter-spacing: 0;
 }
 
 .heroDescription,
-.panelDescription,
 .paragraph {
   margin: 0;
   color: var(--color-text-muted);
+  font-size: 1.05rem;
   line-height: 1.7;
 }
 
-.heroMetaGrid {
-  display: grid;
-  gap: 14px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.heroOverlay .heroEyebrow,
+.heroOverlay .heroTitle,
+.heroOverlay .heroDescription {
+  color: #ffffff;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.36);
 }
 
-.infoCard {
-  display: grid;
-  gap: 8px;
-  padding: 18px;
-  border: 1px solid rgba(122, 31, 36, 0.12);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.82);
-}
-
-.infoCard span {
-  color: var(--color-text-muted);
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.infoCard strong {
-  color: var(--color-text);
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.heroMedia,
-.heroPlaceholder {
-  min-height: 360px;
-  border-radius: 28px;
-  overflow: hidden;
-}
-
-.heroImage {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-}
-
-.heroPlaceholder {
-  display: grid;
-  align-content: center;
-  gap: 14px;
-  padding: clamp(24px, 4vw, 34px);
-  background:
-    radial-gradient(circle at top right, rgba(255, 255, 255, 0.34), transparent 26%),
-    repeating-linear-gradient(
-      135deg,
-      rgba(122, 31, 36, 0.08),
-      rgba(122, 31, 36, 0.08) 12px,
-      rgba(255, 255, 255, 0.1) 12px,
-      rgba(255, 255, 255, 0.1) 24px
-    ),
-    linear-gradient(135deg, rgba(122, 31, 36, 0.14), rgba(255, 255, 255, 0.4));
-}
-
-.heroPlaceholder span {
-  width: fit-content;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
-  color: var(--color-primary);
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.heroPlaceholder h2,
-.heroPlaceholder p {
-  margin: 0;
+.heroOverlay .heroDescription {
+  max-width: 620px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 700;
 }
 
 .contentGrid {
   display: grid;
-  gap: 24px;
-  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  gap: 42px;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  align-items: start;
 }
 
 .sideColumn {
   display: grid;
-  gap: 24px;
+  gap: 22px;
 }
 
 .panel {
-  padding: 24px;
+  display: grid;
+  gap: 18px;
+}
+
+.sideColumn .panel,
+.registrationCard,
+.loadingPanel,
+.errorPanel {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  box-shadow: 0 10px 24px rgba(31, 31, 35, 0.06);
+}
+
+.sideColumn .panel,
+.loadingPanel,
+.errorPanel {
+  padding: 22px;
 }
 
 .panelHeader {
   display: grid;
   gap: 8px;
-  margin-bottom: 20px;
+}
+
+.iconPanelHeader {
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 13px;
+}
+
+.panelHeaderIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  padding: 9px;
+  background: rgba(122, 31, 36, 0.08);
+  color: var(--color-primary);
 }
 
 .panelHeader h2 {
   margin: 0;
-  font-size: clamp(1.7rem, 2.6vw, 2.5rem);
-  line-height: 1.02;
+  font-size: 1.65rem;
+  line-height: 1.12;
 }
 
 .richText {
   color: var(--color-text);
+  font-size: 1.03rem;
   line-height: 1.8;
 }
 
@@ -186,49 +198,101 @@
 
 .definitionList {
   display: grid;
-  gap: 16px;
+  gap: 18px;
   margin: 0;
 }
 
-.definitionList div {
+.definitionList > div {
   display: grid;
-  gap: 6px;
+  gap: 5px;
+}
+
+.definitionList .infoRow {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 13px;
+}
+
+.infoIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  padding: 8px;
+  background: rgba(31, 31, 35, 0.04);
+  color: var(--color-primary);
 }
 
 .definitionList dt {
   color: var(--color-text-muted);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
 .definitionList dd {
   margin: 0;
   color: var(--color-text);
-  line-height: 1.6;
+  line-height: 1.55;
 }
 
 .addressBlock {
-  margin-top: 18px;
-  padding: 18px;
-  border-radius: 22px;
-  background: rgba(122, 31, 36, 0.05);
+  display: grid;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 18px 0 0 47px;
+  border-top: 1px solid var(--color-border);
 }
 
 .addressBlock p {
   margin: 0;
-  color: var(--color-text);
-  line-height: 1.6;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.mapBlock {
+  display: grid;
+  gap: 10px;
+  margin-top: 2px;
+  padding-left: 47px;
+}
+
+.mapBlock iframe {
+  width: 100%;
+  min-height: 210px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface-alt);
+}
+
+.mapLink {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-primary);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.mapLink:hover {
+  text-decoration: underline;
+}
+
+.mapLinkIcon {
+  width: 18px;
+  height: 18px;
 }
 
 .occurrenceSection {
   margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border);
 }
 
 .occurrenceSection h3 {
   margin: 0 0 10px;
-  font-size: 1.05rem;
+  font-size: 1rem;
 }
 
 .occurrenceList {
@@ -243,7 +307,7 @@
   display: grid;
   gap: 12px;
   padding: 18px;
-  border-radius: 24px;
+  box-shadow: none;
 }
 
 .registrationCard strong,
@@ -275,14 +339,185 @@
   gap: 8px;
 }
 
+.registrationMetaItem {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+}
+
+.registrationMetaIcon {
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  color: currentColor;
+}
+
+.compactInfoCard {
+  position: sticky;
+  top: 94px;
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  box-shadow: 0 18px 36px rgba(31, 31, 35, 0.08);
+}
+
+.compactInfoAccent {
+  height: 6px;
+  background: linear-gradient(90deg, #b33a0b, #4f7942, #2f6170);
+}
+
+.compactInfoSection {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 12px;
+  margin: 0 20px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.compactInfoIcon {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  color: var(--color-primary);
+}
+
+.compactInfoBody {
+  display: grid;
+  gap: 4px;
+}
+
+.compactInfoBody h2,
+.compactInfoBody strong,
+.compactInfoBody p,
+.compactInfoBody a {
+  margin: 0;
+}
+
+.compactInfoBody h2 {
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.compactInfoBody strong {
+  color: var(--color-text);
+  font-size: 0.94rem;
+  line-height: 1.35;
+}
+
+.compactInfoBody p,
+.compactInfoBody a {
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.compactInfoBody a {
+  width: fit-content;
+  color: var(--color-primary);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.compactInfoBody a:hover {
+  text-decoration: underline;
+}
+
+.compactMapBlock {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.compactMapBlock iframe {
+  width: 100%;
+  min-height: 124px;
+  border: 0;
+  border-radius: 3px;
+  background: var(--color-surface-alt);
+}
+
+.compactMapLink {
+  font-size: 0.78rem;
+}
+
+.compactOccurrenceList {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 16px;
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.compactRegisterAction {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 18px 20px 20px;
+  border-radius: 2px;
+  background: #b7390c;
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 900;
+  text-decoration: none;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.compactRegisterAction:hover {
+  background: #9f3109;
+  transform: translateY(-1px);
+}
+
+.registerArrowIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.compactRegistrationStatus {
+  margin: 18px 20px 20px;
+  border-radius: 3px;
+  padding: 13px 14px;
+  font-size: 0.86rem;
+  font-weight: 900;
+  line-height: 1.4;
+}
+
+.compactRegistrationWarning {
+  background: var(--color-error-bg);
+  color: var(--color-primary);
+}
+
+.compactRegistrationSuccess {
+  background: var(--color-success-bg);
+  color: #2f5d37;
+}
+
+.compactRegistrationNeutral {
+  background: rgba(122, 31, 36, 0.08);
+  color: var(--color-primary);
+}
+
 .primaryAction {
   display: inline-flex;
   width: fit-content;
+  min-height: 42px;
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: 999px;
-  padding: 12px 18px;
+  border-radius: 3px;
+  padding: 0 18px;
   background: var(--color-primary);
   color: var(--color-on-primary);
   font-weight: 800;
@@ -294,61 +529,429 @@
   transform: translateY(-1px);
 }
 
+.agendaSection {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.agendaHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.agendaTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.agendaHeader h2 {
+  margin: 0;
+  font-size: 1.55rem;
+  line-height: 1.1;
+}
+
+.agendaIcon {
+  position: relative;
+  width: 17px;
+  height: 17px;
+  border: 2px solid var(--color-primary);
+  border-radius: 3px;
+}
+
+.agendaIcon::before {
+  content: '';
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  top: 4px;
+  border-top: 2px solid var(--color-primary);
+}
+
+.agendaControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.agendaControl {
+  min-height: 34px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0 12px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.agendaSlide {
+  position: relative;
+  width: 100%;
+  min-height: 300px;
+  display: block;
+  overflow: hidden;
+  border: 0;
+  border-radius: 4px;
+  background: #1f1f23;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(31, 31, 35, 0.08);
+  transition: transform 0.18s ease;
+}
+
+.agendaControl:hover,
+.agendaSlide:hover {
+  transform: translateY(-1px);
+}
+
+.agendaControl:focus-visible,
+.agendaSlide:focus-visible {
+  outline: 3px solid rgba(122, 31, 36, 0.24);
+  outline-offset: 3px;
+}
+
+.agendaSlide img,
+.agendaDocumentPreview {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.agendaDocumentSlide {
+  border: 1px solid var(--color-border);
+  background: #f8f4ee;
+}
+
+.agendaDocumentPreview {
+  background:
+    linear-gradient(90deg, rgba(122, 31, 36, 0.04) 1px, transparent 1px) 0 0 / 34px 34px,
+    linear-gradient(rgba(122, 31, 36, 0.04) 1px, transparent 1px) 0 0 / 34px 34px,
+    radial-gradient(circle at 50% 36%, rgba(255, 255, 255, 0.9), transparent 30%),
+    #f8f4ee;
+}
+
+.agendaDocumentPreview::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 130px;
+  height: 160px;
+  border: 2px solid rgba(122, 31, 36, 0.16);
+  border-radius: 10px;
+  background:
+    linear-gradient(135deg, transparent 0 75%, rgba(122, 31, 36, 0.14) 76%),
+    linear-gradient(rgba(122, 31, 36, 0.12) 0 0) 24px 48px / 82px 4px no-repeat,
+    linear-gradient(rgba(122, 31, 36, 0.1) 0 0) 24px 68px / 68px 4px no-repeat,
+    #ffffff;
+  box-shadow: 0 20px 44px rgba(31, 31, 35, 0.12);
+  transform: translate(-50%, -50%);
+}
+
+.agendaShade {
+  position: absolute;
+  inset: 0;
+  background: rgba(31, 31, 35, 0.28);
+}
+
+.agendaFileBadge {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 70px;
+  min-height: 86px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--color-primary);
+  font-size: 0.82rem;
+  font-weight: 800;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+}
+
+.agendaPdfSlide .agendaFileBadge {
+  color: #b64019;
+}
+
+.agendaFileBadge::before {
+  content: '';
+  width: 24px;
+  height: 30px;
+  border: 2px solid currentColor;
+  border-radius: 2px;
+  background:
+    linear-gradient(135deg, transparent 0 70%, currentColor 71% 78%, transparent 79%),
+    linear-gradient(currentColor 0 0) center 10px / 12px 2px no-repeat,
+    linear-gradient(currentColor 0 0) center 16px / 12px 2px no-repeat;
+}
+
+.agendaDownloadCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid var(--color-border);
+  border-radius: 0 0 6px 6px;
+  background: var(--color-surface);
+}
+
+.agendaDownloadCard h3,
+.agendaDownloadCard p {
+  margin: 0;
+}
+
+.agendaDownloadCard h3 {
+  color: var(--color-text);
+  font-size: 1.02rem;
+  line-height: 1.3;
+}
+
+.agendaDownloadCard p {
+  margin-top: 8px;
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.agendaDownloadAction {
+  display: inline-flex;
+  min-height: 42px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 0;
+  border-radius: 2px;
+  padding: 0 18px;
+  background: #3f6f3f;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.agendaDownloadAction:hover {
+  background: #355f35;
+  transform: translateY(-1px);
+}
+
+.agendaDownloadAction:focus-visible {
+  outline: 3px solid rgba(63, 111, 63, 0.26);
+  outline-offset: 3px;
+}
+
+.agendaDownloadAction:disabled {
+  cursor: progress;
+  opacity: 0.72;
+  transform: none;
+}
+
+.agendaDownloadAction span {
+  position: relative;
+  width: 14px;
+  height: 16px;
+  border-bottom: 2px solid currentColor;
+}
+
+.agendaDownloadAction span::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 1px;
+  width: 2px;
+  height: 10px;
+  background: currentColor;
+}
+
+.agendaDownloadAction span::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 7px;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.agendaDownloadError {
+  margin: -4px 0 0;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.viewerOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(12, 14, 18, 0.72);
+}
+
+.viewerPanel {
+  width: min(980px, 100%);
+  max-height: calc(100vh - 48px);
+  display: grid;
+  gap: 14px;
+  border-radius: 8px;
+  background: var(--color-surface);
+  padding: 16px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+}
+
+.viewerHeader,
+.viewerControls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.viewerHeader strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viewerHeader button,
+.viewerControls button {
+  min-height: 38px;
+  border-radius: 3px;
+  padding: 0 14px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.viewerStage {
+  min-height: 360px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--color-surface-alt);
+}
+
+.viewerStage img {
+  max-width: 100%;
+  max-height: 70vh;
+  display: block;
+  object-fit: contain;
+}
+
+.viewerStage iframe {
+  width: 100%;
+  min-height: 70vh;
+  border: 0;
+  background: var(--color-surface);
+}
+
+.viewerControls {
+  justify-content: center;
+}
+
 .loadingPanel,
 .errorPanel {
-  padding: 34px;
+  display: grid;
+  gap: 14px;
 }
 
 .loadingPanel h1,
 .errorPanel h1 {
-  margin: 10px 0 0;
-  font-size: clamp(1.8rem, 3vw, 2.8rem);
-  line-height: 1.06;
-}
-
-.emptyState {
-  padding: 22px;
-  border: 1px dashed var(--color-border);
-  border-radius: 24px;
-  background: rgba(122, 31, 36, 0.03);
-}
-
-.emptyState h3,
-.emptyState p {
   margin: 0;
-}
-
-.emptyState p {
-  margin-top: 8px;
-  color: var(--color-text-muted);
+  font-size: 2.2rem;
+  line-height: 1.08;
 }
 
 @media (max-width: 1080px) {
-  .hero,
   .contentGrid {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
-  .hero,
-  .panel,
-  .loadingPanel,
-  .errorPanel {
-    border-radius: 24px;
+  .page {
+    gap: 28px;
   }
 
-  .hero,
-  .panel {
+  .heroImage {
+    height: 100%;
+  }
+
+  .heroMedia {
+    min-height: 360px;
+  }
+
+  .heroTitle {
+    font-size: 2.55rem;
+  }
+
+  .heroOverlay {
+    width: min(100%, calc(100% - 28px));
+    padding: 42px 14px 64px;
+  }
+
+  .sideColumn .panel,
+  .loadingPanel,
+  .errorPanel {
     padding: 18px;
   }
 
-  .heroMetaGrid {
-    grid-template-columns: 1fr;
+  .compactInfoCard {
+    position: static;
   }
 
-  .heroMedia,
-  .heroPlaceholder {
+  .compactInfoSection {
+    margin-inline: 18px;
+  }
+
+  .addressBlock,
+  .mapBlock {
+    padding-left: 0;
+  }
+
+  .agendaSlide {
+    min-height: 230px;
+  }
+
+  .agendaDownloadCard {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 18px;
+  }
+
+  .agendaDownloadAction {
+    width: 100%;
+  }
+
+  .viewerOverlay {
+    padding: 12px;
+  }
+
+  .viewerStage {
     min-height: 260px;
   }
 }

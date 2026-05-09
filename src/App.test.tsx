@@ -6,9 +6,15 @@ import App from './App'
 import i18n from './i18n'
 import { createAppStore } from './store/store'
 
-const { getEvent, listUpcomingEvents, listArchivedEvents } = vi.hoisted(() => ({
+const {
+  getEvent,
+  listUpcomingEvents,
+  listArchivedEvents,
+  listEventsByDateRange,
+} = vi.hoisted(() => ({
   listUpcomingEvents: vi.fn(),
   listArchivedEvents: vi.fn(),
+  listEventsByDateRange: vi.fn(),
   getEvent: vi.fn(),
 }))
 
@@ -16,6 +22,7 @@ vi.mock('./api/eventsApi', () => ({
   eventsApi: {
     listUpcomingEvents,
     listArchivedEvents,
+    listEventsByDateRange,
     getEvent,
   },
 }))
@@ -96,11 +103,23 @@ const sampleArchiveEvent = {
 beforeEach(async () => {
   listUpcomingEvents.mockReset()
   listArchivedEvents.mockReset()
+  listEventsByDateRange.mockReset()
   listUpcomingEvents.mockResolvedValue({
     items: [sampleUpcomingEvent],
     pagination: {
       page: 1,
       page_size: 10,
+      total_items: 1,
+      total_pages: 1,
+      has_next: false,
+      has_prev: false,
+    },
+  })
+  listEventsByDateRange.mockResolvedValue({
+    items: [sampleUpcomingEvent],
+    pagination: {
+      page: 1,
+      page_size: 100,
       total_items: 1,
       total_pages: 1,
       has_next: false,
@@ -149,5 +168,18 @@ describe('App', () => {
       }),
     ).toBeDefined()
     expect(screen.getByRole('link', { name: /voir a venir/i })).toBeDefined()
+  })
+
+  it('renders the event calendar page', async () => {
+    window.history.pushState({}, '', '/gatherings/calendar')
+
+    renderWithProviders(<App />)
+
+    expect(
+      await screen.findByRole('heading', {
+        name: /community calendar/i,
+      }),
+    ).toBeDefined()
+    expect(listEventsByDateRange).toHaveBeenCalled()
   })
 })
