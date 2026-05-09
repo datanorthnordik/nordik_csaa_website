@@ -146,7 +146,6 @@ type PublicDateRangeQuery = {
   startDate: string
   endDate: string
   page?: number
-  pageSize?: number
 }
 
 function buildPublicListParams(
@@ -178,8 +177,9 @@ function buildPublicDateRangeParams(query: PublicDateRangeQuery) {
   params.set('sort_order', 'asc')
   params.set('start_date', query.startDate)
   params.set('end_date', query.endDate)
-  params.set('page', String(query.page ?? 1))
-  params.set('page_size', String(query.pageSize ?? 100))
+  if (query.page) {
+    params.set('page', String(query.page))
+  }
   return params
 }
 
@@ -222,13 +222,11 @@ export const eventsApi = {
     })
   },
 
-  async listEventsByDateRange(startDate: string, endDate: string, pageSize = 100) {
+  async listEventsByDateRange(startDate: string, endDate: string) {
     const firstPage = await listDetailedEventsWithParams(
       buildPublicDateRangeParams({
         startDate,
         endDate,
-        page: 1,
-        pageSize,
       }),
     )
 
@@ -243,7 +241,6 @@ export const eventsApi = {
             startDate,
             endDate,
             page: index + 2,
-            pageSize,
           }),
         ),
       ),

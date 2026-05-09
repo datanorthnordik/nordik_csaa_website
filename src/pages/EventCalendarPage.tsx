@@ -101,7 +101,10 @@ export function EventCalendarPage() {
         return false
       }
 
-      if (selectedCategories.size > 0 && !entry.event.categories.some(cat => selectedCategories.has(cat))) {
+      if (
+        selectedCategories.size > 0 &&
+        !entry.event.categories.some((cat) => selectedCategories.has(cat))
+      ) {
         return false
       }
 
@@ -141,6 +144,9 @@ export function EventCalendarPage() {
           <h1>{t('eventCalendar.title')}</h1>
           <p>{t('eventCalendar.description')}</p>
         </div>
+        <Link to="/gatherings" className={styles.backLink}>
+          {t('eventCalendar.backToGatherings')}
+        </Link>
       </section>
 
       <div className={styles.containerWithSidebar}>
@@ -198,7 +204,7 @@ export function EventCalendarPage() {
                 onClick={() => moveMonth(-1)}
                 title={t('eventCalendar.previousMonth')}
               >
-                ‹
+                {'<'}
               </button>
               <div className={styles.monthTitle}>
                 <h2>{formatMonthTitle(selectedMonth, locale)}</h2>
@@ -209,7 +215,7 @@ export function EventCalendarPage() {
                 onClick={() => moveMonth(1)}
                 title={t('eventCalendar.nextMonth')}
               >
-                ›
+                {'>'}
               </button>
             </div>
 
@@ -229,7 +235,7 @@ export function EventCalendarPage() {
                   onClick={() => setViewMode('month')}
                   title={t('eventCalendar.monthView')}
                 >
-                  📅 {t('eventCalendar.monthViewLabel')}
+                  {t('eventCalendar.monthViewLabel')}
                 </button>
                 <button
                   type="button"
@@ -237,7 +243,7 @@ export function EventCalendarPage() {
                   onClick={() => setViewMode('list')}
                   title={t('eventCalendar.listView')}
                 >
-                  ☰ {t('eventCalendar.listViewLabel')}
+                  {t('eventCalendar.listViewLabel')}
                 </button>
               </div>
             </div>
@@ -325,26 +331,22 @@ function CalendarWeek({
   selectedMonth: Date
   locale: string
 }) {
-  const dayEntries: Record<string, CalendarEntry[]> = {}
-
-  week.forEach((day) => {
-    const key = toApiDate(day)
-    dayEntries[key] = entries.filter(
-      (entry) =>
-        getEntryStartDate(entry) <= day &&
-        getEntryEndDate(entry) >= day,
-    )
-  })
+  const weekStart = week[0]
+  const weekEnd = week[6]
+  const segments = entries
+    .filter((entry) => entryOverlapsRange(entry, weekStart, weekEnd))
+    .map((entry) => buildCalendarSegment(entry, weekStart, weekEnd))
+    .sort((left, right) => {
+      const columnDifference = left.startColumn - right.startColumn
+      return columnDifference || right.span - left.span
+    })
 
   return (
-    <>
-      {week.map((day) => {
-        const dayKey = toApiDate(day)
-        const dayEvents = dayEntries[dayKey] || []
-
-        return (
+    <div className={styles.weekRow}>
+      <div className={styles.weekDayCells}>
+        {week.map((day) => (
           <div
-            key={dayKey}
+            key={toApiDate(day)}
             className={[
               styles.dayCell,
               day.getMonth() !== selectedMonth.getMonth() ? styles.outsideMonth : '',
@@ -354,29 +356,32 @@ function CalendarWeek({
               .join(' ')}
           >
             <span>{day.getDate()}</span>
-            {dayEvents.length > 0 && (
-              <div className={styles.eventsPill}>
-                {dayEvents.slice(0, 2).map((entry) => (
-                  <Link
-                    key={entry.key}
-                    to={`/gatherings/${entry.event.id}`}
-                    className={`${styles.calendarEvent} ${getToneClassName(entry.event.id)}`}
-                    title={entry.event.title}
-                  >
-                    {entry.event.title}
-                  </Link>
-                ))}
-                {dayEvents.length > 2 && (
-                  <span className={styles.eventMore}>
-                    +{dayEvents.length - 2}
-                  </span>
-                )}
-              </div>
-            )}
           </div>
-        )
-      })}
-    </>
+        ))}
+      </div>
+
+      <div className={styles.weekEvents}>
+        {segments.slice(0, 4).map((segment) => (
+          <Link
+            key={`${segment.entry.key}-${segment.startColumn}-${segment.span}`}
+            to={`/gatherings/${segment.entry.event.id}`}
+            className={`${styles.calendarEvent} ${segment.toneClassName}`}
+            style={{
+              gridColumn: `${segment.startColumn} / span ${segment.span}`,
+            }}
+            title={segment.entry.event.title}
+          >
+            <span>{formatCompactEventRange(segment.entry, locale)}</span>
+            <strong>{segment.entry.event.title}</strong>
+          </Link>
+        ))}
+        {segments.length > 4 ? (
+          <span className={styles.eventMore}>
+            +{segments.length - 4}
+          </span>
+        ) : null}
+      </div>
+    </div>
   )
 }
 

@@ -13,6 +13,9 @@ export default defineConfig({
       exclude: [
         'node_modules/',
         'dist/',
+        'coverage/',
+        'cypress/',
+        'src/main.tsx',
         '**/*.config.*',
         '**/*.d.ts',
       ],

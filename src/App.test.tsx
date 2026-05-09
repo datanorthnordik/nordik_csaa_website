@@ -177,7 +177,7 @@ describe('App', () => {
 
     expect(
       await screen.findByRole('heading', {
-        name: /find gatherings by date/i,
+        name: /community calendar/i,
       }),
     ).toBeDefined()
     expect(listEventsByDateRange).toHaveBeenCalled()
