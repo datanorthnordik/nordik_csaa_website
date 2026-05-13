@@ -9,14 +9,14 @@ export function SiteHeader() {
   return (
     <header className={styles.header}>
       <div className={styles.headerInner}>
-        <Link to="/gatherings" className={styles.brand}>
+        <Link to="/events" className={styles.brand}>
           {t('site.header.title')}
         </Link>
 
         <nav className={styles.nav} aria-label={t('site.nav.ariaLabel')}>
           <span className={styles.navPlaceholder}>{t('site.nav.directory')}</span>
           <NavLink
-            to="/gatherings"
+            to="/events"
             className={({ isActive }) =>
               `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
             }

@@ -6,20 +6,20 @@
     "header": {
       "eyebrow": "Communaute CSAA",
       "title": "CSAA Community",
-      "tagline": "Rassemblements, ressources et recits communautaires.",
+      "tagline": "Evenements, ressources et recits communautaires.",
       "cta": "Nous joindre"
     },
     "nav": {
       "ariaLabel": "Navigation principale",
       "directory": "Repertoire",
-      "gatherings": "Rassemblements",
+      "gatherings": "Evenements",
       "protocols": "Protocoles",
       "sustainability": "Durabilite",
       "about": "A propos"
     },
     "footer": {
       "title": "CSAA Community",
-      "copy": "Rassemblements, ressources culturelles et moments partages au meme endroit.",
+      "copy": "Evenements, ressources culturelles et moments partages au meme endroit.",
       "links": {
         "sustainability": "Durabilite",
         "protocols": "Protocoles culturels",
@@ -42,23 +42,23 @@
         "archived": "Evenements archives"
       },
       "placeholderLabel": "Photo principale en attente",
-      "placeholderTitle": "Les rassemblements sont prets a etre publies.",
+      "placeholderTitle": "Les evenements sont prets a etre publies.",
       "placeholderDescription": "Lorsqu un evenement n a pas encore de photo principale, la page conserve tout de meme une presentation soignee avec de l espace pour le texte d accroche et les points forts."
     },
     "upcoming": {
       "eyebrow": "Bientot",
       "title": "Evenements a venir",
-      "description": "Trouvez les prochains rassemblements et programmes communautaires.",
+      "description": "Trouvez les prochains evenements et programmes communautaires.",
       "emptyTitle": "Aucun evenement a venir pour le moment",
-      "emptyDescription": "Lorsque de nouveaux rassemblements seront publies, ils apparaitront ici automatiquement."
+      "emptyDescription": "Lorsque de nouveaux evenements seront publies, ils apparaitront ici automatiquement."
     },
     "archive": {
       "eyebrow": "Archives",
       "title": "Preserver les archives des evenements",
-      "description": "Revoyez les rassemblements precedents, les documents et les moments partages.",
+      "description": "Revoyez les evenements precedents, les documents et les moments partages.",
       "pagination": "Page {{page}} sur {{total}}",
       "emptyTitle": "Aucun evenement archive trouve",
-      "emptyDescription": "Les rassemblements archives apparaitront ici des que des evenements publies passeront dans le passe."
+      "emptyDescription": "Les evenements archives apparaitront ici des que des evenements publies passeront dans le passe."
     },
     "card": {
       "viewDetails": "Voir les details",
@@ -70,8 +70,8 @@
   "eventCalendar": {
     "eyebrow": "Calendrier des evenements",
     "title": "Calendrier communautaire",
-    "description": "Decouvrez les rassemblements, ateliers et ceremonies a venir au sein de notre communaute. Connectez-vous avec l heritage par des experiences partagees.",
-    "backToGatherings": "Retour aux rassemblements",
+    "description": "Decouvrez les evenements, ateliers et ceremonies a venir au sein de notre communaute. Connectez-vous avec l heritage par des experiences partagees.",
+    "backToGatherings": "Retour aux evenements",
     "filtersLabel": "Filtres",
     "eventTypeLabel": "Type d'evenement",
     "clearAll": "Effacer tout",
@@ -104,7 +104,7 @@
     "loadError": "Impossible de charger les details de l evenement pour le moment.",
     "loadingTitle": "Chargement des details de l evenement",
     "errorEyebrow": "Details de l evenement",
-    "backToGatherings": "Retour a tous les rassemblements",
+    "backToGatherings": "Retour a tous les evenements",
     "defaultSummary": "Les details, documents et moments partages de l evenement apparaitront ici lorsqu ils seront ajoutes dans le CMS.",
     "placeholderLabel": "Image principale en attente",
     "overviewEyebrow": "Recit de l evenement",

@@ -109,7 +109,7 @@ export function GatheringsPage() {
               {t('gatherings.hero.primaryAction')}
               <span className={styles.arrowIcon} aria-hidden="true" />
             </a>
-            <Link className={styles.secondaryAction} to="/gatherings/calendar">
+            <Link className={styles.secondaryAction} to="/events/calendar">
               <span className={styles.calendarIcon} aria-hidden="true" />
               {t('gatherings.hero.calendarAction')}
             </Link>
@@ -301,7 +301,7 @@ function EventCard({ event, locale, variant }: EventCardProps) {
           <p className={styles.cardMeta}>{venueLabel}</p>
         </div>
 
-        <Link to={`/gatherings/${event.id}`} className={styles.cardLink}>
+        <Link to={`/events/${event.id}`} className={styles.cardLink}>
           {variant === 'upcoming'
             ? t('gatherings.card.viewDetails')
             : t('gatherings.card.viewArchive')}
