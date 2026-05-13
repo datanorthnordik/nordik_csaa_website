@@ -6,20 +6,20 @@
     "header": {
       "eyebrow": "CSAA community",
       "title": "CSAA Community",
-      "tagline": "Community gatherings, resources, and shared stories.",
+      "tagline": "Community events, resources, and shared stories.",
       "cta": "Join Us"
     },
     "nav": {
       "ariaLabel": "Primary navigation",
       "directory": "Directory",
-      "gatherings": "Gatherings",
+      "gatherings": "Events",
       "protocols": "Protocols",
       "sustainability": "Sustainability",
       "about": "About"
     },
     "footer": {
       "title": "CSAA Community",
-      "copy": "Community gatherings, cultural resources, and shared moments in one place.",
+      "copy": "Community events, cultural resources, and shared moments in one place.",
       "links": {
         "sustainability": "Sustainability",
         "protocols": "Cultural Protocols",
@@ -36,29 +36,29 @@
       "primaryAction": "View Upcoming",
       "secondaryAction": "View Archives",
       "calendarAction": "Events Calendar",
-      "imageAlt": "Circular wooden gathering stage surrounded by green forest",
+      "imageAlt": "Circular wooden event stage surrounded by green forest",
       "stats": {
         "upcoming": "Upcoming events",
         "archived": "Archived events"
       },
       "placeholderLabel": "Display photo pending",
-      "placeholderTitle": "Gatherings are ready for publishing.",
+      "placeholderTitle": "Events are ready for publishing.",
       "placeholderDescription": "When an event does not have a display image yet, the page still keeps a polished layout with room for teaser copy and event highlights."
     },
     "upcoming": {
       "eyebrow": "Coming soon",
       "title": "Upcoming events",
-      "description": "Find upcoming gatherings and community programs.",
+      "description": "Find upcoming events and community programs.",
       "emptyTitle": "No upcoming events yet",
-      "emptyDescription": "When new gatherings are published, they will appear here automatically."
+      "emptyDescription": "When new events are published, they will appear here automatically."
     },
     "archive": {
       "eyebrow": "Event archive",
       "title": "Preserving our event archive",
-      "description": "Revisit previous gatherings, documents, and shared moments.",
+      "description": "Revisit previous events, documents, and shared moments.",
       "pagination": "Page {{page}} of {{total}}",
       "emptyTitle": "No archived events found",
-      "emptyDescription": "Archived gatherings will appear here as soon as published events move into the past."
+      "emptyDescription": "Archived events will appear here as soon as published events move into the past."
     },
     "card": {
       "viewDetails": "View Event Details",
@@ -70,8 +70,8 @@
   "eventCalendar": {
     "eyebrow": "Events calendar",
     "title": "Community Calendar",
-    "description": "Discover upcoming gatherings, workshops, and ceremonies within our community. Connect with heritage through shared experiences.",
-    "backToGatherings": "Back to gatherings",
+    "description": "Discover upcoming events, workshops, and ceremonies within our community. Connect with heritage through shared experiences.",
+    "backToGatherings": "Back to events",
     "filtersLabel": "Filters",
     "eventTypeLabel": "Event Type",
     "clearAll": "Clear All",
@@ -104,7 +104,7 @@
     "loadError": "We could not load the event details right now.",
     "loadingTitle": "Loading event details",
     "errorEyebrow": "Event details",
-    "backToGatherings": "Back to all gatherings",
+    "backToGatherings": "Back to all events",
     "defaultSummary": "Event details, documents, and shared moments will appear here as they are added through the CMS.",
     "placeholderLabel": "Display image pending",
     "overviewEyebrow": "Event story",
@@ -112,7 +112,7 @@
     "scheduleEyebrow": "Plan ahead",
     "scheduleTitle": "Dates and venue",
     "occurrencesTitle": "Scheduled occurrences",
-    "registrationEyebrow": "Attend this gathering",
+    "registrationEyebrow": "Attend this event",
     "registrationTitle": "Registration",
     "registrationStarts": "Registration opens: ",
     "registrationEnds": "Registration closes: ",

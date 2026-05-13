@@ -144,7 +144,7 @@ export function EventCalendarPage() {
           <h1>{t('eventCalendar.title')}</h1>
           <p>{t('eventCalendar.description')}</p>
         </div>
-        <Link to="/gatherings" className={styles.backLink}>
+        <Link to="/events" className={styles.backLink}>
           {t('eventCalendar.backToGatherings')}
         </Link>
       </section>
@@ -364,7 +364,7 @@ function CalendarWeek({
         {segments.slice(0, 4).map((segment) => (
           <Link
             key={`${segment.entry.key}-${segment.startColumn}-${segment.span}`}
-            to={`/gatherings/${segment.entry.event.id}`}
+            to={`/events/${segment.entry.event.id}`}
             className={`${styles.calendarEvent} ${segment.toneClassName}`}
             style={{
               gridColumn: `${segment.startColumn} / span ${segment.span}`,
@@ -432,7 +432,7 @@ function MonthEventCard({
         <p>{venueLabel}</p>
       </div>
 
-      <Link to={`/gatherings/${entry.event.id}`} className={styles.listLink}>
+      <Link to={`/events/${entry.event.id}`} className={styles.listLink}>
         {t('eventCalendar.viewDetails')}
       </Link>
     </article>

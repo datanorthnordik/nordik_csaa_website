@@ -81,7 +81,7 @@ export function EventDetailPage() {
       <div className={styles.errorPanel}>
         <p className={styles.loadingEyebrow}>{t('eventDetail.errorEyebrow')}</p>
         <h1>{t('eventDetail.invalidId')}</h1>
-        <Link to="/gatherings" className={styles.primaryAction}>
+        <Link to="/events" className={styles.primaryAction}>
           {t('eventDetail.backToGatherings')}
         </Link>
       </div>
@@ -102,7 +102,7 @@ export function EventDetailPage() {
       <div className={styles.errorPanel}>
         <p className={styles.loadingEyebrow}>{t('eventDetail.errorEyebrow')}</p>
         <h1>{error ?? t('eventDetail.loadError')}</h1>
-        <Link to="/gatherings" className={styles.primaryAction}>
+        <Link to="/events" className={styles.primaryAction}>
           {t('eventDetail.backToGatherings')}
         </Link>
       </div>
@@ -192,7 +192,7 @@ export function EventDetailPage() {
 
   return (
     <div className={styles.page}>
-      <Link to="/gatherings" className={styles.backLink}>
+      <Link to="/events" className={styles.backLink}>
         {t('eventDetail.backToGatherings')}
       </Link>
 

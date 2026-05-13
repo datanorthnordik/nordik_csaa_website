@@ -145,7 +145,7 @@ beforeEach(async () => {
 })
 
 describe('App', () => {
-  it('renders the gatherings landing page by default', async () => {
+  it('renders the events landing page by default', async () => {
     renderWithProviders(<App />)
 
     expect(
@@ -153,11 +153,11 @@ describe('App', () => {
         name: /explore the journey: our past & future events/i,
       }),
     ).toBeDefined()
-    expect(screen.getByRole('link', { name: /gatherings/i })).toBeDefined()
+    expect(screen.getByRole('link', { name: /^events$/i })).toBeDefined()
     expect(screen.getByRole('button', { name: 'FR' })).toBeDefined()
   })
 
-  it('switches the gatherings page copy to french', async () => {
+  it('switches the events page copy to french', async () => {
     renderWithProviders(<App />)
 
     fireEvent.click(screen.getByRole('button', { name: 'FR' }))
@@ -171,7 +171,7 @@ describe('App', () => {
   })
 
   it('renders the event calendar page', async () => {
-    window.history.pushState({}, '', '/gatherings/calendar')
+    window.history.pushState({}, '', '/events/calendar')
 
     renderWithProviders(<App />)
 

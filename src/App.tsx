@@ -9,13 +9,13 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<SiteShell />}>
-          <Route path="/" element={<Navigate to="/gatherings" replace />} />
-          <Route path="/gatherings" element={<GatheringsPage />} />
-          <Route path="/gatherings/calendar" element={<EventCalendarPage />} />
-          <Route path="/gatherings/:eventId" element={<EventDetailPage />} />
+          <Route path="/" element={<Navigate to="/events" replace />} />
+          <Route path="/events" element={<GatheringsPage />} />
+          <Route path="/events/calendar" element={<EventCalendarPage />} />
+          <Route path="/events/:eventId" element={<EventDetailPage />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/gatherings" replace />} />
+        <Route path="*" element={<Navigate to="/events" replace />} />
       </Routes>
     </BrowserRouter>
   )

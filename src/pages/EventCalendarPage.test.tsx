@@ -141,11 +141,11 @@ describe('EventCalendarPage', () => {
       await screen.findByRole('heading', { name: /community calendar/i }),
     ).toBeDefined()
     expect(
-      screen.getByRole('link', { name: /back to gatherings/i }),
+      screen.getByRole('link', { name: /back to events/i }),
     ).toBeDefined()
     expect(
-      screen.getByRole('link', { name: /back to gatherings/i }).getAttribute('href'),
-    ).toBe('/gatherings')
+      screen.getByRole('link', { name: /back to events/i }).getAttribute('href'),
+    ).toBe('/events')
     expect(listEventsByDateRange).toHaveBeenCalledWith('2026-08-30', '2026-10-03')
   })
 
@@ -171,7 +171,7 @@ describe('EventCalendarPage', () => {
 
     expect(
       screen.getAllByRole('link', { name: /view details/i })[0].getAttribute('href'),
-    ).toBe('/gatherings/101')
+    ).toBe('/events/101')
 
     fireEvent.click(screen.getByRole('button', { name: /^month$/i }))
 
