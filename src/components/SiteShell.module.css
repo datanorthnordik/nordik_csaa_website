@@ -1,5 +1,5 @@
 .shell {
-  --site-header-height: 64px;
+  --site-header-height: 96px;
   --shell-gutter: clamp(18px, 3vw, 40px);
   position: relative;
   min-height: 100svh;
@@ -26,7 +26,7 @@
 .main {
   display: flex;
   flex-direction: column;
-  padding: calc(var(--site-header-height) + 10px) 0 48px;
+  padding: var(--site-header-height) 0 48px;
 }
 
 .footer {
@@ -59,13 +59,13 @@
 
 @media (max-width: 860px) {
   .shell {
-    --site-header-height: 58px;
+    --site-header-height: 82px;
     --shell-gutter: 16px;
     padding-bottom: 28px;
   }
 
   .main {
-    padding: calc(var(--site-header-height) + 12px) 0 32px;
+    padding: var(--site-header-height) 0 32px;
   }
 
   .footer {

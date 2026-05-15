@@ -12,6 +12,9 @@
     "nav": {
       "ariaLabel": "Navigation principale",
       "directory": "Repertoire",
+      "openMenu": "Ouvrir le menu",
+      "closeMenu": "Fermer le menu",
+      "toggleSubmenu": "Afficher le sous-menu pour {{label}}",
       "gatherings": "Evenements",
       "protocols": "Protocoles",
       "sustainability": "Durabilite",
@@ -148,6 +151,9 @@
       "dateRange": "Periode",
       "categories": "Categories"
     }
+  },
+  "comingSoon": {
+    "simpleMessage": "Bientot disponible."
   },
   "common": {
     "loading": "Chargement",
