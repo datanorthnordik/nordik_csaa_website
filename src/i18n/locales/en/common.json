@@ -12,6 +12,9 @@
     "nav": {
       "ariaLabel": "Primary navigation",
       "directory": "Directory",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "toggleSubmenu": "Toggle submenu for {{label}}",
       "gatherings": "Events",
       "protocols": "Protocols",
       "sustainability": "Sustainability",
@@ -148,6 +151,9 @@
       "dateRange": "Date range",
       "categories": "Categories"
     }
+  },
+  "comingSoon": {
+    "simpleMessage": "Coming soon."
   },
   "common": {
     "loading": "Loading",

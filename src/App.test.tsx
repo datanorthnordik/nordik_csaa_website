@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { Provider } from 'react-redux'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -8,14 +8,22 @@ import { createAppStore } from './store/store'
 
 const {
   getEvent,
+  getMainMenu,
   listUpcomingEvents,
   listArchivedEvents,
   listEventsByDateRange,
 } = vi.hoisted(() => ({
+  getMainMenu: vi.fn(),
   listUpcomingEvents: vi.fn(),
   listArchivedEvents: vi.fn(),
   listEventsByDateRange: vi.fn(),
   getEvent: vi.fn(),
+}))
+
+vi.mock('./api/menusApi', () => ({
+  menusApi: {
+    getMainMenu,
+  },
 }))
 
 vi.mock('./api/eventsApi', () => ({
@@ -100,10 +108,84 @@ const sampleArchiveEvent = {
   registration_url: '',
 }
 
+const sampleMenu = {
+  id: 1,
+  menu_key: 'main',
+  name: 'Main Website Navigation',
+  items: [
+    {
+      id: 18,
+      parent_id: null,
+      label: 'Home',
+      navigation_type: 'pages',
+      page_id: 1,
+      external_url: '',
+      open_in_new_tab: false,
+      sort_order: 0,
+      href: '/home',
+      page_type: 'page',
+      page: {
+        id: 1,
+        page_title: 'Home',
+        url_slug: '/home',
+        parent_id: null,
+        page_type: 'page',
+        status: 'published',
+      },
+      children: [
+        {
+          id: 20,
+          parent_id: 18,
+          label: 'Contact Us',
+          navigation_type: 'pages',
+          page_id: 7,
+          external_url: '',
+          open_in_new_tab: false,
+          sort_order: 1,
+          href: '/home/contact-us',
+          page_type: 'page',
+          page: {
+            id: 7,
+            page_title: 'Contact Us',
+            url_slug: '/home/contact-us',
+            parent_id: 1,
+            page_type: 'page',
+            status: 'published',
+          },
+          children: [],
+        },
+      ],
+    },
+    {
+      id: 21,
+      parent_id: null,
+      label: 'Events',
+      navigation_type: 'pages',
+      page_id: 8,
+      external_url: '',
+      open_in_new_tab: false,
+      sort_order: 1,
+      href: '/events',
+      page_type: 'module',
+      page: {
+        id: 8,
+        page_title: 'Events',
+        url_slug: '/events',
+        parent_id: null,
+        page_type: 'module',
+        status: 'published',
+      },
+      children: [],
+    },
+  ],
+}
+
 beforeEach(async () => {
+  getMainMenu.mockReset()
   listUpcomingEvents.mockReset()
   listArchivedEvents.mockReset()
   listEventsByDateRange.mockReset()
+  getMainMenu.mockResolvedValue(sampleMenu)
   listUpcomingEvents.mockResolvedValue({
     items: [sampleUpcomingEvent],
     pagination: {
@@ -145,32 +227,36 @@ beforeEach(async () => {
 })
 
 describe('App', () => {
-  it('renders the events landing page by default', async () => {
+  it('redirects to the first internal menu slug and shows the coming soon page', async () => {
     renderWithProviders(<App />)
 
     expect(
       await screen.findByRole('heading', {
-        name: /explore the journey: our past & future events/i,
+        name: /^home$/i,
       }),
     ).toBeDefined()
-    expect(screen.getByRole('link', { name: /^events$/i })).toBeDefined()
+    expect(window.location.pathname).toBe('/home')
+    expect(
+      within(screen.getByRole('navigation')).getByRole('link', { name: /^home$/i })
+        .getAttribute('aria-current'),
+    ).toBe('page')
+    expect(
+      within(screen.getByRole('navigation')).getByRole('link', { name: /^events$/i }),
+    ).toBeDefined()
     expect(screen.getByRole('button', { name: 'FR' })).toBeDefined()
   })
 
-  it('switches the events page copy to french', async () => {
+  it('switches the shared coming soon copy to french', async () => {
     renderWithProviders(<App />)
+
+    await screen.findByRole('heading', { name: /^home$/i })
 
     fireEvent.click(screen.getByRole('button', { name: 'FR' }))
 
-    expect(
-      await screen.findByRole('heading', {
-        name: /explorez le parcours : nos evenements passes et futurs/i,
-      }),
-    ).toBeDefined()
-    expect(screen.getByRole('link', { name: /voir a venir/i })).toBeDefined()
+    expect(await screen.findByText(/bientot disponible/i)).toBeDefined()
   })
 
-  it('renders the event calendar page', async () => {
+  it('renders the event calendar page and keeps the events item active', async () => {
     window.history.pushState({}, '', '/events/calendar')
 
     renderWithProviders(<App />)
@@ -180,6 +266,26 @@ describe('App', () => {
         name: /community calendar/i,
       }),
     ).toBeDefined()
+    expect(
+      within(screen.getByRole('navigation')).getByRole('link', { name: /^events$/i })
+        .getAttribute('aria-current'),
+    ).toBe('page')
     expect(listEventsByDateRange).toHaveBeenCalled()
+  })
+
+  it('keeps the parent menu item active for child slugs', async () => {
+    window.history.pushState({}, '', '/home/contact-us')
+
+    renderWithProviders(<App />)
+
+    expect(
+      await screen.findByRole('heading', {
+        name: /contact us/i,
+      }),
+    ).toBeDefined()
+    expect(
+      within(screen.getByRole('navigation')).getByRole('link', { name: /^home$/i })
+        .getAttribute('aria-current'),
+    ).toBe('page')
   })
 })
