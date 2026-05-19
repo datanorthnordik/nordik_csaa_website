@@ -9,11 +9,13 @@ import { createAppStore } from './store/store'
 const {
   getEvent,
   getMainMenu,
+  getPageBySlug,
   listUpcomingEvents,
   listArchivedEvents,
   listEventsByDateRange,
 } = vi.hoisted(() => ({
   getMainMenu: vi.fn(),
+  getPageBySlug: vi.fn(),
   listUpcomingEvents: vi.fn(),
   listArchivedEvents: vi.fn(),
   listEventsByDateRange: vi.fn(),
@@ -32,6 +34,12 @@ vi.mock('./api/eventsApi', () => ({
     listArchivedEvents,
     listEventsByDateRange,
     getEvent,
+  },
+}))
+
+vi.mock('./api/pagesApi', () => ({
+  pagesApi: {
+    getPageBySlug,
   },
 }))
 
@@ -180,12 +188,144 @@ const sampleMenu = {
   ],
 }
 
+const sampleHomePage = {
+  id: 1,
+  page_title: 'CSAA Newsletter',
+  url_slug: '/home',
+  parent_id: null,
+  page_type: 'page',
+  status: 'published',
+  hero_image_enabled: false,
+  hero_image_url: '',
+  hero_image_object_key: '',
+  hero_image_fetch_url: '',
+  seo_page_title: 'CSAA Newsletter',
+  seo_page_description: 'Stories, updates, and shared moments from the community.',
+  created_at: '',
+  updated_at: '',
+  page_detail: {
+    id: 1,
+    page_id: 1,
+    template_key: 'default',
+    settings: {},
+    schema_version: 1,
+    sections: [
+      {
+        id: 11,
+        section_name: 'Header Module',
+        section_type: 'header',
+        sort_order: 0,
+        is_enabled: true,
+        settings: {},
+        header: {
+          main_header_text: 'Welcome to the CSAA newsletter',
+          sub_header_text: 'Stories, updates, and shared moments from the community.',
+          hierarchy: 'h1_hero',
+        },
+      },
+      {
+        id: 12,
+        section_name: 'Typography',
+        section_type: 'typography',
+        sort_order: 1,
+        is_enabled: true,
+        settings: {},
+        typography: {
+          html_content:
+            '<p>The newsletter shares community updates, stories, and upcoming opportunities.</p>',
+          text_content: '',
+          text_align: 'left',
+        },
+      },
+      {
+        id: 13,
+        section_name: 'Quote Module',
+        section_type: 'quote',
+        sort_order: 2,
+        is_enabled: true,
+        settings: {},
+        quote: {
+          quote_content: 'Shared stories keep our gatherings close, even between seasons.',
+          attribution: 'Community newsletter',
+        },
+      },
+      {
+        id: 14,
+        section_name: 'CTA Banner',
+        section_type: 'cta_banner',
+        sort_order: 3,
+        is_enabled: true,
+        settings: {},
+        cta_banner: {
+          banner_heading: 'Online donation',
+          banner_message: 'You can donate via our CanadaHelps platform.',
+          button_text: 'Donate now',
+          button_url: 'https://example.com/donate',
+          open_in_new_tab: true,
+        },
+      },
+    ],
+  },
+}
+
+const sampleChildPage = {
+  ...sampleHomePage,
+  id: 7,
+  page_title: 'Contact Us',
+  url_slug: '/home/contact-us',
+  page_detail: {
+    ...sampleHomePage.page_detail,
+    id: 2,
+    page_id: 7,
+    sections: [
+      {
+        id: 21,
+        section_name: 'Header Module',
+        section_type: 'header',
+        sort_order: 0,
+        is_enabled: true,
+        settings: {},
+        header: {
+          main_header_text: 'Contact Us',
+          sub_header_text: 'Reach the CSAA team for support and community questions.',
+          hierarchy: 'h1_hero',
+        },
+      },
+    ],
+  },
+}
+
+const sampleEmptyPage = {
+  ...sampleHomePage,
+  id: 9,
+  page_title: 'Empty Page',
+  url_slug: '/home/empty',
+  seo_page_description: 'Placeholder copy for pages without CMS sections yet.',
+  page_detail: {
+    ...sampleHomePage.page_detail,
+    id: 3,
+    page_id: 9,
+    sections: [],
+  },
+}
+
 beforeEach(async () => {
   getMainMenu.mockReset()
+  getPageBySlug.mockReset()
   listUpcomingEvents.mockReset()
   listArchivedEvents.mockReset()
   listEventsByDateRange.mockReset()
   getMainMenu.mockResolvedValue(sampleMenu)
+  getPageBySlug.mockImplementation(async (slug: string) => {
+    if (slug === '/home/contact-us') {
+      return sampleChildPage
+    }
+    if (slug === '/home/empty') {
+      return sampleEmptyPage
+    }
+
+    return sampleHomePage
+  })
   listUpcomingEvents.mockResolvedValue({
     items: [sampleUpcomingEvent],
     pagination: {
@@ -227,15 +367,21 @@ beforeEach(async () => {
 })
 
 describe('App', () => {
-  it('redirects to the first internal menu slug and shows the coming soon page', async () => {
+  it('redirects to the first internal menu slug and renders the CMS page', async () => {
     renderWithProviders(<App />)
 
     expect(
       await screen.findByRole('heading', {
-        name: /^home$/i,
+        name: /welcome to the csaa newsletter/i,
       }),
     ).toBeDefined()
     expect(window.location.pathname).toBe('/home')
+    expect(getPageBySlug).toHaveBeenCalledWith('/home')
+    expect(
+      screen.getByText(
+        /the newsletter shares community updates, stories, and upcoming opportunities\./i,
+      ),
+    ).toBeDefined()
     expect(
       within(screen.getByRole('navigation')).getByRole('link', { name: /^home$/i })
         .getAttribute('aria-current'),
@@ -249,11 +395,17 @@ describe('App', () => {
   it('switches the shared coming soon copy to french', async () => {
     renderWithProviders(<App />)
 
-    await screen.findByRole('heading', { name: /^home$/i })
+    await screen.findByRole('heading', {
+      name: /welcome to the csaa newsletter/i,
+    })
 
     fireEvent.click(screen.getByRole('button', { name: 'FR' }))
 
-    expect(await screen.findByText(/bientot disponible/i)).toBeDefined()
+    expect(
+      await screen.findByText(
+        /evenements, ressources culturelles et moments partages au meme endroit\./i,
+      ),
+    ).toBeDefined()
   })
 
   it('renders the event calendar page and keeps the events item active', async () => {
@@ -280,12 +432,27 @@ describe('App', () => {
 
     expect(
       await screen.findByRole('heading', {
-        name: /contact us/i,
+        name: /^contact us$/i,
       }),
     ).toBeDefined()
     expect(
       within(screen.getByRole('navigation')).getByRole('link', { name: /^home$/i })
         .getAttribute('aria-current'),
     ).toBe('page')
+  })
+
+  it('shows the placeholder hero when a CMS page has no content sections yet', async () => {
+    window.history.pushState({}, '', '/home/empty')
+
+    renderWithProviders(<App />)
+
+    expect(
+      await screen.findByRole('heading', {
+        name: /^empty page$/i,
+      }),
+    ).toBeDefined()
+    expect(
+      screen.getByText(/placeholder copy for pages without cms sections yet\./i),
+    ).toBeDefined()
   })
 })

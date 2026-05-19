@@ -155,6 +155,9 @@
   "comingSoon": {
     "simpleMessage": "Bientot disponible."
   },
+  "cmsPage": {
+    "loadError": "Impossible de charger cette page pour le moment."
+  },
   "common": {
     "loading": "Chargement",
     "close": "Fermer",

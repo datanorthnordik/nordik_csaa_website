@@ -155,6 +155,9 @@
   "comingSoon": {
     "simpleMessage": "Coming soon."
   },
+  "cmsPage": {
+    "loadError": "We could not load this page right now."
+  },
   "common": {
     "loading": "Loading",
     "close": "Close",

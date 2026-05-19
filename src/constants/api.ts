@@ -11,7 +11,7 @@ export const API_ROUTES = {
   signup: '/api/user/signup',
   refresh: '/api/user/refresh',
   pages: '/api/pages',
-  pageBySlug: (slug: string) => `/api/pages/${slug}`,
+  pageBySlug: '/api/pages/by-slug',
   navigation: '/api/navigation',
   menus: '/api/menus',
   menuByKey: (menuKey: string) => `/api/menus/${menuKey}`,
