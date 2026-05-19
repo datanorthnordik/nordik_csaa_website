@@ -1,5 +1,6 @@
 import type { PageDetailResponse, PageSection } from '../../api/pagesApi'
 import { CmsCtaSection } from './CmsCtaSection'
+import { CmsGallerySection } from './CmsGallerySection'
 import { CmsHeaderSection } from './CmsHeaderSection'
 import { CmsQuoteSection } from './CmsQuoteSection'
 import { CmsTypographySection } from './CmsTypographySection'
@@ -26,6 +27,8 @@ export function CmsSectionRenderer({
       ) : null
     case 'typography':
       return section.typography ? <CmsTypographySection section={section} /> : null
+    case 'gallery':
+      return section.gallery?.gallery_id ? <CmsGallerySection section={section} /> : null
     case 'quote':
       return section.quote ? <CmsQuoteSection section={section} /> : null
     case 'cta_banner':

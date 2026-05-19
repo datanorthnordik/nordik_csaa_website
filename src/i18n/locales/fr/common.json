@@ -158,6 +158,15 @@
   "cmsPage": {
     "loadError": "Impossible de charger cette page pour le moment."
   },
+  "cmsGallery": {
+    "label": "Galerie",
+    "loading": "Chargement des images de la galerie.",
+    "unavailable": "Impossible de charger cette galerie pour le moment.",
+    "empty": "Les images de la galerie apparaitront ici des qu elles seront ajoutees dans le CMS.",
+    "imagesCount_one": "{{count}} image",
+    "imagesCount_other": "{{count}} images",
+    "imageCount": "{{current}} sur {{total}}"
+  },
   "common": {
     "loading": "Chargement",
     "close": "Fermer",

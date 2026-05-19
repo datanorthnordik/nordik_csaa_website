@@ -89,6 +89,8 @@ export function CmsPage() {
               (section.typography.html_content.trim() ||
                 section.typography.text_content.trim()),
           )
+      : section.section_type === 'gallery'
+        ? Boolean(section.gallery?.gallery_id)
       : section.section_type === 'quote'
         ? Boolean(section.quote?.quote_content.trim())
         : section.section_type === 'cta_banner'

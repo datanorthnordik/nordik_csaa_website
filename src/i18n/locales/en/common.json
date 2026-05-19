@@ -158,6 +158,15 @@
   "cmsPage": {
     "loadError": "We could not load this page right now."
   },
+  "cmsGallery": {
+    "label": "Gallery",
+    "loading": "Loading gallery images.",
+    "unavailable": "We could not load this gallery right now.",
+    "empty": "Gallery images will appear here as soon as they are added in the CMS.",
+    "imagesCount_one": "{{count}} image",
+    "imagesCount_other": "{{count}} images",
+    "imageCount": "{{current}} of {{total}}"
+  },
   "common": {
     "loading": "Loading",
     "close": "Close",

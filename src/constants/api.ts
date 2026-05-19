@@ -12,6 +12,8 @@ export const API_ROUTES = {
   refresh: '/api/user/refresh',
   pages: '/api/pages',
   pageBySlug: '/api/pages/by-slug',
+  galleries: '/api/galleries',
+  galleryById: (id: number | string) => `/api/galleries/${id}`,
   navigation: '/api/navigation',
   menus: '/api/menus',
   menuByKey: (menuKey: string) => `/api/menus/${menuKey}`,
