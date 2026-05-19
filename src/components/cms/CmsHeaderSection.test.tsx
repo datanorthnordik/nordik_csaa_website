@@ -1,0 +1,86 @@
+import { render, screen } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
+import type { PageDetailResponse, PageSection } from '../../api/pagesApi'
+import { CmsHeaderSection } from './CmsHeaderSection'
+
+function createPage(overrides: Partial<PageDetailResponse> = {}): PageDetailResponse {
+  return {
+    id: 1,
+    page_title: 'CSAA Newsletter',
+    url_slug: '/newsletter',
+    parent_id: null,
+    page_type: 'page',
+    parent_page_title: 'Community',
+    parent_page_url_slug: '/community',
+    status: 'published',
+    hero_image_enabled: false,
+    hero_image_url: '',
+    hero_image_object_key: '',
+    hero_image_fetch_url: '/api/pages/1/hero/content',
+    seo_page_title: 'CSAA Newsletter',
+    seo_page_description: 'Page level description.',
+    created_at: '',
+    updated_at: '',
+    page_detail: null,
+    ...overrides,
+  }
+}
+
+function createHeaderSection(overrides: Partial<PageSection> = {}): PageSection {
+  return {
+    id: 11,
+    section_name: 'Header Module',
+    section_type: 'header',
+    sort_order: 0,
+    is_enabled: true,
+    settings: {},
+    header: {
+      main_header_text: 'Welcome to the CSAA newsletter',
+      sub_header_text: 'Stories and updates from the community.',
+      hierarchy: 'h1_hero',
+    },
+    ...overrides,
+  }
+}
+
+describe('CmsHeaderSection', () => {
+  it('renders the hero-style header with page eyebrow and hero image', () => {
+    render(
+      <CmsHeaderSection
+        page={createPage()}
+        section={createHeaderSection()}
+        isPrimaryHeader
+      />,
+    )
+
+    expect(
+      screen.getByRole('heading', { name: /welcome to the csaa newsletter/i }),
+    ).toBeDefined()
+    expect(screen.getByText(/^csaa newsletter$/i)).toBeDefined()
+    expect(
+      screen
+        .getByRole('img', { name: /welcome to the csaa newsletter/i })
+        .getAttribute('src'),
+    ).toContain('/api/pages/1/hero/content')
+  })
+
+  it('uses the parent page title as eyebrow when the header matches the page title', () => {
+    render(
+      <CmsHeaderSection
+        page={createPage({ page_title: 'Contact Us' })}
+        section={createHeaderSection({
+          header: {
+            main_header_text: 'Contact Us',
+            sub_header_text: 'Reach out to the team.',
+            hierarchy: 'h2_section',
+          },
+        })}
+        isPrimaryHeader={false}
+      />,
+    )
+
+    expect(screen.getByRole('heading', { name: /^contact us$/i })).toBeDefined()
+    expect(screen.getByText(/^community$/i)).toBeDefined()
+    expect(screen.queryByRole('img')).toBeNull()
+  })
+})
