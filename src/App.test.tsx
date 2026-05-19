@@ -8,6 +8,7 @@ import { createAppStore } from './store/store'
 
 const {
   getEvent,
+  getGallery,
   getMainMenu,
   getPageBySlug,
   listUpcomingEvents,
@@ -16,6 +17,7 @@ const {
 } = vi.hoisted(() => ({
   getMainMenu: vi.fn(),
   getPageBySlug: vi.fn(),
+  getGallery: vi.fn(),
   listUpcomingEvents: vi.fn(),
   listArchivedEvents: vi.fn(),
   listEventsByDateRange: vi.fn(),
@@ -40,6 +42,12 @@ vi.mock('./api/eventsApi', () => ({
 vi.mock('./api/pagesApi', () => ({
   pagesApi: {
     getPageBySlug,
+  },
+}))
+
+vi.mock('./api/galleriesApi', () => ({
+  galleriesApi: {
+    getGallery,
   },
 }))
 
@@ -239,9 +247,21 @@ const sampleHomePage = {
       },
       {
         id: 13,
+        section_name: 'Gallery Module',
+        section_type: 'gallery',
+        sort_order: 2,
+        is_enabled: true,
+        settings: {},
+        gallery: {
+          gallery_id: 5,
+          view_mode: 'grid',
+        },
+      },
+      {
+        id: 14,
         section_name: 'Quote Module',
         section_type: 'quote',
-        sort_order: 2,
+        sort_order: 3,
         is_enabled: true,
         settings: {},
         quote: {
@@ -250,10 +270,10 @@ const sampleHomePage = {
         },
       },
       {
-        id: 14,
+        id: 15,
         section_name: 'CTA Banner',
         section_type: 'cta_banner',
-        sort_order: 3,
+        sort_order: 4,
         is_enabled: true,
         settings: {},
         cta_banner: {
@@ -266,6 +286,32 @@ const sampleHomePage = {
       },
     ],
   },
+}
+
+const sampleGallery = {
+  id: 5,
+  name: 'Community portraits',
+  description: 'Portraits and exhibit images from the community archive.',
+  published: true,
+  asset_limit: 20,
+  cover_image: null,
+  images: [
+    {
+      id: 1,
+      gallery_id: 5,
+      title: 'Fran Fletcher-Luther',
+      alt_text: 'Portrait of Fran Fletcher-Luther',
+      file_name: 'fran.jpg',
+      file_url: '/api/galleries/5/images/1/content',
+      mime_type: 'image/jpeg',
+      file_size: 0,
+      sort_order: 0,
+      created_at: '',
+      updated_at: '',
+    },
+  ],
+  created_at: '',
+  updated_at: '',
 }
 
 const sampleChildPage = {
@@ -312,6 +358,7 @@ const sampleEmptyPage = {
 beforeEach(async () => {
   getMainMenu.mockReset()
   getPageBySlug.mockReset()
+  getGallery.mockReset()
   listUpcomingEvents.mockReset()
   listArchivedEvents.mockReset()
   listEventsByDateRange.mockReset()
@@ -326,6 +373,7 @@ beforeEach(async () => {
 
     return sampleHomePage
   })
+  getGallery.mockResolvedValue(sampleGallery)
   listUpcomingEvents.mockResolvedValue({
     items: [sampleUpcomingEvent],
     pagination: {
@@ -377,6 +425,8 @@ describe('App', () => {
     ).toBeDefined()
     expect(window.location.pathname).toBe('/home')
     expect(getPageBySlug).toHaveBeenCalledWith('/home')
+    expect(await screen.findByRole('heading', { name: /community portraits/i })).toBeDefined()
+    expect(getGallery).toHaveBeenCalledWith(5)
     expect(
       screen.getByText(
         /the newsletter shares community updates, stories, and upcoming opportunities\./i,

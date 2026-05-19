@@ -21,6 +21,11 @@ export type PageTypographySection = {
   text_align: 'left' | 'center' | 'right' | string
 }
 
+export type PageGallerySection = {
+  gallery_id: number | null
+  view_mode: 'grid' | 'carousel' | 'masonry' | 'focus' | string
+}
+
 export type PageQuoteSection = {
   quote_content: string
   attribution: string
@@ -64,6 +69,7 @@ export type PageSection = {
   settings: Record<string, unknown>
   header?: PageHeaderSection | null
   typography?: PageTypographySection | null
+  gallery?: PageGallerySection | null
   quote?: PageQuoteSection | null
   cta_banner?: PageCtaBannerSection | null
   documents?: PageDocumentSection | null
