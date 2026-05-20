@@ -64,13 +64,14 @@ describe('CmsGallerySection', () => {
 
     render(<CmsGallerySection section={createSection()} />)
 
-    expect(await screen.findByRole('heading', { name: /community portraits/i })).toBeDefined()
-    expect(getGallery).toHaveBeenCalledWith(5)
     expect(
-      screen.getByText(/portraits and exhibit images from the community archive\./i),
+      await screen.findByRole('button', { name: /fran fletcher-luther/i }),
     ).toBeDefined()
-    expect(screen.getByText(/1 image/i)).toBeDefined()
-    expect(screen.getByRole('button', { name: /fran fletcher-luther/i })).toBeDefined()
+    expect(getGallery).toHaveBeenCalledWith(5)
+    expect(screen.queryByRole('heading', { name: /community portraits/i })).toBeNull()
+    expect(
+      screen.queryByText(/portraits and exhibit images from the community archive\./i),
+    ).toBeNull()
   })
 
   it('shows a graceful error state when the gallery cannot be loaded', async () => {

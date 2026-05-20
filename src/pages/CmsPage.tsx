@@ -7,6 +7,7 @@ import {
   type PageDetailResponse,
 } from '../api/pagesApi'
 import { CmsFallbackHero } from '../components/cms/CmsFallbackHero'
+import { resolveCmsAssetUrl } from '../components/cms/cmsPageMedia'
 import { CmsSectionRenderer } from '../components/cms/CmsSectionRenderer'
 import { formatPathLabel, normalizeInternalPath } from '../lib/navigationMenu'
 import { ComingSoonPage } from './ComingSoonPage'
@@ -88,6 +89,15 @@ export function CmsPage() {
             section.typography &&
               (section.typography.html_content.trim() ||
                 section.typography.text_content.trim()),
+          )
+      : section.section_type === 'document'
+        ? Boolean(
+            section.documents?.items?.some((document) =>
+              Boolean(
+                resolveCmsAssetUrl(document.fetch_url) ??
+                  resolveCmsAssetUrl(document.file_url),
+              ),
+            ),
           )
       : section.section_type === 'gallery'
         ? Boolean(section.gallery?.gallery_id)

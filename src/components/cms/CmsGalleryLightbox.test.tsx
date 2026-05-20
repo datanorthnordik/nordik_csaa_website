@@ -30,7 +30,7 @@ describe('CmsGalleryLightbox', () => {
     await i18n.changeLanguage('en')
   })
 
-  it('supports navigation, zoom, and close controls', () => {
+  it('supports slideshow, thumbnail rail, navigation, and close controls', () => {
     const onClose = vi.fn()
     const onSelect = vi.fn()
 
@@ -47,8 +47,17 @@ describe('CmsGalleryLightbox', () => {
       screen.getByRole('dialog', { name: /fran fletcher-luther/i }),
     ).toBeDefined()
 
-    fireEvent.click(screen.getByRole('button', { name: /zoom in/i }))
-    expect(screen.getByRole('button', { name: '125%' })).toBeDefined()
+    fireEvent.click(screen.getByRole('button', { name: /play slideshow/i }))
+    expect(screen.getByRole('button', { name: /pause slideshow/i })).toBeDefined()
+
+    expect(screen.queryByRole('button', { name: /elder mary/i })).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: /show thumbnails/i }))
+    expect(screen.getByRole('button', { name: /hide thumbnails/i })).toBeDefined()
+    expect(screen.getByRole('button', { name: /elder mary/i })).toBeDefined()
+    expect(
+      screen.getByRole('button', { name: /fran fletcher-luther/i }).getAttribute('aria-current'),
+    ).toBe('true')
+    expect(screen.getAllByText(/current/i)).toHaveLength(1)
 
     fireEvent.click(screen.getByRole('button', { name: /next/i }))
     expect(onSelect).toHaveBeenCalledWith(1)

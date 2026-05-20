@@ -271,9 +271,37 @@ const sampleHomePage = {
       },
       {
         id: 15,
+        section_name: 'Document Module',
+        section_type: 'document',
+        sort_order: 4,
+        is_enabled: true,
+        settings: {},
+        documents: {
+          items: [
+            {
+              id: 21,
+              display_name: 'Board agenda',
+              description: 'Download the latest meeting agenda.',
+              original_file_name: 'agenda.pdf',
+              file_name: 'agenda.pdf',
+              file_url: '',
+              fetch_url: '/api/pages/documents/21/content',
+              storage_uri: '',
+              gcp_object_key: '',
+              mime_type: 'application/pdf',
+              file_size: 1024,
+              sort_order: 0,
+              created_at: '',
+              updated_at: '',
+            },
+          ],
+        },
+      },
+      {
+        id: 16,
         section_name: 'CTA Banner',
         section_type: 'cta_banner',
-        sort_order: 4,
+        sort_order: 5,
         is_enabled: true,
         settings: {},
         cta_banner: {
@@ -425,13 +453,16 @@ describe('App', () => {
     ).toBeDefined()
     expect(window.location.pathname).toBe('/home')
     expect(getPageBySlug).toHaveBeenCalledWith('/home')
-    expect(await screen.findByRole('heading', { name: /community portraits/i })).toBeDefined()
+    expect(
+      await screen.findByRole('button', { name: /fran fletcher-luther/i }),
+    ).toBeDefined()
     expect(getGallery).toHaveBeenCalledWith(5)
     expect(
       screen.getByText(
         /the newsletter shares community updates, stories, and upcoming opportunities\./i,
       ),
     ).toBeDefined()
+    expect(screen.getByText(/board agenda/i)).toBeDefined()
     expect(
       within(screen.getByRole('navigation')).getByRole('link', { name: /^home$/i })
         .getAttribute('aria-current'),

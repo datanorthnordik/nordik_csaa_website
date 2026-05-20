@@ -2,6 +2,9 @@
   display: grid;
   gap: 18px;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 .galleryIntro {
@@ -160,6 +163,8 @@
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 14px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .gridItem {
@@ -167,8 +172,11 @@
 }
 
 .masonryLayout {
+  width: 100%;
   column-count: 3;
   column-gap: 14px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .masonryItem {
@@ -300,6 +308,8 @@
 .carouselLayout {
   display: grid;
   gap: 14px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .focusStage,
@@ -404,6 +414,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
   gap: 12px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .focusThumb {
@@ -413,8 +425,7 @@
 }
 
 .focusThumbSelected,
-.carouselThumbActive,
-.viewerThumbActive {
+.carouselThumbActive {
   box-shadow:
     0 0 0 2px rgba(122, 31, 36, 0.28),
     0 16px 32px -24px rgba(31, 31, 35, 0.5);
@@ -423,6 +434,7 @@
 .focusThumbImage,
 .carouselThumbImage,
 .viewerThumbImage {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -482,6 +494,8 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .carouselThumb {
@@ -514,99 +528,393 @@
   position: fixed;
   inset: 0;
   z-index: 90;
-  display: grid;
-  place-items: center;
-  padding: 18px;
-  background: rgba(10, 10, 14, 0.86);
+  background: rgba(4, 4, 6, 0.98);
 }
 
 .viewerPanel {
-  width: min(1120px, 100%);
-  max-height: calc(100svh - 36px);
-  display: grid;
-  gap: 16px;
-  padding: 18px;
-  border-radius: 30px;
-  background: rgba(16, 16, 20, 0.96);
-  box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.55);
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background: #050505;
 }
 
-.viewerHeader {
+.viewerTopBar {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  left: 18px;
+  z-index: 4;
   display: flex;
   justify-content: space-between;
-  gap: 16px;
+  gap: 18px;
   align-items: flex-start;
+  pointer-events: none;
 }
 
-.viewerEyebrow {
-  margin-bottom: 10px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.viewerTitle {
-  color: var(--color-on-primary);
-  font-size: clamp(1.6rem, 3vw, 2.6rem);
-  line-height: 1.05;
-}
-
-.viewerDetails {
-  margin-top: 8px;
-  color: rgba(255, 255, 255, 0.74);
-}
-
-.viewerActions {
+.viewerMeta,
+.viewerToolbar {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 12px;
+  pointer-events: auto;
+}
+
+.viewerMeta {
+  min-width: 0;
+  flex-direction: column;
+  max-width: min(30rem, calc(100% - 320px));
+}
+
+.viewerCounter,
+.viewerCaption,
+.viewerToolbar {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(18, 18, 22, 0.62);
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(18px);
+}
+
+.viewerCounter {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.viewerCaption {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 18px;
+}
+
+.viewerCaptionTitle {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.98);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.viewerCaptionText {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.viewerToolbar {
+  padding: 8px;
+  border-radius: 22px;
+}
+
+.viewerIconButton {
+  width: 52px;
+  height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.viewerIconButton:hover,
+.viewerIconButton:focus-visible {
+  background: rgba(255, 255, 255, 0.09);
+  transform: translateY(-1px);
+}
+
+.viewerIconButtonActive {
+  background: linear-gradient(135deg, rgba(122, 31, 36, 0.98), rgba(155, 42, 52, 0.98));
+  color: var(--color-on-primary);
+}
+
+.viewerIcon {
+  width: 22px;
+  height: 22px;
+}
+
+.viewerProgressTrack {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 3;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.viewerProgressFill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  background: linear-gradient(90deg, #f56a81, #ffb06e);
+}
+
+.viewerWorkspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+}
+
+.viewerWorkspaceWithRail {
+  grid-template-columns: minmax(0, 1fr) 320px;
+}
+
+.viewerWorkspaceSolo .viewerStage {
+  padding: 18px clamp(28px, 4vw, 72px) 22px;
+}
+
+.viewerWorkspaceSolo .viewerCanvas {
+  padding: 74px 0 34px;
+  box-sizing: border-box;
+}
+
+.viewerWorkspaceSolo .viewerImage {
+  max-height: calc(100svh - 132px);
 }
 
 .viewerStage {
-  overflow: auto;
-  display: grid;
-  place-items: center;
-  min-height: min(62svh, 680px);
-  padding: 22px;
-  border-radius: 24px;
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 72px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
-    rgba(255, 255, 255, 0.02);
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.04), transparent 54%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0));
+}
+
+.viewerCanvas {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .viewerImage {
   display: block;
   max-width: 100%;
-  max-height: min(62svh, 640px);
+  max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
-  transform-origin: center;
-  transition: transform 0.2s ease;
+  border-radius: 18px;
+  box-shadow:
+    0 24px 50px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
-.viewerThumbStrip {
+.viewerNavButton {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(18, 18, 22, 0.54);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+  backdrop-filter: blur(10px);
+}
+
+.viewerNavButton:hover,
+.viewerNavButton:focus-visible {
+  background: rgba(122, 31, 36, 0.5);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.viewerNavButtonLeft {
+  left: 18px;
+}
+
+.viewerNavButtonRight {
+  right: 18px;
+}
+
+.viewerRail {
+  height: 100%;
+  padding: 90px 16px 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04)),
+    rgba(6, 6, 8, 0.72);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  backdrop-filter: blur(18px);
+}
+
+.viewerThumbGrid {
+  height: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  overflow-y: auto;
+  align-content: start;
+  padding-right: 8px;
+  padding-bottom: 10px;
 }
 
 .viewerThumb {
-  aspect-ratio: 1 / 0.84;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.04);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  aspect-ratio: 1 / 0.82;
+  padding: 8px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03)),
+    rgba(18, 18, 22, 0.76);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 16px 28px rgba(0, 0, 0, 0.22);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
 }
 
-.viewerThumbLabel {
+.viewerThumb::before {
+  content: '';
   position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  padding: 8px 10px;
-  background: linear-gradient(180deg, rgba(12, 12, 16, 0), rgba(12, 12, 16, 0.82));
-  color: var(--color-on-primary);
-  font-size: 0.76rem;
-  font-weight: 700;
-  line-height: 1.2;
-  text-align: left;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.viewerThumb:hover,
+.viewerThumb:focus-visible {
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 20px 34px rgba(0, 0, 0, 0.28);
+}
+
+.viewerThumbActive {
+  border-color: rgba(247, 98, 126, 0.86);
+  background:
+    linear-gradient(180deg, rgba(247, 98, 126, 0.34), rgba(247, 98, 126, 0.08)),
+    rgba(18, 18, 22, 0.88);
+  box-shadow:
+    inset 0 0 0 2px rgba(247, 98, 126, 0.96),
+    0 0 0 1px rgba(247, 98, 126, 0.26),
+    0 0 0 6px rgba(247, 98, 126, 0.12),
+    0 24px 38px rgba(0, 0, 0, 0.32);
+  transform: translateY(-2px) scale(1.015);
+}
+
+.viewerThumbActive::before {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+.viewerThumb .viewerThumbImage {
+  border-radius: 18px;
+  filter: saturate(0.84) brightness(0.82) contrast(0.95);
+}
+
+.viewerThumbActive .viewerThumbImage {
+  filter: none;
+}
+
+.viewerThumbOverlay {
+  position: absolute;
+  inset: 8px;
+  z-index: 0;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.4));
+}
+
+.viewerThumbActive .viewerThumbOverlay {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.16));
+}
+
+.viewerThumbIndex {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: rgba(10, 10, 12, 0.72);
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(10px);
+}
+
+.viewerThumbCurrentMark {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  z-index: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f7627e, #ffb06e);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 18px rgba(247, 98, 126, 0.42);
+}
+
+.viewerThumbCurrentBadge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(12, 12, 16, 0.82);
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+}
+
+.viewerThumbCurrentPulse {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #f7627e;
+  box-shadow: 0 0 0 4px rgba(247, 98, 126, 0.18);
 }
 
 .visuallyHidden {
@@ -652,6 +960,14 @@
   .masonryLayout {
     column-count: 2;
   }
+
+  .viewerWorkspaceWithRail {
+    grid-template-columns: minmax(0, 1fr) 272px;
+  }
+
+  .viewerMeta {
+    max-width: min(24rem, calc(100% - 260px));
+  }
 }
 
 @media (max-width: 820px) {
@@ -668,12 +984,40 @@
     min-height: 320px;
   }
 
-  .viewerHeader {
-    flex-direction: column;
+  .viewerTopBar {
+    top: 14px;
+    right: 14px;
+    left: 14px;
+    gap: 12px;
   }
 
-  .viewerActions {
-    justify-content: flex-start;
+  .viewerMeta {
+    max-width: min(18rem, calc(100% - 232px));
+  }
+
+  .viewerStage {
+    padding: 14px 58px;
+  }
+
+  .viewerWorkspaceWithRail {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 172px;
+  }
+
+  .viewerWorkspaceSolo .viewerCanvas {
+    padding-top: 70px;
+    padding-bottom: 28px;
+  }
+
+  .viewerRail {
+    padding: 14px;
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .viewerThumbGrid {
+    height: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
   }
 }
 
@@ -716,22 +1060,71 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .viewerOverlay {
-    padding: 12px;
+  .viewerToolbar {
+    max-width: 100%;
   }
 
-  .viewerPanel {
-    max-height: calc(100svh - 24px);
-    padding: 14px;
-    border-radius: 22px;
+  .viewerMeta {
+    max-width: calc(100% - 170px);
+  }
+
+  .viewerIconButton {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
   }
 
   .viewerStage {
-    min-height: 48svh;
+    padding: 12px 12px 12px 12px;
+  }
+
+  .viewerNavButton {
+    width: 42px;
+    height: 42px;
+  }
+
+  .viewerNavButtonLeft {
+    left: 6px;
+  }
+
+  .viewerNavButtonRight {
+    right: 6px;
+  }
+
+  .viewerWorkspaceWithRail {
+    grid-template-rows: minmax(0, 1fr) 132px;
+  }
+
+  .viewerWorkspaceSolo .viewerStage {
     padding: 12px;
   }
 
-  .viewerThumbStrip {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .viewerWorkspaceSolo .viewerCanvas {
+    padding-top: 60px;
+    padding-bottom: 18px;
+  }
+
+  .viewerWorkspaceSolo .viewerImage {
+    max-height: calc(100svh - 108px);
+  }
+
+  .viewerThumbGrid {
+    grid-template-columns: repeat(auto-fit, minmax(102px, 1fr));
+  }
+
+  .viewerThumbCurrentBadge {
+    top: 14px;
+    right: 14px;
+    padding: 0 10px;
+  }
+
+  .viewerThumbCurrentMark {
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+  }
+
+  .viewerCaption {
+    display: none;
   }
 }
