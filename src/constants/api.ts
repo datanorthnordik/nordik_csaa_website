@@ -22,4 +22,8 @@ export const API_ROUTES = {
   eventMediaById: (id: number | string, mediaId: number | string) =>
     `/api/events/${id}/media/${mediaId}/content`,
   news: '/api/news',
+  newsletters: '/api/newsletters',
+  newsletterById: (id: number | string) => `/api/newsletters/${id}`,
+  newsletterMediaById: (id: number | string, mediaId: number | string) =>
+    `/api/newsletters/${id}/media/${mediaId}/content`,
 } as const

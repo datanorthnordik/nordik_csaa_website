@@ -1,0 +1,275 @@
+.page {
+  display: grid;
+  gap: 26px;
+  min-width: 0;
+}
+
+.topBar {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  color: var(--color-primary);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.backLink::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.hero {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.heroLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  gap: 34px;
+  align-items: start;
+  min-width: 0;
+  padding-bottom: 26px;
+  border-bottom: 1px solid rgba(122, 31, 36, 0.12);
+}
+
+.heroLayoutCompact {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.heroCopy {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.metaChip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(122, 31, 36, 0.08);
+  color: var(--color-primary);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.metaText {
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.heroTitle {
+  margin: 0;
+  color: var(--color-primary);
+  font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+  font-size: clamp(2.8rem, 4.8vw, 4.8rem);
+  line-height: 0.95;
+}
+
+.richText,
+.fallbackDescription {
+  color: var(--color-text);
+  font-size: 1.03rem;
+  line-height: 1.7;
+}
+
+.richText > * + * {
+  margin-top: 1rem;
+}
+
+.richText p,
+.richText h2,
+.richText h3,
+.fallbackDescription {
+  margin: 0;
+}
+
+.richText a {
+  color: var(--color-primary);
+}
+
+.heroMedia {
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+.coverImage,
+.coverFrame,
+.loadingCard,
+.stateCard {
+  width: 100%;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.coverImage,
+.coverFrame {
+  min-height: 360px;
+}
+
+.coverImage,
+.coverFrame {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+}
+
+.coverFrame {
+  border: 0;
+}
+
+.actionRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.downloadButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 0.94rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.downloadButton:hover,
+.downloadButton:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 28px -20px rgba(122, 31, 36, 0.55);
+}
+
+.downloadButton:disabled {
+  cursor: progress;
+  opacity: 0.72;
+  transform: none;
+  box-shadow: none;
+}
+
+.downloadIcon {
+  position: relative;
+  width: 14px;
+  height: 16px;
+  border-bottom: 2px solid currentColor;
+}
+
+.downloadIcon::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 1px;
+  width: 2px;
+  height: 10px;
+  background: currentColor;
+}
+
+.downloadIcon::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 7px;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.downloadError {
+  margin: -6px 0 0;
+  color: var(--color-primary);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.readerSection {
+  min-width: 0;
+}
+
+.loadingCard,
+.stateCard {
+  padding: 26px;
+  border: 1px solid rgba(122, 31, 36, 0.12);
+  border-radius: 28px;
+  box-shadow: 0 24px 48px -36px rgba(31, 31, 35, 0.28);
+}
+
+.loadingCard {
+  display: grid;
+  place-items: center;
+  gap: 14px;
+  min-height: 240px;
+}
+
+.loadingPulse {
+  width: 74px;
+  height: 74px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(122, 31, 36, 0.18), transparent 66%);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.stateCard h1,
+.stateCard h2,
+.stateCard p {
+  margin: 0;
+}
+
+.stateCard p {
+  margin-top: 10px;
+  color: var(--color-text-muted);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.56;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 920px) {
+  .heroLayout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

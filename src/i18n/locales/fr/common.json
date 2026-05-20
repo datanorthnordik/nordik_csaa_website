@@ -167,6 +167,45 @@
     "imagesCount_other": "{{count}} images",
     "imageCount": "{{current}} sur {{total}}"
   },
+  "newslettersPage": {
+    "hero": {
+      "eyebrow": "Bulletins numeriques",
+      "title": "Bulletins numeriques",
+      "descriptionLead": "Restez a jour avec les nouvelles, mises a jour et initiatives communautaires grace a notre bulletin CST. Chaque edition met en valeur les efforts, les histoires et le soutien qui rapprochent notre communaute. Des ressources essentielles et programmes de rayonnement aux recits inspirants de resilience, notre bulletin presente le travail et l impact de la Community Support Team.",
+      "descriptionSupport": "Parcourez les editions precedentes pour en apprendre davantage sur les initiatives en cours qui renforcent nos liens et soutiennent les personnes dans le besoin au sein de notre communaute.",
+      "descriptionCta": "Cliquez ci-dessous pour acceder aux differentes editions.",
+      "featuredLabel": "Derniere edition"
+    },
+    "filters": {
+      "label": "Filtres des bulletins",
+      "all": "Toutes les editions",
+      "searchLabel": "Rechercher des bulletins",
+      "searchPlaceholder": "Rechercher par titre, sujet ou annee"
+    },
+    "card": {
+      "issueLabel": "Edition",
+      "readEdition": "Lire l edition",
+      "openEdition": "Lire les details de {{title}}",
+      "previewFrameTitle": "Apercu de {{title}}"
+    },
+    "detail": {
+      "loading": "Chargement des details du bulletin.",
+      "errorTitle": "Ce bulletin n est pas disponible pour le moment",
+      "errorDescription": "Nous ne pouvons pas charger les details du bulletin demande pour le moment.",
+      "backToList": "Retour aux bulletins numeriques",
+      "downloadEdition": "Telecharger l edition",
+      "downloadError": "Nous ne pouvons pas telecharger ce bulletin pour le moment. Veuillez reessayer.",
+      "noDescription": "Une description complete de cette edition apparaitra ici lorsqu elle sera ajoutee dans le CMS.",
+      "flipbookUnavailableTitle": "Flipbook indisponible",
+      "flipbookUnavailableDescription": "Une previsualisation flipbook n est pas encore disponible pour cette edition."
+    },
+    "states": {
+      "errorTitle": "Les bulletins numeriques sont indisponibles pour le moment",
+      "errorDescription": "Nous ne pouvons pas charger les bulletins numeriques pour le moment.",
+      "emptyTitle": "Aucun bulletin ne correspond a cette vue",
+      "emptyDescription": "Essayez une autre annee ou un autre terme de recherche pour explorer l archive."
+    }
+  },
   "common": {
     "loading": "Chargement",
     "close": "Fermer",

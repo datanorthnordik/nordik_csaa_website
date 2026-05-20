@@ -167,6 +167,45 @@
     "imagesCount_other": "{{count}} images",
     "imageCount": "{{current}} of {{total}}"
   },
+  "newslettersPage": {
+    "hero": {
+      "eyebrow": "Digital newsletters",
+      "title": "Digital Newsletters",
+      "descriptionLead": "Stay up-to-date with the latest newsletter updates and community initiatives through our CST Newsletter. Each edition highlights the efforts, stories, and support that bring our community closer together. From vital resources and outreach programs to empowering stories of resilience, our newsletter showcases the work and impact of the Community Support Team.",
+      "descriptionSupport": "Explore past editions to learn more about the ongoing initiatives that strengthen our bonds and support those in need within our community.",
+      "descriptionCta": "Click below to access the different editions.",
+      "featuredLabel": "Latest edition"
+    },
+    "filters": {
+      "label": "Newsletter filters",
+      "all": "All editions",
+      "searchLabel": "Search newsletters",
+      "searchPlaceholder": "Search by title, topic, or year"
+    },
+    "card": {
+      "issueLabel": "Issue",
+      "readEdition": "Read Edition",
+      "openEdition": "Read {{title}} details",
+      "previewFrameTitle": "Preview for {{title}}"
+    },
+    "detail": {
+      "loading": "Loading newsletter details.",
+      "errorTitle": "This newsletter is unavailable right now",
+      "errorDescription": "We could not load the requested newsletter details right now.",
+      "backToList": "Back to digital newsletters",
+      "downloadEdition": "Download edition",
+      "downloadError": "We could not download this newsletter right now. Please try again.",
+      "noDescription": "A full description for this edition will appear here when it is added in the CMS.",
+      "flipbookUnavailableTitle": "Flipbook unavailable",
+      "flipbookUnavailableDescription": "A flipbook preview is not available for this edition yet."
+    },
+    "states": {
+      "errorTitle": "Digital newsletters are unavailable right now",
+      "errorDescription": "We could not load digital newsletters right now.",
+      "emptyTitle": "No newsletters matched this view",
+      "emptyDescription": "Try another year or search term to explore the archive."
+    }
+  },
   "common": {
     "loading": "Loading",
     "close": "Close",
