@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import type { GalleryDetailResponse } from '../../api/galleriesApi'
 import { galleriesApi } from '../../api/galleriesApi'
 import type { PageSection } from '../../api/pagesApi'
-import { normalizeCmsLabel, resolveCmsAssetUrl } from './cmsPageMedia'
 import {
   buildCmsGalleryAssets,
   normalizeGalleryViewMode,
@@ -72,43 +71,9 @@ export function CmsGallerySection({ section }: CmsGallerySectionProps) {
   }
 
   const items = gallery ? buildCmsGalleryAssets(gallery) : []
-  const title = gallery?.name.trim() || section.section_name
-  const description = gallery?.description.trim() || ''
-  const eyebrow =
-    normalizeCmsLabel(section.section_name) !== normalizeCmsLabel(title)
-      ? section.section_name
-      : t('cmsGallery.label')
-  const coverImageUrl = gallery?.cover_image
-    ? resolveCmsAssetUrl(gallery.cover_image.file_url || gallery.cover_image.storage_uri)
-    : null
-  const introStyle = coverImageUrl
-    ? {
-        backgroundImage: `linear-gradient(135deg, rgba(8, 8, 10, 0.2), rgba(8, 8, 10, 0.05)), url(${coverImageUrl})`,
-      }
-    : undefined
 
   return (
     <section className={styles.gallerySection}>
-      <div
-        className={`${styles.galleryIntro} ${
-          coverImageUrl ? styles.galleryIntroWithCover : ''
-        }`}
-        style={introStyle}
-      >
-        <div className={styles.galleryIntroContent}>
-          <p className={styles.galleryEyebrow}>{eyebrow}</p>
-          <h2 className={styles.galleryTitle}>{title}</h2>
-          {description ? <p className={styles.galleryDescription}>{description}</p> : null}
-          {status === 'ready' && items.length ? (
-            <div className={styles.galleryMeta}>
-              <p className={styles.galleryCount}>
-                {t('cmsGallery.imagesCount', { count: items.length })}
-              </p>
-            </div>
-          ) : null}
-        </div>
-      </div>
-
       {status === 'loading' ? (
         <div className={styles.galleryLoading} aria-busy="true">
           <div className={styles.loadingPulse} aria-hidden="true" />

@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { apiClient } from '../api/apiClient'
 import { eventsApi, type EventDetailResponse } from '../api/eventsApi'
+import {
+  DocumentShowcase,
+  type DocumentShowcaseItem,
+} from '../components/documents/DocumentShowcase'
 import {
   buildAddressLines,
   buildVenueLabel,
@@ -17,9 +20,9 @@ import {
   getMediaName,
   isImageMedia,
   isPdfMedia,
-  resolveEventMediaApiPath,
   resolveEventMediaUrl,
 } from '../lib/eventMedia'
+import { downloadPublicFile } from '../lib/fileDownload'
 import styles from './EventDetailPage.module.css'
 
 export function EventDetailPage() {
@@ -28,10 +31,6 @@ export function EventDetailPage() {
   const [event, setEvent] = useState<EventDetailResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [agendaIndex, setAgendaIndex] = useState(0)
-  const [isAgendaDownloading, setIsAgendaDownloading] = useState(false)
-  const [agendaDownloadError, setAgendaDownloadError] = useState<string | null>(null)
-  const [activeAttachmentIndex, setActiveAttachmentIndex] = useState<number | null>(null)
 
   const locale = i18n.resolvedLanguage ?? i18n.language
   const parsedEventId = Number.parseInt(eventId ?? '', 10)
@@ -124,71 +123,16 @@ export function EventDetailPage() {
     event.display_image && isImageMedia(event.display_image)
       ? resolveEventMediaUrl(event.display_image)
       : null
-  const attachmentCount = event.attachments.length
-  const activeAttachment =
-    activeAttachmentIndex === null ? null : event.attachments[activeAttachmentIndex] ?? null
-  const normalizedAgendaIndex = attachmentCount ? Math.min(agendaIndex, attachmentCount - 1) : 0
-  const agendaAttachment = event.attachments[normalizedAgendaIndex] ?? null
-
-  function openAttachment(index: number) {
-    setActiveAttachmentIndex(index)
-  }
-
-  function closeAttachment() {
-    setActiveAttachmentIndex(null)
-  }
-
-  function moveAttachment(direction: -1 | 1) {
-    setActiveAttachmentIndex((current) => {
-      if (current === null || !attachmentCount) {
-        return current
-      }
-
-      return (current + direction + attachmentCount) % attachmentCount
-    })
-  }
-
-  function moveAgenda(direction: -1 | 1) {
-    setAgendaIndex((current) => {
-      if (!attachmentCount) {
-        return 0
-      }
-
-      const safeCurrent = Math.min(current, attachmentCount - 1)
-      return (safeCurrent + direction + attachmentCount) % attachmentCount
-    })
-  }
-
-  async function downloadAgendaAttachment() {
-    const attachment = agendaAttachment
-
-    if (!attachment || isAgendaDownloading) {
-      return
-    }
-
-    setIsAgendaDownloading(true)
-    setAgendaDownloadError(null)
-
-    try {
-      const response = await apiClient.get<Blob>(resolveEventMediaApiPath(attachment), {
-        responseType: 'blob',
-        skipAuth: true,
-        skipErrorToast: true,
-      })
-      const downloadUrl = URL.createObjectURL(response.data)
-      const link = document.createElement('a')
-      link.href = downloadUrl
-      link.download = getMediaName(attachment)
-      document.body.appendChild(link)
-      link.click()
-      link.remove()
-      window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000)
-    } catch {
-      setAgendaDownloadError(t('eventDetail.agendaDownloadError'))
-    } finally {
-      setIsAgendaDownloading(false)
-    }
-  }
+  const attachmentItems: DocumentShowcaseItem[] = event.attachments.map((attachment) => ({
+    id: attachment.id,
+    title: getMediaName(attachment),
+    description: '',
+    previewUrl: resolveEventMediaUrl(attachment),
+    downloadUrl: resolveEventMediaUrl(attachment),
+    downloadFileName: getMediaName(attachment),
+    badgeLabel: getMediaExtension(attachment),
+    mimeType: attachment.mime_type,
+  }))
 
   return (
     <div className={styles.page}>
@@ -237,86 +181,24 @@ export function EventDetailPage() {
             </p>
           )}
 
-          {agendaAttachment ? (
-            <section className={styles.agendaSection}>
-              <div className={styles.agendaHeader}>
-                <div className={styles.agendaTitle}>
-                  <span className={styles.agendaIcon} aria-hidden="true" />
-                  <h2>{t('eventDetail.documentsEyebrow')}</h2>
-                </div>
-
-                {event.attachments.length > 1 ? (
-                  <div className={styles.agendaControls}>
-                    <button
-                      type="button"
-                      className={styles.agendaControl}
-                      onClick={() => moveAgenda(-1)}
-                    >
-                      {t('common.previous')}
-                    </button>
-                    <span>
-                      {normalizedAgendaIndex + 1} / {event.attachments.length}
-                    </span>
-                    <button
-                      type="button"
-                      className={styles.agendaControl}
-                      onClick={() => moveAgenda(1)}
-                    >
-                      {t('common.next')}
-                    </button>
-                  </div>
-                ) : null}
-              </div>
-
-              <button
-                type="button"
-                className={[
-                  styles.agendaSlide,
-                  !isImageMedia(agendaAttachment) ? styles.agendaDocumentSlide : '',
-                  isPdfMedia(agendaAttachment) ? styles.agendaPdfSlide : '',
-                ].filter(Boolean).join(' ')}
-                onClick={() => openAttachment(normalizedAgendaIndex)}
-                aria-label={getMediaName(agendaAttachment)}
-              >
-                {isImageMedia(agendaAttachment) ? (
-                  <img
-                    src={resolveEventMediaUrl(agendaAttachment)}
-                    alt={getMediaName(agendaAttachment)}
-                  />
-                ) : (
-                  <span className={styles.agendaDocumentPreview} aria-hidden="true" />
-                )}
-                {isImageMedia(agendaAttachment) ? (
-                  <span className={styles.agendaShade} />
-                ) : null}
-                <span className={styles.agendaFileBadge}>
-                  {getMediaExtension(agendaAttachment)}
-                </span>
-              </button>
-
-              <div className={styles.agendaDownloadCard}>
-                <div>
-                  <h3>{t('eventDetail.agendaDownloadTitle')}</h3>
-                  <p>{t('eventDetail.agendaDownloadDescription')}</p>
-                </div>
-                <button
-                  type="button"
-                  className={styles.agendaDownloadAction}
-                  onClick={downloadAgendaAttachment}
-                  disabled={isAgendaDownloading}
-                >
-                  <span aria-hidden="true" />
-                  {isAgendaDownloading
-                    ? t('common.loading')
-                    : isPdfMedia(agendaAttachment)
-                      ? t('eventDetail.agendaDownloadPdfAction')
-                      : t('eventDetail.agendaDownloadFileAction')}
-                </button>
-              </div>
-              {agendaDownloadError ? (
-                <p className={styles.agendaDownloadError}>{agendaDownloadError}</p>
-              ) : null}
-            </section>
+          {attachmentItems.length ? (
+            <DocumentShowcase
+              heading={t('eventDetail.documentsEyebrow')}
+              items={attachmentItems}
+              getSummary={() => ({
+                title: t('eventDetail.agendaDownloadTitle'),
+                description: t('eventDetail.agendaDownloadDescription'),
+              })}
+              getDownloadLabel={(item) =>
+                isPdfMedia({ mime_type: item.mimeType })
+                  ? t('eventDetail.agendaDownloadPdfAction')
+                  : t('eventDetail.agendaDownloadFileAction')
+              }
+              onDownload={(item) =>
+                downloadPublicFile(item.downloadUrl, item.downloadFileName)
+              }
+              downloadErrorText={t('eventDetail.agendaDownloadError')}
+            />
           ) : null}
         </section>
 
@@ -478,46 +360,6 @@ export function EventDetailPage() {
         </aside>
       </div>
 
-      {activeAttachment ? (
-        <div className={styles.viewerOverlay} role="dialog" aria-modal="true">
-          <div className={styles.viewerPanel}>
-            <div className={styles.viewerHeader}>
-              <strong>{getMediaName(activeAttachment)}</strong>
-              <button type="button" onClick={closeAttachment}>
-                {t('common.close')}
-              </button>
-            </div>
-
-            <div className={styles.viewerStage}>
-              {isImageMedia(activeAttachment) ? (
-                <img
-                  src={resolveEventMediaUrl(activeAttachment)}
-                  alt={getMediaName(activeAttachment)}
-                />
-              ) : (
-                <iframe
-                  title={getMediaName(activeAttachment)}
-                  src={resolveEventMediaUrl(activeAttachment)}
-                />
-              )}
-            </div>
-
-            {event.attachments.length > 1 ? (
-              <div className={styles.viewerControls}>
-                <button type="button" onClick={() => moveAttachment(-1)}>
-                  {t('common.previous')}
-                </button>
-                <span>
-                  {(activeAttachmentIndex ?? 0) + 1} / {event.attachments.length}
-                </span>
-                <button type="button" onClick={() => moveAttachment(1)}>
-                  {t('common.next')}
-                </button>
-              </div>
-            ) : null}
-          </div>
-        </div>
-      ) : null}
     </div>
   )
 }
