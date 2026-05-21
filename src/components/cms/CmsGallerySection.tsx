@@ -10,6 +10,7 @@ import {
 import { CmsGalleryCarousel } from './CmsGalleryCarousel'
 import { CmsGalleryFocus } from './CmsGalleryFocus'
 import { CmsGalleryGrid } from './CmsGalleryGrid'
+import { CmsGalleryIcons } from './CmsGalleryIcons'
 import { CmsGalleryLightbox } from './CmsGalleryLightbox'
 import { CmsGalleryMasonry } from './CmsGalleryMasonry'
 import styles from './CmsGallerySection.module.css'
@@ -109,13 +110,16 @@ export function CmsGallerySection({ section }: CmsGallerySectionProps) {
           {viewMode === 'grid' ? (
             <CmsGalleryGrid items={items} onOpen={setActiveLightboxIndex} />
           ) : null}
+          {viewMode === 'icons' ? <CmsGalleryIcons items={items} /> : null}
 
-          <CmsGalleryLightbox
-            items={items}
-            activeIndex={activeLightboxIndex}
-            onClose={() => setActiveLightboxIndex(null)}
-            onSelect={setActiveLightboxIndex}
-          />
+          {viewMode !== 'icons' ? (
+            <CmsGalleryLightbox
+              items={items}
+              activeIndex={activeLightboxIndex}
+              onClose={() => setActiveLightboxIndex(null)}
+              onSelect={setActiveLightboxIndex}
+            />
+          ) : null}
         </>
       ) : null}
     </section>
