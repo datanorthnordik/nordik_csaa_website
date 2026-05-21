@@ -62,6 +62,7 @@ export function PressArchiveDetailPage() {
     () => (entry ? resolvePressHeroImage(entry) : null),
     [entry],
   )
+  const contentHtml = entry?.content_html.trim() ?? ''
   const documentItems = useMemo<DocumentShowcaseItem[]>(
     () =>
       entry
@@ -121,16 +122,12 @@ export function PressArchiveDetailPage() {
 
             <h1 className={styles.heroTitle}>{entry.title}</h1>
 
-            {entry.content_html.trim() ? (
+            {contentHtml ? (
               <div
                 className={styles.richText}
-                dangerouslySetInnerHTML={{ __html: entry.content_html }}
+                dangerouslySetInnerHTML={{ __html: contentHtml }}
               />
-            ) : (
-              <p className={styles.fallbackDescription}>
-                {t('pressArchivePage.detail.noDescription')}
-              </p>
-            )}
+            ) : null}
 
             {typeof entry.source_url === 'string' && entry.source_url.trim() ? (
               <a

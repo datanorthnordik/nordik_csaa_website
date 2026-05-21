@@ -123,7 +123,7 @@ describe('DigitalNewsletterDetailPage', () => {
     })
   })
 
-  it('shows the newsletter details without a flipbook when no previewable media exists', async () => {
+  it('shows the newsletter details without filler description copy when no previewable media exists', async () => {
     getNewsletter.mockResolvedValue({
       id: 25,
       title: 'Community Support Update',
@@ -144,8 +144,8 @@ describe('DigitalNewsletterDetailPage', () => {
       await screen.findByRole('heading', { name: /community support update/i }),
     ).toBeDefined()
     expect(
-      screen.getByText(/a full description for this edition will appear here when it is added in the cms\./i),
-    ).toBeDefined()
+      screen.queryByText(/a full description for this edition will appear here when it is added in the cms\./i),
+    ).toBeNull()
     expect(screen.queryByText(/flipbook for community support update/i)).toBeNull()
   })
 

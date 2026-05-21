@@ -133,7 +133,7 @@ describe('DigitalNewslettersPage', () => {
       name: /read community reunion highlights details/i,
     })
     expect(link.getAttribute('href')).toBe('/news-media/digital-newsletter/11')
-    expect(link.getAttribute('target')).toBeNull()
+    expect(link.getAttribute('target')).toBe('_blank')
   })
 
   it('filters list results by year and search term', async () => {

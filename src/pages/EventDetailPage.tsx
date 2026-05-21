@@ -123,6 +123,8 @@ export function EventDetailPage() {
     event.display_image && isImageMedia(event.display_image)
       ? resolveEventMediaUrl(event.display_image)
       : null
+  const teaser = event.teaser.trim()
+  const descriptionHtml = event.description_html.trim()
   const attachmentItems: DocumentShowcaseItem[] = event.attachments.map((attachment) => ({
     id: attachment.id,
     title: getMediaName(attachment),
@@ -147,18 +149,14 @@ export function EventDetailPage() {
             <div className={styles.heroOverlay}>
               <p className={styles.heroEyebrow}>{venueLabel}</p>
               <h1 className={styles.heroTitle}>{event.title}</h1>
-              <p className={styles.heroDescription}>
-                {event.teaser.trim() || t('eventDetail.defaultSummary')}
-              </p>
+              {teaser ? <p className={styles.heroDescription}>{teaser}</p> : null}
             </div>
           </div>
         ) : (
           <div className={styles.heroFallback}>
             <p className={styles.heroEyebrow}>{venueLabel}</p>
             <h1 className={styles.heroTitle}>{event.title}</h1>
-            <p className={styles.heroDescription}>
-              {event.teaser.trim() || t('eventDetail.defaultSummary')}
-            </p>
+            {teaser ? <p className={styles.heroDescription}>{teaser}</p> : null}
           </div>
         )}
       </section>
@@ -170,16 +168,14 @@ export function EventDetailPage() {
             <h2>{t('eventDetail.overviewTitle')}</h2>
           </div>
 
-          {event.description_html.trim() ? (
+          {descriptionHtml ? (
             <div
               className={styles.richText}
-              dangerouslySetInnerHTML={{ __html: event.description_html }}
+              dangerouslySetInnerHTML={{ __html: descriptionHtml }}
             />
-          ) : (
-            <p className={styles.paragraph}>
-              {event.teaser.trim() || t('eventDetail.defaultSummary')}
-            </p>
-          )}
+          ) : teaser ? (
+            <p className={styles.paragraph}>{teaser}</p>
+          ) : null}
 
           {attachmentItems.length ? (
             <DocumentShowcase

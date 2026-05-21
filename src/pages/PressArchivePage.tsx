@@ -270,82 +270,90 @@ function PressArchiveCard({
 
   return (
     <article className={styles.card}>
-      {hasSource ? (
-        <a
-          href={sourceUrl}
-          className={styles.cardMain}
-          aria-label={`${entry.title} ${linkLabel}`}
-        >
-          <PressPreviewSurface entry={entry} preview={preview} />
-          <div className={styles.cardContent}>
-            <div className={styles.metaRow}>
-              <span className={styles.metaChip}>{t('pressArchivePage.card.archiveLabel')}</span>
-              <span className={styles.metaText}>
-                {formatPressDate(entry.release_date, locale)}
-              </span>
-              <span className={styles.metaText}>{preview.fileTypeLabel}</span>
+      <div className={styles.cardBody}>
+        {hasSource ? (
+          <a
+            href={sourceUrl}
+            className={styles.cardMain}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`${entry.title} ${linkLabel}`}
+          >
+            <PressPreviewSurface entry={entry} preview={preview} />
+            <div className={styles.cardContent}>
+              <div className={styles.metaRow}>
+                <span className={styles.metaChip}>{t('pressArchivePage.card.archiveLabel')}</span>
+                <span className={styles.metaText}>
+                  {formatPressDate(entry.release_date, locale)}
+                </span>
+                <span className={styles.metaText}>{preview.fileTypeLabel}</span>
+              </div>
+
+              <h2 className={styles.cardTitle}>{entry.title}</h2>
+              {preview.excerpt ? <p className={styles.cardExcerpt}>{preview.excerpt}</p> : null}
+
+              <div className={styles.cardFooter}>
+                <span className={styles.readLink}>{linkLabel}</span>
+              </div>
             </div>
+          </a>
+        ) : (
+          <Link
+            to={`/news-media/press-archive/${entry.id}`}
+            className={styles.cardMain}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`${entry.title} ${linkLabel}`}
+          >
+            <PressPreviewSurface entry={entry} preview={preview} />
+            <div className={styles.cardContent}>
+              <div className={styles.metaRow}>
+                <span className={styles.metaChip}>{t('pressArchivePage.card.archiveLabel')}</span>
+                <span className={styles.metaText}>
+                  {formatPressDate(entry.release_date, locale)}
+                </span>
+                <span className={styles.metaText}>{preview.fileTypeLabel}</span>
+              </div>
 
-            <h2 className={styles.cardTitle}>{entry.title}</h2>
-            {preview.excerpt ? <p className={styles.cardExcerpt}>{preview.excerpt}</p> : null}
+              <h2 className={styles.cardTitle}>{entry.title}</h2>
+              {preview.excerpt ? <p className={styles.cardExcerpt}>{preview.excerpt}</p> : null}
 
-            <div className={styles.cardFooter}>
-              <span className={styles.readLink}>{linkLabel}</span>
+              <div className={styles.cardFooter}>
+                <span className={styles.readLink}>{linkLabel}</span>
+              </div>
+            </div>
+          </Link>
+        )}
+
+        {downloads.length ? (
+          <div className={styles.attachmentColumn}>
+            <div className={styles.attachmentRow}>
+              {downloads.slice(0, 3).map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={styles.attachmentButton}
+                  onClick={() => void handleDownload(item)}
+                  disabled={downloadingId === item.id}
+                  aria-label={`${t('pressArchivePage.card.downloadAttachment')} ${item.title}`}
+                >
+                  {downloadingId === item.id
+                    ? t('common.loading')
+                    : t('pressArchivePage.card.downloadAttachment')}
+                </button>
+              ))}
+
+              {downloads.length > 3 ? (
+                <span className={styles.moreAttachments}>
+                  {t('pressArchivePage.card.moreAttachments', {
+                    count: downloads.length - 3,
+                  })}
+                </span>
+              ) : null}
             </div>
           </div>
-        </a>
-      ) : (
-        <Link
-          to={`/news-media/press-archive/${entry.id}`}
-          className={styles.cardMain}
-          aria-label={`${entry.title} ${linkLabel}`}
-        >
-          <PressPreviewSurface entry={entry} preview={preview} />
-          <div className={styles.cardContent}>
-            <div className={styles.metaRow}>
-              <span className={styles.metaChip}>{t('pressArchivePage.card.archiveLabel')}</span>
-              <span className={styles.metaText}>
-                {formatPressDate(entry.release_date, locale)}
-              </span>
-              <span className={styles.metaText}>{preview.fileTypeLabel}</span>
-            </div>
-
-            <h2 className={styles.cardTitle}>{entry.title}</h2>
-            {preview.excerpt ? <p className={styles.cardExcerpt}>{preview.excerpt}</p> : null}
-
-            <div className={styles.cardFooter}>
-              <span className={styles.readLink}>{linkLabel}</span>
-            </div>
-          </div>
-        </Link>
-      )}
-
-      {downloads.length ? (
-        <div className={styles.attachmentRow}>
-          {downloads.slice(0, 3).map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={styles.attachmentButton}
-              onClick={() => void handleDownload(item)}
-              disabled={downloadingId === item.id}
-              aria-label={`${t('pressArchivePage.card.downloadAttachment')} ${item.title}`}
-            >
-              {downloadingId === item.id
-                ? t('common.loading')
-                : t('pressArchivePage.card.downloadAttachment')}
-            </button>
-          ))}
-
-          {downloads.length > 3 ? (
-            <span className={styles.moreAttachments}>
-              {t('pressArchivePage.card.moreAttachments', {
-                count: downloads.length - 3,
-              })}
-            </span>
-          ) : null}
-        </div>
-      ) : null}
+        ) : null}
+      </div>
 
       {downloadError ? <p className={styles.downloadError}>{downloadError}</p> : null}
     </article>

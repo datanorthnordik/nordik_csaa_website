@@ -229,6 +229,8 @@ function FeaturedNewsletterCard({
       <Link
         to={`/news-media/digital-newsletter/${entry.id}`}
         className={styles.cardHitArea}
+        target="_blank"
+        rel="noreferrer"
         aria-label={t('newslettersPage.card.openEdition', { title: entry.title })}
       />
     </article>
@@ -276,6 +278,8 @@ function NewsletterCard({
       <Link
         to={`/news-media/digital-newsletter/${entry.id}`}
         className={styles.cardHitArea}
+        target="_blank"
+        rel="noreferrer"
         aria-label={t('newslettersPage.card.openEdition', { title: entry.title })}
       />
     </article>

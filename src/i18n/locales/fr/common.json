@@ -45,29 +45,25 @@
         "archived": "Evenements archives"
       },
       "placeholderLabel": "Photo principale en attente",
-      "placeholderTitle": "Les evenements sont prets a etre publies.",
-      "placeholderDescription": "Lorsqu un evenement n a pas encore de photo principale, la page conserve tout de meme une presentation soignee avec de l espace pour le texte d accroche et les points forts."
+      "placeholderTitle": "Les evenements sont prets a etre publies."
     },
     "upcoming": {
       "eyebrow": "Bientot",
       "title": "Evenements a venir",
       "description": "Trouvez les prochains evenements et programmes communautaires.",
-      "emptyTitle": "Aucun evenement a venir pour le moment",
-      "emptyDescription": "Lorsque de nouveaux evenements seront publies, ils apparaitront ici automatiquement."
+      "emptyTitle": "Aucun evenement a venir pour le moment"
     },
     "archive": {
       "eyebrow": "Archives",
       "title": "Preserver les archives des evenements",
       "description": "Revoyez les evenements precedents, les documents et les moments partages.",
       "pagination": "Page {{page}} sur {{total}}",
-      "emptyTitle": "Aucun evenement archive trouve",
-      "emptyDescription": "Les evenements archives apparaitront ici des que des evenements publies passeront dans le passe."
+      "emptyTitle": "Aucun evenement archive trouve"
     },
     "card": {
       "viewDetails": "Voir les details",
       "viewArchive": "Voir le resume",
-      "placeholderTag": "Evenement communautaire",
-      "fallbackSummary": "Les details communautaires seront affiches sur la page de l evenement."
+      "placeholderTag": "Evenement communautaire"
     }
   },
   "eventCalendar": {
@@ -108,7 +104,6 @@
     "loadingTitle": "Chargement des details de l evenement",
     "errorEyebrow": "Details de l evenement",
     "backToGatherings": "Retour a tous les evenements",
-    "defaultSummary": "Les details, documents et moments partages de l evenement apparaitront ici lorsqu ils seront ajoutes dans le CMS.",
     "placeholderLabel": "Image principale en attente",
     "overviewEyebrow": "Recit de l evenement",
     "overviewTitle": "Apercu",
@@ -131,8 +126,6 @@
     "mediaTitle": "Documents et galerie",
     "mediaDescription": "Les photos additionnelles, PDF et autres documents de l evenement apparaissent ci dessous dans un seul visualiseur avec navigation et zoom.",
     "mediaLabel": "Visualiseur",
-    "mediaEmptyTitle": "Aucun document ni photo additionnelle pour le moment",
-    "mediaEmptyDescription": "A mesure que d autres fichiers d evenement seront ajoutes dans le CMS, ils apparaitront ici automatiquement.",
     "documentsEyebrow": "Agenda",
     "documentsTitle": "Documents additionnels",
     "agendaDownloadTitle": "Affiche et ordre du jour",
@@ -162,7 +155,6 @@
     "label": "Galerie",
     "loading": "Chargement des images de la galerie.",
     "unavailable": "Impossible de charger cette galerie pour le moment.",
-    "empty": "Les images de la galerie apparaitront ici des qu elles seront ajoutees dans le CMS.",
     "imagesCount_one": "{{count}} image",
     "imagesCount_other": "{{count}} images",
     "imageCount": "{{current}} sur {{total}}"
@@ -195,7 +187,6 @@
       "backToList": "Retour aux bulletins numeriques",
       "downloadEdition": "Telecharger l edition",
       "downloadError": "Nous ne pouvons pas telecharger ce bulletin pour le moment. Veuillez reessayer.",
-      "noDescription": "Une description complete de cette edition apparaitra ici lorsqu elle sera ajoutee dans le CMS.",
       "flipbookUnavailableTitle": "Flipbook indisponible",
       "flipbookUnavailableDescription": "Une previsualisation flipbook n est pas encore disponible pour cette edition."
     },
@@ -237,7 +228,6 @@
       "errorTitle": "Cette entree des archives de presse est indisponible pour le moment",
       "errorDescription": "Nous ne pouvons pas charger l entree demandee pour le moment.",
       "backToList": "Retour aux archives de presse",
-      "noDescription": "Les details complets de l archive apparaitront ici lorsqu ils seront ajoutes dans le CMS.",
       "documentsTitle": "Documents d archive",
       "documentsDescription": "Les PDF, coupures et fichiers d archive supplementaires peuvent etre telecharges ci-dessous.",
       "downloadPdf": "Telecharger le PDF",

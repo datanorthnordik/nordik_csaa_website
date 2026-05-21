@@ -45,29 +45,25 @@
         "archived": "Archived events"
       },
       "placeholderLabel": "Display photo pending",
-      "placeholderTitle": "Events are ready for publishing.",
-      "placeholderDescription": "When an event does not have a display image yet, the page still keeps a polished layout with room for teaser copy and event highlights."
+      "placeholderTitle": "Events are ready for publishing."
     },
     "upcoming": {
       "eyebrow": "Coming soon",
       "title": "Upcoming events",
       "description": "Find upcoming events and community programs.",
-      "emptyTitle": "No upcoming events yet",
-      "emptyDescription": "When new events are published, they will appear here automatically."
+      "emptyTitle": "No upcoming events yet"
     },
     "archive": {
       "eyebrow": "Event archive",
       "title": "Preserving our event archive",
       "description": "Revisit previous events, documents, and shared moments.",
       "pagination": "Page {{page}} of {{total}}",
-      "emptyTitle": "No archived events found",
-      "emptyDescription": "Archived events will appear here as soon as published events move into the past."
+      "emptyTitle": "No archived events found"
     },
     "card": {
       "viewDetails": "View Event Details",
       "viewArchive": "View Event Summary",
-      "placeholderTag": "Community event",
-      "fallbackSummary": "Community details will be shared on the event page."
+      "placeholderTag": "Community event"
     }
   },
   "eventCalendar": {
@@ -108,7 +104,6 @@
     "loadingTitle": "Loading event details",
     "errorEyebrow": "Event details",
     "backToGatherings": "Back to all events",
-    "defaultSummary": "Event details, documents, and shared moments will appear here as they are added through the CMS.",
     "placeholderLabel": "Display image pending",
     "overviewEyebrow": "Event story",
     "overviewTitle": "Overview",
@@ -131,8 +126,6 @@
     "mediaTitle": "Documents and gallery",
     "mediaDescription": "Additional photos, PDFs, and other event documents appear below in a single viewer with navigation and zoom controls.",
     "mediaLabel": "Viewer",
-    "mediaEmptyTitle": "No documents or additional photos yet",
-    "mediaEmptyDescription": "As more event files are added in the CMS, they will appear in this viewer automatically.",
     "documentsEyebrow": "Agenda",
     "documentsTitle": "Additional documents",
     "agendaDownloadTitle": "Event Poster & Agenda",
@@ -162,7 +155,6 @@
     "label": "Gallery",
     "loading": "Loading gallery images.",
     "unavailable": "We could not load this gallery right now.",
-    "empty": "Gallery images will appear here as soon as they are added in the CMS.",
     "imagesCount_one": "{{count}} image",
     "imagesCount_other": "{{count}} images",
     "imageCount": "{{current}} of {{total}}"
@@ -195,7 +187,6 @@
       "backToList": "Back to digital newsletters",
       "downloadEdition": "Download edition",
       "downloadError": "We could not download this newsletter right now. Please try again.",
-      "noDescription": "A full description for this edition will appear here when it is added in the CMS.",
       "flipbookUnavailableTitle": "Flipbook unavailable",
       "flipbookUnavailableDescription": "A flipbook preview is not available for this edition yet."
     },
@@ -237,7 +228,6 @@
       "errorTitle": "This press archive entry is unavailable right now",
       "errorDescription": "We could not load the requested press archive entry right now.",
       "backToList": "Back to press archive",
-      "noDescription": "Full archive details will appear here when they are added in the CMS.",
       "documentsTitle": "Archive documents",
       "documentsDescription": "Supporting PDFs, clippings, and archive files can be downloaded below.",
       "downloadPdf": "Download PDF",

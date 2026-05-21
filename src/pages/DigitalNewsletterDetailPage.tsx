@@ -77,6 +77,8 @@ export function DigitalNewsletterDetailPage() {
     preview?.previewKind === 'iframe' && preview.previewUrl && !flipbookSource,
   )
   const showHeroMedia = hasImagePreview || hasInlineFramePreview
+  const contentHtml = entry?.content_html.trim() ?? ''
+  const fallbackExcerpt = preview?.excerpt?.trim() ?? ''
 
   async function handleDownload() {
     if (!downloadTarget || isDownloading) {
@@ -142,18 +144,14 @@ export function DigitalNewsletterDetailPage() {
 
             <h1 className={styles.heroTitle}>{entry.title}</h1>
 
-            {entry.content_html.trim() ? (
+            {contentHtml ? (
               <div
                 className={styles.richText}
-                dangerouslySetInnerHTML={{ __html: entry.content_html }}
+                dangerouslySetInnerHTML={{ __html: contentHtml }}
               />
-            ) : preview?.excerpt ? (
-              <p className={styles.fallbackDescription}>{preview.excerpt}</p>
-            ) : (
-              <p className={styles.fallbackDescription}>
-                {t('newslettersPage.detail.noDescription')}
-              </p>
-            )}
+            ) : fallbackExcerpt ? (
+              <p className={styles.fallbackDescription}>{fallbackExcerpt}</p>
+            ) : null}
 
             {downloadTarget ? (
               <div className={styles.actionRow}>

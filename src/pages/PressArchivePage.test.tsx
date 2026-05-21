@@ -143,11 +143,13 @@ describe('PressArchivePage', () => {
       name: /community coverage feature open source/i,
     })
     expect(externalLink.getAttribute('href')).toBe('https://example.com/coverage-story')
+    expect(externalLink.getAttribute('target')).toBe('_blank')
 
     const internalLink = screen.getByRole('link', {
       name: /archived internal release read archive/i,
     })
     expect(internalLink.getAttribute('href')).toBe('/news-media/press-archive/92')
+    expect(internalLink.getAttribute('target')).toBe('_blank')
 
     fireEvent.click(screen.getByRole('button', { name: /download document archive pdf/i }))
 
