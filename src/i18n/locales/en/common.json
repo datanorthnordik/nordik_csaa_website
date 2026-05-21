@@ -206,6 +206,52 @@
       "emptyDescription": "Try another year or search term to explore the archive."
     }
   },
+  "pressArchivePage": {
+    "hero": {
+      "eyebrow": "Press archive",
+      "title": "Press Archive",
+      "descriptionLead": "Explore public coverage, archived articles, and press materials connected to the Children of Shingwauk Alumni Association.",
+      "descriptionSupport": "Browse by year, preview available media, and revisit announcements, interviews, and published stories gathered in one place.",
+      "descriptionCta": "Select an archive entry below to open the original source or view the archived materials."
+    },
+    "filters": {
+      "label": "Press archive filters",
+      "all": "All years",
+      "olderYearLabel": "Filter by an older year",
+      "olderYearPlaceholder": "Older year",
+      "searchLabel": "Search press archive",
+      "searchPlaceholder": "Search by title, source, topic, or year",
+      "clearYear": "Clear year"
+    },
+    "card": {
+      "archiveLabel": "Press archive",
+      "readArchive": "Read archive",
+      "openSource": "Open source",
+      "previewFrameTitle": "Preview for {{title}}",
+      "downloadAttachment": "Download document",
+      "moreAttachments_one": "+{{count}} more attachment",
+      "moreAttachments_other": "+{{count}} more attachments"
+    },
+    "detail": {
+      "loading": "Loading press archive details.",
+      "errorTitle": "This press archive entry is unavailable right now",
+      "errorDescription": "We could not load the requested press archive entry right now.",
+      "backToList": "Back to press archive",
+      "noDescription": "Full archive details will appear here when they are added in the CMS.",
+      "documentsTitle": "Archive documents",
+      "documentsDescription": "Supporting PDFs, clippings, and archive files can be downloaded below.",
+      "downloadPdf": "Download PDF",
+      "downloadDocument": "Download document",
+      "downloadError": "We could not download this archive file right now. Please try again.",
+      "sourceAction": "Open original source"
+    },
+    "states": {
+      "errorTitle": "Press archive is unavailable right now",
+      "errorDescription": "We could not load press archive entries right now.",
+      "emptyTitle": "No press archive entries matched this view",
+      "emptyDescription": "Try another year or search term to explore the archive."
+    }
+  },
   "common": {
     "loading": "Loading",
     "close": "Close",

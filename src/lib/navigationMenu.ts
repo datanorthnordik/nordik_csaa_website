@@ -117,11 +117,30 @@ export function matchesMenuPath(pathname: string, href: string) {
 }
 
 export function isMenuItemActive(item: MenuItem, pathname: string): boolean {
-  if (!isExternalMenuItem(item) && matchesMenuPath(pathname, getMenuItemHref(item))) {
-    return true
+  if (!isExternalMenuItem(item)) {
+    const href = getMenuItemHref(item)
+
+    if (matchesMenuPath(pathname, href)) {
+      return true
+    }
+
+    if (isModuleMenuItem(item) && matchesModuleSectionPath(pathname, href)) {
+      return true
+    }
   }
 
   return item.children.some((child) => isMenuItemActive(child, pathname))
+}
+
+function matchesModuleSectionPath(pathname: string, href: string) {
+  const pathnameSegments = normalizeInternalPath(pathname).split('/').filter(Boolean)
+  const hrefSegments = normalizeInternalPath(href).split('/').filter(Boolean)
+
+  if (!pathnameSegments.length || !hrefSegments.length) {
+    return false
+  }
+
+  return pathnameSegments[0] === hrefSegments[0]
 }
 
 export function findMenuItemByPath(

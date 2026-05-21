@@ -1,0 +1,138 @@
+.page {
+  display: grid;
+  gap: 26px;
+  min-width: 0;
+}
+
+.backLink,
+.sourceAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  color: var(--color-primary);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.backLink::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.hero {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.heroLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+  gap: 34px;
+  align-items: start;
+  min-width: 0;
+  padding-bottom: 26px;
+  border-bottom: 1px solid rgba(122, 31, 36, 0.12);
+}
+
+.heroLayoutCompact {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.heroCopy {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.metaChip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(122, 31, 36, 0.08);
+  color: var(--color-primary);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.metaText {
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.heroTitle {
+  margin: 0;
+  color: var(--color-primary);
+  font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+  font-size: clamp(2.8rem, 4.8vw, 4.8rem);
+  line-height: 0.95;
+}
+
+.richText,
+.fallbackDescription {
+  color: var(--color-text);
+  font-size: 1.03rem;
+  line-height: 1.7;
+}
+
+.richText > * + * {
+  margin-top: 1rem;
+}
+
+.richText p,
+.richText h2,
+.richText h3,
+.fallbackDescription {
+  margin: 0;
+}
+
+.richText a {
+  color: var(--color-primary);
+}
+
+.heroMedia {
+  min-width: 0;
+}
+
+.heroImage {
+  width: 100%;
+  min-height: 400px;
+  border-radius: 20px;
+  display: block;
+  object-fit: cover;
+}
+
+.documentsSection,
+.stateCard {
+  display: grid;
+  gap: 18px;
+}
+
+.stateCard {
+  padding: 26px;
+  border: 1px solid rgba(122, 31, 36, 0.12);
+  border-radius: 28px;
+  box-shadow: 0 24px 48px -36px rgba(31, 31, 35, 0.28);
+}
+
+@media (max-width: 920px) {
+  .heroLayout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -11,8 +11,10 @@ const {
   getGallery,
   getMainMenu,
   getNewsletter,
+  getPressEntry,
   getPageBySlug,
   listPublishedNewsletters,
+  listPublishedPressEntries,
   listUpcomingEvents,
   listArchivedEvents,
   listEventsByDateRange,
@@ -21,7 +23,9 @@ const {
   getPageBySlug: vi.fn(),
   getGallery: vi.fn(),
   getNewsletter: vi.fn(),
+  getPressEntry: vi.fn(),
   listPublishedNewsletters: vi.fn(),
+  listPublishedPressEntries: vi.fn(),
   listUpcomingEvents: vi.fn(),
   listArchivedEvents: vi.fn(),
   listEventsByDateRange: vi.fn(),
@@ -59,6 +63,13 @@ vi.mock('./api/newslettersApi', () => ({
   newslettersApi: {
     getNewsletter,
     listPublishedNewsletters,
+  },
+}))
+
+vi.mock('./api/pressApi', () => ({
+  pressApi: {
+    getPressEntry,
+    listPublishedPressEntries,
   },
 }))
 
@@ -221,13 +232,56 @@ const sampleMenu = {
       page_type: 'module',
       page: {
         id: 9,
-        page_title: 'Digital Newsletters',
+        page_title: 'News & Media',
         url_slug: '/news-media/digital-newsletter',
         parent_id: null,
         page_type: 'module',
         status: 'published',
       },
-      children: [],
+      children: [
+        {
+          id: 23,
+          parent_id: 22,
+          label: 'Digital Newsletters',
+          navigation_type: 'pages',
+          page_id: 10,
+          external_url: '',
+          open_in_new_tab: false,
+          sort_order: 0,
+          href: '/news-media/digital-newsletter',
+          page_type: 'module',
+          page: {
+            id: 10,
+            page_title: 'Digital Newsletters',
+            url_slug: '/news-media/digital-newsletter',
+            parent_id: 9,
+            page_type: 'module',
+            status: 'published',
+          },
+          children: [],
+        },
+        {
+          id: 24,
+          parent_id: 22,
+          label: 'Press Archive',
+          navigation_type: 'pages',
+          page_id: 11,
+          external_url: '',
+          open_in_new_tab: false,
+          sort_order: 1,
+          href: '/news-media/press-archive',
+          page_type: 'module',
+          page: {
+            id: 11,
+            page_title: 'Press Archive',
+            url_slug: '/news-media/press-archive',
+            parent_id: 9,
+            page_type: 'module',
+            status: 'published',
+          },
+          children: [],
+        },
+      ],
     },
   ],
 }
@@ -489,12 +543,77 @@ const sampleNewsletters = [
   },
 ]
 
+const samplePressEntries = [
+  {
+    id: 71,
+    title: 'Press coverage spotlight',
+    release_date: '2026-04-20T00:00:00Z',
+    category_id: null,
+    source_url: 'https://example.com/coverage',
+    content_html: '<p>Press coverage and interviews from across the community.</p>',
+    status: 'published',
+    visibility: 'public',
+    cover_image_url: '/api/press/71/cover/content',
+    cover_image_gcp_key: '',
+    publish_at: null,
+    media: [
+      {
+        id: 801,
+        display_name: 'Press PDF',
+        file_name: 'coverage.pdf',
+        gcp_object_key: '',
+        file_url: '/api/press/71/media/801/content',
+        mime_type: 'application/pdf',
+        file_size: 1024,
+        media_role: 'attachment',
+        sort_order: 0,
+        created_at: '',
+        updated_at: '',
+      },
+    ],
+    created_at: '',
+    updated_at: '',
+  },
+  {
+    id: 72,
+    title: 'Archived statement',
+    release_date: '2025-08-14T00:00:00Z',
+    category_id: null,
+    source_url: '',
+    content_html: '<p>Archived statement with supporting press files.</p>',
+    status: 'published',
+    visibility: 'public',
+    cover_image_url: '',
+    cover_image_gcp_key: '',
+    publish_at: null,
+    media: [
+      {
+        id: 802,
+        display_name: 'Archive PDF',
+        file_name: 'statement.pdf',
+        gcp_object_key: '',
+        file_url: '/api/press/72/media/802/content',
+        mime_type: 'application/pdf',
+        file_size: 1024,
+        media_role: 'attachment',
+        sort_order: 0,
+        created_at: '',
+        updated_at: '',
+      },
+    ],
+    created_at: '',
+    updated_at: '',
+  },
+]
+
 beforeEach(async () => {
   getMainMenu.mockReset()
   getPageBySlug.mockReset()
   getGallery.mockReset()
   getNewsletter.mockReset()
+  getPressEntry.mockReset()
   listPublishedNewsletters.mockReset()
+  listPublishedPressEntries.mockReset()
   listUpcomingEvents.mockReset()
   listArchivedEvents.mockReset()
   listEventsByDateRange.mockReset()
@@ -513,6 +632,15 @@ beforeEach(async () => {
   listPublishedNewsletters.mockResolvedValue(sampleNewsletters)
   getNewsletter.mockImplementation(async (id: number) => {
     const match = sampleNewsletters.find((entry) => entry.id === id)
+    if (!match) {
+      throw new Error('not found')
+    }
+
+    return match
+  })
+  listPublishedPressEntries.mockResolvedValue(samplePressEntries)
+  getPressEntry.mockImplementation(async (id: number) => {
+    const match = samplePressEntries.find((entry) => entry.id === id)
     if (!match) {
       throw new Error('not found')
     }
@@ -684,6 +812,42 @@ describe('App', () => {
     ).toBeDefined()
     expect(screen.getByText(/flipbook for community reunion highlights/i)).toBeDefined()
     expect(getNewsletter).toHaveBeenCalledWith(11)
+    expect(
+      within(screen.getByRole('navigation')).getByRole('link', {
+        name: /news & media/i,
+      }).getAttribute('aria-current'),
+    ).toBe('page')
+  })
+
+  it('renders the press archive module route and keeps the news menu item active', async () => {
+    window.history.pushState({}, '', '/news-media/press-archive')
+
+    renderWithProviders(<App />)
+
+    expect(
+      await screen.findByRole('heading', {
+        name: /press archive/i,
+      }),
+    ).toBeDefined()
+    expect(listPublishedPressEntries).toHaveBeenCalled()
+    expect(
+      within(screen.getByRole('navigation')).getByRole('link', {
+        name: /news & media/i,
+      }).getAttribute('aria-current'),
+    ).toBe('page')
+  })
+
+  it('renders the press archive detail route and keeps the news menu item active', async () => {
+    window.history.pushState({}, '', '/news-media/press-archive/72')
+
+    renderWithProviders(<App />)
+
+    expect(
+      await screen.findByRole('heading', {
+        name: /archived statement/i,
+      }),
+    ).toBeDefined()
+    expect(getPressEntry).toHaveBeenCalledWith(72)
     expect(
       within(screen.getByRole('navigation')).getByRole('link', {
         name: /news & media/i,

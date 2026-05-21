@@ -7,6 +7,8 @@ import { DigitalNewsletterDetailPage } from './pages/DigitalNewsletterDetailPage
 import { DigitalNewslettersPage } from './pages/DigitalNewslettersPage'
 import { EventDetailPage } from './pages/EventDetailPage'
 import { GatheringsPage } from './pages/GatheringsPage'
+import { PressArchiveDetailPage } from './pages/PressArchiveDetailPage'
+import { PressArchivePage } from './pages/PressArchivePage'
 import { getInitialMenuHref } from './lib/navigationMenu'
 
 function App() {
@@ -26,6 +28,14 @@ function App() {
             <Route
               path="/news-media/digital-newsletter"
               element={<DigitalNewslettersPage />}
+            />
+            <Route
+              path="/news-media/press-archive/:pressId"
+              element={<PressArchiveDetailPage />}
+            />
+            <Route
+              path="/news-media/press-archive"
+              element={<PressArchivePage />}
             />
             <Route path="*" element={<CmsPage />} />
           </Route>
