@@ -120,7 +120,7 @@ describe('DigitalNewslettersPage', () => {
       await screen.findByRole('heading', { name: /digital newsletters/i }),
     ).toBeDefined()
     expect(
-      screen.getByText(/stay up-to-date with the latest news, updates, and community initiatives/i),
+      screen.getByText(/stay up-to-date with the latest newsletter updates and community initiatives/i),
     ).toBeDefined()
     expect(
       screen.getAllByText(/latest edition/i).length,
