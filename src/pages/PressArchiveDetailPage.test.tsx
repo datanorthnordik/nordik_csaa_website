@@ -87,7 +87,7 @@ describe('PressArchiveDetailPage', () => {
     expect(screen.getByRole('button', { name: /download pdf/i })).toBeDefined()
   })
 
-  it('shows the fallback description when no content is available', async () => {
+  it('omits filler description copy when no content is available', async () => {
     getPressEntry.mockResolvedValue({
       id: 32,
       title: 'Archive without description',
@@ -108,8 +108,11 @@ describe('PressArchiveDetailPage', () => {
     renderPage('/news-media/press-archive/32')
 
     expect(
-      await screen.findByText(/full archive details will appear here when they are added in the cms\./i),
+      await screen.findByRole('heading', { name: /archive without description/i }),
     ).toBeDefined()
+    expect(
+      screen.queryByText(/full archive details will appear here when they are added in the cms\./i),
+    ).toBeNull()
     expect(screen.queryByRole('heading', { name: /archive documents/i })).toBeNull()
   })
 

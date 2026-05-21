@@ -164,7 +164,6 @@ export function GatheringsPage() {
         ) : (
           <EmptyState
             title={t('gatherings.upcoming.emptyTitle')}
-            description={t('gatherings.upcoming.emptyDescription')}
           />
         )}
       </section>
@@ -232,7 +231,6 @@ export function GatheringsPage() {
         ) : (
           <EmptyState
             title={t('gatherings.archive.emptyTitle')}
-            description={t('gatherings.archive.emptyDescription')}
           />
         )}
       </section>
@@ -316,12 +314,12 @@ function EmptyState({
   description,
 }: {
   title: string
-  description: string
+  description?: string
 }) {
   return (
     <div className={styles.emptyState}>
       <h3>{title}</h3>
-      <p>{description}</p>
+      {description ? <p>{description}</p> : null}
     </div>
   )
 }

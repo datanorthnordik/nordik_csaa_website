@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import i18n from '../../i18n'
 import { galleriesApi } from '../../api/galleriesApi'
@@ -82,5 +82,28 @@ describe('CmsGallerySection', () => {
     expect(
       await screen.findByText(/we could not load this gallery right now\./i),
     ).toBeDefined()
+  })
+
+  it('renders nothing when the gallery is empty instead of filler placeholder copy', async () => {
+    getGallery.mockResolvedValue({
+      id: 5,
+      name: 'Empty gallery',
+      description: '',
+      published: true,
+      asset_limit: 20,
+      cover_image: null,
+      images: [],
+      created_at: '',
+      updated_at: '',
+    })
+
+    const { container } = render(<CmsGallerySection section={createSection()} />)
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText(/gallery images will appear here as soon as they are added in the cms\./i),
+      ).toBeNull()
+      expect(container.firstChild).toBeNull()
+    })
   })
 })

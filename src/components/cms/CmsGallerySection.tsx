@@ -72,6 +72,10 @@ export function CmsGallerySection({ section }: CmsGallerySectionProps) {
 
   const items = gallery ? buildCmsGalleryAssets(gallery) : []
 
+  if (status === 'ready' && !items.length) {
+    return null
+  }
+
   return (
     <section className={styles.gallerySection}>
       {status === 'loading' ? (
@@ -88,12 +92,6 @@ export function CmsGallerySection({ section }: CmsGallerySectionProps) {
       {status === 'error' ? (
         <div className={styles.galleryState}>
           <p className={styles.galleryStateText}>{t('cmsGallery.unavailable')}</p>
-        </div>
-      ) : null}
-
-      {status === 'ready' && !items.length ? (
-        <div className={styles.galleryState}>
-          <p className={styles.galleryStateText}>{t('cmsGallery.empty')}</p>
         </div>
       ) : null}
 
