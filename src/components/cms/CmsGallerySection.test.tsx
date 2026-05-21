@@ -106,4 +106,49 @@ describe('CmsGallerySection', () => {
       expect(container.firstChild).toBeNull()
     })
   })
+
+  it('renders icon galleries as links and does not mount the lightbox', async () => {
+    getGallery.mockResolvedValue({
+      id: 5,
+      name: 'Partner logos',
+      description: '',
+      published: true,
+      asset_limit: 20,
+      cover_image: null,
+      images: [
+        {
+          id: 1,
+          gallery_id: 5,
+          title: 'Jays Care Foundation',
+          alt_text: 'Jays Care Foundation logo',
+          link_url: 'https://www.mlb.com/bluejays/community/jays-care',
+          file_name: 'jays-care.png',
+          file_url: '/api/galleries/5/images/1/content',
+          mime_type: 'image/png',
+          file_size: 0,
+          sort_order: 0,
+          created_at: '',
+          updated_at: '',
+        },
+      ],
+      created_at: '',
+      updated_at: '',
+    })
+
+    render(
+      <CmsGallerySection
+        section={createSection({
+          gallery: {
+            gallery_id: 5,
+            view_mode: 'icons',
+          },
+        })}
+      />,
+    )
+
+    const link = await screen.findByRole('link', { name: /jays care foundation/i })
+
+    expect(link.getAttribute('href')).toBe('https://www.mlb.com/bluejays/community/jays-care')
+    expect(screen.queryByRole('dialog')).toBeNull()
+  })
 })

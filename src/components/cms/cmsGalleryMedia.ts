@@ -1,7 +1,7 @@
 import type { GalleryAssetResponse, GalleryDetailResponse } from '../../api/galleriesApi'
 import { resolveCmsAssetUrl } from './cmsPageMedia'
 
-export type CmsGalleryViewMode = 'grid' | 'carousel' | 'masonry' | 'focus'
+export type CmsGalleryViewMode = 'grid' | 'carousel' | 'masonry' | 'focus' | 'icons'
 
 export type CmsGalleryAsset = {
   id: number
@@ -10,6 +10,7 @@ export type CmsGalleryAsset = {
   altText: string
   imageUrl: string
   fileUrl: string
+  linkUrl?: string | null
   sortOrder: number
 }
 
@@ -22,6 +23,9 @@ export function normalizeGalleryViewMode(value?: string | null): CmsGalleryViewM
     case 'focus':
     case 'focused':
       return 'focus'
+    case 'icon':
+    case 'icons':
+      return 'icons'
     case 'grid':
     default:
       return 'grid'
@@ -64,6 +68,7 @@ function mapCmsGalleryAsset(
     altText: details || title || galleryName.trim() || 'Gallery image',
     imageUrl,
     fileUrl: imageUrl,
+    linkUrl: item.link_url?.trim() || null,
     sortOrder: item.sort_order ?? 0,
   }
 }

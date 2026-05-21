@@ -6,6 +6,7 @@ export type GalleryAssetResponse = {
   gallery_id: number
   title: string
   alt_text: string
+  link_url?: string | null
   file_name: string
   gcp_object_key?: string
   file_url: string

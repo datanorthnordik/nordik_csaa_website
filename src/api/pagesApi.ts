@@ -23,7 +23,7 @@ export type PageTypographySection = {
 
 export type PageGallerySection = {
   gallery_id: number | null
-  view_mode: 'grid' | 'carousel' | 'masonry' | 'focus' | string
+  view_mode: 'grid' | 'carousel' | 'masonry' | 'focus' | 'icons' | string
 }
 
 export type PageQuoteSection = {
