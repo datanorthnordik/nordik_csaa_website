@@ -167,6 +167,91 @@
     "imagesCount_other": "{{count}} images",
     "imageCount": "{{current}} sur {{total}}"
   },
+  "newslettersPage": {
+    "hero": {
+      "eyebrow": "Bulletins numeriques",
+      "title": "Bulletins numeriques",
+      "descriptionLead": "Restez a jour avec les nouvelles, mises a jour et initiatives communautaires grace a notre bulletin CST. Chaque edition met en valeur les efforts, les histoires et le soutien qui rapprochent notre communaute. Des ressources essentielles et programmes de rayonnement aux recits inspirants de resilience, notre bulletin presente le travail et l impact de la Community Support Team.",
+      "descriptionSupport": "Parcourez les editions precedentes pour en apprendre davantage sur les initiatives en cours qui renforcent nos liens et soutiennent les personnes dans le besoin au sein de notre communaute.",
+      "descriptionCta": "Cliquez ci-dessous pour acceder aux differentes editions.",
+      "featuredLabel": "Derniere edition"
+    },
+    "filters": {
+      "label": "Filtres des bulletins",
+      "all": "Toutes les editions",
+      "searchLabel": "Rechercher des bulletins",
+      "searchPlaceholder": "Rechercher par titre, sujet ou annee"
+    },
+    "card": {
+      "issueLabel": "Edition",
+      "readEdition": "Lire l edition",
+      "openEdition": "Lire les details de {{title}}",
+      "previewFrameTitle": "Apercu de {{title}}"
+    },
+    "detail": {
+      "loading": "Chargement des details du bulletin.",
+      "errorTitle": "Ce bulletin n est pas disponible pour le moment",
+      "errorDescription": "Nous ne pouvons pas charger les details du bulletin demande pour le moment.",
+      "backToList": "Retour aux bulletins numeriques",
+      "downloadEdition": "Telecharger l edition",
+      "downloadError": "Nous ne pouvons pas telecharger ce bulletin pour le moment. Veuillez reessayer.",
+      "noDescription": "Une description complete de cette edition apparaitra ici lorsqu elle sera ajoutee dans le CMS.",
+      "flipbookUnavailableTitle": "Flipbook indisponible",
+      "flipbookUnavailableDescription": "Une previsualisation flipbook n est pas encore disponible pour cette edition."
+    },
+    "states": {
+      "errorTitle": "Les bulletins numeriques sont indisponibles pour le moment",
+      "errorDescription": "Nous ne pouvons pas charger les bulletins numeriques pour le moment.",
+      "emptyTitle": "Aucun bulletin ne correspond a cette vue",
+      "emptyDescription": "Essayez une autre annee ou un autre terme de recherche pour explorer l archive."
+    }
+  },
+  "pressArchivePage": {
+    "hero": {
+      "eyebrow": "Archives de presse",
+      "title": "Archives de presse",
+      "descriptionLead": "Explorez la couverture publique, les articles archives et les documents de presse lies a la Children of Shingwauk Alumni Association.",
+      "descriptionSupport": "Parcourez par annee, previsualisez les medias disponibles et retrouvez annonces, entrevues et histoires publiees reunies au meme endroit.",
+      "descriptionCta": "Selectionnez une entree ci-dessous pour ouvrir la source originale ou consulter les documents archives."
+    },
+    "filters": {
+      "label": "Filtres des archives de presse",
+      "all": "Toutes les annees",
+      "olderYearLabel": "Filtrer par une annee plus ancienne",
+      "olderYearPlaceholder": "Annee plus ancienne",
+      "searchLabel": "Rechercher dans les archives de presse",
+      "searchPlaceholder": "Rechercher par titre, source, sujet ou annee",
+      "clearYear": "Effacer l annee"
+    },
+    "card": {
+      "archiveLabel": "Archives de presse",
+      "readArchive": "Lire l archive",
+      "openSource": "Ouvrir la source",
+      "previewFrameTitle": "Apercu de {{title}}",
+      "downloadAttachment": "Telecharger le document",
+      "moreAttachments_one": "+{{count}} autre piece jointe",
+      "moreAttachments_other": "+{{count}} autres pieces jointes"
+    },
+    "detail": {
+      "loading": "Chargement des details des archives de presse.",
+      "errorTitle": "Cette entree des archives de presse est indisponible pour le moment",
+      "errorDescription": "Nous ne pouvons pas charger l entree demandee pour le moment.",
+      "backToList": "Retour aux archives de presse",
+      "noDescription": "Les details complets de l archive apparaitront ici lorsqu ils seront ajoutes dans le CMS.",
+      "documentsTitle": "Documents d archive",
+      "documentsDescription": "Les PDF, coupures et fichiers d archive supplementaires peuvent etre telecharges ci-dessous.",
+      "downloadPdf": "Telecharger le PDF",
+      "downloadDocument": "Telecharger le document",
+      "downloadError": "Nous ne pouvons pas telecharger ce fichier d archive pour le moment. Veuillez reessayer.",
+      "sourceAction": "Ouvrir la source originale"
+    },
+    "states": {
+      "errorTitle": "Les archives de presse sont indisponibles pour le moment",
+      "errorDescription": "Nous ne pouvons pas charger les entrees des archives de presse pour le moment.",
+      "emptyTitle": "Aucune entree des archives de presse ne correspond a cette vue",
+      "emptyDescription": "Essayez une autre annee ou un autre terme de recherche pour explorer l archive."
+    }
+  },
   "common": {
     "loading": "Chargement",
     "close": "Fermer",

@@ -10,7 +10,11 @@ const {
   getEvent,
   getGallery,
   getMainMenu,
+  getNewsletter,
+  getPressEntry,
   getPageBySlug,
+  listPublishedNewsletters,
+  listPublishedPressEntries,
   listUpcomingEvents,
   listArchivedEvents,
   listEventsByDateRange,
@@ -18,6 +22,10 @@ const {
   getMainMenu: vi.fn(),
   getPageBySlug: vi.fn(),
   getGallery: vi.fn(),
+  getNewsletter: vi.fn(),
+  getPressEntry: vi.fn(),
+  listPublishedNewsletters: vi.fn(),
+  listPublishedPressEntries: vi.fn(),
   listUpcomingEvents: vi.fn(),
   listArchivedEvents: vi.fn(),
   listEventsByDateRange: vi.fn(),
@@ -49,6 +57,24 @@ vi.mock('./api/galleriesApi', () => ({
   galleriesApi: {
     getGallery,
   },
+}))
+
+vi.mock('./api/newslettersApi', () => ({
+  newslettersApi: {
+    getNewsletter,
+    listPublishedNewsletters,
+  },
+}))
+
+vi.mock('./api/pressApi', () => ({
+  pressApi: {
+    getPressEntry,
+    listPublishedPressEntries,
+  },
+}))
+
+vi.mock('./components/newsletters/NewsletterFlipbook', () => ({
+  NewsletterFlipbook: ({ title }: { title: string }) => <div>Flipbook for {title}</div>,
 }))
 
 function renderWithProviders(ui: ReactElement) {
@@ -192,6 +218,70 @@ const sampleMenu = {
         status: 'published',
       },
       children: [],
+    },
+    {
+      id: 22,
+      parent_id: null,
+      label: 'News & Media',
+      navigation_type: 'pages',
+      page_id: 9,
+      external_url: '',
+      open_in_new_tab: false,
+      sort_order: 2,
+      href: '/news-media/digital-newsletter',
+      page_type: 'module',
+      page: {
+        id: 9,
+        page_title: 'News & Media',
+        url_slug: '/news-media/digital-newsletter',
+        parent_id: null,
+        page_type: 'module',
+        status: 'published',
+      },
+      children: [
+        {
+          id: 23,
+          parent_id: 22,
+          label: 'Digital Newsletters',
+          navigation_type: 'pages',
+          page_id: 10,
+          external_url: '',
+          open_in_new_tab: false,
+          sort_order: 0,
+          href: '/news-media/digital-newsletter',
+          page_type: 'module',
+          page: {
+            id: 10,
+            page_title: 'Digital Newsletters',
+            url_slug: '/news-media/digital-newsletter',
+            parent_id: 9,
+            page_type: 'module',
+            status: 'published',
+          },
+          children: [],
+        },
+        {
+          id: 24,
+          parent_id: 22,
+          label: 'Press Archive',
+          navigation_type: 'pages',
+          page_id: 11,
+          external_url: '',
+          open_in_new_tab: false,
+          sort_order: 1,
+          href: '/news-media/press-archive',
+          page_type: 'module',
+          page: {
+            id: 11,
+            page_title: 'Press Archive',
+            url_slug: '/news-media/press-archive',
+            parent_id: 9,
+            page_type: 'module',
+            status: 'published',
+          },
+          children: [],
+        },
+      ],
     },
   ],
 }
@@ -383,10 +473,147 @@ const sampleEmptyPage = {
   },
 }
 
+const sampleNewsletters = [
+  {
+    id: 11,
+    title: 'Community Reunion Highlights',
+    category: 'csaa',
+    send_date: '2026-05-01T00:00:00Z',
+    content_html: '<p>Revisiting reunion stories from across the community.</p>',
+    status: 'published',
+    visibility: 'public',
+    publish_at: null,
+    created_at: '',
+    updated_at: '',
+    media: [
+      {
+        id: 201,
+        display_name: 'Display image',
+        file_name: 'reunion.jpg',
+        gcp_object_key: '',
+        file_url: '/api/newsletters/11/media/201/content',
+        mime_type: 'image/jpeg',
+        file_size: 1024,
+        media_role: 'attachment',
+        sort_order: 0,
+        created_at: '',
+        updated_at: '',
+      },
+      {
+        id: 202,
+        display_name: 'Edition PDF',
+        file_name: 'reunion.pdf',
+        gcp_object_key: '',
+        file_url: '/api/newsletters/11/media/202/content',
+        mime_type: 'application/pdf',
+        file_size: 2048,
+        media_role: 'attachment',
+        sort_order: 1,
+        created_at: '',
+        updated_at: '',
+      },
+    ],
+  },
+  {
+    id: 12,
+    title: 'Archival Digitization Milestones',
+    category: 'cst',
+    send_date: '2025-11-15T00:00:00Z',
+    content_html: '<p>Digitization updates and collection notes.</p>',
+    status: 'published',
+    visibility: 'public',
+    publish_at: null,
+    created_at: '',
+    updated_at: '',
+    media: [
+      {
+        id: 301,
+        display_name: 'Edition PDF',
+        file_name: 'digitization.pdf',
+        gcp_object_key: '',
+        file_url: '/api/newsletters/12/media/301/content',
+        mime_type: 'application/pdf',
+        file_size: 2048,
+        media_role: 'attachment',
+        sort_order: 0,
+        created_at: '',
+        updated_at: '',
+      },
+    ],
+  },
+]
+
+const samplePressEntries = [
+  {
+    id: 71,
+    title: 'Press coverage spotlight',
+    release_date: '2026-04-20T00:00:00Z',
+    category_id: null,
+    source_url: 'https://example.com/coverage',
+    content_html: '<p>Press coverage and interviews from across the community.</p>',
+    status: 'published',
+    visibility: 'public',
+    cover_image_url: '/api/press/71/cover/content',
+    cover_image_gcp_key: '',
+    publish_at: null,
+    media: [
+      {
+        id: 801,
+        display_name: 'Press PDF',
+        file_name: 'coverage.pdf',
+        gcp_object_key: '',
+        file_url: '/api/press/71/media/801/content',
+        mime_type: 'application/pdf',
+        file_size: 1024,
+        media_role: 'attachment',
+        sort_order: 0,
+        created_at: '',
+        updated_at: '',
+      },
+    ],
+    created_at: '',
+    updated_at: '',
+  },
+  {
+    id: 72,
+    title: 'Archived statement',
+    release_date: '2025-08-14T00:00:00Z',
+    category_id: null,
+    source_url: '',
+    content_html: '<p>Archived statement with supporting press files.</p>',
+    status: 'published',
+    visibility: 'public',
+    cover_image_url: '',
+    cover_image_gcp_key: '',
+    publish_at: null,
+    media: [
+      {
+        id: 802,
+        display_name: 'Archive PDF',
+        file_name: 'statement.pdf',
+        gcp_object_key: '',
+        file_url: '/api/press/72/media/802/content',
+        mime_type: 'application/pdf',
+        file_size: 1024,
+        media_role: 'attachment',
+        sort_order: 0,
+        created_at: '',
+        updated_at: '',
+      },
+    ],
+    created_at: '',
+    updated_at: '',
+  },
+]
+
 beforeEach(async () => {
   getMainMenu.mockReset()
   getPageBySlug.mockReset()
   getGallery.mockReset()
+  getNewsletter.mockReset()
+  getPressEntry.mockReset()
+  listPublishedNewsletters.mockReset()
+  listPublishedPressEntries.mockReset()
   listUpcomingEvents.mockReset()
   listArchivedEvents.mockReset()
   listEventsByDateRange.mockReset()
@@ -402,6 +629,24 @@ beforeEach(async () => {
     return sampleHomePage
   })
   getGallery.mockResolvedValue(sampleGallery)
+  listPublishedNewsletters.mockResolvedValue(sampleNewsletters)
+  getNewsletter.mockImplementation(async (id: number) => {
+    const match = sampleNewsletters.find((entry) => entry.id === id)
+    if (!match) {
+      throw new Error('not found')
+    }
+
+    return match
+  })
+  listPublishedPressEntries.mockResolvedValue(samplePressEntries)
+  getPressEntry.mockImplementation(async (id: number) => {
+    const match = samplePressEntries.find((entry) => entry.id === id)
+    if (!match) {
+      throw new Error('not found')
+    }
+
+    return match
+  })
   listUpcomingEvents.mockResolvedValue({
     items: [sampleUpcomingEvent],
     pagination: {
@@ -535,5 +780,78 @@ describe('App', () => {
     expect(
       screen.getByText(/placeholder copy for pages without cms sections yet\./i),
     ).toBeDefined()
+  })
+
+  it('renders the digital newsletters module route with the shared header shell', async () => {
+    window.history.pushState({}, '', '/news-media/digital-newsletter')
+
+    renderWithProviders(<App />)
+
+    expect(
+      await screen.findByRole('heading', {
+        name: /digital newsletters/i,
+      }),
+    ).toBeDefined()
+    expect(listPublishedNewsletters).toHaveBeenCalled()
+    expect(
+      within(screen.getByRole('navigation')).getByRole('link', {
+        name: /news & media/i,
+      }).getAttribute('aria-current'),
+    ).toBe('page')
+  })
+
+  it('renders the newsletter detail route and keeps the news menu item active', async () => {
+    window.history.pushState({}, '', '/news-media/digital-newsletter/11')
+
+    renderWithProviders(<App />)
+
+    expect(
+      await screen.findByRole('heading', {
+        name: /community reunion highlights/i,
+      }),
+    ).toBeDefined()
+    expect(screen.getByText(/flipbook for community reunion highlights/i)).toBeDefined()
+    expect(getNewsletter).toHaveBeenCalledWith(11)
+    expect(
+      within(screen.getByRole('navigation')).getByRole('link', {
+        name: /news & media/i,
+      }).getAttribute('aria-current'),
+    ).toBe('page')
+  })
+
+  it('renders the press archive module route and keeps the news menu item active', async () => {
+    window.history.pushState({}, '', '/news-media/press-archive')
+
+    renderWithProviders(<App />)
+
+    expect(
+      await screen.findByRole('heading', {
+        name: /press archive/i,
+      }),
+    ).toBeDefined()
+    expect(listPublishedPressEntries).toHaveBeenCalled()
+    expect(
+      within(screen.getByRole('navigation')).getByRole('link', {
+        name: /news & media/i,
+      }).getAttribute('aria-current'),
+    ).toBe('page')
+  })
+
+  it('renders the press archive detail route and keeps the news menu item active', async () => {
+    window.history.pushState({}, '', '/news-media/press-archive/72')
+
+    renderWithProviders(<App />)
+
+    expect(
+      await screen.findByRole('heading', {
+        name: /archived statement/i,
+      }),
+    ).toBeDefined()
+    expect(getPressEntry).toHaveBeenCalledWith(72)
+    expect(
+      within(screen.getByRole('navigation')).getByRole('link', {
+        name: /news & media/i,
+      }).getAttribute('aria-current'),
+    ).toBe('page')
   })
 })
