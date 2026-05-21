@@ -22,10 +22,19 @@ export function CmsHeaderSection({
   const imageUrl = isPrimaryHeader
     ? resolveCmsAssetUrl(page.hero_image_fetch_url)
     : null
+  const mainHeaderText = header.main_header_text.trim()
+  const subHeaderText = header.sub_header_text.trim()
+  const heroTitle = mainHeaderText || page.page_title
+  const sectionTitle = mainHeaderText || section.section_name
+  const heroSummary = subHeaderText || page.seo_page_description
   const eyebrow =
-    normalizeCmsLabel(page.page_title) !== normalizeCmsLabel(header.main_header_text)
-      ? page.page_title
-      : page.parent_page_title
+    isPrimaryHeader
+      ? normalizeCmsLabel(page.page_title) !== normalizeCmsLabel(heroTitle)
+        ? page.page_title
+        : page.parent_page_title
+      : normalizeCmsLabel(page.page_title) === normalizeCmsLabel(sectionTitle)
+        ? page.parent_page_title
+        : ''
 
   if (header.hierarchy === 'h1_hero') {
     return (
@@ -33,20 +42,11 @@ export function CmsHeaderSection({
         <div className={styles.heroCard}>
           <div className={styles.heroCopy}>
             {eyebrow ? <p className={styles.eyebrow}>{eyebrow}</p> : null}
-            <h1 className={styles.heroTitle}>
-              {header.main_header_text || page.page_title}
-            </h1>
-            {header.sub_header_text || page.seo_page_description ? (
-              <p className={styles.heroSummary}>
-                {header.sub_header_text || page.seo_page_description}
-              </p>
-            ) : null}
+            <h1 className={styles.heroTitle}>{heroTitle}</h1>
+            {heroSummary ? <p className={styles.heroSummary}>{heroSummary}</p> : null}
           </div>
 
-          <CmsHeroMedia
-            imageUrl={imageUrl}
-            title={header.main_header_text || page.page_title}
-          />
+          <CmsHeroMedia imageUrl={imageUrl} title={heroTitle} showFallback={false} />
         </div>
       </section>
     )
@@ -56,12 +56,8 @@ export function CmsHeaderSection({
     <section className={`${styles.section} ${styles.simpleHeaderSection}`}>
       <div className={styles.simpleHeaderCard}>
         {eyebrow ? <p className={styles.sectionEyebrow}>{eyebrow}</p> : null}
-        <h2 className={styles.sectionTitle}>
-          {header.main_header_text || section.section_name}
-        </h2>
-        {header.sub_header_text ? (
-          <p className={styles.sectionSummary}>{header.sub_header_text}</p>
-        ) : null}
+        <h2 className={styles.sectionTitle}>{sectionTitle}</h2>
+        {subHeaderText ? <p className={styles.sectionSummary}>{subHeaderText}</p> : null}
       </div>
     </section>
   )

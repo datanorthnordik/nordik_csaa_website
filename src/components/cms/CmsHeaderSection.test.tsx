@@ -83,4 +83,48 @@ describe('CmsHeaderSection', () => {
     expect(screen.getByText(/^community$/i)).toBeDefined()
     expect(screen.queryByRole('img')).toBeNull()
   })
+
+  it('keeps the page title at the top instead of repeating it in lower section headers', () => {
+    render(
+      <CmsHeaderSection
+        page={createPage()}
+        section={createHeaderSection({
+          header: {
+            main_header_text: 'Programs and services',
+            sub_header_text: 'Ways the community can connect.',
+            hierarchy: 'h2_section',
+          },
+        })}
+        isPrimaryHeader={false}
+      />,
+    )
+
+    expect(
+      screen.getByRole('heading', { name: /programs and services/i }),
+    ).toBeDefined()
+    expect(screen.queryByText(/^csaa newsletter$/i)).toBeNull()
+  })
+
+  it('uses the page title as the heading without duplicating it or showing a media placeholder', () => {
+    const { queryByTestId } = render(
+      <CmsHeaderSection
+        page={createPage({
+          hero_image_fetch_url: '',
+        })}
+        section={createHeaderSection({
+          header: {
+            main_header_text: '   ',
+            sub_header_text: '',
+            hierarchy: 'h1_hero',
+          },
+        })}
+        isPrimaryHeader
+      />,
+    )
+
+    expect(screen.getByRole('heading', { name: /^csaa newsletter$/i })).toBeDefined()
+    expect(screen.getAllByText(/^csaa newsletter$/i)).toHaveLength(1)
+    expect(screen.queryByRole('img')).toBeNull()
+    expect(queryByTestId('cms-hero-media-fallback')).toBeNull()
+  })
 })
