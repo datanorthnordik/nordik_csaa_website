@@ -24,6 +24,13 @@ export function CmsHeaderSection({
     : null
   const mainHeaderText = header.main_header_text.trim()
   const subHeaderText = header.sub_header_text.trim()
+  const textAlign = header.text_align?.trim().toLowerCase()
+  const alignmentClass =
+    textAlign === 'center'
+      ? styles.alignCenter
+      : textAlign === 'right'
+        ? styles.alignRight
+        : styles.alignLeft
   const heroTitle = mainHeaderText || page.page_title
   const sectionTitle = mainHeaderText || section.section_name
   const heroSummary = subHeaderText || page.seo_page_description
@@ -40,7 +47,7 @@ export function CmsHeaderSection({
     return (
       <section className={`${styles.section} ${styles.heroSection}`}>
         <div className={styles.heroCard}>
-          <div className={styles.heroCopy}>
+          <div className={`${styles.heroCopy} ${alignmentClass}`}>
             {eyebrow ? <p className={styles.eyebrow}>{eyebrow}</p> : null}
             <h1 className={styles.heroTitle}>{heroTitle}</h1>
             {heroSummary ? <p className={styles.heroSummary}>{heroSummary}</p> : null}
@@ -54,7 +61,7 @@ export function CmsHeaderSection({
 
   return (
     <section className={`${styles.section} ${styles.simpleHeaderSection}`}>
-      <div className={styles.simpleHeaderCard}>
+      <div className={`${styles.simpleHeaderCard} ${alignmentClass}`}>
         {eyebrow ? <p className={styles.sectionEyebrow}>{eyebrow}</p> : null}
         <h2 className={styles.sectionTitle}>{sectionTitle}</h2>
         {subHeaderText ? <p className={styles.sectionSummary}>{subHeaderText}</p> : null}

@@ -38,6 +38,7 @@ function createHeaderSection(overrides: Partial<PageSection> = {}): PageSection 
       main_header_text: 'Welcome to the CSAA newsletter',
       sub_header_text: 'Stories and updates from the community.',
       hierarchy: 'h1_hero',
+      text_align: 'left',
     },
     ...overrides,
   }
@@ -64,6 +65,28 @@ describe('CmsHeaderSection', () => {
     ).toContain('/api/pages/1/hero/content')
   })
 
+  it('applies centered alignment to hero headers', () => {
+    render(
+      <CmsHeaderSection
+        page={createPage()}
+        section={createHeaderSection({
+          header: {
+            main_header_text: 'Welcome to the CSAA newsletter',
+            sub_header_text: 'Stories and updates from the community.',
+            hierarchy: 'h1_hero',
+            text_align: 'center',
+          },
+        })}
+        isPrimaryHeader
+      />,
+    )
+
+    expect(
+      screen.getByRole('heading', { name: /welcome to the csaa newsletter/i }).parentElement
+        ?.className,
+    ).toContain('alignCenter')
+  })
+
   it('uses the parent page title as eyebrow when the header matches the page title', () => {
     render(
       <CmsHeaderSection
@@ -73,6 +96,7 @@ describe('CmsHeaderSection', () => {
             main_header_text: 'Contact Us',
             sub_header_text: 'Reach out to the team.',
             hierarchy: 'h2_section',
+            text_align: 'right',
           },
         })}
         isPrimaryHeader={false}
@@ -82,6 +106,9 @@ describe('CmsHeaderSection', () => {
     expect(screen.getByRole('heading', { name: /^contact us$/i })).toBeDefined()
     expect(screen.getByText(/^community$/i)).toBeDefined()
     expect(screen.queryByRole('img')).toBeNull()
+    expect(screen.getByRole('heading', { name: /^contact us$/i }).parentElement?.className).toContain(
+      'alignRight',
+    )
   })
 
   it('keeps the page title at the top instead of repeating it in lower section headers', () => {
@@ -93,6 +120,7 @@ describe('CmsHeaderSection', () => {
             main_header_text: 'Programs and services',
             sub_header_text: 'Ways the community can connect.',
             hierarchy: 'h2_section',
+            text_align: 'left',
           },
         })}
         isPrimaryHeader={false}
@@ -116,6 +144,7 @@ describe('CmsHeaderSection', () => {
             main_header_text: '   ',
             sub_header_text: '',
             hierarchy: 'h1_hero',
+            text_align: 'diagonal',
           },
         })}
         isPrimaryHeader
@@ -126,5 +155,8 @@ describe('CmsHeaderSection', () => {
     expect(screen.getAllByText(/^csaa newsletter$/i)).toHaveLength(1)
     expect(screen.queryByRole('img')).toBeNull()
     expect(queryByTestId('cms-hero-media-fallback')).toBeNull()
+    expect(screen.getByRole('heading', { name: /^csaa newsletter$/i }).parentElement?.className).toContain(
+      'alignLeft',
+    )
   })
 })

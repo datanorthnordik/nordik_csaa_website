@@ -319,6 +319,7 @@ const sampleHomePage = {
           main_header_text: 'Welcome to the CSAA newsletter',
           sub_header_text: 'Stories, updates, and shared moments from the community.',
           hierarchy: 'h1_hero',
+          text_align: 'left',
         },
       },
       {
@@ -453,6 +454,7 @@ const sampleChildPage = {
           main_header_text: 'Contact Us',
           sub_header_text: 'Reach the CSAA team for support and community questions.',
           hierarchy: 'h1_hero',
+          text_align: 'left',
         },
       },
     ],
@@ -830,6 +832,7 @@ describe('App', () => {
       }),
     ).toBeDefined()
     expect(listPublishedPressEntries).toHaveBeenCalled()
+    expect(getPressEntry).not.toHaveBeenCalled()
     expect(
       within(screen.getByRole('navigation')).getByRole('link', {
         name: /news & media/i,
