@@ -795,6 +795,7 @@ describe('App', () => {
       }),
     ).toBeDefined()
     expect(listPublishedNewsletters).toHaveBeenCalled()
+    expect(getNewsletter).not.toHaveBeenCalled()
     expect(
       within(screen.getByRole('navigation')).getByRole('link', {
         name: /news & media/i,
