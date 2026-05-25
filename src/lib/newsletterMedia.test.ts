@@ -89,7 +89,7 @@ describe('newsletterMedia', () => {
     expect(preview.fileTypeLabel).toBe('PDF')
   })
 
-  it('handles missing media collections without throwing', () => {
+  it('handles empty media collections without throwing', () => {
     const entry = {
       id: 18,
       title: 'Archive microsite',
@@ -101,7 +101,7 @@ describe('newsletterMedia', () => {
       publish_at: null,
       created_at: '',
       updated_at: '',
-      media: null,
+      media: [],
     } as Parameters<typeof resolveNewsletterPreview>[0]
 
     expect(resolveNewsletterPreview(entry).previewKind).toBe('placeholder')
@@ -260,6 +260,7 @@ describe('newsletterMedia', () => {
         '<p>Reflecting on reunion stories, oral histories, and new archive work.</p>',
       ),
     ).toMatch(/reflecting on reunion stories/i)
+
     expect(getNewsletterCategoryLabel('cst')).toBe('CST')
   })
 })
