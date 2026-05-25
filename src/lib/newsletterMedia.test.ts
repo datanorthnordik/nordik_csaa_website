@@ -89,6 +89,26 @@ describe('newsletterMedia', () => {
     expect(preview.fileTypeLabel).toBe('PDF')
   })
 
+  it('handles missing media collections without throwing', () => {
+    const entry = {
+      id: 18,
+      title: 'Archive microsite',
+      category: 'csaa',
+      send_date: '2024-03-02T00:00:00Z',
+      content_html: '<p>Archive edition overview.</p>',
+      status: 'published',
+      visibility: 'public',
+      publish_at: null,
+      created_at: '',
+      updated_at: '',
+      media: null,
+    } as Parameters<typeof resolveNewsletterPreview>[0]
+
+    expect(resolveNewsletterPreview(entry).previewKind).toBe('placeholder')
+    expect(resolveNewsletterFlipbook(entry)).toBeNull()
+    expect(resolveNewsletterDownload(entry)).toBeNull()
+  })
+
   it('resolves a pdf flipbook source when a pdf attachment exists', () => {
     const flipbook = resolveNewsletterFlipbook({
       id: 22,

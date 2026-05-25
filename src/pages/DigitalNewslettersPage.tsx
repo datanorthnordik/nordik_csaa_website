@@ -74,11 +74,12 @@ export function DigitalNewslettersPage() {
     }
 
     const preview = resolveNewsletterPreview(entry)
+    const media = Array.isArray(entry.media) ? entry.media : []
     const searchableParts = [
       entry.title,
       entry.category,
       preview.excerpt,
-      ...entry.media.map((item) => `${item.display_name} ${item.file_name}`),
+      ...media.map((item) => `${item.display_name} ${item.file_name}`),
     ]
 
     return searchableParts.some((value) => value.toLowerCase().includes(normalizedSearch))

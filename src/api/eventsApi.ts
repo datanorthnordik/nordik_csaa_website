@@ -49,19 +49,7 @@ export type EventOccurrence = {
   updated_at: string
 }
 
-export type EventListItem = {
-  id: number
-  title: string
-  categories: string[]
-  status: EventStatus
-  published: boolean
-  event_type: EventType
-  start_at: string
-  end_at?: string | null
-  date_display?: string
-  created_at: string
-  updated_at: string
-}
+export type EventListItem = EventDetailResponse
 
 export type EventListPageMeta = {
   page: number
@@ -93,6 +81,7 @@ export type EventDetailResponse = {
   title: string
   show_title: boolean
   categories: string[]
+  status?: EventStatus | string
   event_type: EventType
   start_at: string
   end_at?: string | null
@@ -132,7 +121,7 @@ export type EventDetailResponse = {
 }
 
 export type PublicEventListResponse = {
-  items: EventDetailResponse[]
+  items: EventListItem[]
   pagination: EventListPageMeta
 }
 
@@ -146,6 +135,7 @@ type PublicDateRangeQuery = {
   startDate: string
   endDate: string
   page?: number
+  pageSize?: number
 }
 
 function buildPublicListParams(
@@ -158,8 +148,13 @@ function buildPublicListParams(
   params.set('sort_by', 'start_at')
   params.set('sort_order', mode === 'upcoming' ? 'asc' : 'desc')
 
+  if (query.page) {
+    params.set('page', String(query.page))
+  }
+
   if (mode === 'upcoming') {
     params.set('start_date', query.referenceDate)
+    params.set('page_size', String(query.pageSize ?? 100))
   } else {
     params.set('end_date', query.referenceDate)
     params.set('page', String(query.page ?? 1))
@@ -180,79 +175,75 @@ function buildPublicDateRangeParams(query: PublicDateRangeQuery) {
   if (query.page) {
     params.set('page', String(query.page))
   }
+  params.set('page_size', String(query.pageSize ?? 100))
   return params
 }
 
-async function listDetailedEventsWithParams(params: URLSearchParams) {
+async function listPublicEventsWithParams(params: URLSearchParams) {
   const response = await apiClient.get<EventListResponse>(API_ROUTES.events, {
     params,
     skipAuth: true,
     skipErrorToast: true,
   })
 
-  const items = await Promise.all(
-    response.data.items.map((item) => eventsApi.getEvent(item.id)),
-  )
-
   return {
-    items,
+    items: response.data.items,
     pagination: response.data.pagination,
   } satisfies PublicEventListResponse
 }
 
-function listDetailedEvents(
-  mode: 'upcoming' | 'archive',
-  query: PublicListQuery,
+async function listAllPublicEvents(
+  buildParams: (page?: number) => URLSearchParams,
 ) {
-  return listDetailedEventsWithParams(buildPublicListParams(mode, query))
+  const firstPage = await listPublicEventsWithParams(buildParams())
+
+  if (firstPage.pagination.total_pages <= 1) {
+    return firstPage
+  }
+
+  const remainingPages = await Promise.all(
+    Array.from({ length: firstPage.pagination.total_pages - 1 }, (_, index) =>
+      listPublicEventsWithParams(buildParams(index + 2)),
+    ),
+  )
+
+  return {
+    items: [
+      ...firstPage.items,
+      ...remainingPages.flatMap((page) => page.items),
+    ],
+    pagination: firstPage.pagination,
+  } satisfies PublicEventListResponse
 }
 
 export const eventsApi = {
-  async listUpcomingEvents(referenceDate: string) {
-    return listDetailedEvents('upcoming', {
-      referenceDate,
-    })
+  async listUpcomingEvents(referenceDate: string, pageSize = 100) {
+    return listAllPublicEvents((page) =>
+      buildPublicListParams('upcoming', {
+        referenceDate,
+        page,
+        pageSize,
+      }),
+    )
   },
 
   async listArchivedEvents(referenceDate: string, page = 1, pageSize = 10) {
-    return listDetailedEvents('archive', {
+    return listPublicEventsWithParams(buildPublicListParams('archive', {
       referenceDate,
       page,
       pageSize,
-    })
+    }))
   },
 
-  async listEventsByDateRange(startDate: string, endDate: string) {
-    const firstPage = await listDetailedEventsWithParams(
+  async listEventsByDateRange(startDate: string, endDate: string, pageSize = 100) {
+    return listAllPublicEvents((page) =>
       buildPublicDateRangeParams({
         startDate,
         endDate,
+        page,
+        pageSize,
       }),
     )
-
-    if (firstPage.pagination.total_pages <= 1) {
-      return firstPage
-    }
-
-    const remainingPages = await Promise.all(
-      Array.from({ length: firstPage.pagination.total_pages - 1 }, (_, index) =>
-        listDetailedEventsWithParams(
-          buildPublicDateRangeParams({
-            startDate,
-            endDate,
-            page: index + 2,
-          }),
-        ),
-      ),
-    )
-
-    return {
-      items: [
-        ...firstPage.items,
-        ...remainingPages.flatMap((page) => page.items),
-      ],
-      pagination: firstPage.pagination,
-    } satisfies PublicEventListResponse
   },
 
   async getEvent(id: number) {

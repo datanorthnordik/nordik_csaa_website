@@ -19,9 +19,15 @@ export type PressSummaryItem = {
   id: number
   title: string
   release_date: string
+  category_id: number | null
+  source_url: string
+  content_html: string
   status: 'draft' | 'published' | 'archived' | string
   visibility: 'public' | 'private' | 'scheduled' | string
   cover_image_url: string
+  cover_image_gcp_key: string
+  publish_at: string | null
+  media: PressMediaResponse[]
   created_at: string
   updated_at: string
 }
@@ -34,14 +40,7 @@ export type PressListResponse = {
   total_pages: number
 }
 
-export type PressDetailResponse = PressSummaryItem & {
-  category_id: number | null
-  source_url: string
-  content_html: string
-  cover_image_gcp_key: string
-  publish_at: string | null
-  media: PressMediaResponse[]
-}
+export type PressDetailResponse = PressSummaryItem
 
 const publicPressParams = {
   status: 'published',
@@ -90,11 +89,9 @@ export const pressApi = {
           )
         : []
 
-    const summaries = [
+    return [
       ...firstPage.items,
       ...remainingPages.flatMap((page) => page.items),
     ]
-
-    return Promise.all(summaries.map((item) => pressApi.getPressEntry(item.id)))
   },
 }

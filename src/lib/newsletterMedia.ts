@@ -138,10 +138,16 @@ export function extractNewsletterExcerpt(contentHtml: string, maxLength = 180) {
   return `${text.slice(0, maxLength).trimEnd()}...`
 }
 
-export function resolveNewsletterPreview(entry: NewsletterDetailResponse): NewsletterResolvedPreview {
-  const media = [...entry.media].sort(
+function getSortedNewsletterMedia(entry: Pick<NewsletterDetailResponse, 'media'>) {
+  const mediaList = Array.isArray(entry.media) ? entry.media : []
+
+  return [...mediaList].sort(
     (left, right) => left.sort_order - right.sort_order || left.id - right.id,
   )
+}
+
+export function resolveNewsletterPreview(entry: NewsletterDetailResponse): NewsletterResolvedPreview {
+  const media = getSortedNewsletterMedia(entry)
   const displayImage = media.find((item) => isImageNewsletterMedia(item)) ?? null
   const previewMedia =
     media.find((item) => !isImageNewsletterMedia(item) && canPreviewNewsletterMedia(item)) ??
@@ -178,9 +184,7 @@ export function resolveNewsletterPreview(entry: NewsletterDetailResponse): Newsl
 }
 
 export function resolveNewsletterFlipbook(entry: NewsletterDetailResponse): NewsletterFlipbookSource | null {
-  const media = [...entry.media].sort(
-    (left, right) => left.sort_order - right.sort_order || left.id - right.id,
-  )
+  const media = getSortedNewsletterMedia(entry)
   const pdfMedia = media.find((item) => isPdfNewsletterMedia(item))
 
   if (pdfMedia) {
@@ -210,9 +214,7 @@ export function resolveNewsletterFlipbook(entry: NewsletterDetailResponse): News
 export function resolveNewsletterDownload(
   entry: NewsletterDetailResponse,
 ): NewsletterDownloadTarget | null {
-  const media = [...entry.media].sort(
-    (left, right) => left.sort_order - right.sort_order || left.id - right.id,
-  )
+  const media = getSortedNewsletterMedia(entry)
   const preferredMedia = media.find((item) => isPdfNewsletterMedia(item)) ?? media[0] ?? null
 
   if (!preferredMedia) {

@@ -15,7 +15,7 @@ describe('pressApi', () => {
     apiGet.mockReset()
   })
 
-  it('fetches all published public press entries and hydrates details', async () => {
+  it('fetches all published public press entries from the list API only', async () => {
     apiGet.mockImplementation(async (url, config) => {
       if (url === '/api/press') {
         expect(config?.skipAuth).toBe(true)
@@ -29,9 +29,15 @@ describe('pressApi', () => {
                   id: 2,
                   title: 'Winter Coverage',
                   release_date: '2025-12-08T00:00:00Z',
+                  category_id: null,
+                  source_url: '',
+                  content_html: '<p>Archive story.</p>',
                   status: 'published',
                   visibility: 'public',
                   cover_image_url: '',
+                  cover_image_gcp_key: '',
+                  publish_at: null,
+                  media: [],
                   created_at: '',
                   updated_at: '',
                 },
@@ -60,9 +66,15 @@ describe('pressApi', () => {
                 id: 1,
                 title: 'Community Press Release',
                 release_date: '2026-05-01T00:00:00Z',
+                category_id: null,
+                source_url: 'https://example.com/source-one',
+                content_html: '<p>Feature story.</p>',
                 status: 'published',
                 visibility: 'public',
                 cover_image_url: '',
+                cover_image_gcp_key: '',
+                publish_at: null,
+                media: [],
                 created_at: '',
                 updated_at: '',
               },
@@ -75,42 +87,7 @@ describe('pressApi', () => {
         }
       }
 
-      return {
-        data:
-          url === '/api/press/1'
-            ? {
-                id: 1,
-                title: 'Community Press Release',
-                release_date: '2026-05-01T00:00:00Z',
-                category_id: null,
-                source_url: 'https://example.com/source-one',
-                content_html: '<p>Feature story.</p>',
-                status: 'published',
-                visibility: 'public',
-                cover_image_url: '',
-                cover_image_gcp_key: '',
-                publish_at: null,
-                media: [],
-                created_at: '',
-                updated_at: '',
-              }
-            : {
-                id: 2,
-                title: 'Winter Coverage',
-                release_date: '2025-12-08T00:00:00Z',
-                category_id: null,
-                source_url: '',
-                content_html: '<p>Archive story.</p>',
-                status: 'published',
-                visibility: 'public',
-                cover_image_url: '',
-                cover_image_gcp_key: '',
-                publish_at: null,
-                media: [],
-                created_at: '',
-                updated_at: '',
-              },
-      }
+      throw new Error(`unexpected request: ${String(url)}`)
     })
 
     const response = await pressApi.listPublishedPressEntries()
@@ -119,13 +96,6 @@ describe('pressApi', () => {
       'Community Press Release',
       'Winter Coverage',
     ])
-    expect(apiGet).toHaveBeenCalledWith('/api/press/1', {
-      skipAuth: true,
-      skipErrorToast: true,
-    })
-    expect(apiGet).toHaveBeenCalledWith('/api/press/2', {
-      skipAuth: true,
-      skipErrorToast: true,
-    })
+    expect(apiGet).toHaveBeenCalledTimes(2)
   })
 })

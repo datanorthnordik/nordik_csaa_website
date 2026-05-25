@@ -13,6 +13,7 @@ export type PageHeaderSection = {
   main_header_text: string
   sub_header_text: string
   hierarchy: 'h1_hero' | 'h2_section' | string
+  text_align?: 'left' | 'center' | 'right' | string
 }
 
 export type PageTypographySection = {

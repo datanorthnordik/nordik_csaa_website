@@ -168,4 +168,27 @@ describe('DigitalNewslettersPage', () => {
       await screen.findByText(/we could not load digital newsletters right now\./i),
     ).toBeDefined()
   })
+
+  it('renders safely when a newsletter arrives without a media array', async () => {
+    listPublishedNewsletters.mockResolvedValue([
+      {
+        ...sampleEntries[0],
+        media: undefined,
+      },
+    ])
+
+    renderPage()
+
+    await screen.findByRole('heading', { name: /digital newsletters/i })
+
+    fireEvent.change(screen.getByRole('searchbox', { name: /search newsletters/i }), {
+      target: { value: 'community' },
+    })
+
+    expect(
+      screen.getAllByRole('link', {
+        name: /read community reunion highlights details/i,
+      }).length,
+    ).toBeGreaterThan(0)
+  })
 })

@@ -20,8 +20,11 @@ export type NewsletterSummaryItem = {
   title: string
   category: string
   send_date: string
+  content_html: string
   status: 'draft' | 'published' | string
   visibility: 'public' | 'private' | string
+  publish_at: string | null
+  media: NewsletterMediaResponse[]
   created_at: string
   updated_at: string
 }
@@ -34,10 +37,13 @@ export type NewsletterListResponse = {
   total_pages: number
 }
 
-export type NewsletterDetailResponse = NewsletterSummaryItem & {
-  content_html: string
-  publish_at: string | null
-  media: NewsletterMediaResponse[]
+export type NewsletterDetailResponse = NewsletterSummaryItem
+
+function normalizeNewsletterItem(item: NewsletterSummaryItem): NewsletterSummaryItem {
+  return {
+    ...item,
+    media: Array.isArray(item.media) ? item.media : [],
+  }
 }
 
 const publicNewsletterParams = {
@@ -71,7 +77,7 @@ export const newslettersApi = {
       },
     )
 
-    return response.data
+    return normalizeNewsletterItem(response.data)
   },
 
   async listPublishedNewsletters(pageSize = 100) {
@@ -90,11 +96,9 @@ export const newslettersApi = {
           )
         : []
 
-    const summaries = [
+    return [
       ...firstPage.items,
       ...remainingPages.flatMap((page) => page.items),
-    ]
-
-    return Promise.all(summaries.map((item) => newslettersApi.getNewsletter(item.id)))
+    ].map(normalizeNewsletterItem)
   },
 }

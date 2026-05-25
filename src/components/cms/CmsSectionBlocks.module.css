@@ -60,10 +60,12 @@
 
 .heroTitle {
   margin: 0;
-  max-width: 11.5ch;
+  width: 100%;
+  max-width: 100%;
   font-size: clamp(3rem, 6vw, 4.9rem);
   line-height: 1.02;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 
 .heroSummary,
@@ -76,7 +78,7 @@
 }
 
 .heroSummary {
-  max-width: 40rem;
+  width: min(100%, 40rem);
   margin: 0;
   font-size: clamp(1.18rem, 2.1vw, 1.42rem);
   line-height: 1.5;
@@ -117,17 +119,21 @@
 
 .sectionTitle {
   margin: 14px 0 8px;
+  width: 100%;
+  max-width: 100%;
   font-size: clamp(2rem, 3.5vw, 3rem);
   line-height: 1.02;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 
 .sectionSummary {
-  max-width: 40rem;
+  width: min(100%, 40rem);
   margin: 0;
   font-size: clamp(1.08rem, 1.7vw, 1.24rem);
   line-height: 1.55;
   font-weight: 500;
+  overflow-wrap: anywhere;
 }
 
 .typographyCard {
@@ -144,6 +150,29 @@
 
 .alignRight {
   text-align: right;
+}
+
+.heroCopy.alignLeft .eyebrow,
+.heroCopy.alignLeft .heroSummary {
+  justify-self: start;
+}
+
+.heroCopy.alignCenter .eyebrow,
+.heroCopy.alignCenter .heroSummary {
+  justify-self: center;
+}
+
+.heroCopy.alignRight .eyebrow,
+.heroCopy.alignRight .heroSummary {
+  justify-self: end;
+}
+
+.simpleHeaderCard.alignCenter .sectionSummary {
+  margin-inline: auto;
+}
+
+.simpleHeaderCard.alignRight .sectionSummary {
+  margin-left: auto;
 }
 
 .richText,
