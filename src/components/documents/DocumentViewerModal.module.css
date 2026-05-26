@@ -1,0 +1,89 @@
+.viewerOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(12, 14, 18, 0.72);
+}
+
+.viewerPanel {
+  width: min(980px, 100%);
+  max-height: calc(100vh - 48px);
+  display: grid;
+  gap: 14px;
+  border-radius: 8px;
+  background: var(--color-surface);
+  padding: 16px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+}
+
+.viewerHeader,
+.viewerControls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.viewerHeader strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viewerHeader button,
+.viewerControls button {
+  min-height: 38px;
+  border: 0;
+  border-radius: 3px;
+  padding: 0 14px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.viewerHeader button:focus-visible,
+.viewerControls button:focus-visible {
+  outline: 3px solid rgba(122, 31, 36, 0.24);
+  outline-offset: 3px;
+}
+
+.viewerStage {
+  min-height: 360px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--color-surface-alt);
+}
+
+.viewerStage img {
+  max-width: 100%;
+  max-height: 70vh;
+  display: block;
+  object-fit: contain;
+}
+
+.viewerStage iframe {
+  width: 100%;
+  min-height: 70vh;
+  border: 0;
+  background: var(--color-surface);
+}
+
+.viewerControls {
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .viewerOverlay {
+    padding: 12px;
+  }
+
+  .viewerStage {
+    min-height: 260px;
+  }
+}
