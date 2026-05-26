@@ -218,6 +218,45 @@
       "action": "Plant a Flower"
     }
   },
+  "healingMemorials": {
+    "hero": {
+      "title": "Healing & Memorials",
+      "description": "We honor the resilience and spirit of the Children of Shingwauk. This sacred space is dedicated to healing, remembrance, and the enduring legacy of our Alumni. Through shared stories and hallowed grounds, we walk together on the path toward reconciliation.",
+      "cta": "Explore Memorials"
+    },
+    "pillars": {
+      "label": "Community pillars",
+      "eyebrow": "Our Path Forward",
+      "title": "Community Pillars",
+      "learnMore": "Learn More",
+      "inMemorial": {
+        "title": "In Memorial",
+        "description": "Honoring the memory of those we have lost. This dedicated space provides a permanent tribute for families and the community to share remembrance and stories of loved ones."
+      },
+      "exhibition": {
+        "title": "Shingwauk Hall Exhibition",
+        "description": "Explore the physical and virtual exhibition documenting the lived experiences and historical reality of Shingwauk Hall and its students."
+      },
+      "everyChild": {
+        "title": "Every Child Matters",
+        "description": "Join the movement for truth and reconciliation. Understanding the profound impact of the residential school system on generations of indigenous families."
+      },
+      "cryingRock": {
+        "title": "Crying Rock",
+        "description": "Discover the spiritual significance of the Crying Rock, a place of historical reflection and deep connection for the Shingwauk community."
+      },
+      "wawnosh": {
+        "title": "Wawanosh Memorial Project",
+        "description": "Honouring the legacy of the Wawanosh Indian Residential School. This project preserves the stories, names, and memories of those whose lives were shaped by this institution."
+      }
+    },
+    "support": {
+      "title": "Support Our Healing Journey",
+      "description": "The Children of Shingwauk Alumni Association relies on your support to maintain these memorials and continue our archival work.",
+      "donate": "Donate Today",
+      "join": "Join the Association"
+    }
+  },
   "newsMediaPage": {
     "hero": {
       "title": "News & Media",
