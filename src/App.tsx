@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { NavigationMenuProvider, useNavigationMenu } from './components/NavigationMenuProvider'
+import { ScrollToTop } from './components/ScrollToTop'
 import { SiteShell } from './components/SiteShell'
 import { EventCalendarPage } from './pages/EventCalendarPage'
 import { CmsPage } from './pages/CmsPage'
@@ -17,6 +18,7 @@ import { getInitialMenuHref } from './lib/navigationMenu'
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <NavigationMenuProvider>
         <Routes>
           <Route element={<SiteShell />}>

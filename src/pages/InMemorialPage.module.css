@@ -60,7 +60,7 @@
   font-family: 'Montserrat', sans-serif;
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
   color: rgba(27, 28, 28, 0.9);
   line-height: 1.2;
   margin-bottom: 4px;
@@ -71,7 +71,7 @@
   font-family: 'Montserrat', sans-serif;
   font-style: normal;
   font-weight: 700;
-  font-size: clamp(5rem, 13vw, 10rem);
+  font-size: clamp(3rem, 7vw, 5.5rem);
   color: #1b1c1c;
   letter-spacing: 0.1em;
   line-height: 1;

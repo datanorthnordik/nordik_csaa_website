@@ -1,6 +1,11 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import heroImage from '../assets/hero.png'
+import healingHero from '../assets/healing hero section.jpg'
+import shingwaukHallImg from '../assets/shingwaukhall-hero.jpg'
+import everyChildImg from '../assets/every-child-matters-hero.jpg'
+import wawnoshImg from '../assets/wawnosh-hero-section.jpg'
+import cryingRockImg from '../assets/cryingrock-hero.png'
+import watercolorMeadow from '../assets/watercolor_meadow.png'
 import styles from './HealingMemorialsPage.module.css'
 
 /* ─── Wave SVG divider ─── */
@@ -26,6 +31,7 @@ function WaveDivider({ fill }: { fill: string }) {
 type Pillar = {
   key: string
   href: string
+  imageSrc?: string
   gradient: string
 }
 
@@ -33,22 +39,32 @@ const PILLARS: Pillar[] = [
   {
     key: 'inMemorial',
     href: '/our-story/healing-memorials/in-memorial',
+    imageSrc: watercolorMeadow,
     gradient: 'linear-gradient(160deg, #2a2018 0%, #3e2e20 50%, #1a1510 100%)',
   },
   {
     key: 'exhibition',
     href: '/our-story/healing-memorials/shingwauk-hall-exhibition',
+    imageSrc: shingwaukHallImg,
     gradient: 'linear-gradient(160deg, #c8b89a 0%, #9a8870 40%, #5a4838 100%)',
   },
   {
     key: 'everyChild',
     href: '/our-story/healing-memorials/every-child-matters',
+    imageSrc: everyChildImg,
     gradient: 'linear-gradient(160deg, #c84800 0%, #a03810 50%, #6a2808 100%)',
   },
   {
     key: 'cryingRock',
     href: '/our-story/healing-memorials/crying-rock',
+    imageSrc: cryingRockImg,
     gradient: 'linear-gradient(160deg, #1a3018 0%, #2a4828 50%, #0a1808 100%)',
+  },
+  {
+    key: 'wawnosh',
+    href: '/our-story/healing-memorials/wawanosh-memorial-project',
+    imageSrc: wawnoshImg,
+    gradient: 'linear-gradient(160deg, #1a2830 0%, #2a3840 50%, #0a1820 100%)',
   },
 ]
 
@@ -63,7 +79,7 @@ export function HealingMemorialsPage() {
       <section className={styles.hero}>
         <div
           className={styles.heroImage}
-          style={{ backgroundImage: `url(${heroImage})` }}
+          style={{ backgroundImage: `url(${healingHero})` }}
           aria-hidden="true"
         />
         <div className={styles.heroOverlay} aria-hidden="true" />
@@ -71,7 +87,7 @@ export function HealingMemorialsPage() {
           <h1 className={styles.heroTitle}>{t('healingMemorials.hero.title')}</h1>
           <p className={styles.heroDescription}>{t('healingMemorials.hero.description')}</p>
           <a href="#pillars" className={styles.heroCta}>
-            {t('healingMemorials.hero.cta')} ↓
+            {t('healingMemorials.hero.cta')}
           </a>
         </div>
         <WaveDivider fill="#ffffff" />
@@ -85,12 +101,13 @@ export function HealingMemorialsPage() {
           <div className={styles.pillarsRule} aria-hidden="true" />
         </div>
         <div className={styles.pillarsGrid}>
-          {PILLARS.map(({ key, href, gradient }) => (
+          {PILLARS.map(({ key, href, imageSrc, gradient }) => (
             <PillarCard
               key={key}
               title={t(`healingMemorials.pillars.${key}.title`)}
               description={t(`healingMemorials.pillars.${key}.description`)}
               href={href}
+              imageSrc={imageSrc}
               gradient={gradient}
               learnMore={t('healingMemorials.pillars.learnMore')}
             />
@@ -121,15 +138,20 @@ type PillarCardProps = {
   title: string
   description: string
   href: string
+  imageSrc?: string
   gradient: string
   learnMore: string
 }
 
-function PillarCard({ title, description, href, gradient, learnMore }: PillarCardProps) {
+function PillarCard({ title, description, href, imageSrc, gradient, learnMore }: PillarCardProps) {
   return (
     <article className={styles.pillarCard}>
       <Link to={href} className={styles.cardImageLink} tabIndex={-1} aria-hidden="true">
-        <div className={styles.cardImage} style={{ background: gradient }} />
+        {imageSrc ? (
+          <img src={imageSrc} alt="" className={styles.cardImage} />
+        ) : (
+          <div className={styles.cardImagePlaceholder} style={{ background: gradient }} />
+        )}
       </Link>
       <div className={styles.cardBody}>
         <h3 className={styles.cardTitle}>
