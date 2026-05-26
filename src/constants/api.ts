@@ -31,4 +31,16 @@ export const API_ROUTES = {
   newsletterById: (id: number | string) => `/api/newsletters/${id}`,
   newsletterMediaById: (id: number | string, mediaId: number | string) =>
     `/api/newsletters/${id}/media/${mediaId}/content`,
+<<<<<<< HEAD
+=======
+  memorials: '/api/memorial',
+  memorialById: (id: number | string) => `/api/memorial/${id}`,
+  memorialPortraitById: (id: number | string) =>
+    `/api/memorial/${id}/portrait/content`,
+  memorialGalleryImageById: (id: number | string, mediaId: number | string) =>
+    `/api/memorial/${id}/gallery/${mediaId}/content`,
+  resources: '/api/resources',
+  resourceById: (id: number | string) => `/api/resources/${id}`,
+  resourceContentById: (id: number | string) => `/api/resources/${id}/content`,
+>>>>>>> 0a5998ba9cd949fd00bda62d064ec0b480e53f0c
 } as const

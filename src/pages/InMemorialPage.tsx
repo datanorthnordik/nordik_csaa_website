@@ -1,48 +1,24 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { useTranslation } from 'react-i18next'
+import {
+  publicMemorialsApi,
+  type PublicMemorialEntry,
+} from '../api/memorialsApi'
 import memorialFlower from '../assets/memorial_flower.png'
 import watercolorMeadow from '../assets/watercolor_meadow.png'
 import styles from './InMemorialPage.module.css'
 
+<<<<<<< HEAD
 type MemorialEntry = {
+=======
+const MEMORIAL_PAGE_SIZE = 100
+
+type Story = {
+>>>>>>> 0a5998ba9cd949fd00bda62d064ec0b480e53f0c
   id: number
-  name: string
-  years: string
-  hasPhoto: boolean
-  gradient?: string
+  quote: string
+  attribution: string
 }
-
-const MEMORIAL_ENTRIES: MemorialEntry[] = [
-  {
-    id: 1,
-    name: 'Agnes Wabano',
-    years: '1934 – 2021',
-    hasPhoto: true,
-    gradient: 'linear-gradient(170deg, #8a8078 0%, #3e3830 55%, #2a2420 100%)',
-  },
-  {
-    id: 2,
-    name: 'Samuel Grey',
-    years: '1941 – 2023',
-    hasPhoto: false,
-  },
-  {
-    id: 3,
-    name: 'David Kee',
-    years: '1945 – 2022',
-    hasPhoto: true,
-    gradient: 'linear-gradient(160deg, #707870 0%, #303830 55%, #202820 100%)',
-  },
-  {
-    id: 4,
-    name: 'Mary Pine',
-    years: '1938 – 2020',
-    hasPhoto: true,
-    gradient: 'linear-gradient(170deg, #787080 0%, #302838 55%, #201820 100%)',
-  },
-]
-
-type Story = { id: number; quote: string; attribution: string }
 
 const STORIES: Story[] = [
   {
@@ -60,20 +36,30 @@ const STORIES: Story[] = [
 ]
 
 const FLOWER_COLORS = [
-  '#e57373', '#f06292', '#ba68c8', '#7986cb',
-  '#4db6ac', '#81c784', '#ffb74d', '#ff8a65',
-  '#a1887f', '#90a4ae',
+  '#e57373',
+  '#f06292',
+  '#ba68c8',
+  '#7986cb',
+  '#4db6ac',
+  '#81c784',
+  '#ffb74d',
+  '#ff8a65',
+  '#a1887f',
+  '#90a4ae',
 ]
+
+type Particle = {
+  id: number
+  drift: number
+  color: string
+}
+
+const WAVE_PATH =
+  'M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C58.47,100.8,118.42,100.34,176.49,90.47,227,81.86,276.54,64.74,321.39,56.44Z'
 
 function randomFlowerColor() {
   return FLOWER_COLORS[Math.floor(Math.random() * FLOWER_COLORS.length)]
 }
-
-type Particle = { id: number; drift: number; color: string }
-
-/* ─── Wave SVG divider ─── */
-const WAVE_PATH =
-  'M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C58.47,100.8,118.42,100.34,176.49,90.47,227,81.86,276.54,64.74,321.39,56.44Z'
 
 function WaveDivider({ fill, flip = false }: { fill: string; flip?: boolean }) {
   return (
@@ -91,26 +77,69 @@ function WaveDivider({ fill, flip = false }: { fill: string; flip?: boolean }) {
   )
 }
 
-/* ─── Page ─── */
 export function InMemorialPage() {
   const { t } = useTranslation()
+<<<<<<< HEAD
   const [particles, setParticles] = useState<Particle[]>([])
   const nextId = useRef(0)
 
+=======
+  const [entries, setEntries] = useState<PublicMemorialEntry[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [particles, setParticles] = useState<Particle[]>([])
+  const nextId = useRef(0)
+
+  useEffect(() => {
+    let ignore = false
+
+    async function loadMemorials() {
+      setIsLoading(true)
+      setError(null)
+
+      try {
+        const response = await publicMemorialsApi.listMemorials({
+          page: 1,
+          pageSize: MEMORIAL_PAGE_SIZE,
+          sortBy: 'date_of_passing',
+          sortOrder: 'desc',
+        })
+
+        if (!ignore) {
+          setEntries(response.items)
+        }
+      } catch (loadError) {
+        if (!ignore) {
+          setEntries([])
+          setError(getErrorMessage(loadError))
+        }
+      } finally {
+        if (!ignore) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    void loadMemorials()
+
+    return () => {
+      ignore = true
+    }
+  }, [])
+
+>>>>>>> 0a5998ba9cd949fd00bda62d064ec0b480e53f0c
   function handlePlantFlower() {
     const id = ++nextId.current
     const drift = Math.round(Math.random() * 80 - 40)
     const color = randomFlowerColor()
-    setParticles((prev) => [...prev, { id, drift, color }])
-    setTimeout(() => {
-      setParticles((prev) => prev.filter((p) => p.id !== id))
+    setParticles((current) => [...current, { id, drift, color }])
+    window.setTimeout(() => {
+      setParticles((current) => current.filter((particle) => particle.id !== id))
     }, 1500)
   }
 
   return (
     <div className={styles.page}>
-
-      {/* ── Hero ── */}
       <section className={styles.hero}>
         <div className={styles.heroContent}>
           <span className={styles.heroInLoving}>{t('inMemorial.hero.inLoving')}</span>
@@ -125,16 +154,33 @@ export function InMemorialPage() {
         <WaveDivider fill="#f2f5f4" />
       </section>
 
-      {/* ── Gallery ── */}
       <section className={styles.gallerySection} aria-label={t('inMemorial.gallery.label')}>
-        <div className={styles.galleryGrid}>
-          {MEMORIAL_ENTRIES.map((entry) => (
-            <MemorialCard key={entry.id} entry={entry} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className={styles.galleryGrid} aria-label="Loading memorial portraits">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <article key={index} className={styles.skeletonCard} aria-hidden="true">
+                <div className={styles.skeletonPhoto} />
+                <div className={styles.skeletonOverlay} />
+              </article>
+            ))}
+          </div>
+        ) : error ? (
+          <div className={styles.galleryState}>
+            <p className={styles.galleryNotice}>{error}</p>
+          </div>
+        ) : entries.length ? (
+          <div className={styles.galleryGrid}>
+            {entries.map((entry) => (
+              <MemorialCard key={entry.id} entry={entry} />
+            ))}
+          </div>
+        ) : (
+          <div className={styles.galleryState}>
+            <p className={styles.galleryNotice}>Memorial portraits will appear here soon.</p>
+          </div>
+        )}
       </section>
 
-      {/* ── Stories of Resilience ── */}
       <section className={styles.storiesSection}>
         <WaveDivider fill="#f6f3f2" flip />
         <div className={styles.storiesInner}>
@@ -145,10 +191,12 @@ export function InMemorialPage() {
           <div className={styles.quoteList}>
             {STORIES.map((story) => (
               <div key={story.id} className={styles.quoteBlock}>
-                <span className={styles.quoteMark} aria-hidden="true">"</span>
+                <span className={styles.quoteMark} aria-hidden="true">
+                  "
+                </span>
                 <blockquote className={styles.quote}>
                   <p className={styles.quoteText}>{story.quote}</p>
-                  <footer className={styles.quoteAttribution}>— {story.attribution}</footer>
+                  <footer className={styles.quoteAttribution}>- {story.attribution}</footer>
                 </blockquote>
               </div>
             ))}
@@ -157,7 +205,6 @@ export function InMemorialPage() {
         <WaveDivider fill="#f2f5f4" />
       </section>
 
-      {/* ── Remembrance Garden ── */}
       <section className={styles.gardenSection}>
         <div className={styles.gardenCard}>
           <h2 className={styles.gardenTitle}>{t('inMemorial.garden.title')}</h2>
@@ -165,14 +212,19 @@ export function InMemorialPage() {
             <img src={watercolorMeadow} alt="" className={styles.meadowImage} />
           </div>
           <div className={styles.gardenAction}>
-            {particles.map((p) => (
+            {particles.map((particle) => (
               <span
-                key={p.id}
+                key={particle.id}
                 className={styles.floatingFlower}
-                style={{ '--drift': `${p.drift}px`, '--flower-color': p.color } as React.CSSProperties}
+                style={
+                  {
+                    '--drift': `${particle.drift}px`,
+                    '--flower-color': particle.color,
+                  } as CSSProperties
+                }
                 aria-hidden="true"
               >
-                ✿
+                *
               </span>
             ))}
             <button type="button" className={styles.plantButton} onClick={handlePlantFlower}>
@@ -181,19 +233,22 @@ export function InMemorialPage() {
           </div>
         </div>
       </section>
-
     </div>
   )
 }
 
-/* ─── Memorial Card ─── */
-function MemorialCard({ entry }: { entry: MemorialEntry }) {
+function MemorialCard({ entry }: { entry: PublicMemorialEntry }) {
+  const yearsLabel = getMemorialYearsLabel(entry)
+  const portraitUrl = entry.portraitContentUrl.trim()
+
   return (
     <article className={styles.memorialCard}>
-      {entry.hasPhoto ? (
-        <div
+      {portraitUrl ? (
+        <img
+          src={portraitUrl}
+          alt={entry.fullName}
           className={styles.cardPhoto}
-          style={{ background: entry.gradient }}
+          loading="lazy"
         />
       ) : (
         <div className={styles.cardPlaceholder}>
@@ -201,11 +256,37 @@ function MemorialCard({ entry }: { entry: MemorialEntry }) {
         </div>
       )}
       <div className={styles.cardOverlay}>
-        <h3 className={styles.cardName}>{entry.name}</h3>
-        <p className={styles.cardYears}>{entry.years}</p>
+        <h3 className={styles.cardName}>{entry.fullName}</h3>
+        {yearsLabel ? <p className={styles.cardYears}>{yearsLabel}</p> : null}
       </div>
     </article>
   )
+}
+
+function getMemorialYearsLabel(entry: Pick<PublicMemorialEntry, 'dateOfBirth' | 'dateOfPassing'>) {
+  const birthYear = getYear(entry.dateOfBirth)
+  const passingYear = getYear(entry.dateOfPassing)
+
+  if (birthYear && passingYear) {
+    return `${birthYear} - ${passingYear}`
+  }
+
+  return passingYear || birthYear
+}
+
+function getYear(value: string) {
+  const trimmed = value.trim()
+  if (!trimmed) {
+    return ''
+  }
+
+  return trimmed.slice(0, 4)
+}
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error
+    ? error.message
+    : 'We could not load memorial portraits right now.'
 }
 
 function ParkIcon() {

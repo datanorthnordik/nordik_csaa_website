@@ -111,10 +111,11 @@ export function CmsPage() {
     renderableSections.find(
       (section) => section.section_type === 'header' && section.header,
     )?.id ?? null
+  const hasRenderableHeader = firstHeaderId !== null
 
   return (
     <div className={styles.page}>
-      {renderableSections.length === 0 ? <CmsFallbackHero page={page} /> : null}
+      {!hasRenderableHeader ? <CmsFallbackHero page={page} /> : null}
 
       <div className={styles.sections}>
         {renderableSections.map((section) => (

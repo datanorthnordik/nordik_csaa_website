@@ -14,6 +14,10 @@ import { NewsMediaLandingPage } from './pages/NewsMediaLandingPage'
 import { PressArchiveDetailPage } from './pages/PressArchiveDetailPage'
 import { PressArchivePage } from './pages/PressArchivePage'
 import { getInitialMenuHref } from './lib/navigationMenu'
+<<<<<<< HEAD
+=======
+import { CommunityResourcesPage } from './pages/ResourcesPage'
+>>>>>>> 0a5998ba9cd949fd00bda62d064ec0b480e53f0c
 
 function App() {
   return (
@@ -45,6 +49,12 @@ function App() {
               path="/news-media/press-archive"
               element={<PressArchivePage />}
             />
+<<<<<<< HEAD
+=======
+            <Route
+              path="/community-support-team/resources"
+              element={<CommunityResourcesPage />} />
+>>>>>>> 0a5998ba9cd949fd00bda62d064ec0b480e53f0c
             <Route path="*" element={<CmsPage />} />
           </Route>
         </Routes>
