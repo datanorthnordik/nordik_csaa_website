@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
-import type { KeyboardEvent } from 'react'
 import cstLogo from '../assets/community-support-team-logo.png'
 import {
   publicResourcesApi,
   type PublicResourceCategory,
   type PublicResourceEntry,
   type PublicResourceListPageMeta,
+  resolvePublicResourceContentUrl,
 } from '../api/resourcesApi'
+import { DocumentViewerModal } from '../components/documents/DocumentViewerModal'
 import { downloadPublicFile } from '../lib/fileDownload'
 import styles from './ResourcesPage.module.css'
 
@@ -186,9 +187,30 @@ export function CommunityResourcesPage() {
       </section>
 
       {selectedDocument ? (
-        <ResourceDocumentModal
-          resource={selectedDocument}
+        <DocumentViewerModal
+          title={selectedDocument.name}
+          previewUrl={resolvePublicResourceContentUrl({
+            id: selectedDocument.id,
+            contentUrl: selectedDocument.contentUrl,
+          })}
+          mimeType={selectedDocument.mimeType}
           onClose={() => setSelectedDocument(null)}
+          controls={
+            <button
+              type="button"
+              onClick={() =>
+                downloadPublicFile(
+                  resolvePublicResourceContentUrl({
+                    id: selectedDocument.id,
+                    contentUrl: selectedDocument.contentUrl,
+                  }),
+                  getResourceFileName(selectedDocument),
+                )
+              }
+            >
+              Download document
+            </button>
+          }
         />
       ) : null}
     </main>
@@ -242,99 +264,6 @@ function ResourceCard({ resource, onOpenDocument }: ResourceCardProps) {
   )
 }
 
-type ResourceDocumentModalProps = {
-  resource: PublicResourceEntry
-  onClose: () => void
-}
-
-function ResourceDocumentModal({ resource, onClose }: ResourceDocumentModalProps) {
-  const documentUrl = resource.contentUrl || `/api/resources/${resource.id}/content`
-  const fileName = resource.fileName || `${resource.name}.pdf`
-  const isImage = isImageDocument(resource)
-  const canPreview = isImage || isPdfDocument(resource)
-
-  useEffect(() => {
-    function handleKeyDown(event: globalThis.KeyboardEvent) {
-      if (event.key === 'Escape') {
-        onClose()
-      }
-    }
-
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    window.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.body.style.overflow = previousOverflow
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [onClose])
-
-  function handleOverlayKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-    if (event.key === 'Enter' || event.key === ' ') {
-      onClose()
-    }
-  }
-
-  return (
-    <div
-      className={styles.viewerOverlay}
-      role="presentation"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) {
-          onClose()
-        }
-      }}
-      onKeyDown={handleOverlayKeyDown}
-    >
-      <section
-        className={styles.viewerPanel}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="resource-viewer-title"
-        aria-describedby="resource-viewer-description"
-      >
-        <div className={styles.viewerHeader}>
-          <div>
-            <p className={styles.viewerEyebrow}>{resource.categoryLabel}</p>
-            <strong id="resource-viewer-title">{resource.name}</strong>
-          </div>
-          <button type="button" onClick={onClose} aria-label="Close resource viewer">
-            Close
-          </button>
-        </div>
-
-        <p id="resource-viewer-description" className={styles.viewerDescription}>
-          {resource.description}
-        </p>
-
-        <div className={styles.viewerStage}>
-          {isImage ? (
-            <img src={documentUrl} alt={resource.name} />
-          ) : canPreview ? (
-            <iframe title={resource.name} src={documentUrl} />
-          ) : (
-            <div className={styles.previewUnavailable}>
-              <DocumentIcon />
-              <h3>Preview unavailable</h3>
-              <p>This file type may need to be downloaded to view.</p>
-            </div>
-          )}
-        </div>
-
-        <div className={styles.viewerControls}>
-          <button
-            type="button"
-            onClick={() => downloadPublicFile(documentUrl, fileName)}
-          >
-            Download document
-          </button>
-        </div>
-      </section>
-    </div>
-  )
-}
-
 function usePageMeta({ title, description }: { title: string; description: string }) {
   useEffect(() => {
     const previousTitle = document.title
@@ -371,13 +300,7 @@ function getResourceActionLabel(resource: PublicResourceEntry) {
   if (resource.category === 'link') {
     return 'Access Resource'
   }
-  if (resource.category === 'media') {
-    return 'Watch Media'
-  }
-  if (isPdfDocument(resource)) {
-    return 'Open PDF'
-  }
-  return 'Open Document'
+  return 'Open Documents'
 }
 
 function getCategoryToneClass(category: PublicResourceCategory) {
@@ -395,22 +318,11 @@ function getCategoryToneClass(category: PublicResourceCategory) {
   }
 }
 
-function isPdfDocument(resource: PublicResourceEntry) {
-  return (
-    resource.mimeType.toLowerCase().includes('pdf') ||
-    resource.fileName.toLowerCase().endsWith('.pdf')
-  )
-}
+function getResourceFileName(resource: PublicResourceEntry) {
+  const trimmedFileName = resource.fileName.trim()
+  const trimmedResourceName = resource.name.trim()
 
-function isImageDocument(resource: PublicResourceEntry) {
-  const normalizedMimeType = resource.mimeType.toLowerCase()
-  const fileName = resource.fileName.toLowerCase()
-  return (
-    normalizedMimeType.startsWith('image/') ||
-    ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg'].some((extension) =>
-      fileName.endsWith(extension),
-    )
-  )
+  return trimmedFileName || trimmedResourceName || 'document'
 }
 
 function getErrorMessage(error: unknown) {

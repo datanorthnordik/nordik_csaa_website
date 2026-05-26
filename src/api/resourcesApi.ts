@@ -1,4 +1,4 @@
-import { API_ROUTES } from '../constants/api'
+import { API_BASE_URL, API_ROUTES } from '../constants/api'
 import { apiClient } from './apiClient'
 
 export type PublicResourceCategory = 'educational' | 'media' | 'link' | 'report'
@@ -131,7 +131,10 @@ export function publicResourceApiEntryToLocal(
     mimeType: entry.mime_type,
     fileSize: entry.file_size,
     hasDocument: entry.has_document,
-    contentUrl: entry.content_url || buildResourceContentUrl(entry.id),
+    contentUrl: resolvePublicResourceContentUrl({
+      id: entry.id,
+      contentUrl: entry.content_url,
+    }),
     createdAt: entry.created_at,
     updatedAt: entry.updated_at,
   }
@@ -204,8 +207,25 @@ export const publicResourcesApi = {
   },
 }
 
-function buildResourceContentUrl(id: number) {
-  return API_ROUTES.resourceContentById(String(id))
+function buildResourceContentUrl(id: number | string) {
+  return `${API_BASE_URL}${API_ROUTES.resourceContentById(String(id))}`
+}
+
+export function resolvePublicResourceContentUrl(resource: {
+  id: number | string
+  contentUrl?: string | null
+}) {
+  const trimmed = resource.contentUrl?.trim()
+
+  if (trimmed && /^https?:\/\//i.test(trimmed)) {
+    return trimmed
+  }
+
+  if (trimmed?.startsWith('/api/')) {
+    return `${API_BASE_URL}${trimmed}`
+  }
+
+  return buildResourceContentUrl(resource.id)
 }
 
 function getResourceCategoryLabel(category: PublicResourceCategory) {
