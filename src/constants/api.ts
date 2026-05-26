@@ -31,7 +31,7 @@ export const API_ROUTES = {
   newsletterById: (id: number | string) => `/api/newsletters/${id}`,
   newsletterMediaById: (id: number | string, mediaId: number | string) =>
     `/api/newsletters/${id}/media/${mediaId}/content`,
-    resources: '/api/resources',
-  resourceById: (id: string) => `/api/resources/${id}`,
-  resourceContentById: (id: string) => `/api/resources/${id}/content`,
+  resources: '/api/resources',
+  resourceById: (id: number | string) => `/api/resources/${id}`,
+  resourceContentById: (id: number | string) => `/api/resources/${id}/content`,
 } as const

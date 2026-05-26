@@ -4,8 +4,6 @@ import memorialFlower from '../assets/memorial_flower.png'
 import watercolorMeadow from '../assets/watercolor_meadow.png'
 import styles from './InMemorialPage.module.css'
 
-const INITIAL_FLOWER_COUNT = 342
-
 type MemorialEntry = {
   id: number
   name: string
@@ -96,16 +94,10 @@ function WaveDivider({ fill, flip = false }: { fill: string; flip?: boolean }) {
 /* ─── Page ─── */
 export function InMemorialPage() {
   const { t } = useTranslation()
-  const [flowerCount, setFlowerCount] = useState(INITIAL_FLOWER_COUNT)
   const [particles, setParticles] = useState<Particle[]>([])
-  const [isPulsing, setIsPulsing] = useState(false)
   const nextId = useRef(0)
 
   function handlePlantFlower() {
-    setFlowerCount((prev) => prev + 1)
-    setIsPulsing(true)
-    setTimeout(() => setIsPulsing(false), 700)
-
     const id = ++nextId.current
     const drift = Math.round(Math.random() * 80 - 40)
     const color = randomFlowerColor()
@@ -169,13 +161,6 @@ export function InMemorialPage() {
       <section className={styles.gardenSection}>
         <div className={styles.gardenCard}>
           <h2 className={styles.gardenTitle}>{t('inMemorial.garden.title')}</h2>
-          <p className={styles.gardenCountLine}>
-            {t('inMemorial.garden.countPrefix')}
-            <span className={`${styles.gardenCountNum} ${isPulsing ? styles.pulse : ''}`}>
-              {flowerCount}
-            </span>
-            {t('inMemorial.garden.countSuffix')}
-          </p>
           <div className={styles.gardenMeadow}>
             <img src={watercolorMeadow} alt="" className={styles.meadowImage} />
           </div>

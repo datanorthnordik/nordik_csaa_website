@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DocumentViewerModal } from './DocumentViewerModal'
 import styles from './DocumentShowcase.module.css'
 
 export type DocumentShowcaseItem = {
@@ -172,14 +171,30 @@ export function DocumentShowcase({
       {downloadError ? <p className={styles.showcaseDownloadError}>{downloadError}</p> : null}
 
       {viewerItem ? (
-        <DocumentViewerModal
-          title={viewerItem.title}
-          previewUrl={viewerItem.previewUrl}
-          mimeType={viewerItem.mimeType}
-          onClose={() => setViewerIndex(null)}
-          controls={
-            items.length > 1 ? (
-              <>
+        <div
+          className={styles.viewerOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label={viewerItem.title}
+        >
+          <div className={styles.viewerPanel}>
+            <div className={styles.viewerHeader}>
+              <strong>{viewerItem.title}</strong>
+              <button type="button" onClick={() => setViewerIndex(null)}>
+                {t('common.close')}
+              </button>
+            </div>
+
+            <div className={styles.viewerStage}>
+              {isImageDocument(viewerItem) ? (
+                <img src={viewerItem.previewUrl} alt={viewerItem.title} />
+              ) : (
+                <iframe title={viewerItem.title} src={viewerItem.previewUrl} />
+              )}
+            </div>
+
+            {items.length > 1 ? (
+              <div className={styles.viewerControls}>
                 <button type="button" onClick={() => moveViewer(-1)}>
                   {t('common.previous')}
                 </button>
@@ -189,10 +204,10 @@ export function DocumentShowcase({
                 <button type="button" onClick={() => moveViewer(1)}>
                   {t('common.next')}
                 </button>
-              </>
-            ) : undefined
-          }
-        />
+              </div>
+            ) : null}
+          </div>
+        </div>
       ) : null}
     </section>
   )
