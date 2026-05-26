@@ -197,6 +197,27 @@
       "emptyDescription": "Try another year or search term to explore the archive."
     }
   },
+  "inMemorial": {
+    "hero": {
+      "inLoving": "In Loving",
+      "memory": "MEMORY",
+      "tagline": "Forever in our hearts",
+      "imageAlt": "Memorial flower arrangement"
+    },
+    "gallery": {
+      "label": "Memorial portraits"
+    },
+    "stories": {
+      "eyebrow": "Community Echoes",
+      "title": "Stories of Resilience"
+    },
+    "garden": {
+      "title": "Add to the Remembrance Garden",
+      "countPrefix": "Current Meadow Growth: ",
+      "countSuffix": " Flowers Planted",
+      "action": "Plant a Flower"
+    }
+  },
   "newsMediaPage": {
     "hero": {
       "title": "News & Media",
