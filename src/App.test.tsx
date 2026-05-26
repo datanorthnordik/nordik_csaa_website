@@ -483,6 +483,57 @@ const sampleEmptyPage = {
   },
 }
 
+const samplePageWithoutHeader = {
+  ...sampleHomePage,
+  id: 26,
+  page_title: 'Reclaiming Shingwauk Hall Exhibition',
+  url_slug: '/our-story/healing-memorials/reclaiming-shingwauk-hall-exhibition',
+  parent_id: 23,
+  parent_page_title: 'Healing & Memorials',
+  parent_page_url_slug: '/our-story/healing-memorials',
+  hero_image_enabled: true,
+  hero_image_url: 'gs://nordik-csa-documents/pages/26/hero_shingwaukhall-hero.jpg',
+  hero_image_object_key: 'pages/26/hero_shingwaukhall-hero.jpg',
+  hero_image_fetch_url: '/api/pages/26/hero/content',
+  seo_page_title: 'Shingwauk Hall Residential School Exhibition - CSAA',
+  seo_page_description:
+    'Explore the history, stories, and legacy of the Shingwauk Indian Residential School.',
+  page_detail: {
+    ...sampleHomePage.page_detail,
+    id: 13,
+    page_id: 26,
+    sections: [
+      {
+        id: 275,
+        section_name: 'Typography',
+        section_type: 'typography',
+        sort_order: 0,
+        is_enabled: true,
+        settings: {},
+        typography: {
+          html_content:
+            '<p>Reclaiming Shingwauk Hall is the first major, permanent Residential School Survivor driven exhibition in a former Residential School building.</p>',
+          text_content:
+            'Reclaiming Shingwauk Hall is the first major, permanent Residential School Survivor driven exhibition in a former Residential School building.',
+          text_align: 'left',
+        },
+      },
+      {
+        id: 276,
+        section_name: 'Gallery Module',
+        section_type: 'gallery',
+        sort_order: 1,
+        is_enabled: true,
+        settings: {},
+        gallery: {
+          gallery_id: 5,
+          view_mode: 'masonry',
+        },
+      },
+    ],
+  },
+}
+
 const sampleNewsletters = [
   {
     id: 11,
@@ -635,6 +686,9 @@ beforeEach(async () => {
     if (slug === '/home/empty') {
       return sampleEmptyPage
     }
+    if (slug === '/our-story/healing-memorials/reclaiming-shingwauk-hall-exhibition') {
+      return samplePageWithoutHeader
+    }
 
     return sampleHomePage
   })
@@ -784,6 +838,30 @@ describe('App', () => {
     ).toBeDefined()
     expect(
       screen.getByText(/placeholder copy for pages without cms sections yet\./i),
+    ).toBeDefined()
+  })
+
+  it('shows the page hero when a CMS page has content sections but no header section', async () => {
+    window.history.pushState(
+      {},
+      '',
+      '/our-story/healing-memorials/reclaiming-shingwauk-hall-exhibition',
+    )
+
+    renderWithProviders(<App />)
+
+    expect(
+      await screen.findByRole('heading', {
+        name: /reclaiming shingwauk hall exhibition/i,
+      }),
+    ).toBeDefined()
+    expect(
+      screen
+        .getByRole('img', { name: /reclaiming shingwauk hall exhibition/i })
+        .getAttribute('src'),
+    ).toContain('/api/pages/26/hero/content')
+    expect(
+      screen.getByText(/first major, permanent residential school survivor driven exhibition/i),
     ).toBeDefined()
   })
 
