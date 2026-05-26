@@ -197,6 +197,27 @@
       "emptyDescription": "Essayez une autre annee ou un autre terme de recherche pour explorer l archive."
     }
   },
+  "inMemorial": {
+    "hero": {
+      "inLoving": "En aimant souvenir",
+      "memory": "MÉMOIRE",
+      "tagline": "À jamais dans nos cœurs",
+      "imageAlt": "Arrangement floral commémoratif"
+    },
+    "gallery": {
+      "label": "Portraits commémoratifs"
+    },
+    "stories": {
+      "eyebrow": "Échos communautaires",
+      "title": "Histoires de résilience"
+    },
+    "garden": {
+      "title": "Ajouter au jardin du souvenir",
+      "countPrefix": "Croissance actuelle du pré : ",
+      "countSuffix": " fleurs plantées",
+      "action": "Planter une fleur"
+    }
+  },
   "newsMediaPage": {
     "hero": {
       "title": "Nouvelles et médias",
