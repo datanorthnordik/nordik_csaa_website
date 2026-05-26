@@ -197,6 +197,28 @@
       "emptyDescription": "Try another year or search term to explore the archive."
     }
   },
+  "newsMediaPage": {
+    "hero": {
+      "title": "News & Media",
+      "description": "Stay informed with updates from our community and external press coverage. Discover the stories driving our heritage forward."
+    },
+    "newsletter": {
+      "title": "Digital Newsletter",
+      "description": "Read our latest community updates, stories, and upcoming events. Our newsletter is a curated journey through the heart of our vibrant organization.",
+      "action": "Read Latest Edition"
+    },
+    "pressArchive": {
+      "title": "Press Archive",
+      "description": "Browse external media coverage, official statements, and press releases. Stay connected with the broader impact of our community in the global landscape.",
+      "action": "View Press Archive"
+    },
+    "pressInquiries": {
+      "title": "Press Inquiries",
+      "description": "For media requests, interview opportunities, or press kits, please reach out to our community support team",
+      "action": "Reach out",
+      "imageAlt": "Press and media equipment including cameras and a typewriter"
+    }
+  },
   "pressArchivePage": {
     "hero": {
       "eyebrow": "Press archive",

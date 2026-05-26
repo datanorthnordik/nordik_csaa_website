@@ -197,6 +197,28 @@
       "emptyDescription": "Essayez une autre annee ou un autre terme de recherche pour explorer l archive."
     }
   },
+  "newsMediaPage": {
+    "hero": {
+      "title": "Nouvelles et médias",
+      "description": "Restez informé des mises à jour de notre communauté et de la couverture médiatique externe. Découvrez les histoires qui font avancer notre patrimoine."
+    },
+    "newsletter": {
+      "title": "Bulletin numérique",
+      "description": "Lisez nos dernières mises à jour communautaires, histoires et événements à venir. Notre bulletin est un parcours curé à travers le cœur de notre organisation dynamique.",
+      "action": "Lire la dernière édition"
+    },
+    "pressArchive": {
+      "title": "Archives de presse",
+      "description": "Parcourez la couverture médiatique externe, les déclarations officielles et les communiqués de presse. Restez connecté à l'impact plus large de notre communauté dans le paysage mondial.",
+      "action": "Voir les archives de presse"
+    },
+    "pressInquiries": {
+      "title": "Demandes des médias",
+      "description": "Pour les demandes des médias, les opportunités d'entrevues ou les dossiers de presse, veuillez contacter notre équipe de soutien communautaire",
+      "action": "Nous contacter",
+      "imageAlt": "Équipement de presse et de médias incluant des caméras et une machine à écrire"
+    }
+  },
   "pressArchivePage": {
     "hero": {
       "eyebrow": "Archives de presse",
