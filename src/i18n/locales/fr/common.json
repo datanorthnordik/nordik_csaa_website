@@ -218,6 +218,41 @@
       "action": "Planter une fleur"
     }
   },
+  "healingMemorials": {
+    "hero": {
+      "title": "Guérison et commémorations",
+      "description": "Nous honorons la résilience et l'esprit des Enfants de Shingwauk. Cet espace sacré est dédié à la guérison, au souvenir et à l'héritage durable de nos anciens. À travers des histoires partagées et des terres sacrées, nous marchons ensemble sur le chemin de la réconciliation.",
+      "cta": "Explorer les commémorations"
+    },
+    "pillars": {
+      "label": "Piliers communautaires",
+      "eyebrow": "Notre voie à suivre",
+      "title": "Piliers communautaires",
+      "learnMore": "En savoir plus",
+      "inMemorial": {
+        "title": "En mémoire",
+        "description": "Honorant la mémoire de ceux que nous avons perdus. Cet espace dédié offre un hommage permanent pour que les familles et la communauté partagent souvenirs et histoires de leurs proches."
+      },
+      "exhibition": {
+        "title": "Exposition du Shingwauk Hall",
+        "description": "Explorez l'exposition physique et virtuelle documentant les expériences vécues et la réalité historique du Shingwauk Hall et de ses étudiants."
+      },
+      "everyChild": {
+        "title": "Chaque enfant compte",
+        "description": "Rejoignez le mouvement pour la vérité et la réconciliation. Comprendre l'impact profond du système des pensionnats sur des générations de familles autochtones."
+      },
+      "cryingRock": {
+        "title": "Le Rocher qui pleure",
+        "description": "Découvrez la signification spirituelle du Rocher qui pleure, un lieu de réflexion historique et de connexion profonde pour la communauté de Shingwauk."
+      }
+    },
+    "support": {
+      "title": "Soutenez notre parcours de guérison",
+      "description": "L'Association des anciens élèves des Enfants de Shingwauk compte sur votre soutien pour maintenir ces commémorations et poursuivre notre travail d'archivage.",
+      "donate": "Faire un don",
+      "join": "Rejoindre l'association"
+    }
+  },
   "newsMediaPage": {
     "hero": {
       "title": "Nouvelles et médias",

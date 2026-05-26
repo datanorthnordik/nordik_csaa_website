@@ -7,12 +7,12 @@ import { DigitalNewsletterDetailPage } from './pages/DigitalNewsletterDetailPage
 import { DigitalNewslettersPage } from './pages/DigitalNewslettersPage'
 import { EventDetailPage } from './pages/EventDetailPage'
 import { GatheringsPage } from './pages/GatheringsPage'
+import { HealingMemorialsPage } from './pages/HealingMemorialsPage'
 import { InMemorialPage } from './pages/InMemorialPage'
 import { NewsMediaLandingPage } from './pages/NewsMediaLandingPage'
 import { PressArchiveDetailPage } from './pages/PressArchiveDetailPage'
 import { PressArchivePage } from './pages/PressArchivePage'
 import { getInitialMenuHref } from './lib/navigationMenu'
-import {CommunityResourcesPage}  from './pages/ResourcesPage'
 
 function App() {
   return (
@@ -24,6 +24,7 @@ function App() {
             <Route path="/events" element={<GatheringsPage />} />
             <Route path="/events/calendar" element={<EventCalendarPage />} />
             <Route path="/events/:eventId" element={<EventDetailPage />} />
+            <Route path="/our-story/healing-memorials" element={<HealingMemorialsPage />} />
             <Route path="/our-story/healing-memorials/in-memorial" element={<InMemorialPage />} />
             <Route path="/news-media" element={<NewsMediaLandingPage />} />
             <Route
@@ -42,7 +43,6 @@ function App() {
               path="/news-media/press-archive"
               element={<PressArchivePage />}
             />
-            <Route path="/community-support-team/resources" element={<CommunityResourcesPage />} />
             <Route path="*" element={<CmsPage />} />
           </Route>
         </Routes>

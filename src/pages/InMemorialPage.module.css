@@ -41,6 +41,8 @@
   background: #ffffff;
   padding-bottom: 96px;
   overflow: hidden;
+  margin-left: calc(-1 * var(--shell-gutter));
+  margin-right: calc(-1 * var(--shell-gutter));
 }
 
 .heroContent {
@@ -188,6 +190,8 @@
   background: #f6f3f2;
   padding: 96px 0;
   overflow: hidden;
+  margin-left: calc(-1 * var(--shell-gutter));
+  margin-right: calc(-1 * var(--shell-gutter));
 }
 
 .storiesInner {
@@ -294,30 +298,6 @@
   color: #1b1c1c;
 }
 
-.gardenCountLine {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  flex-wrap: wrap;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 400;
-  color: #5d3f3a;
-  line-height: 1.6;
-}
-
-.gardenCountNum {
-  display: inline-block;
-  font-weight: 700;
-  color: #1b1c1c;
-}
-
-.gardenCountNum.pulse {
-  animation: pulse 0.65s ease both;
-}
-
 .gardenMeadow {
   margin: 20px 0 8px;
   border-radius: 8px;
@@ -383,12 +363,6 @@
 }
 
 /* ── Animations ── */
-
-@keyframes pulse {
-  0%   { color: #1b1c1c; }
-  35%  { color: #d32f2f; }
-  100% { color: #1b1c1c; }
-}
 
 @keyframes floatUp {
   0% {
