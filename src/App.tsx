@@ -10,6 +10,7 @@ import { GatheringsPage } from './pages/GatheringsPage'
 import { PressArchiveDetailPage } from './pages/PressArchiveDetailPage'
 import { PressArchivePage } from './pages/PressArchivePage'
 import { getInitialMenuHref } from './lib/navigationMenu'
+import {CommunityResourcesPage}  from './pages/ResourcesPage'
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
               path="/news-media/press-archive"
               element={<PressArchivePage />}
             />
+            <Route path="/community-support-team/resources" element={<CommunityResourcesPage />} />
             <Route path="*" element={<CmsPage />} />
           </Route>
         </Routes>
