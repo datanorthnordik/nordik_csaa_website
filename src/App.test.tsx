@@ -82,6 +82,14 @@ function renderWithProviders(ui: ReactElement) {
   return render(<Provider store={store}>{ui}</Provider>)
 }
 
+async function findPrimaryNavigationLink(name: string | RegExp) {
+  const navigation = await screen.findByRole('navigation', {
+    name: /primary navigation/i,
+  })
+
+  return within(navigation).findByRole('link', { name })
+}
+
 const sampleUpcomingEvent = {
   id: 101,
   title: 'Elders Council Circle',
@@ -710,13 +718,10 @@ describe('App', () => {
       ),
     ).toBeDefined()
     expect(screen.getByText(/board agenda/i)).toBeDefined()
-    expect(
-      within(screen.getByRole('navigation')).getByRole('link', { name: /^home$/i })
-        .getAttribute('aria-current'),
-    ).toBe('page')
-    expect(
-      within(screen.getByRole('navigation')).getByRole('link', { name: /^events$/i }),
-    ).toBeDefined()
+    expect((await findPrimaryNavigationLink(/^home$/i)).getAttribute('aria-current')).toBe(
+      'page',
+    )
+    expect(await findPrimaryNavigationLink(/^events$/i)).toBeDefined()
     expect(screen.getByRole('button', { name: 'FR' })).toBeDefined()
   })
 
@@ -746,10 +751,9 @@ describe('App', () => {
         name: /community calendar/i,
       }),
     ).toBeDefined()
-    expect(
-      within(screen.getByRole('navigation')).getByRole('link', { name: /^events$/i })
-        .getAttribute('aria-current'),
-    ).toBe('page')
+    expect((await findPrimaryNavigationLink(/^events$/i)).getAttribute('aria-current')).toBe(
+      'page',
+    )
     expect(listEventsByDateRange).toHaveBeenCalled()
   })
 
@@ -763,10 +767,9 @@ describe('App', () => {
         name: /^contact us$/i,
       }),
     ).toBeDefined()
-    expect(
-      within(screen.getByRole('navigation')).getByRole('link', { name: /^home$/i })
-        .getAttribute('aria-current'),
-    ).toBe('page')
+    expect((await findPrimaryNavigationLink(/^home$/i)).getAttribute('aria-current')).toBe(
+      'page',
+    )
   })
 
   it('shows the placeholder hero when a CMS page has no content sections yet', async () => {
@@ -797,9 +800,7 @@ describe('App', () => {
     expect(listPublishedNewsletters).toHaveBeenCalled()
     expect(getNewsletter).not.toHaveBeenCalled()
     expect(
-      within(screen.getByRole('navigation')).getByRole('link', {
-        name: /news & media/i,
-      }).getAttribute('aria-current'),
+      (await findPrimaryNavigationLink(/news & media/i)).getAttribute('aria-current'),
     ).toBe('page')
   })
 
@@ -816,9 +817,7 @@ describe('App', () => {
     expect(screen.getByText(/flipbook for community reunion highlights/i)).toBeDefined()
     expect(getNewsletter).toHaveBeenCalledWith(11)
     expect(
-      within(screen.getByRole('navigation')).getByRole('link', {
-        name: /news & media/i,
-      }).getAttribute('aria-current'),
+      (await findPrimaryNavigationLink(/news & media/i)).getAttribute('aria-current'),
     ).toBe('page')
   })
 
@@ -835,9 +834,7 @@ describe('App', () => {
     expect(listPublishedPressEntries).toHaveBeenCalled()
     expect(getPressEntry).not.toHaveBeenCalled()
     expect(
-      within(screen.getByRole('navigation')).getByRole('link', {
-        name: /news & media/i,
-      }).getAttribute('aria-current'),
+      (await findPrimaryNavigationLink(/news & media/i)).getAttribute('aria-current'),
     ).toBe('page')
   })
 
@@ -853,9 +850,7 @@ describe('App', () => {
     ).toBeDefined()
     expect(getPressEntry).toHaveBeenCalledWith(72)
     expect(
-      within(screen.getByRole('navigation')).getByRole('link', {
-        name: /news & media/i,
-      }).getAttribute('aria-current'),
+      (await findPrimaryNavigationLink(/news & media/i)).getAttribute('aria-current'),
     ).toBe('page')
   })
 })
