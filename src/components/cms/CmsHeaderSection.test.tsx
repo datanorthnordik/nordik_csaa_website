@@ -13,7 +13,7 @@ function createPage(overrides: Partial<PageDetailResponse> = {}): PageDetailResp
     parent_page_title: 'Community',
     parent_page_url_slug: '/community',
     status: 'published',
-    hero_image_enabled: false,
+    hero_image_enabled: true,
     hero_image_url: '',
     hero_image_object_key: '',
     hero_image_fetch_url: '/api/pages/1/hero/content',
@@ -158,5 +158,20 @@ describe('CmsHeaderSection', () => {
     expect(screen.getByRole('heading', { name: /^csaa newsletter$/i }).parentElement?.className).toContain(
       'alignLeft',
     )
+  })
+
+  it('does not render the page hero image when display is disabled', () => {
+    render(
+      <CmsHeaderSection
+        page={createPage({
+          hero_image_enabled: false,
+          hero_image_fetch_url: '/api/pages/1/hero/content',
+        })}
+        section={createHeaderSection()}
+        isPrimaryHeader
+      />,
+    )
+
+    expect(screen.queryByRole('img')).toBeNull()
   })
 })

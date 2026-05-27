@@ -1,6 +1,6 @@
 import type { PageDetailResponse } from '../../api/pagesApi'
 import { CmsHeroMedia } from './CmsHeroMedia'
-import { resolveCmsAssetUrl } from './cmsPageMedia'
+import { resolvePageHeroImageUrl } from './cmsPageMedia'
 import styles from './CmsSectionBlocks.module.css'
 
 type CmsFallbackHeroProps = {
@@ -8,7 +8,7 @@ type CmsFallbackHeroProps = {
 }
 
 export function CmsFallbackHero({ page }: CmsFallbackHeroProps) {
-  const imageUrl = resolveCmsAssetUrl(page.hero_image_fetch_url)
+  const imageUrl = resolvePageHeroImageUrl(page)
 
   return (
     <section className={`${styles.section} ${styles.heroSection}`}>

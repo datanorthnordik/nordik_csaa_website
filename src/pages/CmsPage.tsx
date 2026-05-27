@@ -7,7 +7,10 @@ import {
   type PageDetailResponse,
 } from '../api/pagesApi'
 import { CmsFallbackHero } from '../components/cms/CmsFallbackHero'
-import { resolveCmsAssetUrl } from '../components/cms/cmsPageMedia'
+import {
+  resolveCmsAssetUrl,
+  resolvePageHeroImageUrl,
+} from '../components/cms/cmsPageMedia'
 import { CmsSectionRenderer } from '../components/cms/CmsSectionRenderer'
 import { formatPathLabel, normalizeInternalPath } from '../lib/navigationMenu'
 import { ComingSoonPage } from './ComingSoonPage'
@@ -107,15 +110,19 @@ export function CmsPage() {
           ? Boolean(section.cta_banner)
           : false,
   )
-  const firstHeaderId =
+  const primaryHeaderSection =
     renderableSections.find(
       (section) => section.section_type === 'header' && section.header,
-    )?.id ?? null
-  const hasRenderableHeader = firstHeaderId !== null
+    ) ?? null
+  const firstHeaderId = primaryHeaderSection?.id ?? null
+  const hasRenderableHeader = primaryHeaderSection !== null
+  const hasPrimaryHeroHeader = primaryHeaderSection?.header?.hierarchy === 'h1_hero'
+  const hasPageHeroImage = Boolean(resolvePageHeroImageUrl(page))
+  const showFallbackHero = !hasRenderableHeader || (!hasPrimaryHeroHeader && hasPageHeroImage)
 
   return (
     <div className={styles.page}>
-      {!hasRenderableHeader ? <CmsFallbackHero page={page} /> : null}
+      {showFallbackHero ? <CmsFallbackHero page={page} /> : null}
 
       <div className={styles.sections}>
         {renderableSections.map((section) => (
