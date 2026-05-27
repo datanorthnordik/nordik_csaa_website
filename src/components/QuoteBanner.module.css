@@ -1,0 +1,80 @@
+.section {
+  width: 100%;
+  max-width: 100%;
+  background: #9c0000;
+  color: #ffffff;
+  padding: 52px clamp(24px, 3.5vw, 44px);
+  text-align: center;
+}
+
+.inner {
+  width: min(860px, 100%);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.icon {
+  display: block;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 20px;
+}
+
+.quote {
+  margin: 0 auto 20px;
+  max-width: 100%;
+  font-family: 'Montserrat', 'Avenir Next', 'Segoe UI', sans-serif;
+  font-size: clamp(1rem, 2vw, 1.22rem);
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.62;
+}
+
+.rule {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ruleLine {
+  display: block;
+  width: 36px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.ruleText {
+  font-family: 'Montserrat', 'Avenir Next', 'Segoe UI', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding: 40px 18px;
+  }
+
+  .quote {
+    margin-bottom: 18px;
+    font-size: 0.96rem;
+    line-height: 1.7;
+  }
+
+  .rule {
+    gap: 8px;
+  }
+
+  .ruleLine {
+    width: 24px;
+  }
+
+  .ruleText {
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+  }
+}

@@ -37,6 +37,7 @@ describe('CmsGalleryLightbox', () => {
     render(
       <CmsGalleryLightbox
         items={sampleItems}
+        showTitleDescription
         activeIndex={0}
         onClose={onClose}
         onSelect={onSelect}

@@ -25,6 +25,8 @@ export type PageTypographySection = {
 export type PageGallerySection = {
   gallery_id: number | null
   view_mode: 'grid' | 'carousel' | 'masonry' | 'focus' | 'icons' | string
+  show_title_description?: boolean
+  auto_scroll_enabled?: boolean
 }
 
 export type PageQuoteSection = {
