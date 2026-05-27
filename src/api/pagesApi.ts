@@ -12,8 +12,10 @@ export type PageSectionType =
 export type PageHeaderSection = {
   main_header_text: string
   sub_header_text: string
+  description?: string
   hierarchy: 'h1_hero' | 'h2_section' | string
   text_align?: 'left' | 'center' | 'right' | string
+  underline_enabled?: boolean
 }
 
 export type PageTypographySection = {

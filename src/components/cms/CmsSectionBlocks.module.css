@@ -34,24 +34,17 @@
   min-width: 0;
 }
 
-.eyebrow,
 .sectionEyebrow {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
   margin: 0;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(122, 31, 36, 0.08);
-  font-size: 0.74rem;
-  font-weight: 800;
-  letter-spacing: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--color-primary);
+  color: #9c0000;
 }
 
 .heroTitle,
-.sectionTitle,
 .quoteText,
 .ctaHeading {
   font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
@@ -117,22 +110,39 @@
   padding: 10px 0 0;
 }
 
+.simpleHeaderCard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .sectionTitle {
-  margin: 14px 0 8px;
+  margin: 0;
   width: 100%;
   max-width: 100%;
-  font-size: clamp(2rem, 3.5vw, 3rem);
-  line-height: 1.02;
-  letter-spacing: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  font-weight: 700;
+  color: #1b1c1c;
+  line-height: 1.15;
   overflow-wrap: anywhere;
 }
 
+.sectionRule {
+  width: 56px;
+  height: 3px;
+  background: #9c0000;
+  border-radius: 2px;
+}
+
 .sectionSummary {
-  width: min(100%, 40rem);
+  width: min(100%, 45rem);
   margin: 0;
-  font-size: clamp(1.08rem, 1.7vw, 1.24rem);
-  line-height: 1.55;
-  font-weight: 500;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  font-weight: 400;
+  color: #5d3f3a;
   overflow-wrap: anywhere;
 }
 
@@ -171,7 +181,15 @@
   margin-inline: auto;
 }
 
+.simpleHeaderCard.alignCenter .sectionRule {
+  margin-inline: auto;
+}
+
 .simpleHeaderCard.alignRight .sectionSummary {
+  margin-left: auto;
+}
+
+.simpleHeaderCard.alignRight .sectionRule {
   margin-left: auto;
 }
 

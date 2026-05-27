@@ -1,6 +1,6 @@
 import type { PageDetailResponse, PageSection } from '../../api/pagesApi'
-import { CmsHeroMedia } from './CmsHeroMedia'
-import { normalizeCmsLabel, resolvePageHeroImageUrl } from './cmsPageMedia'
+import { SharedImageHero } from '../SharedImageHero'
+import { resolvePageHeroImageUrl } from './cmsPageMedia'
 import styles from './CmsSectionBlocks.module.css'
 
 type CmsHeaderSectionProps = {
@@ -22,6 +22,7 @@ export function CmsHeaderSection({
   const imageUrl = isPrimaryHeader ? resolvePageHeroImageUrl(page) : null
   const mainHeaderText = header.main_header_text.trim()
   const subHeaderText = header.sub_header_text.trim()
+  const description = header.description?.trim() ?? ''
   const textAlign = header.text_align?.trim().toLowerCase()
   const alignmentClass =
     textAlign === 'center'
@@ -29,35 +30,33 @@ export function CmsHeaderSection({
       : textAlign === 'right'
         ? styles.alignRight
         : styles.alignLeft
-  const heroTitle = mainHeaderText
+  const heroTitle = mainHeaderText || page.page_title.trim()
+  const heroEyebrow = description ? subHeaderText : ''
+  const heroDescription = description || subHeaderText || page.seo_page_description.trim()
   const sectionTitle = mainHeaderText
-  const eyebrow =
-    isPrimaryHeader
-      ? page.parent_page_title
-      : ''
+  const sectionEyebrow = subHeaderText
+  const sectionDescription = description
+  const showSectionRule = Boolean(header.underline_enabled)
 
   if (header.hierarchy === 'h1_hero') {
     return (
-      <section className={`${styles.section} ${styles.heroSection}`}>
-        <div className={styles.heroCard}>
-          <div className={`${styles.heroCopy} ${alignmentClass}`}>
-            {eyebrow ? <p className={styles.eyebrow}>{eyebrow}</p> : null}
-            {heroTitle && <h1 className={styles.heroTitle}>{heroTitle}</h1>}
-            {subHeaderText ? <p className={styles.heroSummary}>{subHeaderText}</p> : null}
-          </div>
-
-          <CmsHeroMedia imageUrl={imageUrl} title={heroTitle || page.page_title} showFallback={false} />
-        </div>
-      </section>
+      <SharedImageHero
+        eyebrow={heroEyebrow}
+        title={heroTitle}
+        description={heroDescription}
+        backgroundImageUrl={imageUrl}
+        testId="cms-header-hero"
+      />
     )
   }
 
   return (
     <section className={`${styles.section} ${styles.simpleHeaderSection}`}>
       <div className={`${styles.simpleHeaderCard} ${alignmentClass}`}>
-        {eyebrow ? <p className={styles.sectionEyebrow}>{eyebrow}</p> : null}
+        {sectionEyebrow ? <p className={styles.sectionEyebrow}>{sectionEyebrow}</p> : null}
         {sectionTitle && <h2 className={styles.sectionTitle}>{sectionTitle}</h2>}
-        {subHeaderText ? <p className={styles.sectionSummary}>{subHeaderText}</p> : null}
+        {showSectionRule ? <div className={styles.sectionRule} aria-hidden="true" /> : null}
+        {sectionDescription ? <p className={styles.sectionSummary}>{sectionDescription}</p> : null}
       </div>
     </section>
   )
