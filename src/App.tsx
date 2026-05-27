@@ -9,6 +9,7 @@ import { DigitalNewslettersPage } from './pages/DigitalNewslettersPage'
 import { EventDetailPage } from './pages/EventDetailPage'
 import { GatheringsPage } from './pages/GatheringsPage'
 import { HealingMemorialsPage } from './pages/HealingMemorialsPage'
+import { OurStoryPage } from './pages/OurStoryPage'
 import { InMemorialPage } from './pages/InMemorialPage'
 import { NewsMediaLandingPage } from './pages/NewsMediaLandingPage'
 import { PressArchiveDetailPage } from './pages/PressArchiveDetailPage'
@@ -27,6 +28,7 @@ function App() {
             <Route path="/events" element={<GatheringsPage />} />
             <Route path="/events/calendar" element={<EventCalendarPage />} />
             <Route path="/events/:eventId" element={<EventDetailPage />} />
+            <Route path="/our-story" element={<OurStoryPage />} />
             <Route path="/our-story/healing-memorials" element={<HealingMemorialsPage />} />
             <Route path="/our-story/healing-memorials/in-memorial" element={<InMemorialPage />} />
             <Route path="/news-media" element={<NewsMediaLandingPage />} />

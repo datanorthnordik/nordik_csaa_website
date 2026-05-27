@@ -1,0 +1,542 @@
+/* ─────────────────────────────────────────
+   Our Story — Earth & Heritage
+   Font: Montserrat | Primary: #9c0000
+   ───────────────────────────────────────── */
+
+.page {
+  display: grid;
+  gap: 0;
+  min-width: 0;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
+}
+
+/* ── Wave Divider ── */
+
+.waveDivider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  pointer-events: none;
+}
+
+.waveSvg {
+  display: block;
+  width: 100%;
+  height: 96px;
+}
+
+/* ── Hero ── */
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding-bottom: 96px;
+  margin-left: calc(-1 * var(--shell-gutter));
+  margin-right: calc(-1 * var(--shell-gutter));
+}
+
+.heroImage {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.42) 0%,
+    rgba(0, 0, 0, 0.22) 50%,
+    rgba(0, 0, 0, 0.62) 100%
+  );
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 900px;
+  padding: 80px var(--shell-gutter) 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.heroTitle {
+  margin: 0 0 24px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.heroDescription {
+  margin: 0 0 40px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.7;
+  max-width: 660px;
+}
+
+.heroCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 32px;
+  border-radius: 4px;
+  background: #9c0000;
+  color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.heroCta:hover {
+  background: #b80000;
+  transform: translateY(-1px);
+}
+
+.heroCta:active {
+  transform: scale(0.97);
+}
+
+/* ── Mission & Vision ── */
+
+.missionSection {
+  padding: 96px 0;
+}
+
+.missionGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 72px;
+  align-items: center;
+}
+
+.missionText {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.missionEyebrow {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #9c0000;
+}
+
+.missionTitle {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  font-weight: 700;
+  color: #1b1c1c;
+  line-height: 1.15;
+}
+
+.missionRule {
+  width: 56px;
+  height: 3px;
+  background: #9c0000;
+  border-radius: 2px;
+}
+
+.missionBody {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #5d3f3a;
+  line-height: 1.7;
+}
+
+.missionImageWrap {
+  position: relative;
+}
+
+.missionImageGlow {
+  position: absolute;
+  inset: -20px;
+  background: rgba(51, 82, 49, 0.12);
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.missionImage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 480px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.14);
+  border: 4px solid #ffffff;
+}
+
+/* ── Explore Our Legacy ── */
+
+.legacySection {
+  padding: 96px 0 108px;
+}
+
+.legacyHeader {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.legacyTitle {
+  margin: 0 0 16px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  font-weight: 700;
+  color: #1b1c1c;
+  line-height: 1.15;
+}
+
+.legacyDescription {
+  margin: 0 auto;
+  max-width: 520px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #5d3f3a;
+  line-height: 1.65;
+}
+
+.legacyGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* ── Legacy Card ── */
+
+.legacyCard {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid rgba(147, 111, 105, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  transition:
+    box-shadow 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.3s ease;
+}
+
+.legacyCard:hover {
+  box-shadow: 0 12px 40px rgba(27, 28, 28, 0.1);
+  border-color: rgba(156, 0, 0, 0.22);
+  transform: translateY(-4px);
+}
+
+.legacyCardImageLink {
+  display: block;
+  outline-offset: -2px;
+  overflow: hidden;
+  height: 224px;
+  flex-shrink: 0;
+}
+
+.legacyCardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s ease;
+  display: block;
+}
+
+.legacyCard:hover .legacyCardImage {
+  transform: scale(1.04);
+}
+
+.legacyCardBody {
+  padding: 28px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.legacyCardTitle {
+  margin: 0 0 12px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1b1c1c;
+  line-height: 1.25;
+}
+
+.legacyCardTitleLink {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.legacyCardTitleLink:hover {
+  color: #9c0000;
+}
+
+.legacyCardDescription {
+  margin: 0 0 auto;
+  padding-bottom: 20px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #5d3f3a;
+  line-height: 1.65;
+}
+
+.legacyCardLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #9c0000;
+  text-decoration: none;
+  transition: gap 0.18s ease;
+}
+
+.legacyCardLink:hover {
+  gap: 10px;
+}
+
+/* ── Foundations of Our Journey ── */
+
+.foundationsSection {
+  position: relative;
+  padding: 96px 0;
+  overflow: hidden;
+  background: #eae8e7;
+  margin-left: calc(-1 * var(--shell-gutter));
+  margin-right: calc(-1 * var(--shell-gutter));
+  padding-left: var(--shell-gutter);
+  padding-right: var(--shell-gutter);
+}
+
+.foundationsDecor {
+  position: absolute;
+  right: -8%;
+  top: 0;
+  width: 36%;
+  height: 100%;
+  background: rgba(156, 0, 0, 0.04);
+  transform: skewX(-12deg);
+  pointer-events: none;
+}
+
+.foundationsInner {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  gap: 72px;
+  align-items: flex-start;
+}
+
+.foundationsHeadCol {
+  flex: 0 0 280px;
+}
+
+.foundationsTitle {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 700;
+  color: #1b1c1c;
+  line-height: 1.15;
+}
+
+.foundationsTimeline {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.timelineItem {
+  border-left: 4px solid rgba(147, 111, 105, 0.3);
+  padding-left: 24px;
+}
+
+.timelineItemAccent {
+  border-left: 4px solid #9c0000;
+  padding-left: 24px;
+}
+
+.timelineLabel {
+  margin: 0 0 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1b1c1c;
+}
+
+.timelineLabelAccent {
+  margin: 0 0 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9c0000;
+}
+
+.timelineBody {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #5d3f3a;
+  line-height: 1.65;
+}
+
+/* ── Solemn Dedication ── */
+
+.dedicationSection {
+  background: #9c0000;
+  color: #ffffff;
+  padding: 100px var(--shell-gutter);
+  text-align: center;
+  margin-left: calc(-1 * var(--shell-gutter));
+  margin-right: calc(-1 * var(--shell-gutter));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dedicationIcon {
+  display: block;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 32px;
+}
+
+.dedicationQuote {
+  margin: 0 auto 32px;
+  max-width: 760px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.7;
+}
+
+.dedicationRule {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dedicationRuleLine {
+  display: block;
+  width: 48px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.dedicationRuleText {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 960px) {
+  .missionGrid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .missionImage {
+    height: 360px;
+  }
+
+  .legacyGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .foundationsInner {
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  .foundationsHeadCol {
+    flex: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .waveSvg {
+    height: 60px;
+  }
+
+  .hero {
+    padding-bottom: 60px;
+    min-height: 90svh;
+  }
+
+  .missionSection {
+    padding: 64px 0;
+  }
+
+  .legacySection {
+    padding: 64px 0 72px;
+  }
+
+  .legacyGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .legacyHeader {
+    margin-bottom: 40px;
+  }
+
+  .foundationsSection {
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+
+  .dedicationSection {
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
+}
