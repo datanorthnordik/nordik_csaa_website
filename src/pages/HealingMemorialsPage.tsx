@@ -9,20 +9,27 @@ import watercolorMeadow from '../assets/watercolor_meadow.png'
 import styles from './HealingMemorialsPage.module.css'
 
 /* ─── Wave SVG divider ─── */
-const WAVE_PATH =
-  'M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C58.47,100.8,118.42,100.34,176.49,90.47,227,81.86,276.54,64.74,321.39,56.44Z'
+const WAVE_CURVE = 'M0,45 C400,45 450,95 700,95 C1000,95 1100,25 1300,25 C1380,25 1410,35 1440,35'
 
-function WaveDivider({ fill }: { fill: string }) {
+function WaveDivider() {
   return (
     <div className={styles.waveDivider}>
       <svg
-        viewBox="0 0 1200 120"
+        viewBox="0 0 1440 120"
         preserveAspectRatio="none"
         className={styles.waveSvg}
-        style={{ fill }}
         aria-hidden="true"
       >
-        <path d={WAVE_PATH} />
+        <path d={`${WAVE_CURVE} L1440,120 L0,120 Z`} fill="#ffffff" />
+        <path
+          d={WAVE_CURVE}
+          fill="none"
+          stroke="#9c0000"
+          strokeWidth="5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
+        />
       </svg>
     </div>
   )
@@ -90,7 +97,7 @@ export function HealingMemorialsPage() {
             {t('healingMemorials.hero.cta')}
           </a>
         </div>
-        <WaveDivider fill="#ffffff" />
+        <WaveDivider />
       </section>
 
       {/* ── Community Pillars ── */}

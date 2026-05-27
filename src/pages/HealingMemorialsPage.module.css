@@ -1,6 +1,7 @@
 /* ─────────────────────────────────────────
    Healing & Memorials — Earth & Heritage
    Font: Montserrat | Primary: #9c0000 | Tertiary: #335231
+   Full-bleed layout: every section spans 100vw
    ───────────────────────────────────────── */
 
 .page {
@@ -14,18 +15,19 @@
 
 .waveDivider {
   position: absolute;
-  bottom: 0;
+  bottom: -1px;
   left: 0;
   width: 100%;
   overflow: hidden;
   line-height: 0;
   pointer-events: none;
+  z-index: 10;
 }
 
 .waveSvg {
   display: block;
   width: 100%;
-  height: 96px;
+  height: 90px;
 }
 
 /* ── Hero ── */
@@ -37,9 +39,10 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding-bottom: 96px;
-  margin-left: calc(-1 * var(--shell-gutter));
-  margin-right: calc(-1 * var(--shell-gutter));
+  padding-bottom: 90px;
+  /* true full-bleed regardless of frame max-width */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
 
 .heroImage {
@@ -65,7 +68,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  padding: 80px 24px 40px;
+  padding: 80px clamp(20px, 5vw, 80px) 40px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -122,12 +125,16 @@
 /* ── Community Pillars ── */
 
 .pillarsSection {
-  padding: 96px 0 108px;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  background: #ffffff;
+  padding: 96px clamp(20px, 6vw, 120px) 108px;
 }
 
 .pillarsHeader {
   text-align: center;
-  margin-bottom: 64px;
+  margin: 0 auto 64px;
+  max-width: 1240px;
 }
 
 .pillarsEyebrow {
@@ -161,8 +168,9 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
+  max-width: 1240px;
+  margin: 0 auto;
 }
-
 
 /* ── Pillar Card ── */
 
@@ -259,15 +267,14 @@
 
 .supportSection {
   background: #eae8e7;
-  padding: 100px 0;
+  padding: 100px clamp(20px, 6vw, 120px);
   text-align: center;
-  margin-left: calc(-1 * var(--shell-gutter));
-  margin-right: calc(-1 * var(--shell-gutter));
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
 
 .supportTitle {
   margin: 0 0 16px;
-  padding: 0 var(--shell-gutter);
   font-family: 'Montserrat', sans-serif;
   font-size: clamp(1.8rem, 4vw, 2.8rem);
   font-weight: 700;
@@ -277,7 +284,6 @@
 
 .supportDescription {
   margin: 0 auto 40px;
-  padding: 0 var(--shell-gutter);
   max-width: 540px;
   font-family: 'Montserrat', sans-serif;
   font-size: 1rem;
@@ -292,7 +298,6 @@
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
-  padding: 0 var(--shell-gutter);
 }
 
 .donateButton {
@@ -356,7 +361,8 @@
   }
 
   .pillarsSection {
-    padding: 64px 0 72px;
+    padding-top: 64px;
+    padding-bottom: 72px;
   }
 
   .pillarsHeader {
@@ -364,6 +370,7 @@
   }
 
   .supportSection {
-    padding: 64px 0;
+    padding-top: 64px;
+    padding-bottom: 64px;
   }
 }
