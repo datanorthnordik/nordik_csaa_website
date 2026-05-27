@@ -15,15 +15,17 @@ export function QuoteBanner({ quote, attribution }: QuoteBannerProps) {
 
   return (
     <section className={styles.section}>
-      <LibraryIcon />
-      <blockquote className={styles.quote}>{trimmedQuote}</blockquote>
-      {trimmedAttribution ? (
-        <div className={styles.rule} aria-hidden="true">
-          <span className={styles.ruleLine} />
-          <span className={styles.ruleText}>{trimmedAttribution}</span>
-          <span className={styles.ruleLine} />
-        </div>
-      ) : null}
+      <div className={styles.inner}>
+        <LibraryIcon />
+        <blockquote className={styles.quote}>{trimmedQuote}</blockquote>
+        {trimmedAttribution ? (
+          <div className={styles.rule} aria-hidden="true">
+            <span className={styles.ruleLine} />
+            <span className={styles.ruleText}>{trimmedAttribution}</span>
+            <span className={styles.ruleLine} />
+          </div>
+        ) : null}
+      </div>
     </section>
   )
 }

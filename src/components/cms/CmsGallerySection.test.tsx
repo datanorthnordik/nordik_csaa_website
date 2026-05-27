@@ -74,6 +74,50 @@ describe('CmsGallerySection', () => {
     ).toBeNull()
   })
 
+  it('hides gallery image captions when the section disables title and description display', async () => {
+    getGallery.mockResolvedValue({
+      id: 5,
+      name: 'Community portraits',
+      description: 'Portraits and exhibit images from the community archive.',
+      published: true,
+      asset_limit: 20,
+      cover_image: null,
+      images: [
+        {
+          id: 1,
+          gallery_id: 5,
+          title: 'Fran Fletcher-Luther',
+          alt_text: 'Portrait of Fran Fletcher-Luther',
+          file_name: 'fran.jpg',
+          file_url: '/api/galleries/5/images/1/content',
+          mime_type: 'image/jpeg',
+          file_size: 0,
+          sort_order: 0,
+          created_at: '',
+          updated_at: '',
+        },
+      ],
+      created_at: '',
+      updated_at: '',
+    })
+
+    render(
+      <CmsGallerySection
+        section={createSection({
+          gallery: {
+            gallery_id: 5,
+            view_mode: 'grid',
+            show_title_description: false,
+          },
+        })}
+      />,
+    )
+
+    await screen.findByRole('button', { name: /fran fletcher-luther/i })
+
+    expect(screen.queryByText(/fran fletcher-luther/i)).toBeNull()
+  })
+
   it('shows a graceful error state when the gallery cannot be loaded', async () => {
     getGallery.mockRejectedValue(new Error('service unavailable'))
 
