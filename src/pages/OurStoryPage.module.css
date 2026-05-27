@@ -427,56 +427,6 @@
 
 /* ── Solemn Dedication ── */
 
-.dedicationSection {
-  background: #9c0000;
-  color: #ffffff;
-  padding: 100px var(--shell-gutter);
-  text-align: center;
-  margin-left: calc(-1 * var(--shell-gutter));
-  margin-right: calc(-1 * var(--shell-gutter));
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.dedicationIcon {
-  display: block;
-  color: rgba(255, 255, 255, 0.75);
-  margin-bottom: 32px;
-}
-
-.dedicationQuote {
-  margin: 0 auto 32px;
-  max-width: 760px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-  font-weight: 300;
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.92);
-  line-height: 1.7;
-}
-
-.dedicationRule {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.dedicationRuleLine {
-  display: block;
-  width: 48px;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.dedicationRuleText {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.65);
-}
 
 /* ── Responsive ── */
 
@@ -535,8 +485,4 @@
     padding-bottom: 64px;
   }
 
-  .dedicationSection {
-    padding-top: 72px;
-    padding-bottom: 72px;
-  }
 }
