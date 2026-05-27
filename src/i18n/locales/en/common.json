@@ -218,6 +218,62 @@
       "action": "Plant a Flower"
     }
   },
+  "ourStory": {
+    "hero": {
+      "title": "Our Story: A Journey of Resilience",
+      "description": "The Children of Shingwauk Alumni Association (CSAA) is a dedicated non-profit volunteer organization representing the survivors of the Shingwauk and Wawanosh Indian Residential Schools. We stand as a testament to endurance, a bridge to history, and a community for those who walked these grounds.",
+      "cta": "Discover Our Mission"
+    },
+    "mission": {
+      "eyebrow": "Purpose & Path",
+      "title": "Mission & Vision",
+      "body1": "Our primary mission is to ensure the history of the residential school system is never forgotten, while providing a safe space for survivors to find support, shared understanding, and a collective voice.",
+      "body2": "We envision a future where healing is facilitated through education, the preservation of archives, and the creation of lasting memorials that honor the dignity of every student who attended these institutions.",
+      "imageAlt": "A serene close-up of indigenous beadwork on natural cedar bark"
+    },
+    "legacy": {
+      "title": "Explore Our Legacy",
+      "description": "Connecting the past to the present through history, healing, and documentation.",
+      "csaaLegacy": {
+        "title": "The CSAA Legacy",
+        "description": "Learn about the formation of our association and the pioneers who fought to preserve our shared history.",
+        "action": "Read More"
+      },
+      "healingMemorials": {
+        "title": "Healing & Memorials",
+        "description": "Discover sacred sites like Crying Rock and the Wawanosh memorials that serve as focal points for reflection.",
+        "action": "Explore Memorials"
+      },
+      "archives": {
+        "title": "Research & Archives",
+        "description": "We are committed to safeguarding documents, photographs, and oral histories for future generations.",
+        "action": "View Archives"
+      }
+    },
+    "foundations": {
+      "title": "Foundations of Our Journey",
+      "origins": {
+        "label": "1873 — Origins",
+        "body": "The Shingwauk Home opened its doors, originally envisioned as an industrial school. Over the decades, it became a central site in the residential school system."
+      },
+      "closure": {
+        "label": "1970 — Closure",
+        "body": "The Shingwauk Indian Residential School officially closed, marking the end of a painful era and the beginning of a long path toward reclamation."
+      },
+      "reunion": {
+        "label": "1981 — First Reunion",
+        "body": "Survivors gathered for the first time as an organized group, leading to the formal creation of the Alumni Association to support one another."
+      },
+      "today": {
+        "label": "Today — Active Advocacy",
+        "body": "The CSAA remains a vibrant force, working alongside Algoma University and the Shingwauk Residential Schools Centre to educate and heal."
+      }
+    },
+    "dedication": {
+      "quote": "\"We honor the children who were taken, the parents who were left behind, and the survivors who carried the weight of history. To those who did not return, your memory is our sacred fire; to those who remain, your resilience is our light. We walk this path of healing together, today and for all generations to come.\"",
+      "attribution": "In Solemn Remembrance"
+    }
+  },
   "healingMemorials": {
     "hero": {
       "title": "Healing & Memorials",

@@ -218,6 +218,62 @@
       "action": "Planter une fleur"
     }
   },
+  "ourStory": {
+    "hero": {
+      "title": "Notre histoire : un parcours de résilience",
+      "description": "L'Association des anciens élèves des Enfants de Shingwauk (CSAA) est un organisme bénévole à but non lucratif représentant les survivants des pensionnats indiens de Shingwauk et de Wawanosh. Nous sommes un témoignage d'endurance, un pont vers l'histoire et une communauté pour ceux qui ont foulé ces lieux.",
+      "cta": "Découvrir notre mission"
+    },
+    "mission": {
+      "eyebrow": "But et chemin",
+      "title": "Mission et vision",
+      "body1": "Notre mission principale est de veiller à ce que l'histoire du système des pensionnats ne soit jamais oubliée, tout en offrant un espace sûr où les survivants peuvent trouver du soutien, une compréhension partagée et une voix collective.",
+      "body2": "Nous envisageons un avenir où la guérison est facilitée par l'éducation, la préservation des archives et la création de mémoriaux durables qui honorent la dignité de chaque élève ayant fréquenté ces établissements.",
+      "imageAlt": "Gros plan serein de perlage autochtone sur de l'écorce de cèdre naturelle"
+    },
+    "legacy": {
+      "title": "Explorer notre héritage",
+      "description": "Relier le passé au présent à travers l'histoire, la guérison et la documentation.",
+      "csaaLegacy": {
+        "title": "L'héritage de la CSAA",
+        "description": "Découvrez la création de notre association et les pionniers qui ont lutté pour préserver notre histoire commune.",
+        "action": "Lire la suite"
+      },
+      "healingMemorials": {
+        "title": "Guérison et commémorations",
+        "description": "Découvrez des lieux sacrés comme Crying Rock et les mémoriaux de Wawanosh, qui sont des points de repère pour la réflexion.",
+        "action": "Explorer les mémoriaux"
+      },
+      "archives": {
+        "title": "Recherche et archives",
+        "description": "Nous nous engageons à préserver les documents, photographies et histoires orales pour les générations futures.",
+        "action": "Voir les archives"
+      }
+    },
+    "foundations": {
+      "title": "Les fondements de notre parcours",
+      "origins": {
+        "label": "1873 — Origines",
+        "body": "La Maison Shingwauk a ouvert ses portes, conçue à l'origine comme une école industrielle. Au fil des décennies, elle est devenue un site central du système des pensionnats."
+      },
+      "closure": {
+        "label": "1970 — Fermeture",
+        "body": "Le pensionnat indien de Shingwauk a officiellement fermé ses portes, marquant la fin d'une ère douloureuse et le début d'un long chemin vers la reconquête."
+      },
+      "reunion": {
+        "label": "1981 — Première réunion",
+        "body": "Les survivants se sont réunis pour la première fois en groupe organisé, menant à la création formelle de l'Association des anciens pour se soutenir mutuellement."
+      },
+      "today": {
+        "label": "Aujourd'hui — Défense active",
+        "body": "La CSAA demeure une force dynamique, travaillant aux côtés de l'Université Algoma et du Centre des pensionnats de Shingwauk pour éduquer et guérir."
+      }
+    },
+    "dedication": {
+      "quote": "« Nous honorons les enfants qui ont été emmenés, les parents qui ont été laissés derrière, et les survivants qui ont porté le poids de l'histoire. À ceux qui ne sont pas revenus, votre mémoire est notre feu sacré; à ceux qui demeurent, votre résilience est notre lumière. Nous marchons ensemble sur ce chemin de guérison, aujourd'hui et pour toutes les générations à venir. »",
+      "attribution": "En solennel souvenir"
+    }
+  },
   "healingMemorials": {
     "hero": {
       "title": "Guérison et commémorations",
