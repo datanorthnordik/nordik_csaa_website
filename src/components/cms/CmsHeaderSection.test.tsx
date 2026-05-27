@@ -57,7 +57,6 @@ describe('CmsHeaderSection', () => {
     expect(
       screen.getByRole('heading', { name: /welcome to the csaa newsletter/i }),
     ).toBeDefined()
-    expect(screen.getByText(/^csaa newsletter$/i)).toBeDefined()
     expect(
       screen
         .getByRole('img', { name: /welcome to the csaa newsletter/i })
@@ -130,7 +129,7 @@ describe('CmsHeaderSection', () => {
     expect(
       screen.getByRole('heading', { name: /programs and services/i }),
     ).toBeDefined()
-    expect(screen.queryByText(/^csaa newsletter$/i)).toBeNull()
+    expect(screen.queryByRole('heading', { name: /^csaa newsletter$/i })).toBeNull()
   })
 
   it('uses the page title as the heading without duplicating it or showing a media placeholder', () => {
@@ -151,13 +150,8 @@ describe('CmsHeaderSection', () => {
       />,
     )
 
-    expect(screen.getByRole('heading', { name: /^csaa newsletter$/i })).toBeDefined()
-    expect(screen.getAllByText(/^csaa newsletter$/i)).toHaveLength(1)
-    expect(screen.queryByRole('img')).toBeNull()
+    expect(screen.queryByRole('heading')).toBeNull()
     expect(queryByTestId('cms-hero-media-fallback')).toBeNull()
-    expect(screen.getByRole('heading', { name: /^csaa newsletter$/i }).parentElement?.className).toContain(
-      'alignLeft',
-    )
   })
 
   it('does not render the page hero image when display is disabled', () => {

@@ -29,17 +29,12 @@ export function CmsHeaderSection({
       : textAlign === 'right'
         ? styles.alignRight
         : styles.alignLeft
-  const heroTitle = mainHeaderText || page.page_title
-  const sectionTitle = mainHeaderText || section.section_name
-  const heroSummary = subHeaderText || page.seo_page_description
+  const heroTitle = mainHeaderText
+  const sectionTitle = mainHeaderText
   const eyebrow =
     isPrimaryHeader
-      ? normalizeCmsLabel(page.page_title) !== normalizeCmsLabel(heroTitle)
-        ? page.page_title
-        : page.parent_page_title
-      : normalizeCmsLabel(page.page_title) === normalizeCmsLabel(sectionTitle)
-        ? page.parent_page_title
-        : ''
+      ? page.parent_page_title
+      : ''
 
   if (header.hierarchy === 'h1_hero') {
     return (
@@ -47,11 +42,11 @@ export function CmsHeaderSection({
         <div className={styles.heroCard}>
           <div className={`${styles.heroCopy} ${alignmentClass}`}>
             {eyebrow ? <p className={styles.eyebrow}>{eyebrow}</p> : null}
-            <h1 className={styles.heroTitle}>{heroTitle}</h1>
-            {heroSummary ? <p className={styles.heroSummary}>{heroSummary}</p> : null}
+            {heroTitle && <h1 className={styles.heroTitle}>{heroTitle}</h1>}
+            {subHeaderText ? <p className={styles.heroSummary}>{subHeaderText}</p> : null}
           </div>
 
-          <CmsHeroMedia imageUrl={imageUrl} title={heroTitle} showFallback={false} />
+          <CmsHeroMedia imageUrl={imageUrl} title={heroTitle || page.page_title} showFallback={false} />
         </div>
       </section>
     )
@@ -61,7 +56,7 @@ export function CmsHeaderSection({
     <section className={`${styles.section} ${styles.simpleHeaderSection}`}>
       <div className={`${styles.simpleHeaderCard} ${alignmentClass}`}>
         {eyebrow ? <p className={styles.sectionEyebrow}>{eyebrow}</p> : null}
-        <h2 className={styles.sectionTitle}>{sectionTitle}</h2>
+        {sectionTitle && <h2 className={styles.sectionTitle}>{sectionTitle}</h2>}
         {subHeaderText ? <p className={styles.sectionSummary}>{subHeaderText}</p> : null}
       </div>
     </section>

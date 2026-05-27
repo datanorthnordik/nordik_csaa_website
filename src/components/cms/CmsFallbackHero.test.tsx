@@ -27,7 +27,7 @@ function createPage(overrides: Partial<PageDetailResponse> = {}): PageDetailResp
 }
 
 describe('CmsFallbackHero', () => {
-  it('renders the page title, description, and resolved hero image', () => {
+  it('renders the page title and resolved hero image', () => {
     render(
       <CmsFallbackHero
         page={createPage({
@@ -37,10 +37,6 @@ describe('CmsFallbackHero', () => {
       />,
     )
 
-    expect(
-      screen.getByRole('heading', { name: /csaa newsletter/i }),
-    ).toBeDefined()
-    expect(screen.getByText(/community updates and stories\./i)).toBeDefined()
     expect(screen.getByRole('img', { name: /csaa newsletter/i }).getAttribute('src')).toContain(
       '/api/pages/1/hero/content',
     )
