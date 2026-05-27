@@ -36,16 +36,18 @@ function createHeaderSection(overrides: Partial<PageSection> = {}): PageSection 
     settings: {},
     header: {
       main_header_text: 'Welcome to the CSAA newsletter',
-      sub_header_text: 'Stories and updates from the community.',
+      sub_header_text: 'Community updates',
+      description: 'Stories and updates from the community.',
       hierarchy: 'h1_hero',
       text_align: 'left',
+      underline_enabled: false,
     },
     ...overrides,
   }
 }
 
 describe('CmsHeaderSection', () => {
-  it('renders the hero-style header with page eyebrow and hero image', () => {
+  it('renders the hero-style header with background media, eyebrow, and description', () => {
     render(
       <CmsHeaderSection
         page={createPage()}
@@ -57,70 +59,25 @@ describe('CmsHeaderSection', () => {
     expect(
       screen.getByRole('heading', { name: /welcome to the csaa newsletter/i }),
     ).toBeDefined()
-    expect(screen.getByText(/^csaa newsletter$/i)).toBeDefined()
+    expect(screen.getByText(/^community updates$/i)).toBeDefined()
+    expect(screen.getByText(/stories and updates from the community\./i)).toBeDefined()
     expect(
-      screen
-        .getByRole('img', { name: /welcome to the csaa newsletter/i })
-        .getAttribute('src'),
+      screen.getByTestId('cms-header-hero-background').getAttribute('src'),
     ).toContain('/api/pages/1/hero/content')
   })
 
-  it('applies centered alignment to hero headers', () => {
-    render(
-      <CmsHeaderSection
-        page={createPage()}
-        section={createHeaderSection({
-          header: {
-            main_header_text: 'Welcome to the CSAA newsletter',
-            sub_header_text: 'Stories and updates from the community.',
-            hierarchy: 'h1_hero',
-            text_align: 'center',
-          },
-        })}
-        isPrimaryHeader
-      />,
-    )
-
-    expect(
-      screen.getByRole('heading', { name: /welcome to the csaa newsletter/i }).parentElement
-        ?.className,
-    ).toContain('alignCenter')
-  })
-
-  it('uses the parent page title as eyebrow when the header matches the page title', () => {
-    render(
-      <CmsHeaderSection
-        page={createPage({ page_title: 'Contact Us' })}
-        section={createHeaderSection({
-          header: {
-            main_header_text: 'Contact Us',
-            sub_header_text: 'Reach out to the team.',
-            hierarchy: 'h2_section',
-            text_align: 'right',
-          },
-        })}
-        isPrimaryHeader={false}
-      />,
-    )
-
-    expect(screen.getByRole('heading', { name: /^contact us$/i })).toBeDefined()
-    expect(screen.getByText(/^community$/i)).toBeDefined()
-    expect(screen.queryByRole('img')).toBeNull()
-    expect(screen.getByRole('heading', { name: /^contact us$/i }).parentElement?.className).toContain(
-      'alignRight',
-    )
-  })
-
-  it('keeps the page title at the top instead of repeating it in lower section headers', () => {
+  it('renders h2 headers with eyebrow, underline, description, and text alignment', () => {
     render(
       <CmsHeaderSection
         page={createPage()}
         section={createHeaderSection({
           header: {
             main_header_text: 'Programs and services',
-            sub_header_text: 'Ways the community can connect.',
+            sub_header_text: 'Purpose & Path',
+            description: 'Ways the community can connect.',
             hierarchy: 'h2_section',
-            text_align: 'left',
+            text_align: 'right',
+            underline_enabled: true,
           },
         })}
         isPrimaryHeader={false}
@@ -130,11 +87,43 @@ describe('CmsHeaderSection', () => {
     expect(
       screen.getByRole('heading', { name: /programs and services/i }),
     ).toBeDefined()
-    expect(screen.queryByText(/^csaa newsletter$/i)).toBeNull()
+    expect(screen.getByText(/^purpose & path$/i)).toBeDefined()
+    expect(screen.getByText(/ways the community can connect\./i)).toBeDefined()
+    expect(
+      screen.getByRole('heading', { name: /programs and services/i }).parentElement?.className,
+    ).toContain('alignRight')
+    expect(
+      screen.getByRole('heading', { name: /programs and services/i }).parentElement?.querySelector(
+        'div[aria-hidden="true"]',
+      ),
+    ).not.toBeNull()
   })
 
-  it('uses the page title as the heading without duplicating it or showing a media placeholder', () => {
-    const { queryByTestId } = render(
+  it('keeps h2 headers in the new layout even when only the subtitle is provided', () => {
+    render(
+      <CmsHeaderSection
+        page={createPage()}
+        section={createHeaderSection({
+          header: {
+            main_header_text: 'Contact Us',
+            sub_header_text: 'Need help',
+            description: '',
+            hierarchy: 'h2_section',
+            text_align: 'left',
+            underline_enabled: false,
+          },
+        })}
+        isPrimaryHeader={false}
+      />,
+    )
+
+    expect(screen.getByRole('heading', { name: /^contact us$/i })).toBeDefined()
+    expect(screen.getByText(/^need help$/i)).toBeDefined()
+    expect(screen.queryByText(/page level description\./i)).toBeNull()
+  })
+
+  it('falls back to the page title and seo description when the hero header content is blank', () => {
+    render(
       <CmsHeaderSection
         page={createPage({
           hero_image_fetch_url: '',
@@ -143,8 +132,10 @@ describe('CmsHeaderSection', () => {
           header: {
             main_header_text: '   ',
             sub_header_text: '',
+            description: '',
             hierarchy: 'h1_hero',
             text_align: 'diagonal',
+            underline_enabled: false,
           },
         })}
         isPrimaryHeader
@@ -152,15 +143,11 @@ describe('CmsHeaderSection', () => {
     )
 
     expect(screen.getByRole('heading', { name: /^csaa newsletter$/i })).toBeDefined()
-    expect(screen.getAllByText(/^csaa newsletter$/i)).toHaveLength(1)
-    expect(screen.queryByRole('img')).toBeNull()
-    expect(queryByTestId('cms-hero-media-fallback')).toBeNull()
-    expect(screen.getByRole('heading', { name: /^csaa newsletter$/i }).parentElement?.className).toContain(
-      'alignLeft',
-    )
+    expect(screen.queryByText(/page level description\./i)).toBeNull()
+    expect(screen.queryByTestId('cms-header-hero-background')).toBeNull()
   })
 
-  it('does not render the page hero image when display is disabled', () => {
+  it('does not attach the page hero image when display is disabled', () => {
     render(
       <CmsHeaderSection
         page={createPage({
@@ -172,6 +159,7 @@ describe('CmsHeaderSection', () => {
       />,
     )
 
-    expect(screen.queryByRole('img')).toBeNull()
+    expect(screen.getByRole('heading', { name: /welcome to the csaa newsletter/i })).toBeDefined()
+    expect(screen.queryByTestId('cms-header-hero-background')).toBeNull()
   })
 })

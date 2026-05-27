@@ -325,9 +325,11 @@ const sampleHomePage = {
         settings: {},
         header: {
           main_header_text: 'Welcome to the CSAA newsletter',
-          sub_header_text: 'Stories, updates, and shared moments from the community.',
+          sub_header_text: 'Community updates',
+          description: 'Stories, updates, and shared moments from the community.',
           hierarchy: 'h1_hero',
           text_align: 'left',
+          underline_enabled: false,
         },
       },
       {
@@ -460,9 +462,11 @@ const sampleChildPage = {
         settings: {},
         header: {
           main_header_text: 'Contact Us',
-          sub_header_text: 'Reach the CSAA team for support and community questions.',
+          sub_header_text: 'Community support',
+          description: 'Reach the CSAA team for support and community questions.',
           hierarchy: 'h1_hero',
           text_align: 'left',
+          underline_enabled: false,
         },
       },
     ],
@@ -563,9 +567,11 @@ const samplePageWithSectionHeaderAndHero = {
         settings: {},
         header: {
           main_header_text: 'Meet The CSAA !',
-          sub_header_text: '',
+          sub_header_text: 'Community support team',
+          description: 'Resources, updates, and community care built for CSAA members.',
           hierarchy: 'h2_section',
           text_align: 'left',
+          underline_enabled: true,
         },
       },
       {
@@ -581,6 +587,61 @@ const samplePageWithSectionHeaderAndHero = {
           text_content:
             'Welcome to the official Children of Shingwauk Alumni Association Members portal. This dedicated space is designed to help our community stay connected, collaborate on ongoing healing and memorial initiatives, and easily access network resources.',
           text_align: 'center',
+        },
+      },
+    ],
+  },
+}
+
+const samplePageWithLateHeroHeader = {
+  ...sampleHomePage,
+  id: 44,
+  page_title: 'Pathways to Healing',
+  url_slug: '/community-support-team/pathways-to-healing',
+  parent_id: 29,
+  parent_page_title: 'Community Support Team',
+  parent_page_url_slug: '/community-support-team',
+  hero_image_enabled: true,
+  hero_image_url: 'gs://nordik-csa-documents/pages/44/hero_pathways.jpg',
+  hero_image_object_key: 'pages/44/hero_pathways.jpg',
+  hero_image_fetch_url: '/api/pages/44/hero/content',
+  seo_page_title: 'Pathways to Healing | Children of Shingwauk Alumni Association',
+  seo_page_description: 'Stories, services, and survivor-led healing pathways across the CSAA community.',
+  page_detail: {
+    ...sampleHomePage.page_detail,
+    id: 19,
+    page_id: 44,
+    sections: [
+      {
+        id: 601,
+        section_name: 'Typography',
+        section_type: 'typography',
+        sort_order: 0,
+        is_enabled: true,
+        settings: {},
+        typography: {
+          html_content:
+            '<p>This paragraph was created before the hero header, but the hero still needs to appear first.</p>',
+          text_content:
+            'This paragraph was created before the hero header, but the hero still needs to appear first.',
+          text_align: 'left',
+        },
+      },
+      {
+        id: 602,
+        section_name: 'Header Module',
+        section_type: 'header',
+        sort_order: 1,
+        is_enabled: true,
+        settings: {},
+        header: {
+          main_header_text: 'Pathways to Healing',
+          sub_header_text: 'Community support team',
+          description:
+            'Stories, services, and survivor-led healing pathways across the CSAA community.',
+          hierarchy: 'h1_hero',
+          text_align: 'left',
+          underline_enabled: false,
         },
       },
     ],
@@ -742,6 +803,9 @@ beforeEach(async () => {
     if (slug === '/community-support-team/csaa-members') {
       return samplePageWithSectionHeaderAndHero
     }
+    if (slug === '/community-support-team/pathways-to-healing') {
+      return samplePageWithLateHeroHeader
+    }
     if (slug === '/our-story/healing-memorials/reclaiming-shingwauk-hall-exhibition') {
       return samplePageWithoutHeader
     }
@@ -892,9 +956,7 @@ describe('App', () => {
         name: /^empty page$/i,
       }),
     ).toBeDefined()
-    expect(
-      screen.getByText(/placeholder copy for pages without cms sections yet\./i),
-    ).toBeDefined()
+    expect(screen.queryByText(/placeholder copy for pages without cms sections yet\./i)).toBeNull()
   })
 
   it('shows the page hero when a CMS page has content sections but no header section', async () => {
@@ -912,10 +974,11 @@ describe('App', () => {
       }),
     ).toBeDefined()
     expect(
-      screen
-        .getByRole('img', { name: /reclaiming shingwauk hall exhibition/i })
-        .getAttribute('src'),
+      screen.getByTestId('cms-fallback-hero-background').getAttribute('src'),
     ).toContain('/api/pages/26/hero/content')
+    expect(
+      screen.getByText(/explore the history, stories, and legacy of the shingwauk indian residential school\./i),
+    ).toBeDefined()
     expect(
       screen.getByText(/first major, permanent residential school survivor driven exhibition/i),
     ).toBeDefined()
@@ -927,21 +990,43 @@ describe('App', () => {
     renderWithProviders(<App />)
 
     expect(
-      await screen.findByRole('img', {
-        name: /csaa members/i,
-      }),
+      await screen.findByTestId('cms-fallback-hero-background'),
     ).toBeDefined()
-    expect(screen.getByRole('img', { name: /csaa members/i }).getAttribute('src')).toContain(
+    expect(screen.getByTestId('cms-fallback-hero-background').getAttribute('src')).toContain(
       '/api/pages/36/hero/content',
     )
+    expect(
+      screen.getByText(/welcome to the csaa members network\. find resources, community support tools, and updates for residential school survivors and alumni\./i),
+    ).toBeDefined()
     expect(
       screen.getByRole('heading', {
         name: /meet the csaa/i,
       }),
     ).toBeDefined()
     expect(
+      screen.getByText(/resources, updates, and community care built for csaa members\./i),
+    ).toBeDefined()
+    expect(
       screen.getByText(/welcome to the official children of shingwauk alumni association members portal/i),
     ).toBeDefined()
+  })
+
+  it('promotes an h1 header into the hero area even when it was created after other sections', async () => {
+    window.history.pushState({}, '', '/community-support-team/pathways-to-healing')
+
+    renderWithProviders(<App />)
+
+    const heroHeading = await screen.findByRole('heading', {
+      name: /pathways to healing/i,
+    })
+    const bodyText = screen.getByText(
+      /this paragraph was created before the hero header, but the hero still needs to appear first\./i,
+    )
+
+    expect(screen.getByTestId('cms-header-hero-background').getAttribute('src')).toContain(
+      '/api/pages/44/hero/content',
+    )
+    expect(heroHeading.compareDocumentPosition(bodyText) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it('renders the digital newsletters module route with the shared header shell', async () => {

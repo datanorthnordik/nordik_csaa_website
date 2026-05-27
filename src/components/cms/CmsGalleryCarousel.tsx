@@ -142,11 +142,17 @@ export function CmsGalleryCarousel({
       ) : null}
 
       {items.length > 1 ? (
-        <div className={styles.carouselFooter} aria-hidden="true">
+        <div className={styles.carouselFooter}>
           {items.map((item, index) => (
-            <span
+            <button
               key={item.id}
-              className={safeIndex === index ? styles.carouselDotActive : styles.carouselDot}
+              type="button"
+              className={`${styles.carouselDotButton} ${
+                safeIndex === index ? styles.carouselDotActive : styles.carouselDot
+              }`}
+              onClick={() => setActiveIndex(index)}
+              aria-label={`${t('common.viewImage')} ${index + 1}`}
+              aria-pressed={safeIndex === index}
             />
           ))}
         </div>

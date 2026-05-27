@@ -27,7 +27,7 @@ function createPage(overrides: Partial<PageDetailResponse> = {}): PageDetailResp
 }
 
 describe('CmsFallbackHero', () => {
-  it('renders the page title, description, and resolved hero image', () => {
+  it('renders the page title, description, and resolved hero background', () => {
     render(
       <CmsFallbackHero
         page={createPage({
@@ -37,22 +37,22 @@ describe('CmsFallbackHero', () => {
       />,
     )
 
-    expect(
-      screen.getByRole('heading', { name: /csaa newsletter/i }),
-    ).toBeDefined()
+    expect(screen.getByRole('heading', { name: /csaa newsletter/i })).toBeDefined()
     expect(screen.getByText(/community updates and stories\./i)).toBeDefined()
-    expect(screen.getByRole('img', { name: /csaa newsletter/i }).getAttribute('src')).toContain(
-      '/api/pages/1/hero/content',
-    )
+    expect(
+      screen.getByTestId('cms-fallback-hero-background').getAttribute('src'),
+    ).toContain('/api/pages/1/hero/content')
   })
 
-  it('falls back to the decorative media block when no image exists', () => {
+  it('uses fallback copy even when no image exists', () => {
     render(<CmsFallbackHero page={createPage()} />)
 
-    expect(screen.queryByRole('img')).toBeNull()
+    expect(screen.getByRole('heading', { name: /csaa newsletter/i })).toBeDefined()
+    expect(screen.queryByText(/community updates and stories\./i)).toBeNull()
+    expect(screen.queryByTestId('cms-fallback-hero-background')).toBeNull()
   })
 
-  it('does not render the hero image when display is disabled', () => {
+  it('does not attach the hero image when display is disabled', () => {
     render(
       <CmsFallbackHero
         page={createPage({
@@ -62,6 +62,7 @@ describe('CmsFallbackHero', () => {
       />,
     )
 
-    expect(screen.queryByRole('img')).toBeNull()
+    expect(screen.getByRole('heading', { name: /csaa newsletter/i })).toBeDefined()
+    expect(screen.queryByTestId('cms-fallback-hero-background')).toBeNull()
   })
 })

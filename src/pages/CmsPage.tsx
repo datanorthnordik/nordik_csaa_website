@@ -110,27 +110,41 @@ export function CmsPage() {
           ? Boolean(section.cta_banner)
           : false,
   )
-  const primaryHeaderSection =
+  const firstHeaderSection =
     renderableSections.find(
       (section) => section.section_type === 'header' && section.header,
     ) ?? null
-  const firstHeaderId = primaryHeaderSection?.id ?? null
-  const hasRenderableHeader = primaryHeaderSection !== null
-  const hasPrimaryHeroHeader = primaryHeaderSection?.header?.hierarchy === 'h1_hero'
+  const heroHeaderSection =
+    renderableSections.find(
+      (section) =>
+        section.section_type === 'header' && section.header?.hierarchy === 'h1_hero',
+    ) ?? null
   const hasPageHeroImage = Boolean(resolvePageHeroImageUrl(page))
-  const showFallbackHero = !hasRenderableHeader || (!hasPrimaryHeroHeader && hasPageHeroImage)
+  const showFallbackHero = !heroHeaderSection && (!firstHeaderSection || hasPageHeroImage)
+  const visibleSections = heroHeaderSection
+    ? renderableSections.filter((section) => section.id !== heroHeaderSection.id)
+    : renderableSections
 
   return (
     <div className={styles.page}>
-      {showFallbackHero ? <CmsFallbackHero page={page} /> : null}
+      {heroHeaderSection ? (
+        <CmsSectionRenderer
+          page={page}
+          section={heroHeaderSection}
+          isPrimaryHeader
+        />
+      ) : null}
+      {showFallbackHero ? (
+        <CmsFallbackHero page={page} header={firstHeaderSection?.header ?? null} />
+      ) : null}
 
       <div className={styles.sections}>
-        {renderableSections.map((section) => (
+        {visibleSections.map((section) => (
           <CmsSectionRenderer
             key={section.id}
             page={page}
             section={section}
-            isPrimaryHeader={section.id === firstHeaderId}
+            isPrimaryHeader={false}
           />
         ))}
       </div>

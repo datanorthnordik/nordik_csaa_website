@@ -12,8 +12,10 @@ export type PageSectionType =
 export type PageHeaderSection = {
   main_header_text: string
   sub_header_text: string
+  description?: string
   hierarchy: 'h1_hero' | 'h2_section' | string
   text_align?: 'left' | 'center' | 'right' | string
+  underline_enabled?: boolean
 }
 
 export type PageTypographySection = {
@@ -34,12 +36,20 @@ export type PageQuoteSection = {
   attribution: string
 }
 
+export type PageSectionAsset = {
+  file_url: string
+  fetch_url: string
+  storage_uri: string
+  gcp_object_key: string
+}
+
 export type PageCtaBannerSection = {
   banner_heading: string
   banner_message: string
   button_text: string
   button_url: string
   open_in_new_tab: boolean
+  image?: PageSectionAsset | null
 }
 
 export type PageDocument = {
