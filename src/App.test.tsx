@@ -534,6 +534,59 @@ const samplePageWithoutHeader = {
   },
 }
 
+const samplePageWithSectionHeaderAndHero = {
+  ...sampleHomePage,
+  id: 36,
+  page_title: 'CSAA Members',
+  url_slug: '/community-support-team/csaa-members',
+  parent_id: 29,
+  parent_page_title: 'Community Support Team',
+  parent_page_url_slug: '/community-support-team',
+  hero_image_enabled: true,
+  hero_image_url: 'gs://nordik-csa-documents/pages/36/hero_20260526191645_makwa17.jpg',
+  hero_image_object_key: 'pages/36/hero_20260526191645_makwa17.jpg',
+  hero_image_fetch_url: '/api/pages/36/hero/content',
+  seo_page_title: 'CSAA Members | Children of Shingwauk Alumni Association',
+  seo_page_description:
+    'Welcome to the CSAA members network. Find resources, community support tools, and updates for residential school survivors and alumni.',
+  page_detail: {
+    ...sampleHomePage.page_detail,
+    id: 17,
+    page_id: 36,
+    sections: [
+      {
+        id: 453,
+        section_name: 'Header Module',
+        section_type: 'header',
+        sort_order: 0,
+        is_enabled: true,
+        settings: {},
+        header: {
+          main_header_text: 'Meet The CSAA !',
+          sub_header_text: '',
+          hierarchy: 'h2_section',
+          text_align: 'left',
+        },
+      },
+      {
+        id: 454,
+        section_name: 'Typography',
+        section_type: 'typography',
+        sort_order: 1,
+        is_enabled: true,
+        settings: {},
+        typography: {
+          html_content:
+            '<p>Welcome to the official Children of Shingwauk Alumni Association Members portal. This dedicated space is designed to help our community stay connected, collaborate on ongoing healing and memorial initiatives, and easily access network resources.</p>',
+          text_content:
+            'Welcome to the official Children of Shingwauk Alumni Association Members portal. This dedicated space is designed to help our community stay connected, collaborate on ongoing healing and memorial initiatives, and easily access network resources.',
+          text_align: 'center',
+        },
+      },
+    ],
+  },
+}
+
 const sampleNewsletters = [
   {
     id: 11,
@@ -685,6 +738,9 @@ beforeEach(async () => {
     }
     if (slug === '/home/empty') {
       return sampleEmptyPage
+    }
+    if (slug === '/community-support-team/csaa-members') {
+      return samplePageWithSectionHeaderAndHero
     }
     if (slug === '/our-story/healing-memorials/reclaiming-shingwauk-hall-exhibition') {
       return samplePageWithoutHeader
@@ -862,6 +918,29 @@ describe('App', () => {
     ).toContain('/api/pages/26/hero/content')
     expect(
       screen.getByText(/first major, permanent residential school survivor driven exhibition/i),
+    ).toBeDefined()
+  })
+
+  it('shows the page hero when a CMS page has a non-hero header section and hero display is enabled', async () => {
+    window.history.pushState({}, '', '/community-support-team/csaa-members')
+
+    renderWithProviders(<App />)
+
+    expect(
+      await screen.findByRole('img', {
+        name: /csaa members/i,
+      }),
+    ).toBeDefined()
+    expect(screen.getByRole('img', { name: /csaa members/i }).getAttribute('src')).toContain(
+      '/api/pages/36/hero/content',
+    )
+    expect(
+      screen.getByRole('heading', {
+        name: /meet the csaa/i,
+      }),
+    ).toBeDefined()
+    expect(
+      screen.getByText(/welcome to the official children of shingwauk alumni association members portal/i),
     ).toBeDefined()
   })
 

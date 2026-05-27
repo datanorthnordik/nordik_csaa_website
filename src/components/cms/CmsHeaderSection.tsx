@@ -1,6 +1,6 @@
 import type { PageDetailResponse, PageSection } from '../../api/pagesApi'
 import { CmsHeroMedia } from './CmsHeroMedia'
-import { normalizeCmsLabel, resolveCmsAssetUrl } from './cmsPageMedia'
+import { normalizeCmsLabel, resolvePageHeroImageUrl } from './cmsPageMedia'
 import styles from './CmsSectionBlocks.module.css'
 
 type CmsHeaderSectionProps = {
@@ -19,9 +19,7 @@ export function CmsHeaderSection({
     return null
   }
 
-  const imageUrl = isPrimaryHeader
-    ? resolveCmsAssetUrl(page.hero_image_fetch_url)
-    : null
+  const imageUrl = isPrimaryHeader ? resolvePageHeroImageUrl(page) : null
   const mainHeaderText = header.main_header_text.trim()
   const subHeaderText = header.sub_header_text.trim()
   const textAlign = header.text_align?.trim().toLowerCase()

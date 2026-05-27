@@ -13,7 +13,7 @@ function createPage(overrides: Partial<PageDetailResponse> = {}): PageDetailResp
     parent_page_title: '',
     parent_page_url_slug: '',
     status: 'published',
-    hero_image_enabled: false,
+    hero_image_enabled: true,
     hero_image_url: '',
     hero_image_object_key: '',
     hero_image_fetch_url: '',
@@ -31,6 +31,7 @@ describe('CmsFallbackHero', () => {
     render(
       <CmsFallbackHero
         page={createPage({
+          hero_image_enabled: true,
           hero_image_fetch_url: '/api/pages/1/hero/content',
         })}
       />,
@@ -47,6 +48,19 @@ describe('CmsFallbackHero', () => {
 
   it('falls back to the decorative media block when no image exists', () => {
     render(<CmsFallbackHero page={createPage()} />)
+
+    expect(screen.queryByRole('img')).toBeNull()
+  })
+
+  it('does not render the hero image when display is disabled', () => {
+    render(
+      <CmsFallbackHero
+        page={createPage({
+          hero_image_enabled: false,
+          hero_image_fetch_url: '/api/pages/1/hero/content',
+        })}
+      />,
+    )
 
     expect(screen.queryByRole('img')).toBeNull()
   })
