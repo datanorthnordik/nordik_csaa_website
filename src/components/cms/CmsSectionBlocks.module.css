@@ -45,8 +45,7 @@
 }
 
 .heroTitle,
-.quoteText,
-.ctaHeading {
+.quoteText {
   font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
   color: var(--color-primary);
 }
@@ -267,28 +266,69 @@
 
 .ctaCard {
   display: grid;
+  gap: clamp(24px, 4vw, 72px);
+  align-items: center;
+  margin-inline: calc(50% - 50vw);
+  padding: clamp(54px, 7vw, 82px) max(24px, calc((100vw - 980px) / 2));
+  background: #f1f0ef;
+}
+
+.ctaCardWithImage {
+  grid-template-columns: minmax(240px, 0.82fr) minmax(0, 1fr);
+  justify-items: stretch;
+  text-align: left;
+}
+
+.ctaCardCentered {
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
-  gap: 12px;
-  padding: 20px 0 8px;
   text-align: center;
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
+}
+
+.ctaMedia {
+  display: flex;
+  justify-content: center;
+}
+
+.ctaImage {
+  width: min(280px, 72vw);
+  height: auto;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 28px rgba(31, 31, 35, 0.14));
+}
+
+.ctaCopy {
+  display: grid;
+  gap: 18px;
+  max-width: 560px;
+}
+
+.ctaCardCentered .ctaCopy {
+  justify-items: center;
+  max-width: 54rem;
 }
 
 .ctaHeading {
   margin: 0;
-  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--color-text);
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  font-weight: 800;
   line-height: 1.04;
-  letter-spacing: 0;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
 }
 
 .ctaMessage {
-  max-width: 42rem;
+  max-width: 46rem;
+  margin: 0;
   padding: 0;
   background: transparent;
   color: var(--color-text);
-  font-weight: 600;
-  line-height: 1.6;
+  font-size: clamp(1rem, 1.7vw, 1.18rem);
+  font-weight: 500;
+  line-height: 1.65;
 }
 
 .ctaButton {
@@ -296,13 +336,13 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 42px;
-  padding: 0 18px;
-  border-radius: 3px;
+  min-height: 50px;
+  padding: 0 28px;
+  border-radius: 2px;
   background: var(--color-primary);
   color: var(--color-on-primary);
   font-weight: 800;
-  font-size: 0.9rem;
+  font-size: 1rem;
   letter-spacing: 0;
   text-decoration: none;
   transition: transform 0.18s ease, background 0.18s ease;
@@ -362,6 +402,15 @@
   .heroMediaFallback {
     min-height: 260px;
   }
+
+  .ctaCardWithImage {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .ctaCardWithImage .ctaCopy {
+    text-align: left;
+  }
 }
 
 @media (max-width: 640px) {
@@ -390,6 +439,18 @@
   .heroMedia,
   .heroMediaFallback {
     min-height: 220px;
+  }
+
+  .ctaCard {
+    padding: 44px 24px;
+  }
+
+  .ctaHeading {
+    font-size: clamp(2rem, 9vw, 3rem);
+  }
+
+  .ctaMessage {
+    font-size: 1rem;
   }
 
   .ctaButton {

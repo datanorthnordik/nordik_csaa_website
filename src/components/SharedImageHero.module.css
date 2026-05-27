@@ -52,9 +52,11 @@
 .heroContent {
   grid-area: stack;
   z-index: 1;
-  align-self: center;
+  align-self: start;
+  justify-self: center;
   width: 100%;
-  padding: 80px 24px 136px;
+  max-width: 900px;
+  padding: 72px 24px 136px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -144,6 +146,6 @@
   }
 
   .heroContent {
-    padding: 48px 20px 88px;
+    padding: 44px 20px 88px;
   }
 }
