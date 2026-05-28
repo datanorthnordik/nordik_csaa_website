@@ -53,17 +53,25 @@
 }
 
 .heroActions {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
-  flex-wrap: wrap;
-  align-items: center;
+  width: min(100%, 520px);
   margin-top: 4px;
+}
+
+.heroActions > :first-child {
+  grid-column: 1 / -1;
+}
+
+.heroActions > * {
+  width: 100%;
 }
 
 .primaryAction,
 .secondaryAction,
 .cardLink,
-.paginationButton {
+.loadMoreButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -81,13 +89,13 @@
 }
 
 .primaryAction,
-.cardLink {
+.cardLink,
+.loadMoreButton {
   background: var(--color-primary);
   color: var(--color-on-primary);
 }
 
-.secondaryAction,
-.paginationButton {
+.secondaryAction {
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-text);
@@ -121,13 +129,13 @@
 .primaryAction:hover,
 .secondaryAction:hover,
 .cardLink:hover,
-.paginationButton:hover:not(:disabled) {
+.loadMoreButton:hover:not(:disabled) {
   transform: translateY(-1px);
 }
 
-.paginationButton:disabled {
+.loadMoreButton:disabled {
   opacity: 0.45;
-  cursor: not-allowed;
+  cursor: wait;
 }
 
 .heroMedia {
@@ -161,8 +169,7 @@
 .heroImage {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
+  height: auto;
 }
 
 .section {
@@ -196,7 +203,7 @@
 .cardGrid {
   display: grid;
   gap: 18px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   align-items: stretch;
 }
 
@@ -423,17 +430,9 @@
   animation: shimmer 1.4s infinite linear;
 }
 
-.pagination {
+.loadMoreWrap {
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.paginationLabel {
-  color: var(--color-text-muted);
-  font-weight: 700;
+  justify-content: center;
 }
 
 @keyframes shimmer {
@@ -455,10 +454,6 @@
   .heroMedia {
     justify-content: flex-start;
   }
-
-  .cardGrid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 768px) {
@@ -477,21 +472,16 @@
   }
 
   .heroActions {
-    align-items: stretch;
+    grid-template-columns: 1fr;
   }
 
-  .primaryAction,
-  .secondaryAction {
-    flex: 1 1 100%;
+  .heroActions > :first-child {
+    grid-column: auto;
   }
 
   .mediaChrome {
     width: 100%;
     box-shadow: 0 14px 32px rgba(31, 31, 35, 0.1);
-  }
-
-  .cardGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .cardBody,
@@ -501,19 +491,5 @@
 
   .cardTitle {
     font-size: 1.2rem;
-  }
-
-  .pagination {
-    justify-content: stretch;
-  }
-
-  .paginationButton {
-    flex: 1 1 0;
-  }
-}
-
-@media (max-width: 560px) {
-  .cardGrid {
-    grid-template-columns: 1fr;
   }
 }

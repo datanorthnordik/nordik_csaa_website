@@ -127,17 +127,16 @@
 
 .coverImage,
 .coverFrame {
-  min-height: 360px;
-}
-
-.coverImage,
-.coverFrame {
   display: block;
   width: 100%;
-  object-fit: cover;
+}
+
+.coverImage {
+  height: auto;
 }
 
 .coverFrame {
+  min-height: 360px;
   border: 0;
 }
 

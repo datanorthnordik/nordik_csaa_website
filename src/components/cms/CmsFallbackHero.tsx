@@ -12,13 +12,8 @@ export function CmsFallbackHero({ page, header = null }: CmsFallbackHeroProps) {
   const imageUrl = resolvePageHeroImageUrl(page)
   const headerSubText = header?.sub_header_text?.trim() ?? ''
   const headerDescription = header?.description?.trim() ?? ''
-  const pageDescription = page.seo_page_description.trim()
-  const parentPageTitle = (page.parent_page_title ?? '').trim()
-  const description = pageDescription || headerDescription || headerSubText
-  const eyebrow =
-    description === headerSubText
-      ? parentPageTitle
-      : headerSubText || parentPageTitle
+  const description = headerDescription || headerSubText
+  const eyebrow = headerDescription ? headerSubText : ''
 
   useEffect(() => {
     if (page.seo_page_description) {

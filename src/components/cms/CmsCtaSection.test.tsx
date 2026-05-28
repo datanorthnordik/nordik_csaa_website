@@ -81,4 +81,28 @@ describe('CmsCtaSection', () => {
       '/api/pages/sections/14/cta-image/content',
     )
   })
+
+  it('does not render a CTA image when no uploaded asset metadata exists', () => {
+    render(
+      <CmsCtaSection
+        section={createSection({
+          cta_banner: {
+            banner_heading: 'Community Support',
+            banner_message: 'We are here for the community.',
+            button_text: 'Learn more',
+            button_url: '/community-support',
+            open_in_new_tab: false,
+            image: {
+              file_url: '/api/pages/sections/14/cta-image/content',
+              fetch_url: '/api/pages/sections/14/cta-image/content',
+              storage_uri: '',
+              gcp_object_key: '',
+            },
+          },
+        })}
+      />,
+    )
+
+    expect(screen.queryByAltText(/community support/i)).toBeNull()
+  })
 })
