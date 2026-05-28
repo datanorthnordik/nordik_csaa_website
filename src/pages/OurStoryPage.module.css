@@ -450,7 +450,6 @@
 
 /* ── Solemn Dedication ── */
 
-<<<<<<< HEAD
 .dedicationSection {
   width: 100vw;
   margin-left: calc(50% - 50vw);
@@ -528,8 +527,6 @@
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.65);
 }
-=======
->>>>>>> 02bfb29c029bba0f69574f90b05e1ab047b6af3d
 
 /* ── Responsive ── */
 

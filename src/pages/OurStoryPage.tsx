@@ -3,17 +3,10 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import shingwaukHero from '../assets/irs_vector.png'
 import missionImg from '../assets/makwa17.jpg'
-<<<<<<< HEAD
 import legacyImg from '../assets/canoe_vector.png'
 import memorialsImg from '../assets/every-child-matters-hero.jpg'
 import archivesImg from '../assets/srsc_logo.png'
 import csaaLogo from '../assets/csaa_logo.png'
-=======
-import legacyImg from '../assets/watercolor_meadow.png'
-import memorialsImg from '../assets/cryingrock-hero.png'
-import archivesImg from '../assets/every-child-matters-hero.jpg'
-import { QuoteBanner } from '../components/QuoteBanner'
->>>>>>> 02bfb29c029bba0f69574f90b05e1ab047b6af3d
 import styles from './OurStoryPage.module.css'
 
 /* S-curve wave: starts mid-left, dips down, rises back up on the right */
@@ -157,7 +150,6 @@ export function OurStoryPage() {
       </section>
 
       {/* ── Solemn Dedication ── */}
-<<<<<<< HEAD
       <section className={styles.dedicationSection}>
         <img src={csaaLogo} alt="CSAA Logo" className={styles.dedicationLogo} />
         <blockquote className={styles.dedicationQuote}>
@@ -169,12 +161,6 @@ export function OurStoryPage() {
           <span className={styles.dedicationRuleLine} />
         </div>
       </section>
-=======
-      <QuoteBanner
-        quote={t('ourStory.dedication.quote')}
-        attribution={t('ourStory.dedication.attribution')}
-      />
->>>>>>> 02bfb29c029bba0f69574f90b05e1ab047b6af3d
 
     </div>
   )

@@ -9,36 +9,6 @@ import watercolorMeadow from '../assets/watercolor_meadow.png'
 import { SharedImageHero } from '../components/SharedImageHero'
 import styles from './HealingMemorialsPage.module.css'
 
-<<<<<<< HEAD
-/* ─── Wave SVG divider ─── */
-const WAVE_CURVE = 'M0,45 C400,45 450,95 700,95 C1000,95 1100,25 1300,25 C1380,25 1410,35 1440,35'
-
-function WaveDivider() {
-  return (
-    <div className={styles.waveDivider}>
-      <svg
-        viewBox="0 0 1440 120"
-        preserveAspectRatio="none"
-        className={styles.waveSvg}
-        aria-hidden="true"
-      >
-        <path d={`${WAVE_CURVE} L1440,120 L0,120 Z`} fill="#ffffff" />
-        <path
-          d={WAVE_CURVE}
-          fill="none"
-          stroke="#9c0000"
-          strokeWidth="5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          vectorEffect="non-scaling-stroke"
-        />
-      </svg>
-    </div>
-  )
-}
-
-=======
->>>>>>> 02bfb29c029bba0f69574f90b05e1ab047b6af3d
 type Pillar = {
   key: string
   href: string
@@ -94,34 +64,11 @@ export function HealingMemorialsPage() {
         }}
       />
 
-<<<<<<< HEAD
-      {/* ── Hero ── */}
-      <section className={styles.hero}>
-        <div
-          className={styles.heroImage}
-          style={{ backgroundImage: `url(${healingHero})` }}
-          aria-hidden="true"
-        />
-        <div className={styles.heroOverlay} aria-hidden="true" />
-        <div className={styles.heroContent}>
-          <h1 className={styles.heroTitle}>{t('healingMemorials.hero.title')}</h1>
-          <p className={styles.heroDescription}>{t('healingMemorials.hero.description')}</p>
-          <a href="#pillars" className={styles.heroCta}>
-            {t('healingMemorials.hero.cta')}
-          </a>
-        </div>
-        <WaveDivider />
-      </section>
-
-      {/* ── Community Pillars ── */}
-      <section id="pillars" className={styles.pillarsSection} aria-label={t('healingMemorials.pillars.label')}>
-=======
       <section
         id="pillars"
         className={styles.pillarsSection}
         aria-label={t('healingMemorials.pillars.label')}
       >
->>>>>>> 02bfb29c029bba0f69574f90b05e1ab047b6af3d
         <div className={styles.pillarsHeader}>
           <p className={styles.pillarsEyebrow}>{t('healingMemorials.pillars.eyebrow')}</p>
           <h2 className={styles.pillarsTitle}>{t('healingMemorials.pillars.title')}</h2>
