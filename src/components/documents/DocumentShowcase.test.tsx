@@ -27,6 +27,16 @@ const sampleItems: DocumentShowcaseItem[] = [
     badgeLabel: 'PDF',
     mimeType: 'application/pdf',
   },
+  {
+    id: 3,
+    title: 'Facilitator guide',
+    description: 'Session facilitator guide',
+    previewUrl: 'https://example.com/facilitator-guide.docx',
+    downloadUrl: 'https://example.com/facilitator-guide.docx',
+    downloadFileName: 'facilitator-guide.docx',
+    badgeLabel: 'DOCX',
+    mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  },
 ]
 
 describe('DocumentShowcase', () => {
@@ -69,15 +79,16 @@ describe('DocumentShowcase', () => {
     expect(
       screen.getByRole('heading', { name: /additional documents/i }),
     ).toBeDefined()
-    expect(screen.getByText('1 / 2')).toBeDefined()
+    expect(screen.getByText('1 / 3')).toBeDefined()
     expect(screen.getByAltText(/community poster/i)).toBeDefined()
     expect(screen.getByText(/opening celebration poster/i)).toBeDefined()
 
     fireEvent.click(screen.getByRole('button', { name: /next/i }))
 
-    expect(screen.getByText('2 / 2')).toBeDefined()
+    expect(screen.getByText('2 / 3')).toBeDefined()
     expect(screen.getByText(/detailed workshop agenda/i)).toBeDefined()
     expect(screen.getByRole('button', { name: /download pdf/i })).toBeDefined()
+    expect(screen.getByTitle(/workshop agenda preview/i)).toBeDefined()
 
     fireEvent.click(screen.getByRole('button', { name: /workshop agenda/i }))
 
@@ -92,6 +103,24 @@ describe('DocumentShowcase', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /close/i }))
     expect(screen.queryByRole('dialog')).toBeNull()
+
+    fireEvent.click(screen.getByRole('button', { name: /next/i }))
+
+    const officePreview = screen.getByTitle(/facilitator guide preview/i)
+    expect(officePreview.getAttribute('src')).toContain(
+      'https://view.officeapps.live.com/op/embed.aspx?src=',
+    )
+    expect(officePreview.getAttribute('src')).toContain(
+      encodeURIComponent('https://example.com/facilitator-guide.docx'),
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: /facilitator guide/i }))
+
+    const officeDialog = screen.getByRole('dialog', { name: /facilitator guide/i })
+    const officeViewer = within(officeDialog).getByTitle(/facilitator guide/i)
+    expect(officeViewer.getAttribute('src')).toContain(
+      encodeURIComponent('https://example.com/facilitator-guide.docx'),
+    )
   })
 
   it('downloads the active item and shows an error if the download fails', async () => {

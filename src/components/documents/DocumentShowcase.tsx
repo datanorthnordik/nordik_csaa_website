@@ -61,8 +61,10 @@ export function DocumentShowcase({
   const safeIndex = Math.min(activeIndex, items.length - 1)
   const activeItem = items[safeIndex]
   const activeSummary = getSummary(activeItem)
+  const activePreview = resolveInlinePreview(activeItem)
   const viewerItem =
     viewerIndex === null ? null : items[Math.min(viewerIndex, items.length - 1)] ?? null
+  const viewerPreviewUrl = viewerItem ? resolveViewerPreviewUrl(viewerItem) : null
   const sectionClassName = className
     ? `${styles.showcaseSection} ${className}`
     : styles.showcaseSection
@@ -130,28 +132,39 @@ export function DocumentShowcase({
         ) : null}
       </div>
 
-      <button
-        type="button"
+      <div
         className={[
           styles.showcaseSlide,
-          !isImageDocument(activeItem) ? styles.showcaseDocumentSlide : '',
+          activePreview.kind !== 'image' ? styles.showcaseDocumentSlide : '',
           isPdfDocument(activeItem) ? styles.showcasePdfSlide : '',
         ]
           .filter(Boolean)
           .join(' ')}
-        onClick={() => setViewerIndex(safeIndex)}
-        aria-label={activeItem.title}
       >
-        {isImageDocument(activeItem) ? (
+        {activePreview.kind === 'image' ? (
           <img src={activeItem.previewUrl} alt={activeItem.title} />
+        ) : activePreview.kind === 'iframe' ? (
+          <iframe
+            title={`${activeItem.title} preview`}
+            src={activePreview.url}
+            className={styles.showcasePreviewFrame}
+            loading="lazy"
+            tabIndex={-1}
+          />
         ) : (
           <span className={styles.showcaseDocumentPreview} aria-hidden="true" />
         )}
-        {isImageDocument(activeItem) ? (
+        {activePreview.kind === 'image' ? (
           <span className={styles.showcaseShade} aria-hidden="true" />
         ) : null}
+        <button
+          type="button"
+          className={styles.showcasePreviewButton}
+          onClick={() => setViewerIndex(safeIndex)}
+          aria-label={activeItem.title}
+        />
         <span className={styles.showcaseFileBadge}>{activeItem.badgeLabel}</span>
-      </button>
+      </div>
 
       <div className={styles.showcaseDownloadCard}>
         <div>
@@ -188,8 +201,12 @@ export function DocumentShowcase({
             <div className={styles.viewerStage}>
               {isImageDocument(viewerItem) ? (
                 <img src={viewerItem.previewUrl} alt={viewerItem.title} />
+              ) : viewerPreviewUrl ? (
+                <iframe title={viewerItem.title} src={viewerPreviewUrl} />
               ) : (
-                <iframe title={viewerItem.title} src={viewerItem.previewUrl} />
+                <div className={styles.viewerFallback}>
+                  <span className={styles.viewerFallbackBadge}>{viewerItem.badgeLabel}</span>
+                </div>
               )}
             </div>
 
@@ -213,10 +230,111 @@ export function DocumentShowcase({
   )
 }
 
-function isImageDocument(item?: Pick<DocumentShowcaseItem, 'mimeType'> | null) {
-  return Boolean(item?.mimeType.toLowerCase().startsWith('image/'))
+function isImageDocument(
+  item?: Pick<DocumentShowcaseItem, 'mimeType' | 'downloadFileName'> | null,
+) {
+  return Boolean(
+    getMimeType(item).startsWith('image/') ||
+      IMAGE_EXTENSIONS.includes(getFileExtension(item)),
+  )
 }
 
-function isPdfDocument(item?: Pick<DocumentShowcaseItem, 'mimeType'> | null) {
-  return item?.mimeType.toLowerCase() === 'application/pdf'
+function isPdfDocument(
+  item?: Pick<DocumentShowcaseItem, 'mimeType' | 'downloadFileName'> | null,
+) {
+  const mimeType = getMimeType(item)
+  return mimeType === 'application/pdf' || getFileExtension(item) === 'pdf'
 }
+
+function isHtmlDocument(
+  item?: Pick<DocumentShowcaseItem, 'mimeType' | 'downloadFileName'> | null,
+) {
+  const mimeType = getMimeType(item)
+  const extension = getFileExtension(item)
+  return mimeType.includes('html') || extension === 'html' || extension === 'htm'
+}
+
+function isOfficeDocument(
+  item?: Pick<DocumentShowcaseItem, 'mimeType' | 'downloadFileName'> | null,
+) {
+  return OFFICE_MIME_TYPES.has(getMimeType(item)) || OFFICE_EXTENSIONS.has(getFileExtension(item))
+}
+
+function resolveInlinePreview(
+  item: Pick<DocumentShowcaseItem, 'previewUrl' | 'mimeType' | 'downloadFileName'>,
+) {
+  if (isImageDocument(item)) {
+    return {
+      kind: 'image' as const,
+      url: item.previewUrl,
+    }
+  }
+
+  const viewerPreviewUrl = resolveViewerPreviewUrl(item)
+  if (viewerPreviewUrl && (isPdfDocument(item) || isHtmlDocument(item) || isOfficeDocument(item))) {
+    return {
+      kind: 'iframe' as const,
+      url: viewerPreviewUrl,
+    }
+  }
+
+  return {
+    kind: 'placeholder' as const,
+    url: null,
+  }
+}
+
+function resolveViewerPreviewUrl(
+  item: Pick<DocumentShowcaseItem, 'previewUrl' | 'mimeType' | 'downloadFileName'>,
+) {
+  if (isOfficeDocument(item)) {
+    if (!/^https?:\/\//i.test(item.previewUrl)) {
+      return null
+    }
+
+    return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(
+      item.previewUrl,
+    )}`
+  }
+
+  return item.previewUrl
+}
+
+function getMimeType(item?: Pick<DocumentShowcaseItem, 'mimeType'> | null) {
+  return item?.mimeType.toLowerCase().trim() ?? ''
+}
+
+function getFileExtension(
+  item?: Pick<DocumentShowcaseItem, 'downloadFileName'> | null,
+) {
+  return item?.downloadFileName.split('.').pop()?.trim().toLowerCase() ?? ''
+}
+
+const IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg']
+
+const OFFICE_EXTENSIONS = new Set([
+  'doc',
+  'docx',
+  'ppt',
+  'pptx',
+  'xls',
+  'xlsx',
+  'rtf',
+  'odt',
+  'ods',
+  'odp',
+])
+
+const OFFICE_MIME_TYPES = new Set([
+  'application/msword',
+  'application/vnd.ms-excel',
+  'application/vnd.ms-powerpoint',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'application/rtf',
+  'text/rtf',
+  'application/vnd.oasis.opendocument.text',
+  'application/vnd.oasis.opendocument.spreadsheet',
+  'application/vnd.oasis.opendocument.presentation',
+])

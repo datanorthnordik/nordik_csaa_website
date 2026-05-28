@@ -22,7 +22,10 @@
 
 .heroMedia {
   position: relative;
+  min-height: 420px;
   display: grid;
+  align-items: center;
+  justify-items: center;
   overflow: hidden;
   border-radius: 8px;
   background: var(--color-surface-alt);
@@ -52,21 +55,20 @@
 }
 
 .heroImage {
-  grid-area: 1 / 1;
+  position: absolute;
+  inset: 0;
   width: 100%;
+  height: 100%;
   display: block;
-  height: auto;
+  object-fit: cover;
 }
 
 .heroOverlay,
 .heroFallback {
-  grid-area: 1 / 1;
   position: relative;
   z-index: 3;
   display: grid;
   gap: 16px;
-  align-self: center;
-  justify-self: center;
   justify-items: center;
   width: min(760px, calc(100% - 40px));
   padding: 52px 20px 76px;
@@ -893,6 +895,14 @@
 @media (max-width: 768px) {
   .page {
     gap: 28px;
+  }
+
+  .heroImage {
+    height: 100%;
+  }
+
+  .heroMedia {
+    min-height: 360px;
   }
 
   .heroTitle {
