@@ -32,7 +32,7 @@ export function CmsHeaderSection({
         : styles.alignLeft
   const heroTitle = mainHeaderText || page.page_title.trim()
   const heroEyebrow = description ? subHeaderText : ''
-  const heroDescription = description || subHeaderText || page.seo_page_description.trim()
+  const heroDescription = description || subHeaderText
   const sectionTitle = mainHeaderText
   const sectionEyebrow = subHeaderText
   const sectionDescription = description

@@ -1,4 +1,4 @@
-import type { PageDetailResponse, PageDocument } from '../../api/pagesApi'
+import type { PageDetailResponse, PageDocument, PageSectionAsset } from '../../api/pagesApi'
 import { API_BASE_URL } from '../../constants/api'
 
 export function resolveCmsAssetUrl(value?: string) {
@@ -18,10 +18,25 @@ export function resolveCmsAssetUrl(value?: string) {
   return null
 }
 
+export function resolveUploadedCmsAssetUrl(asset?: PageSectionAsset | null) {
+  const hasUploadedAsset = Boolean(
+    asset?.gcp_object_key?.trim() || asset?.storage_uri?.trim(),
+  )
+
+  if (!hasUploadedAsset) {
+    return null
+  }
+
+  return resolveCmsAssetUrl(asset?.fetch_url) ?? resolveCmsAssetUrl(asset?.file_url)
+}
+
 export function resolvePageHeroImageUrl(
-  page: Pick<PageDetailResponse, 'hero_image_enabled' | 'hero_image_fetch_url'>,
+  page: Pick<
+    PageDetailResponse,
+    'hero_image_enabled' | 'hero_image_fetch_url' | 'hero_image_object_key'
+  >,
 ) {
-  if (!page.hero_image_enabled) {
+  if (!page.hero_image_enabled || !page.hero_image_object_key.trim()) {
     return null
   }
 

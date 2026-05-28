@@ -27,21 +27,48 @@ function createPage(overrides: Partial<PageDetailResponse> = {}): PageDetailResp
 }
 
 describe('CmsFallbackHero', () => {
-  it('renders the page title, description, and resolved hero background', () => {
+  it('renders the page title and resolved hero background without page-level fallback copy', () => {
     render(
       <CmsFallbackHero
         page={createPage({
           hero_image_enabled: true,
+          hero_image_object_key: 'pages/1/hero.jpg',
           hero_image_fetch_url: '/api/pages/1/hero/content',
         })}
       />,
     )
 
     expect(screen.getByRole('heading', { name: /csaa newsletter/i })).toBeDefined()
-    expect(screen.getByText(/community updates and stories\./i)).toBeDefined()
+    expect(screen.queryByText(/community updates and stories\./i)).toBeNull()
     expect(
       screen.getByTestId('cms-fallback-hero-background').getAttribute('src'),
     ).toContain('/api/pages/1/hero/content')
+  })
+
+  it('renders the header subheading and description when a fallback header is available', () => {
+    render(
+      <CmsFallbackHero
+        page={createPage({
+          hero_image_enabled: true,
+          hero_image_object_key: 'pages/1/hero.jpg',
+          hero_image_fetch_url: '/api/pages/1/hero/content',
+          parent_page_title: 'Community',
+        })}
+        header={{
+          main_header_text: 'Welcome',
+          sub_header_text: 'Community updates',
+          description: 'Stories and updates from the community.',
+          hierarchy: 'h2_section',
+          text_align: 'left',
+          underline_enabled: false,
+        }}
+      />,
+    )
+
+    expect(screen.getByText(/^community updates$/i)).toBeDefined()
+    expect(screen.getByText(/stories and updates from the community\./i)).toBeDefined()
+    expect(screen.queryByText(/^community$/i)).toBeNull()
+    expect(screen.queryByText(/community updates and stories\./i)).toBeNull()
   })
 
   it('uses fallback copy even when no image exists', () => {
@@ -57,6 +84,7 @@ describe('CmsFallbackHero', () => {
       <CmsFallbackHero
         page={createPage({
           hero_image_enabled: false,
+          hero_image_object_key: 'pages/1/hero.jpg',
           hero_image_fetch_url: '/api/pages/1/hero/content',
         })}
       />,

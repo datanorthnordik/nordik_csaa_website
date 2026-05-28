@@ -382,6 +382,7 @@
   },
   "common": {
     "loading": "Loading",
+    "showMore": "Show more",
     "close": "Close",
     "previous": "Previous",
     "next": "Next",

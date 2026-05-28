@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
@@ -18,18 +18,30 @@ import { isImageMedia, resolveEventMediaUrl } from '../lib/eventMedia'
 import heroStageImage from '../assets/gatherings-hero-stage.jpg'
 import styles from './GatheringsPage.module.css'
 
+const PAGE_SIZE = 10
+
 export function GatheringsPage() {
   const { i18n, t } = useTranslation()
   const [upcomingEvents, setUpcomingEvents] = useState<EventDetailResponse[]>([])
   const [archivedEvents, setArchivedEvents] = useState<EventDetailResponse[]>([])
   const [archivePagination, setArchivePagination] = useState<EventListPageMeta | null>(null)
-  const [archivePage, setArchivePage] = useState(1)
+  const [upcomingVisibleCount, setUpcomingVisibleCount] = useState(PAGE_SIZE)
   const [isUpcomingLoading, setIsUpcomingLoading] = useState(true)
   const [isArchiveLoading, setIsArchiveLoading] = useState(true)
+  const [isArchiveLoadingMore, setIsArchiveLoadingMore] = useState(false)
   const [upcomingError, setUpcomingError] = useState<string | null>(null)
   const [archiveError, setArchiveError] = useState<string | null>(null)
 
   const locale = i18n.resolvedLanguage ?? i18n.language
+  const [currentApiDate] = useState(() => getCurrentApiDate())
+  const [archiveReferenceDate] = useState(() => getYesterdayApiDate())
+  const visibleUpcomingEvents = useMemo(
+    () => upcomingEvents.slice(0, upcomingVisibleCount),
+    [upcomingEvents, upcomingVisibleCount],
+  )
+  const hasMoreUpcomingEvents = upcomingEvents.length > visibleUpcomingEvents.length
+  const hasMoreArchivedEvents = archivePagination?.has_next ?? false
+
   useEffect(() => {
     let ignore = false
 
@@ -38,9 +50,10 @@ export function GatheringsPage() {
       setUpcomingError(null)
 
       try {
-        const response = await eventsApi.listUpcomingEvents(getCurrentApiDate())
+        const response = await eventsApi.listUpcomingEvents(currentApiDate)
         if (!ignore) {
           setUpcomingEvents(response.items)
+          setUpcomingVisibleCount(PAGE_SIZE)
         }
       } catch (error) {
         if (!ignore) {
@@ -58,7 +71,7 @@ export function GatheringsPage() {
     return () => {
       ignore = true
     }
-  }, [])
+  }, [currentApiDate])
 
   useEffect(() => {
     let ignore = false
@@ -68,11 +81,7 @@ export function GatheringsPage() {
       setArchiveError(null)
 
       try {
-        const response = await eventsApi.listArchivedEvents(
-          getYesterdayApiDate(),
-          archivePage,
-          10,
-        )
+        const response = await eventsApi.listArchivedEvents(archiveReferenceDate, 1, PAGE_SIZE)
 
         if (!ignore) {
           setArchivedEvents(response.items)
@@ -81,6 +90,8 @@ export function GatheringsPage() {
       } catch (error) {
         if (!ignore) {
           setArchiveError(getErrorMessage(error))
+          setArchivedEvents([])
+          setArchivePagination(null)
         }
       } finally {
         if (!ignore) {
@@ -94,7 +105,30 @@ export function GatheringsPage() {
     return () => {
       ignore = true
     }
-  }, [archivePage])
+  }, [archiveReferenceDate])
+
+  async function handleArchiveShowMore() {
+    if (!archivePagination?.has_next || isArchiveLoadingMore) {
+      return
+    }
+
+    setIsArchiveLoadingMore(true)
+    setArchiveError(null)
+
+    try {
+      const response = await eventsApi.listArchivedEvents(
+        archiveReferenceDate,
+        archivePagination.page + 1,
+        PAGE_SIZE,
+      )
+      setArchivedEvents((current) => mergeEvents(current, response.items))
+      setArchivePagination(response.pagination)
+    } catch (error) {
+      setArchiveError(getErrorMessage(error))
+    } finally {
+      setIsArchiveLoadingMore(false)
+    }
+  }
 
   return (
     <div className={styles.page}>
@@ -151,16 +185,32 @@ export function GatheringsPage() {
             ))}
           </div>
         ) : upcomingEvents.length ? (
-          <div className={styles.cardGrid}>
-            {upcomingEvents.map((event) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                locale={locale}
-                variant="upcoming"
-              />
-            ))}
-          </div>
+          <>
+            <div className={styles.cardGrid}>
+              {visibleUpcomingEvents.map((event) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  locale={locale}
+                  variant="upcoming"
+                />
+              ))}
+            </div>
+
+            {hasMoreUpcomingEvents ? (
+              <div className={styles.loadMoreWrap}>
+                <button
+                  type="button"
+                  className={styles.loadMoreButton}
+                  onClick={() =>
+                    setUpcomingVisibleCount((current) => current + PAGE_SIZE)
+                  }
+                >
+                  {t('common.showMore')}
+                </button>
+              </div>
+            ) : null}
+          </>
         ) : (
           <EmptyState
             title={t('gatherings.upcoming.emptyTitle')}
@@ -197,33 +247,15 @@ export function GatheringsPage() {
               ))}
             </div>
 
-            {archivePagination && archivePagination.total_pages > 1 ? (
-              <div className={styles.pagination}>
+            {hasMoreArchivedEvents ? (
+              <div className={styles.loadMoreWrap}>
                 <button
                   type="button"
-                  className={styles.paginationButton}
-                  disabled={!archivePagination.has_prev}
-                  onClick={() => setArchivePage((current) => Math.max(current - 1, 1))}
+                  className={styles.loadMoreButton}
+                  disabled={isArchiveLoadingMore}
+                  onClick={() => void handleArchiveShowMore()}
                 >
-                  {t('common.previous')}
-                </button>
-                <span className={styles.paginationLabel}>
-                  {t('gatherings.archive.pagination', {
-                    page: archivePagination.page,
-                    total: archivePagination.total_pages,
-                  })}
-                </span>
-                <button
-                  type="button"
-                  className={styles.paginationButton}
-                  disabled={!archivePagination.has_next}
-                  onClick={() =>
-                    setArchivePage((current) =>
-                      Math.min(current + 1, archivePagination.total_pages),
-                    )
-                  }
-                >
-                  {t('common.next')}
+                  {isArchiveLoadingMore ? t('common.loading') : t('common.showMore')}
                 </button>
               </div>
             ) : null}
@@ -322,6 +354,11 @@ function EmptyState({
       {description ? <p>{description}</p> : null}
     </div>
   )
+}
+
+function mergeEvents(current: EventDetailResponse[], next: EventDetailResponse[]) {
+  const seen = new Set(current.map((item) => item.id))
+  return [...current, ...next.filter((item) => !seen.has(item.id))]
 }
 
 function getCurrentApiDate() {

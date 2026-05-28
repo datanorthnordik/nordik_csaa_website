@@ -15,7 +15,7 @@ function createPage(overrides: Partial<PageDetailResponse> = {}): PageDetailResp
     status: 'published',
     hero_image_enabled: true,
     hero_image_url: '',
-    hero_image_object_key: '',
+    hero_image_object_key: 'pages/1/hero.jpg',
     hero_image_fetch_url: '/api/pages/1/hero/content',
     seo_page_title: 'CSAA Newsletter',
     seo_page_description: 'Page level description.',
@@ -126,6 +126,7 @@ describe('CmsHeaderSection', () => {
     render(
       <CmsHeaderSection
         page={createPage({
+          hero_image_object_key: '',
           hero_image_fetch_url: '',
         })}
         section={createHeaderSection({
@@ -152,6 +153,7 @@ describe('CmsHeaderSection', () => {
       <CmsHeaderSection
         page={createPage({
           hero_image_enabled: false,
+          hero_image_object_key: 'pages/1/hero.jpg',
           hero_image_fetch_url: '/api/pages/1/hero/content',
         })}
         section={createHeaderSection()}

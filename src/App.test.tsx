@@ -977,8 +977,10 @@ describe('App', () => {
       screen.getByTestId('cms-fallback-hero-background').getAttribute('src'),
     ).toContain('/api/pages/26/hero/content')
     expect(
-      screen.getByText(/explore the history, stories, and legacy of the shingwauk indian residential school\./i),
-    ).toBeDefined()
+      within(screen.getByTestId('cms-fallback-hero')).queryByText(
+        /explore the history, stories, and legacy of the shingwauk indian residential school\./i,
+      ),
+    ).toBeNull()
     expect(
       screen.getByText(/first major, permanent residential school survivor driven exhibition/i),
     ).toBeDefined()
@@ -996,7 +998,22 @@ describe('App', () => {
       '/api/pages/36/hero/content',
     )
     expect(
-      screen.getByText(/welcome to the csaa members network\. find resources, community support tools, and updates for residential school survivors and alumni\./i),
+      within(screen.getByTestId('cms-fallback-hero')).getByRole('heading', {
+        name: /csaa members/i,
+      }),
+    ).toBeDefined()
+    expect(
+      within(screen.getByTestId('cms-fallback-hero')).queryByText(
+        /welcome to the csaa members network\. find resources, community support tools, and updates for residential school survivors and alumni\./i,
+      ),
+    ).toBeNull()
+    expect(
+      within(screen.getByTestId('cms-fallback-hero')).getByText(/^community support team$/i),
+    ).toBeDefined()
+    expect(
+      within(screen.getByTestId('cms-fallback-hero')).getByText(
+        /resources, updates, and community care built for csaa members\./i,
+      ),
     ).toBeDefined()
     expect(
       screen.getByRole('heading', {
@@ -1004,8 +1021,8 @@ describe('App', () => {
       }),
     ).toBeDefined()
     expect(
-      screen.getByText(/resources, updates, and community care built for csaa members\./i),
-    ).toBeDefined()
+      screen.getAllByText(/resources, updates, and community care built for csaa members\./i),
+    ).toHaveLength(2)
     expect(
       screen.getByText(/welcome to the official children of shingwauk alumni association members portal/i),
     ).toBeDefined()

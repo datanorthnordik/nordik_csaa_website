@@ -382,6 +382,7 @@
   },
   "common": {
     "loading": "Chargement",
+    "showMore": "Afficher plus",
     "close": "Fermer",
     "previous": "Precedent",
     "next": "Suivant",
