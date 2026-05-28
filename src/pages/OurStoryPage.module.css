@@ -1,8 +1,10 @@
 /* ─────────────────────────────────────────
    Our Story — Earth & Heritage
    Font: Montserrat | Primary: #9c0000
+   Full-bleed layout: every section spans 100vw
    ───────────────────────────────────────── */
 
+/* Shared full-bleed helper — applied to every section */
 .page {
   display: grid;
   gap: 0;
@@ -14,18 +16,19 @@
 
 .waveDivider {
   position: absolute;
-  bottom: 0;
+  bottom: -1px; /* closes sub-pixel rendering gaps */
   left: 0;
   width: 100%;
   overflow: hidden;
   line-height: 0;
   pointer-events: none;
+  z-index: 10;
 }
 
 .waveSvg {
   display: block;
   width: 100%;
-  height: 96px;
+  height: 90px;
 }
 
 /* ── Hero ── */
@@ -38,8 +41,9 @@
   justify-content: center;
   overflow: hidden;
   padding-bottom: 96px;
-  margin-left: calc(-1 * var(--shell-gutter));
-  margin-right: calc(-1 * var(--shell-gutter));
+  /* true full-bleed regardless of frame max-width */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
 
 .heroImage {
@@ -66,7 +70,7 @@
   z-index: 1;
   width: 100%;
   max-width: 900px;
-  padding: 80px var(--shell-gutter) 40px;
+  padding: 80px clamp(20px, 5vw, 80px) 40px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -125,7 +129,10 @@
 /* ── Mission & Vision ── */
 
 .missionSection {
-  padding: 96px 0;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  background: #f8f6f4;
+  padding: 96px clamp(20px, 6vw, 120px);
 }
 
 .missionGrid {
@@ -133,6 +140,8 @@
   grid-template-columns: 1fr 1fr;
   gap: 72px;
   align-items: center;
+  max-width: 1240px;
+  margin: 0 auto;
 }
 
 .missionText {
@@ -204,12 +213,16 @@
 /* ── Explore Our Legacy ── */
 
 .legacySection {
-  padding: 96px 0 108px;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  background: #ffffff;
+  padding: 96px clamp(20px, 6vw, 120px) 108px;
 }
 
 .legacyHeader {
   text-align: center;
-  margin-bottom: 64px;
+  margin: 0 auto 64px;
+  max-width: 1240px;
 }
 
 .legacyTitle {
@@ -235,6 +248,8 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
+  max-width: 1240px;
+  margin: 0 auto;
 }
 
 /* ── Legacy Card ── */
@@ -277,6 +292,16 @@
 
 .legacyCard:hover .legacyCardImage {
   transform: scale(1.04);
+}
+
+/* Logo variant — contain instead of cover, with padding and white bg */
+.legacyCardImageLogo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  padding: 28px;
+  background: #ffffff;
 }
 
 .legacyCardBody {
@@ -335,13 +360,11 @@
 
 .foundationsSection {
   position: relative;
-  padding: 96px 0;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding: 96px clamp(20px, 6vw, 120px);
   overflow: hidden;
   background: #eae8e7;
-  margin-left: calc(-1 * var(--shell-gutter));
-  margin-right: calc(-1 * var(--shell-gutter));
-  padding-left: var(--shell-gutter);
-  padding-right: var(--shell-gutter);
 }
 
 .foundationsDecor {
@@ -427,6 +450,83 @@
 
 /* ── Solemn Dedication ── */
 
+.dedicationSection {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  background: #9c0000;
+  color: #ffffff;
+  padding: 100px clamp(20px, 6vw, 120px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dedicationIcon {
+  display: block;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 32px;
+}
+
+.dedicationLogo {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 32px;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.35),
+    0 2px 8px rgba(0, 0, 0, 0.2);
+  animation: floatLogo 3.6s ease-in-out infinite;
+}
+
+@keyframes floatLogo {
+  0%, 100% {
+    transform: translateY(0);
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.35),
+      0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    transform: translateY(-10px);
+    box-shadow:
+      0 18px 36px rgba(0, 0, 0, 0.3),
+      0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.dedicationQuote {
+  margin: 0 auto 32px;
+  max-width: 760px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.7;
+}
+
+.dedicationRule {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dedicationRuleLine {
+  display: block;
+  width: 48px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.dedicationRuleText {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+}
 
 /* ── Responsive ── */
 
@@ -465,11 +565,13 @@
   }
 
   .missionSection {
-    padding: 64px 0;
+    padding-top: 64px;
+    padding-bottom: 64px;
   }
 
   .legacySection {
-    padding: 64px 0 72px;
+    padding-top: 64px;
+    padding-bottom: 72px;
   }
 
   .legacyGrid {

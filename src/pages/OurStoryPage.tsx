@@ -1,27 +1,41 @@
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import shingwaukHero from '../assets/irs_vector.jpeg'
+import shingwaukHero from '../assets/irs_vector.png'
 import missionImg from '../assets/makwa17.jpg'
-import legacyImg from '../assets/watercolor_meadow.png'
-import memorialsImg from '../assets/cryingrock-hero.png'
-import archivesImg from '../assets/every-child-matters-hero.jpg'
-import { QuoteBanner } from '../components/QuoteBanner'
+import legacyImg from '../assets/canoe_vector.png'
+import memorialsImg from '../assets/every-child-matters-hero.jpg'
+import archivesImg from '../assets/srsc_logo.png'
+import csaaLogo from '../assets/csaa_logo.png'
 import styles from './OurStoryPage.module.css'
 
-const WAVE_PATH =
-  'M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C58.47,100.8,118.42,100.34,176.49,90.47,227,81.86,276.54,64.74,321.39,56.44Z'
+/* S-curve wave: starts mid-left, dips down, rises back up on the right */
+const WAVE_CURVE = 'M0,45 C400,45 450,95 700,95 C1000,95 1100,25 1300,25 C1380,25 1410,35 1440,35'
 
-function WaveDivider({ fill }: { fill: string }) {
+function WaveDivider() {
   return (
     <div className={styles.waveDivider}>
       <svg
-        viewBox="0 0 1200 120"
+        viewBox="0 0 1440 120"
         preserveAspectRatio="none"
         className={styles.waveSvg}
-        style={{ fill }}
         aria-hidden="true"
       >
-        <path d={WAVE_PATH} />
+        {/* White fill closes the shape down to the bottom edge */}
+        <path
+          d={`${WAVE_CURVE} L1440,120 L0,120 Z`}
+          fill="#f8f6f4"
+        />
+        {/* Red stroke traces the wave edge — non-scaling so it stays consistent at any width */}
+        <path
+          d={WAVE_CURVE}
+          fill="none"
+          stroke="#9c0000"
+          strokeWidth="5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
+        />
       </svg>
     </div>
   )
@@ -49,7 +63,7 @@ export function OurStoryPage() {
             <ArrowDownIcon />
           </a>
         </div>
-        <WaveDivider fill="#f2f5f4" />
+        <WaveDivider />
       </section>
 
       {/* ── Mission & Vision ── */}
@@ -84,7 +98,7 @@ export function OurStoryPage() {
             imageSrc={legacyImg}
             title={t('ourStory.legacy.csaaLegacy.title')}
             description={t('ourStory.legacy.csaaLegacy.description')}
-            href="#"
+            href="/our-story/csaa-legacy"
             action={t('ourStory.legacy.csaaLegacy.action')}
           />
           <LegacyCard
@@ -98,8 +112,10 @@ export function OurStoryPage() {
             imageSrc={archivesImg}
             title={t('ourStory.legacy.archives.title')}
             description={t('ourStory.legacy.archives.description')}
-            href="#"
+            href="https://srsc.algomau.ca/"
             action={t('ourStory.legacy.archives.action')}
+            isExternal
+            isLogo
           />
         </div>
       </section>
@@ -134,10 +150,17 @@ export function OurStoryPage() {
       </section>
 
       {/* ── Solemn Dedication ── */}
-      <QuoteBanner
-        quote={t('ourStory.dedication.quote')}
-        attribution={t('ourStory.dedication.attribution')}
-      />
+      <section className={styles.dedicationSection}>
+        <img src={csaaLogo} alt="CSAA Logo" className={styles.dedicationLogo} />
+        <blockquote className={styles.dedicationQuote}>
+          {t('ourStory.dedication.quote')}
+        </blockquote>
+        <div className={styles.dedicationRule} aria-hidden="true">
+          <span className={styles.dedicationRuleLine} />
+          <span className={styles.dedicationRuleText}>{t('ourStory.dedication.attribution')}</span>
+          <span className={styles.dedicationRuleLine} />
+        </div>
+      </section>
 
     </div>
   )
@@ -151,22 +174,46 @@ type LegacyCardProps = {
   description: string
   href: string
   action: string
+  isExternal?: boolean
+  isLogo?: boolean
 }
 
-function LegacyCard({ imageSrc, title, description, href, action }: LegacyCardProps) {
+function LegacyCard({ imageSrc, title, description, href, action, isExternal = false, isLogo = false }: LegacyCardProps) {
+  const externalProps = isExternal
+    ? { target: '_blank', rel: 'noreferrer noopener' }
+    : {}
+
+  const ImageWrapper = ({ children, className }: { children: React.ReactNode; className: string }) =>
+    isExternal ? (
+      <a href={href} className={className} tabIndex={-1} aria-hidden="true" {...externalProps}>{children}</a>
+    ) : (
+      <Link to={href} className={className} tabIndex={-1} aria-hidden="true">{children}</Link>
+    )
+
+  const CardLink = ({ children, className }: { children: React.ReactNode; className: string }) =>
+    isExternal ? (
+      <a href={href} className={className} {...externalProps}>{children}</a>
+    ) : (
+      <Link to={href} className={className}>{children}</Link>
+    )
+
   return (
     <article className={styles.legacyCard}>
-      <Link to={href} className={styles.legacyCardImageLink} tabIndex={-1} aria-hidden="true">
-        <img src={imageSrc} alt="" className={styles.legacyCardImage} />
-      </Link>
+      <ImageWrapper className={styles.legacyCardImageLink}>
+        <img
+          src={imageSrc}
+          alt=""
+          className={isLogo ? styles.legacyCardImageLogo : styles.legacyCardImage}
+        />
+      </ImageWrapper>
       <div className={styles.legacyCardBody}>
         <h3 className={styles.legacyCardTitle}>
-          <Link to={href} className={styles.legacyCardTitleLink}>{title}</Link>
+          <CardLink className={styles.legacyCardTitleLink}>{title}</CardLink>
         </h3>
         <p className={styles.legacyCardDescription}>{description}</p>
-        <Link to={href} className={styles.legacyCardLink}>
+        <CardLink className={styles.legacyCardLink}>
           {action} →
-        </Link>
+        </CardLink>
       </div>
     </article>
   )

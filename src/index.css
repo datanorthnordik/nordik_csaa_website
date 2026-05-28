@@ -112,3 +112,16 @@ code {
     font-size: 15px;
   }
 }
+
+/* ── CSAA Legacy scrollytelling — hide nav while story canvas is active ─────
+   The sticky canvas switches to position:fixed (z-index:50) via JS,
+   covering the header (z-index:40). This rule additionally fades the header
+   out so it doesn't peek through during the transition in/out.
+   ─────────────────────────────────────────────────────────────────────────── */
+header {
+  transition: opacity 0.35s ease;
+}
+body.csaa-story-active header {
+  opacity: 0;
+  pointer-events: none;
+}
