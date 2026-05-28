@@ -6,8 +6,34 @@ import everyChildImg from '../assets/every-child-matters-hero.jpg'
 import wawnoshImg from '../assets/wawnosh-hero-section.jpg'
 import cryingRockImg from '../assets/cryingrock-hero.png'
 import watercolorMeadow from '../assets/watercolor_meadow.png'
-import { SharedImageHero } from '../components/SharedImageHero'
 import styles from './HealingMemorialsPage.module.css'
+
+/* ─── Wave SVG divider ─── */
+const WAVE_CURVE = 'M0,45 C400,45 450,95 700,95 C1000,95 1100,25 1300,25 C1380,25 1410,35 1440,35'
+
+function WaveDivider() {
+  return (
+    <div className={styles.waveDivider}>
+      <svg
+        viewBox="0 0 1440 120"
+        preserveAspectRatio="none"
+        className={styles.waveSvg}
+        aria-hidden="true"
+      >
+        <path d={`${WAVE_CURVE} L1440,120 L0,120 Z`} fill="#ffffff" />
+        <path
+          d={WAVE_CURVE}
+          fill="none"
+          stroke="#9c0000"
+          strokeWidth="5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
+    </div>
+  )
+}
 
 type Pillar = {
   key: string
@@ -49,26 +75,33 @@ const PILLARS: Pillar[] = [
   },
 ]
 
+/* ─── Page ─── */
 export function HealingMemorialsPage() {
   const { t } = useTranslation()
 
   return (
     <div className={styles.page}>
-      <SharedImageHero
-        title={t('healingMemorials.hero.title')}
-        description={t('healingMemorials.hero.description')}
-        backgroundImageUrl={healingHero}
-        cta={{
-          href: '#pillars',
-          label: t('healingMemorials.hero.cta'),
-        }}
-      />
 
-      <section
-        id="pillars"
-        className={styles.pillarsSection}
-        aria-label={t('healingMemorials.pillars.label')}
-      >
+      {/* ── Hero ── */}
+      <section className={styles.hero}>
+        <div
+          className={styles.heroImage}
+          style={{ backgroundImage: `url(${healingHero})` }}
+          aria-hidden="true"
+        />
+        <div className={styles.heroOverlay} aria-hidden="true" />
+        <div className={styles.heroContent}>
+          <h1 className={styles.heroTitle}>{t('healingMemorials.hero.title')}</h1>
+          <p className={styles.heroDescription}>{t('healingMemorials.hero.description')}</p>
+          <a href="#pillars" className={styles.heroCta}>
+            {t('healingMemorials.hero.cta')}
+          </a>
+        </div>
+        <WaveDivider />
+      </section>
+
+      {/* ── Community Pillars ── */}
+      <section id="pillars" className={styles.pillarsSection} aria-label={t('healingMemorials.pillars.label')}>
         <div className={styles.pillarsHeader}>
           <p className={styles.pillarsEyebrow}>{t('healingMemorials.pillars.eyebrow')}</p>
           <h2 className={styles.pillarsTitle}>{t('healingMemorials.pillars.title')}</h2>
@@ -89,6 +122,7 @@ export function HealingMemorialsPage() {
         </div>
       </section>
 
+      {/* ── Support ── */}
       <section className={styles.supportSection}>
         <h2 className={styles.supportTitle}>{t('healingMemorials.support.title')}</h2>
         <p className={styles.supportDescription}>{t('healingMemorials.support.description')}</p>
@@ -101,10 +135,12 @@ export function HealingMemorialsPage() {
           </Link>
         </div>
       </section>
+
     </div>
   )
 }
 
+/* ─── Pillar Card ─── */
 type PillarCardProps = {
   title: string
   description: string
@@ -126,14 +162,11 @@ function PillarCard({ title, description, href, imageSrc, gradient, learnMore }:
       </Link>
       <div className={styles.cardBody}>
         <h3 className={styles.cardTitle}>
-          <Link to={href} className={styles.cardTitleLink}>
-            {title}
-          </Link>
+          <Link to={href} className={styles.cardTitleLink}>{title}</Link>
         </h3>
         <p className={styles.cardDescription}>{description}</p>
         <Link to={href} className={styles.cardLink}>
-          {learnMore}
-          {' ->'}
+          {learnMore} →
         </Link>
       </div>
     </article>

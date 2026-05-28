@@ -5,7 +5,6 @@ import styles from './CmsGallerySection.module.css'
 
 type CmsGalleryLightboxProps = {
   items: CmsGalleryAsset[]
-  showTitleDescription: boolean
   activeIndex: number | null
   onClose: () => void
   onSelect: (index: number) => void
@@ -15,7 +14,6 @@ const slideshowIntervalMs = 4200
 
 export function CmsGalleryLightbox({
   items,
-  showTitleDescription,
   activeIndex,
   onClose,
   onSelect,
@@ -178,7 +176,7 @@ export function CmsGalleryLightbox({
             <span className={styles.viewerCounter}>
               {safeIndex + 1} / {items.length}
             </span>
-            {showTitleDescription && (activeItem.title || activeItem.details) ? (
+            {activeItem.title || activeItem.details ? (
               <div className={styles.viewerCaption}>
                 {activeItem.title ? (
                   <p className={styles.viewerCaptionTitle}>{activeItem.title}</p>

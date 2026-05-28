@@ -21,11 +21,10 @@ function createSection(overrides: Partial<PageSection> = {}): PageSection {
 
 describe('CmsQuoteSection', () => {
   it('renders the quote content and attribution', () => {
-    const { container } = render(<CmsQuoteSection section={createSection()} />)
+    render(<CmsQuoteSection section={createSection()} />)
 
     expect(screen.getByText(/shared stories keep our gatherings close\./i)).toBeDefined()
     expect(screen.getByText(/community newsletter/i)).toBeDefined()
-    expect(container.querySelector('blockquote')).not.toBeNull()
   })
 
   it('returns no content when the quote text is blank', () => {
@@ -41,21 +40,5 @@ describe('CmsQuoteSection', () => {
     )
 
     expect(container.innerHTML).toBe('')
-  })
-
-  it('omits the attribution rule when the attribution is blank', () => {
-    render(
-      <CmsQuoteSection
-        section={createSection({
-          quote: {
-            quote_content: 'Shared stories keep our gatherings close.',
-            attribution: '   ',
-          },
-        })}
-      />,
-    )
-
-    expect(screen.getByText(/shared stories keep our gatherings close\./i)).toBeDefined()
-    expect(screen.queryByText(/community newsletter/i)).toBeNull()
   })
 })

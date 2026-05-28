@@ -1,6 +1,6 @@
 import type { PageDetailResponse, PageSection } from '../../api/pagesApi'
-import { SharedImageHero } from '../SharedImageHero'
-import { resolvePageHeroImageUrl } from './cmsPageMedia'
+import { CmsHeroMedia } from './CmsHeroMedia'
+import { normalizeCmsLabel, resolveCmsAssetUrl } from './cmsPageMedia'
 import styles from './CmsSectionBlocks.module.css'
 
 type CmsHeaderSectionProps = {
@@ -19,10 +19,11 @@ export function CmsHeaderSection({
     return null
   }
 
-  const imageUrl = isPrimaryHeader ? resolvePageHeroImageUrl(page) : null
+  const imageUrl = isPrimaryHeader
+    ? resolveCmsAssetUrl(page.hero_image_fetch_url)
+    : null
   const mainHeaderText = header.main_header_text.trim()
   const subHeaderText = header.sub_header_text.trim()
-  const description = header.description?.trim() ?? ''
   const textAlign = header.text_align?.trim().toLowerCase()
   const alignmentClass =
     textAlign === 'center'
@@ -30,33 +31,40 @@ export function CmsHeaderSection({
       : textAlign === 'right'
         ? styles.alignRight
         : styles.alignLeft
-  const heroTitle = mainHeaderText || page.page_title.trim()
-  const heroEyebrow = description ? subHeaderText : ''
-  const heroDescription = description || subHeaderText || page.seo_page_description.trim()
-  const sectionTitle = mainHeaderText
-  const sectionEyebrow = subHeaderText
-  const sectionDescription = description
-  const showSectionRule = Boolean(header.underline_enabled)
+  const heroTitle = mainHeaderText || page.page_title
+  const sectionTitle = mainHeaderText || section.section_name
+  const heroSummary = subHeaderText || page.seo_page_description
+  const eyebrow =
+    isPrimaryHeader
+      ? normalizeCmsLabel(page.page_title) !== normalizeCmsLabel(heroTitle)
+        ? page.page_title
+        : page.parent_page_title
+      : normalizeCmsLabel(page.page_title) === normalizeCmsLabel(sectionTitle)
+        ? page.parent_page_title
+        : ''
 
   if (header.hierarchy === 'h1_hero') {
     return (
-      <SharedImageHero
-        eyebrow={heroEyebrow}
-        title={heroTitle}
-        description={heroDescription}
-        backgroundImageUrl={imageUrl}
-        testId="cms-header-hero"
-      />
+      <section className={`${styles.section} ${styles.heroSection}`}>
+        <div className={styles.heroCard}>
+          <div className={`${styles.heroCopy} ${alignmentClass}`}>
+            {eyebrow ? <p className={styles.eyebrow}>{eyebrow}</p> : null}
+            <h1 className={styles.heroTitle}>{heroTitle}</h1>
+            {heroSummary ? <p className={styles.heroSummary}>{heroSummary}</p> : null}
+          </div>
+
+          <CmsHeroMedia imageUrl={imageUrl} title={heroTitle} showFallback={false} />
+        </div>
+      </section>
     )
   }
 
   return (
     <section className={`${styles.section} ${styles.simpleHeaderSection}`}>
       <div className={`${styles.simpleHeaderCard} ${alignmentClass}`}>
-        {sectionEyebrow ? <p className={styles.sectionEyebrow}>{sectionEyebrow}</p> : null}
-        {sectionTitle && <h2 className={styles.sectionTitle}>{sectionTitle}</h2>}
-        {showSectionRule ? <div className={styles.sectionRule} aria-hidden="true" /> : null}
-        {sectionDescription ? <p className={styles.sectionSummary}>{sectionDescription}</p> : null}
+        {eyebrow ? <p className={styles.sectionEyebrow}>{eyebrow}</p> : null}
+        <h2 className={styles.sectionTitle}>{sectionTitle}</h2>
+        {subHeaderText ? <p className={styles.sectionSummary}>{subHeaderText}</p> : null}
       </div>
     </section>
   )

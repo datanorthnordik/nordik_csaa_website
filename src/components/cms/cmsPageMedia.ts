@@ -1,4 +1,4 @@
-import type { PageDetailResponse, PageDocument } from '../../api/pagesApi'
+import type { PageDocument } from '../../api/pagesApi'
 import { API_BASE_URL } from '../../constants/api'
 
 export function resolveCmsAssetUrl(value?: string) {
@@ -16,16 +16,6 @@ export function resolveCmsAssetUrl(value?: string) {
   }
 
   return null
-}
-
-export function resolvePageHeroImageUrl(
-  page: Pick<PageDetailResponse, 'hero_image_enabled' | 'hero_image_fetch_url'>,
-) {
-  if (!page.hero_image_enabled) {
-    return null
-  }
-
-  return resolveCmsAssetUrl(page.hero_image_fetch_url)
 }
 
 export function getDocumentBadge(document: PageDocument) {

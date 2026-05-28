@@ -1,5 +1,5 @@
 import type { PageSection } from '../../api/pagesApi'
-import { QuoteBanner } from '../QuoteBanner'
+import styles from './CmsSectionBlocks.module.css'
 
 type CmsQuoteSectionProps = {
   section: PageSection
@@ -11,5 +11,17 @@ export function CmsQuoteSection({ section }: CmsQuoteSectionProps) {
     return null
   }
 
-  return <QuoteBanner quote={quote.quote_content} attribution={quote.attribution} />
+  return (
+    <section className={`${styles.section} ${styles.quoteSection}`}>
+      <blockquote className={styles.quoteCard}>
+        <span className={styles.quoteMark} aria-hidden="true">
+          "
+        </span>
+        <p className={styles.quoteText}>{quote.quote_content}</p>
+        {quote.attribution ? (
+          <footer className={styles.quoteAttribution}>{quote.attribution}</footer>
+        ) : null}
+      </blockquote>
+    </section>
+  )
 }

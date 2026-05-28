@@ -28,7 +28,7 @@ describe('CmsGalleryMasonry', () => {
   it('renders masonry tiles and opens the clicked image', () => {
     const onOpen = vi.fn()
 
-    render(<CmsGalleryMasonry items={sampleItems} showTitleDescription onOpen={onOpen} />)
+    render(<CmsGalleryMasonry items={sampleItems} onOpen={onOpen} />)
 
     expect(screen.getByText(/shingwauk hall/i)).toBeDefined()
     expect(screen.getByText(/community portraits in the archive/i)).toBeDefined()

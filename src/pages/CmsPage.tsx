@@ -7,10 +7,7 @@ import {
   type PageDetailResponse,
 } from '../api/pagesApi'
 import { CmsFallbackHero } from '../components/cms/CmsFallbackHero'
-import {
-  resolveCmsAssetUrl,
-  resolvePageHeroImageUrl,
-} from '../components/cms/cmsPageMedia'
+import { resolveCmsAssetUrl } from '../components/cms/cmsPageMedia'
 import { CmsSectionRenderer } from '../components/cms/CmsSectionRenderer'
 import { formatPathLabel, normalizeInternalPath } from '../lib/navigationMenu'
 import { ComingSoonPage } from './ComingSoonPage'
@@ -110,41 +107,23 @@ export function CmsPage() {
           ? Boolean(section.cta_banner)
           : false,
   )
-  const firstHeaderSection =
+  const firstHeaderId =
     renderableSections.find(
       (section) => section.section_type === 'header' && section.header,
-    ) ?? null
-  const heroHeaderSection =
-    renderableSections.find(
-      (section) =>
-        section.section_type === 'header' && section.header?.hierarchy === 'h1_hero',
-    ) ?? null
-  const hasPageHeroImage = Boolean(resolvePageHeroImageUrl(page))
-  const showFallbackHero = !heroHeaderSection && (!firstHeaderSection || hasPageHeroImage)
-  const visibleSections = heroHeaderSection
-    ? renderableSections.filter((section) => section.id !== heroHeaderSection.id)
-    : renderableSections
+    )?.id ?? null
+  const hasRenderableHeader = firstHeaderId !== null
 
   return (
     <div className={styles.page}>
-      {heroHeaderSection ? (
-        <CmsSectionRenderer
-          page={page}
-          section={heroHeaderSection}
-          isPrimaryHeader
-        />
-      ) : null}
-      {showFallbackHero ? (
-        <CmsFallbackHero page={page} header={firstHeaderSection?.header ?? null} />
-      ) : null}
+      {!hasRenderableHeader ? <CmsFallbackHero page={page} /> : null}
 
       <div className={styles.sections}>
-        {visibleSections.map((section) => (
+        {renderableSections.map((section) => (
           <CmsSectionRenderer
             key={section.id}
             page={page}
             section={section}
-            isPrimaryHeader={false}
+            isPrimaryHeader={section.id === firstHeaderId}
           />
         ))}
       </div>

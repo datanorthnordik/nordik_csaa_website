@@ -31,7 +31,7 @@ describe('CmsGalleryFocus', () => {
   })
 
   it('switches the featured image from the thumbnail rail', () => {
-    render(<CmsGalleryFocus items={sampleItems} showTitleDescription onOpen={vi.fn()} />)
+    render(<CmsGalleryFocus items={sampleItems} onOpen={vi.fn()} />)
 
     expect(
       screen.getByRole('heading', { name: /fran fletcher-luther/i }),

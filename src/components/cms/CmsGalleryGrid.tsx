@@ -4,26 +4,15 @@ import styles from './CmsGallerySection.module.css'
 
 type CmsGalleryGridProps = {
   items: CmsGalleryAsset[]
-  showTitleDescription: boolean
   onOpen: (index: number) => void
 }
 
-export function CmsGalleryGrid({
-  items,
-  showTitleDescription,
-  onOpen,
-}: CmsGalleryGridProps) {
+export function CmsGalleryGrid({ items, onOpen }: CmsGalleryGridProps) {
   return (
     <div className={styles.gridLayout}>
       {items.map((item, index) => (
         <div key={item.id} className={styles.gridItem}>
-          <CmsGalleryTile
-            item={item}
-            index={index}
-            variant="grid"
-            showTitleDescription={showTitleDescription}
-            onOpen={onOpen}
-          />
+          <CmsGalleryTile item={item} index={index} variant="grid" onOpen={onOpen} />
         </div>
       ))}
     </div>

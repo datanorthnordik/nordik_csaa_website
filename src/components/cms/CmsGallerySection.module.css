@@ -319,7 +319,7 @@
 .carouselShade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(12, 12, 16, 0.02), rgba(12, 12, 16, 0.48));
+  background: linear-gradient(180deg, rgba(12, 12, 16, 0.04), rgba(12, 12, 16, 0.74));
 }
 
 .tileMeta,
@@ -345,7 +345,7 @@
 }
 
 .tileTitle {
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   line-height: 1.15;
 }
 
@@ -358,7 +358,7 @@
 }
 
 .tileDetails {
-  font-size: 0.82rem;
+  font-size: 0.92rem;
 }
 
 .focusLayout,
@@ -429,13 +429,10 @@
   min-height: 42px;
   padding: 0 14px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.12);
   color: var(--color-on-primary);
   text-decoration: none;
-  transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
-  font-size: 1.4rem;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: background 0.18s ease, transform 0.18s ease;
 }
 
 .roundButton:hover,
@@ -444,9 +441,7 @@
 .roundButton:focus-visible,
 .viewerButton:focus-visible,
 .viewerLink:focus-visible {
-  background: rgba(255, 255, 255, 0.38);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-  transform: scale(1.08);
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .roundButton:disabled,
@@ -463,13 +458,13 @@
 
 .focusTitle {
   max-width: 14ch;
-  font-size: clamp(1.8rem, 4.2vw, 3.6rem);
+  font-size: clamp(2.1rem, 5vw, 4.2rem);
   line-height: 0.98;
 }
 
 .focusDetails {
   max-width: 40rem;
-  font-size: clamp(0.92rem, 1.6vw, 1.05rem);
+  font-size: clamp(1rem, 1.8vw, 1.18rem);
 }
 
 .focusRail {
@@ -506,7 +501,7 @@
 .carouselThumbShade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(12, 12, 16, 0.01), rgba(12, 12, 16, 0.50));
+  background: linear-gradient(180deg, rgba(12, 12, 16, 0.03), rgba(12, 12, 16, 0.72));
 }
 
 .focusThumbLabel,
@@ -518,7 +513,7 @@
   z-index: 1;
   padding: 12px 14px;
   color: var(--color-on-primary);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 700;
   text-align: left;
 }
@@ -543,13 +538,13 @@
 
 .carouselTitle {
   max-width: 12ch;
-  font-size: clamp(1.6rem, 3.5vw, 3.1rem);
+  font-size: clamp(1.8rem, 4vw, 3.6rem);
   line-height: 1;
 }
 
 .carouselDetails {
   max-width: 34rem;
-  font-size: 0.92rem;
+  font-size: 1rem;
 }
 
 .carouselRail {
@@ -573,35 +568,17 @@
   gap: 10px;
 }
 
-.carouselDotButton {
-  border: 0;
-  cursor: pointer;
-  padding: 0;
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(122, 31, 36, 0.24);
-  transition: all 0.22s ease;
-}
-
-.carouselDot {
+.carouselDot,
+.carouselDotActive {
   width: 8px;
   height: 8px;
+  border-radius: 999px;
+  background: rgba(122, 31, 36, 0.18);
 }
 
 .carouselDotActive {
   width: 18px;
   background: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(122, 31, 36, 0.12);
-}
-
-.carouselDotButton:hover {
-  background: rgba(122, 31, 36, 0.36);
-  transform: scale(1.15);
-}
-
-.carouselDotButton:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
 }
 
 .viewerOverlay {

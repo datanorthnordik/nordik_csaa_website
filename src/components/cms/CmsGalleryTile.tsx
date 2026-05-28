@@ -5,7 +5,6 @@ type CmsGalleryTileProps = {
   item: CmsGalleryAsset
   index: number
   variant: 'grid' | 'masonry'
-  showTitleDescription: boolean
   onOpen: (index: number) => void
 }
 
@@ -13,7 +12,6 @@ export function CmsGalleryTile({
   item,
   index,
   variant,
-  showTitleDescription,
   onOpen,
 }: CmsGalleryTileProps) {
   const label = item.title || item.altText
@@ -34,17 +32,13 @@ export function CmsGalleryTile({
           variant === 'masonry' ? styles.masonryImage : ''
         }`}
       />
-      {showTitleDescription ? (
-        <>
-          <span className={styles.tileShade} aria-hidden="true" />
-          <span className={styles.tileMeta}>
-            <strong className={styles.tileTitle}>{label}</strong>
-            {item.details && item.details !== label ? (
-              <span className={styles.tileDetails}>{item.details}</span>
-            ) : null}
-          </span>
-        </>
-      ) : null}
+      <span className={styles.tileShade} aria-hidden="true" />
+      <span className={styles.tileMeta}>
+        <strong className={styles.tileTitle}>{label}</strong>
+        {item.details && item.details !== label ? (
+          <span className={styles.tileDetails}>{item.details}</span>
+        ) : null}
+      </span>
     </button>
   )
 }

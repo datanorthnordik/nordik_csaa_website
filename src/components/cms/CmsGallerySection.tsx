@@ -25,8 +25,6 @@ export function CmsGallerySection({ section }: CmsGallerySectionProps) {
   const { t } = useTranslation()
   const galleryId = section.gallery?.gallery_id ?? null
   const viewMode = normalizeGalleryViewMode(section.gallery?.view_mode)
-  const showTitleDescription = section.gallery?.show_title_description ?? true
-  const autoScrollEnabled = section.gallery?.auto_scroll_enabled ?? false
   const [gallery, setGallery] = useState<GalleryDetailResponse | null>(null)
   const [status, setStatus] = useState<GalleryStatus>('loading')
   const [activeLightboxIndex, setActiveLightboxIndex] = useState<number | null>(null)
@@ -101,40 +99,22 @@ export function CmsGallerySection({ section }: CmsGallerySectionProps) {
       {status === 'ready' && items.length ? (
         <>
           {viewMode === 'masonry' ? (
-            <CmsGalleryMasonry
-              items={items}
-              showTitleDescription={showTitleDescription}
-              onOpen={setActiveLightboxIndex}
-            />
+            <CmsGalleryMasonry items={items} onOpen={setActiveLightboxIndex} />
           ) : null}
           {viewMode === 'focus' ? (
-            <CmsGalleryFocus
-              items={items}
-              showTitleDescription={showTitleDescription}
-              onOpen={setActiveLightboxIndex}
-            />
+            <CmsGalleryFocus items={items} onOpen={setActiveLightboxIndex} />
           ) : null}
           {viewMode === 'carousel' ? (
-            <CmsGalleryCarousel
-              items={items}
-              showTitleDescription={showTitleDescription}
-              autoScrollEnabled={autoScrollEnabled}
-              onOpen={setActiveLightboxIndex}
-            />
+            <CmsGalleryCarousel items={items} onOpen={setActiveLightboxIndex} />
           ) : null}
           {viewMode === 'grid' ? (
-            <CmsGalleryGrid
-              items={items}
-              showTitleDescription={showTitleDescription}
-              onOpen={setActiveLightboxIndex}
-            />
+            <CmsGalleryGrid items={items} onOpen={setActiveLightboxIndex} />
           ) : null}
           {viewMode === 'icons' ? <CmsGalleryIcons items={items} /> : null}
 
           {viewMode !== 'icons' ? (
             <CmsGalleryLightbox
               items={items}
-              showTitleDescription={showTitleDescription}
               activeIndex={activeLightboxIndex}
               onClose={() => setActiveLightboxIndex(null)}
               onSelect={setActiveLightboxIndex}

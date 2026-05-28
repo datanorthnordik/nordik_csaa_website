@@ -3,41 +3,18 @@ import { useTranslation } from 'react-i18next'
 import type { CmsGalleryAsset } from './cmsGalleryMedia'
 import styles from './CmsGallerySection.module.css'
 
-const carouselAutoScrollIntervalMs = 5000
-
 type CmsGalleryCarouselProps = {
   items: CmsGalleryAsset[]
-  showTitleDescription: boolean
-  autoScrollEnabled: boolean
   onOpen: (index: number) => void
 }
 
-export function CmsGalleryCarousel({
-  items,
-  showTitleDescription,
-  autoScrollEnabled,
-  onOpen,
-}: CmsGalleryCarouselProps) {
+export function CmsGalleryCarousel({ items, onOpen }: CmsGalleryCarouselProps) {
   const { t } = useTranslation()
   const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {
     setActiveIndex((current) => Math.min(current, Math.max(items.length - 1, 0)))
   }, [items.length])
-
-  useEffect(() => {
-    if (!autoScrollEnabled || items.length <= 1) {
-      return
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setActiveIndex((current) => (current + 1) % items.length)
-    }, carouselAutoScrollIntervalMs)
-
-    return () => {
-      window.clearTimeout(timeoutId)
-    }
-  }, [activeIndex, autoScrollEnabled, items.length])
 
   if (!items.length) {
     return null
@@ -68,17 +45,13 @@ export function CmsGalleryCarousel({
               className={styles.carouselImage}
             />
           </div>
-          {showTitleDescription ? (
-            <>
-              <span className={styles.carouselShade} aria-hidden="true" />
-              <div className={styles.carouselBody}>
-                <h3 className={styles.carouselTitle}>{activeLabel}</h3>
-                {activeItem.details && activeItem.details !== activeLabel ? (
-                  <p className={styles.carouselDetails}>{activeItem.details}</p>
-                ) : null}
-              </div>
-            </>
-          ) : null}
+          <span className={styles.carouselShade} aria-hidden="true" />
+          <div className={styles.carouselBody}>
+            <h3 className={styles.carouselTitle}>{activeLabel}</h3>
+            {activeItem.details && activeItem.details !== activeLabel ? (
+              <p className={styles.carouselDetails}>{activeItem.details}</p>
+            ) : null}
+          </div>
         </button>
 
         {items.length > 1 ? (
@@ -129,12 +102,8 @@ export function CmsGalleryCarousel({
                   alt={item.altText}
                   className={styles.carouselThumbImage}
                 />
-                {showTitleDescription ? (
-                  <>
-                    <span className={styles.carouselThumbShade} aria-hidden="true" />
-                    <span className={styles.carouselThumbLabel}>{item.title || item.altText}</span>
-                  </>
-                ) : null}
+                <span className={styles.carouselThumbShade} aria-hidden="true" />
+                <span className={styles.carouselThumbLabel}>{item.title || item.altText}</span>
               </button>
             )
           })}
@@ -142,17 +111,11 @@ export function CmsGalleryCarousel({
       ) : null}
 
       {items.length > 1 ? (
-        <div className={styles.carouselFooter}>
+        <div className={styles.carouselFooter} aria-hidden="true">
           {items.map((item, index) => (
-            <button
+            <span
               key={item.id}
-              type="button"
-              className={`${styles.carouselDotButton} ${
-                safeIndex === index ? styles.carouselDotActive : styles.carouselDot
-              }`}
-              onClick={() => setActiveIndex(index)}
-              aria-label={`${t('common.viewImage')} ${index + 1}`}
-              aria-pressed={safeIndex === index}
+              className={safeIndex === index ? styles.carouselDotActive : styles.carouselDot}
             />
           ))}
         </div>

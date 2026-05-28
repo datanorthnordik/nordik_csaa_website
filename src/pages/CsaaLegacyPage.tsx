@@ -165,6 +165,8 @@ export function CsaaLegacyPage() {
   const [activeScene,   setActiveScene]   = useState<1 | 2 | 3>(1)
   const [hotspotsOn,    setHotspotsOn]    = useState(false)
   const [isMuted,       setIsMuted]       = useState(true)
+  const [showIdleNudge, setShowIdleNudge] = useState(false)
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Audio refs (swap src paths when files are available)
   const audioWater = useRef<HTMLAudioElement>(null)
@@ -218,6 +220,10 @@ export function CsaaLegacyPage() {
       // ── BEAT 1 (0.0–1.5): "Once upon a time…" ───────────────────────────
       tl.fromTo('[data-beat="intro"]', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7 }, 0)
       tl.to('[data-beat="intro"]',  { opacity: 0, y: -20, duration: 0.5 }, 0.9)
+
+      // Canvas scroll cue — appears with beat 1, fades before canoe arrives
+      tl.fromTo('[data-beat="canvas-cue"]', { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.6 }, 0.15)
+      tl.to('[data-beat="canvas-cue"]', { opacity: 0, y: -6, duration: 0.4 }, 1.1)
 
       // ── BEAT 2 (1.5–3.7): Canoe slides in from bottom-right ─────────────
       tl.fromTo('[data-beat="canoe-layer"]',
@@ -388,6 +394,33 @@ export function CsaaLegacyPage() {
     }
   }, [])
 
+  // ── Idle-scroll nudge ────────────────────────────────────────────────────
+  // If the user stops scrolling for 4 s while the story canvas is active,
+  // show the "Keep scrolling" prompt. Resets immediately on any scroll event.
+  useEffect(() => {
+    const IDLE_MS = 4000
+
+    const startIdleTimer = () => {
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+      idleTimerRef.current = setTimeout(() => {
+        if (document.body.classList.contains('csaa-story-active')) {
+          setShowIdleNudge(true)
+        }
+      }, IDLE_MS)
+    }
+
+    const onScroll = () => {
+      setShowIdleNudge(false)
+      startIdleTimer()
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+    }
+  }, [])
+
   return (
     <div className={styles.page}>
 
@@ -414,10 +447,12 @@ export function CsaaLegacyPage() {
             An interactive journey through the lived experience of the Shingwauk
             Residential School — told through Dr. Shirley Horn's artwork.
           </p>
-          <div className={styles.scrollCue} aria-hidden="true">
-            <span className={styles.scrollCueWheel} />
-            <span className={styles.scrollCueLabel}>Scroll to explore</span>
-          </div>
+        </div>
+
+        {/* Scroll cue — absolute bottom-centre so it stays viewport-centred */}
+        <div className={styles.scrollCue} aria-hidden="true">
+          <span className={styles.scrollCueWheel} />
+          <span className={styles.scrollCueLabel}>Keep scrolling to explore</span>
         </div>
 
         {/* Wave transitions from dark hero → paper-white canvas */}
@@ -439,6 +474,20 @@ export function CsaaLegacyPage() {
           >
             {isMuted ? <MutedIcon /> : <UnmutedIcon />}
           </button>
+
+          {/* Canvas scroll cue — GSAP fades it in with beat 1, out before beat 2 */}
+          <div data-beat="canvas-cue" className={styles.canvasCue} aria-hidden="true">
+            <span className={styles.canvasCueWheel} />
+            <span className={styles.canvasCueLabel}>Keep scrolling to explore</span>
+          </div>
+
+          {/* Idle nudge — appears after 4 s of no scrolling, hides on next scroll */}
+          {showIdleNudge && (
+            <div className={styles.idleNudge} aria-live="polite" aria-label="Keep scrolling to explore">
+              <span className={styles.canvasCueWheel} />
+              <span className={styles.canvasCueLabel}>Keep scrolling to explore</span>
+            </div>
+          )}
 
           {/* ── SCENE 1: Taking the Children ─────────────────────────── */}
           <div data-beat="scene1" className={styles.scene}>
@@ -478,20 +527,27 @@ export function CsaaLegacyPage() {
               <span className={styles.captionQuote}>"Once upon a time…"</span>
             </div>
 
-            <div data-beat="canoe-text" className={`${styles.caption} ${styles.captionBottom}`} aria-hidden="true">
-              <span className={styles.captionLine}>They came in by boats.</span>
+            <div data-beat="canoe-text" className={`${styles.caption} ${styles.captionBottom} ${styles.captionNarrative}`} aria-hidden="true">
+              <span className={styles.captionLine}>For generations, the waters carried us.</span>
+              <span className={styles.captionLine}>Our canoes moved with the rhythm of the land — connecting family, seasonal camps, and community.</span>
+              <span className={styles.captionLine}>But then, the waters brought a different kind of vessel. One that did not come to share the land, but to divide it.</span>
             </div>
 
-            <div data-beat="train-text" className={`${styles.caption} ${styles.captionBottom}`} aria-hidden="true">
-              <span className={styles.captionLine}>Came by train.</span>
+            <div data-beat="train-text" className={`${styles.caption} ${styles.captionBottom} ${styles.captionNarrative}`} aria-hidden="true">
+              <span className={styles.captionLine}>They arrived on tracks of iron and wings of steel, cutting through the territories.</span>
+              <span className={styles.captionLine}>They brought a calculated silence. No longer just a journey, transport became a tool of separation — carrying away the laughter of our villages, one community at a time.</span>
             </div>
 
-            <div data-beat="plane-text" className={`${styles.caption} ${styles.captionBottom}`} aria-hidden="true">
-              <span className={styles.captionLine}>Came by plane.</span>
+            <div data-beat="plane-text" className={`${styles.caption} ${styles.captionBottom} ${styles.captionNarrative}`} aria-hidden="true">
+              <span className={styles.captionLine}>Then came the roar from the sky.</span>
+              <span className={styles.captionLine}>Bush planes descended upon our most remote northern waters, reaching places where no tracks could go.</span>
+              <span className={styles.captionLine}>For the children of the Far North, the plane didn't mean adventure — it meant a sudden departure from the quiet of the bush, carrying them thousands of miles from the only homes they had ever known.</span>
             </div>
 
-            <div data-beat="school-text" className={`${styles.caption} ${styles.captionBottom}`} aria-hidden="true">
-              <span className={styles.captionLine}>They got locked in school.</span>
+            <div data-beat="school-text" className={`${styles.caption} ${styles.captionUpperCenter} ${styles.captionNarrative}`} aria-hidden="true">
+              <span className={styles.captionLine}>And the doors closed.</span>
+              <span className={styles.captionLine}>Heavy stone, rigid walls, and unfamiliar rules replaced the open canopy of the forest and the warmth of the fireside.</span>
+              <span className={styles.captionLine}>The circle of the family was broken — locked inside an institution meant to erase who we were.</span>
             </div>
 
             {/* ── Scene title (appears at beat 6) ────────────────────── */}

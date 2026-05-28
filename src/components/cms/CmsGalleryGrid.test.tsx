@@ -28,7 +28,7 @@ describe('CmsGalleryGrid', () => {
   it('renders image titles and details and opens the selected slide', () => {
     const onOpen = vi.fn()
 
-    render(<CmsGalleryGrid items={sampleItems} showTitleDescription onOpen={onOpen} />)
+    render(<CmsGalleryGrid items={sampleItems} onOpen={onOpen} />)
 
     expect(screen.getByText(/fran fletcher-luther/i)).toBeDefined()
     expect(screen.getByText(/april 26, 1935 - october 26, 2019/i)).toBeDefined()

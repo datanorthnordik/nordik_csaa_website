@@ -1,7 +1,7 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  gap: 24px;
   width: 100%;
   min-width: 0;
 }
@@ -9,7 +9,7 @@
 .sections {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 20px;
   width: 100%;
   min-width: 0;
 }
@@ -56,10 +56,10 @@
 
 @media (max-width: 640px) {
   .page {
-    gap: 28px;
+    gap: 20px;
   }
 
   .sections {
-    gap: 24px;
+    gap: 16px;
   }
 }
