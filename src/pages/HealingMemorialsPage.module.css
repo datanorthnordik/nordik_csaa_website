@@ -1,9 +1,12 @@
+<<<<<<< HEAD
 /* ─────────────────────────────────────────
    Healing & Memorials — Earth & Heritage
    Font: Montserrat | Primary: #9c0000 | Tertiary: #335231
    Full-bleed layout: every section spans 100vw
    ───────────────────────────────────────── */
 
+=======
+>>>>>>> 02bfb29c029bba0f69574f90b05e1ab047b6af3d
 .page {
   display: grid;
   gap: 0;
@@ -11,6 +14,7 @@
   font-family: 'Montserrat', 'Segoe UI', sans-serif;
 }
 
+<<<<<<< HEAD
 /* ── Wave Divider ── */
 
 .waveDivider {
@@ -124,6 +128,8 @@
 
 /* ── Community Pillars ── */
 
+=======
+>>>>>>> 02bfb29c029bba0f69574f90b05e1ab047b6af3d
 .pillarsSection {
   width: 100vw;
   margin-left: calc(50% - 50vw);
@@ -172,8 +178,11 @@
   margin: 0 auto;
 }
 
+<<<<<<< HEAD
 /* ── Pillar Card ── */
 
+=======
+>>>>>>> 02bfb29c029bba0f69574f90b05e1ab047b6af3d
 .pillarCard {
   background: #ffffff;
   border: 1px solid rgba(147, 111, 105, 0.2);
@@ -263,8 +272,6 @@
   gap: 10px;
 }
 
-/* ── Support Section ── */
-
 .supportSection {
   background: #eae8e7;
   padding: 100px clamp(20px, 6vw, 120px);
@@ -342,8 +349,6 @@
   background: rgba(27, 28, 28, 0.08);
 }
 
-/* ── Responsive ── */
-
 @media (max-width: 720px) {
   .pillarsGrid {
     grid-template-columns: 1fr;
@@ -351,15 +356,6 @@
 }
 
 @media (max-width: 640px) {
-  .waveSvg {
-    height: 60px;
-  }
-
-  .hero {
-    padding-bottom: 60px;
-    min-height: 400px;
-  }
-
   .pillarsSection {
     padding-top: 64px;
     padding-bottom: 72px;

@@ -5,10 +5,15 @@ import styles from './CmsGallerySection.module.css'
 
 type CmsGalleryFocusProps = {
   items: CmsGalleryAsset[]
+  showTitleDescription: boolean
   onOpen: (index: number) => void
 }
 
-export function CmsGalleryFocus({ items, onOpen }: CmsGalleryFocusProps) {
+export function CmsGalleryFocus({
+  items,
+  showTitleDescription,
+  onOpen,
+}: CmsGalleryFocusProps) {
   const { t } = useTranslation()
   const [activeIndex, setActiveIndex] = useState(0)
 
@@ -42,13 +47,17 @@ export function CmsGalleryFocus({ items, onOpen }: CmsGalleryFocusProps) {
             alt={activeItem.altText}
             className={styles.focusImage}
           />
-          <span className={styles.focusShade} aria-hidden="true" />
-          <div className={styles.focusBody}>
-            <h3 className={styles.focusTitle}>{activeLabel}</h3>
-            {activeItem.details && activeItem.details !== activeLabel ? (
-              <p className={styles.focusDetails}>{activeItem.details}</p>
-            ) : null}
-          </div>
+          {showTitleDescription ? (
+            <>
+              <span className={styles.focusShade} aria-hidden="true" />
+              <div className={styles.focusBody}>
+                <h3 className={styles.focusTitle}>{activeLabel}</h3>
+                {activeItem.details && activeItem.details !== activeLabel ? (
+                  <p className={styles.focusDetails}>{activeItem.details}</p>
+                ) : null}
+              </div>
+            </>
+          ) : null}
         </button>
 
         {items.length > 1 ? (
@@ -96,8 +105,12 @@ export function CmsGalleryFocus({ items, onOpen }: CmsGalleryFocusProps) {
                 alt={item.altText}
                 className={styles.focusThumbImage}
               />
-              <span className={styles.focusThumbShade} aria-hidden="true" />
-              <span className={styles.focusThumbLabel}>{item.title || item.altText}</span>
+              {showTitleDescription ? (
+                <>
+                  <span className={styles.focusThumbShade} aria-hidden="true" />
+                  <span className={styles.focusThumbLabel}>{item.title || item.altText}</span>
+                </>
+              ) : null}
             </button>
           ))}
         </div>

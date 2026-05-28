@@ -1,0 +1,151 @@
+.hero {
+  position: relative;
+  display: grid;
+  grid-template-areas: 'stack';
+  overflow: hidden;
+  margin-left: calc(-1 * var(--shell-gutter));
+  margin-right: calc(-1 * var(--shell-gutter));
+}
+
+.plainHero {
+  width: 100%;
+  padding: 16px 0 4px;
+}
+
+.plainHeroContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.plainHeroTitle {
+  margin: 0;
+  font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.08;
+  color: #1b1c1c;
+}
+
+.heroImage {
+  grid-area: stack;
+  display: block;
+  width: 100%;
+  height: auto;
+  min-width: 0;
+  object-fit: contain;
+}
+
+.heroOverlay {
+  grid-area: stack;
+  align-self: stretch;
+  justify-self: stretch;
+  background: linear-gradient(
+    105deg,
+    rgba(10, 18, 10, 0.82) 0%,
+    rgba(20, 32, 20, 0.6) 55%,
+    rgba(10, 20, 10, 0.2) 100%
+  );
+}
+
+.heroContent {
+  grid-area: stack;
+  z-index: 1;
+  align-self: start;
+  justify-self: center;
+  width: 100%;
+  max-width: 900px;
+  padding: 72px 24px 136px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.heroEyebrow {
+  margin: 0 0 16px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.heroTitle {
+  margin: 0 0 20px;
+  font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.08;
+}
+
+.heroDescription {
+  margin: 0 0 36px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.86);
+  line-height: 1.7;
+  max-width: 720px;
+}
+
+.heroCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 28px;
+  border-radius: 4px;
+  background: #9c0000;
+  color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.heroCta:hover {
+  background: #b80000;
+  transform: translateY(-1px);
+}
+
+.heroCta:active {
+  transform: scale(0.97);
+}
+
+.waveDivider {
+  grid-area: stack;
+  align-self: end;
+  z-index: 2;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  pointer-events: none;
+}
+
+.waveSvg {
+  display: block;
+  width: 100%;
+  height: 96px;
+}
+
+@media (max-width: 640px) {
+  .waveSvg {
+    height: 60px;
+  }
+
+  .plainHero {
+    padding-top: 8px;
+  }
+
+  .heroContent {
+    padding: 44px 20px 88px;
+  }
+}
