@@ -1,9 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import shingwaukHero from '../assets/irs_vector.jpeg'
+import shingwaukHero from '../assets/irs_vector.png'
 import missionImg from '../assets/makwa17.jpg'
-import legacyImg from '../assets/canoe_vector.jpeg'
+import legacyImg from '../assets/canoe_vector.png'
 import memorialsImg from '../assets/every-child-matters-hero.jpg'
 import archivesImg from '../assets/srsc_logo.png'
 import csaaLogo from '../assets/csaa_logo.png'
@@ -98,7 +98,7 @@ export function OurStoryPage() {
             imageSrc={legacyImg}
             title={t('ourStory.legacy.csaaLegacy.title')}
             description={t('ourStory.legacy.csaaLegacy.description')}
-            href="#"
+            href="/our-story/csaa-legacy"
             action={t('ourStory.legacy.csaaLegacy.action')}
           />
           <LegacyCard
@@ -256,17 +256,3 @@ function ArrowDownIcon() {
   )
 }
 
-function LibraryIcon() {
-  return (
-    <svg
-      className={styles.dedicationIcon}
-      width="40"
-      height="40"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z" />
-    </svg>
-  )
-}
