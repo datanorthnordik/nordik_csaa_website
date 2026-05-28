@@ -27,15 +27,29 @@ function createPage(overrides: Partial<PageDetailResponse> = {}): PageDetailResp
 }
 
 describe('CmsFallbackHero', () => {
+<<<<<<< HEAD
   it('renders the page title, description, and resolved hero image', () => {
     render(
       <CmsFallbackHero
         page={createPage({
+=======
+  it('renders the page title and resolved hero background without page-level fallback copy', () => {
+    render(
+      <CmsFallbackHero
+        page={createPage({
+          hero_image_enabled: true,
+          hero_image_object_key: 'pages/1/hero.jpg',
+>>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
           hero_image_fetch_url: '/api/pages/1/hero/content',
         })}
       />,
     )
 
+<<<<<<< HEAD
+=======
+    expect(screen.getByRole('heading', { name: /csaa newsletter/i })).toBeDefined()
+    expect(screen.queryByText(/community updates and stories\./i)).toBeNull()
+>>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
     expect(
       screen.getByRole('heading', { name: /csaa newsletter/i }),
     ).toBeDefined()
@@ -45,9 +59,59 @@ describe('CmsFallbackHero', () => {
     )
   })
 
+<<<<<<< HEAD
   it('falls back to the decorative media block when no image exists', () => {
     render(<CmsFallbackHero page={createPage()} />)
 
     expect(screen.queryByRole('img')).toBeNull()
+=======
+  it('renders the header subheading and description when a fallback header is available', () => {
+    render(
+      <CmsFallbackHero
+        page={createPage({
+          hero_image_enabled: true,
+          hero_image_object_key: 'pages/1/hero.jpg',
+          hero_image_fetch_url: '/api/pages/1/hero/content',
+          parent_page_title: 'Community',
+        })}
+        header={{
+          main_header_text: 'Welcome',
+          sub_header_text: 'Community updates',
+          description: 'Stories and updates from the community.',
+          hierarchy: 'h2_section',
+          text_align: 'left',
+          underline_enabled: false,
+        }}
+      />,
+    )
+
+    expect(screen.getByText(/^community updates$/i)).toBeDefined()
+    expect(screen.getByText(/stories and updates from the community\./i)).toBeDefined()
+    expect(screen.queryByText(/^community$/i)).toBeNull()
+    expect(screen.queryByText(/community updates and stories\./i)).toBeNull()
+  })
+
+  it('uses fallback copy even when no image exists', () => {
+    render(<CmsFallbackHero page={createPage()} />)
+
+    expect(screen.getByRole('heading', { name: /csaa newsletter/i })).toBeDefined()
+    expect(screen.queryByText(/community updates and stories\./i)).toBeNull()
+    expect(screen.queryByTestId('cms-fallback-hero-background')).toBeNull()
+  })
+
+  it('does not attach the hero image when display is disabled', () => {
+    render(
+      <CmsFallbackHero
+        page={createPage({
+          hero_image_enabled: false,
+          hero_image_object_key: 'pages/1/hero.jpg',
+          hero_image_fetch_url: '/api/pages/1/hero/content',
+        })}
+      />,
+    )
+
+    expect(screen.getByRole('heading', { name: /csaa newsletter/i })).toBeDefined()
+    expect(screen.queryByTestId('cms-fallback-hero-background')).toBeNull()
+>>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
   })
 })

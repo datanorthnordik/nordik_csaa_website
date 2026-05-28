@@ -7,8 +7,31 @@ type CmsFallbackHeroProps = {
   page: PageDetailResponse
 }
 
+<<<<<<< HEAD
 export function CmsFallbackHero({ page }: CmsFallbackHeroProps) {
   const imageUrl = resolveCmsAssetUrl(page.hero_image_fetch_url)
+=======
+export function CmsFallbackHero({ page, header = null }: CmsFallbackHeroProps) {
+  const imageUrl = resolvePageHeroImageUrl(page)
+  const headerSubText = header?.sub_header_text?.trim() ?? ''
+  const headerDescription = header?.description?.trim() ?? ''
+  const description = headerDescription || headerSubText
+  const eyebrow = headerDescription ? headerSubText : ''
+
+  useEffect(() => {
+    if (page.seo_page_description) {
+      const metaDescription = document.querySelector('meta[name="description"]')
+      if (metaDescription) {
+        metaDescription.setAttribute('content', page.seo_page_description)
+      } else {
+        const meta = document.createElement('meta')
+        meta.name = 'description'
+        meta.content = page.seo_page_description
+        document.head.appendChild(meta)
+      }
+    }
+  }, [page.seo_page_description])
+>>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
 
   return (
     <section className={`${styles.section} ${styles.heroSection}`}>

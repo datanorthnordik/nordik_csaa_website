@@ -4,6 +4,10 @@
   max-width: 100%;
 }
 
+.ctaSection {
+  background: transparent;
+}
+
 .heroSection {
   padding: 10px 0 2px;
 }
@@ -249,19 +253,79 @@
 
 .ctaCard {
   display: grid;
+<<<<<<< HEAD
+=======
+  width: auto;
+  max-width: none;
+  gap: clamp(32px, 5vw, 96px);
+  align-items: center;
+  margin-inline: calc(50% - 50vw + var(--shell-gutter, clamp(18px, 3vw, 40px)));
+  padding: clamp(54px, 7vw, 82px) clamp(24px, 4vw, 72px);
+  background: #f1f0ef;
+}
+
+.ctaCardWithImage {
+  grid-template-columns: minmax(250px, 360px) minmax(0, 38rem);
+  justify-content: center;
+  justify-items: stretch;
+  text-align: left;
+}
+
+.ctaCardCentered {
+  grid-template-columns: minmax(0, 1fr);
+>>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
   justify-items: center;
   gap: 12px;
   padding: 20px 0 8px;
   text-align: center;
+<<<<<<< HEAD
   border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
+=======
+}
+
+.ctaMedia {
+  display: flex;
+  justify-content: center;
+}
+
+.ctaImage {
+  width: min(340px, 100%);
+  height: auto;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 28px rgba(31, 31, 35, 0.14));
+}
+
+.ctaCopy {
+  display: grid;
+  gap: 18px;
+  width: min(100%, 38rem);
+  max-width: none;
+}
+
+.ctaCardCentered .ctaCopy {
+  width: min(100%, 54rem);
+  margin-inline: auto;
+  justify-items: center;
+>>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
 }
 
 .ctaHeading {
   margin: 0;
+<<<<<<< HEAD
   font-size: clamp(2rem, 4vw, 3rem);
   line-height: 1.04;
   letter-spacing: 0;
+=======
+  color: var(--color-text);
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(2rem, 4vw, 3.65rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+>>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
 }
 
 .ctaMessage {
@@ -278,9 +342,16 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
+<<<<<<< HEAD
   min-height: 42px;
   padding: 0 18px;
   border-radius: 3px;
+=======
+  min-height: 50px;
+  width: fit-content;
+  padding: 0 28px;
+  border-radius: 2px;
+>>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
   background: var(--color-primary);
   color: var(--color-on-primary);
   font-weight: 800;
@@ -288,6 +359,14 @@
   letter-spacing: 0;
   text-decoration: none;
   transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.ctaCardWithImage .ctaButton {
+  width: min(100%, 36rem);
+}
+
+.ctaCardCentered .ctaButton {
+  justify-self: center;
 }
 
 .ctaButton:hover {
@@ -344,6 +423,23 @@
   .heroMediaFallback {
     min-height: 260px;
   }
+<<<<<<< HEAD
+=======
+
+  .ctaCardWithImage {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .ctaCardWithImage .ctaCopy {
+    width: min(100%, 38rem);
+    text-align: left;
+  }
+
+  .ctaCardWithImage .ctaButton {
+    width: fit-content;
+  }
+>>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
 }
 
 @media (max-width: 640px) {
@@ -374,7 +470,25 @@
     min-height: 220px;
   }
 
+<<<<<<< HEAD
   .ctaButton {
+=======
+  .ctaCard {
+    padding: 44px 24px;
+  }
+
+  .ctaHeading {
+    font-size: clamp(1.9rem, 8vw, 2.8rem);
+  }
+
+  .ctaMessage {
+    font-size: 1rem;
+  }
+
+  .ctaButton,
+  .ctaCardWithImage .ctaButton,
+  .ctaCardCentered .ctaButton {
+>>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
     width: 100%;
     max-width: 280px;
   }

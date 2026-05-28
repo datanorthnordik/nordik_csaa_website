@@ -31,6 +31,7 @@ export function CmsHeaderSection({
       : textAlign === 'right'
         ? styles.alignRight
         : styles.alignLeft
+<<<<<<< HEAD
   const heroTitle = mainHeaderText || page.page_title
   const sectionTitle = mainHeaderText || section.section_name
   const heroSummary = subHeaderText || page.seo_page_description
@@ -42,6 +43,15 @@ export function CmsHeaderSection({
       : normalizeCmsLabel(page.page_title) === normalizeCmsLabel(sectionTitle)
         ? page.parent_page_title
         : ''
+=======
+  const heroTitle = mainHeaderText || page.page_title.trim()
+  const heroEyebrow = description ? subHeaderText : ''
+  const heroDescription = description || subHeaderText
+  const sectionTitle = mainHeaderText
+  const sectionEyebrow = subHeaderText
+  const sectionDescription = description
+  const showSectionRule = Boolean(header.underline_enabled)
+>>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
 
   if (header.hierarchy === 'h1_hero') {
     return (
