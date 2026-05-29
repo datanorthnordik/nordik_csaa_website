@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { eventsApi, type EventDetailResponse } from '../api/eventsApi'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import {
   buildVenueLabel,
   formatEventDateRange,
@@ -47,6 +48,16 @@ export function EventCalendarPage() {
   const visibleEnd = calendarWeeks[calendarWeeks.length - 1][6]
   const monthStart = startOfMonth(selectedMonth)
   const monthEnd = endOfMonth(selectedMonth)
+
+  usePageBreadcrumbs([
+    {
+      label: t('site.nav.gatherings'),
+      href: '/events',
+    },
+    {
+      label: t('eventCalendar.title'),
+    },
+  ])
 
   useEffect(() => {
     let ignore = false
@@ -144,9 +155,6 @@ export function EventCalendarPage() {
           <h1>{t('eventCalendar.title')}</h1>
           <p>{t('eventCalendar.description')}</p>
         </div>
-        <Link to="/events" className={styles.backLink}>
-          {t('eventCalendar.backToGatherings')}
-        </Link>
       </section>
 
       <div className={styles.containerWithSidebar}>

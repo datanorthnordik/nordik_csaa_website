@@ -15,6 +15,7 @@ const {
   getPageBySlug,
   listPublishedNewsletters,
   listPublishedPressEntries,
+  listResources,
   listUpcomingEvents,
   listArchivedEvents,
   listEventsByDateRange,
@@ -26,6 +27,7 @@ const {
   getPressEntry: vi.fn(),
   listPublishedNewsletters: vi.fn(),
   listPublishedPressEntries: vi.fn(),
+  listResources: vi.fn(),
   listUpcomingEvents: vi.fn(),
   listArchivedEvents: vi.fn(),
   listEventsByDateRange: vi.fn(),
@@ -73,6 +75,18 @@ vi.mock('./api/pressApi', () => ({
   },
 }))
 
+vi.mock('./api/resourcesApi', async () => {
+  const actual = await vi.importActual<typeof import('./api/resourcesApi')>('./api/resourcesApi')
+
+  return {
+    ...actual,
+    publicResourcesApi: {
+      ...actual.publicResourcesApi,
+      listResources,
+    },
+  }
+})
+
 vi.mock('./components/newsletters/NewsletterFlipbook', () => ({
   NewsletterFlipbook: ({ title }: { title: string }) => <div>Flipbook for {title}</div>,
 }))
@@ -88,6 +102,10 @@ async function findPrimaryNavigationLink(name: string | RegExp) {
   })
 
   return within(navigation).findByRole('link', { name })
+}
+
+async function findBreadcrumbNavigation() {
+  return screen.findByRole('navigation', { name: /breadcrumb/i })
 }
 
 const sampleUpcomingEvent = {
@@ -675,6 +693,7 @@ beforeEach(async () => {
   getPressEntry.mockReset()
   listPublishedNewsletters.mockReset()
   listPublishedPressEntries.mockReset()
+  listResources.mockReset()
   listUpcomingEvents.mockReset()
   listArchivedEvents.mockReset()
   listEventsByDateRange.mockReset()
@@ -703,6 +722,34 @@ beforeEach(async () => {
     return match
   })
   listPublishedPressEntries.mockResolvedValue(samplePressEntries)
+  listResources.mockResolvedValue({
+    items: [
+      {
+        id: '7',
+        name: 'Community guide',
+        description: 'Helpful support information.',
+        category: 'report',
+        categoryLabel: 'Report',
+        visibility: 'public',
+        linkUrl: '',
+        fileName: 'guide.docx',
+        mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        fileSize: 1024,
+        hasDocument: true,
+        contentUrl: '',
+        createdAt: '',
+        updatedAt: '',
+      },
+    ],
+    pagination: {
+      page: 1,
+      pageSize: 10,
+      totalItems: 1,
+      totalPages: 1,
+      hasNext: false,
+      hasPrev: false,
+    },
+  })
   getPressEntry.mockImplementation(async (id: number) => {
     const match = samplePressEntries.find((entry) => entry.id === id)
     if (!match) {
@@ -771,6 +818,7 @@ describe('App', () => {
         /the newsletter shares community updates, stories, and upcoming opportunities\./i,
       ),
     ).toBeDefined()
+    expect(screen.queryByRole('navigation', { name: /breadcrumb/i })).toBeNull()
     expect(screen.getByText(/board agenda/i)).toBeDefined()
     expect((await findPrimaryNavigationLink(/^home$/i)).getAttribute('aria-current')).toBe(
       'page',
@@ -805,6 +853,14 @@ describe('App', () => {
         name: /community calendar/i,
       }),
     ).toBeDefined()
+    const breadcrumb = await findBreadcrumbNavigation()
+    expect(within(breadcrumb).getByRole('link', { name: /^home$/i }).getAttribute('href')).toBe(
+      '/home',
+    )
+    expect(within(breadcrumb).getByRole('link', { name: /^events$/i }).getAttribute('href')).toBe(
+      '/events',
+    )
+    expect(within(breadcrumb).getByText(/community calendar/i)).toBeDefined()
     expect((await findPrimaryNavigationLink(/^events$/i)).getAttribute('aria-current')).toBe(
       'page',
     )
@@ -821,6 +877,11 @@ describe('App', () => {
         name: /^contact us$/i,
       }),
     ).toBeDefined()
+    const breadcrumb = await findBreadcrumbNavigation()
+    expect(within(breadcrumb).getByRole('link', { name: /^home$/i }).getAttribute('href')).toBe(
+      '/home',
+    )
+    expect(within(breadcrumb).getByText(/^contact us$/i)).toBeDefined()
     expect((await findPrimaryNavigationLink(/^home$/i)).getAttribute('aria-current')).toBe(
       'page',
     )
@@ -892,11 +953,41 @@ describe('App', () => {
         name: /community reunion highlights/i,
       }),
     ).toBeDefined()
+    const breadcrumb = await findBreadcrumbNavigation()
+    expect(
+      within(breadcrumb).getByRole('link', { name: /news & media/i }).getAttribute('href'),
+    ).toBe('/news-media')
+    expect(
+      within(breadcrumb).getByRole('link', { name: /digital newsletters/i }).getAttribute('href'),
+    ).toBe('/news-media/digital-newsletter')
+    expect(within(breadcrumb).getByText(/community reunion highlights/i)).toBeDefined()
     expect(screen.getByText(/flipbook for community reunion highlights/i)).toBeDefined()
     expect(getNewsletter).toHaveBeenCalledWith(11)
     expect(
       (await findPrimaryNavigationLink(/news & media/i)).getAttribute('aria-current'),
     ).toBe('page')
+  })
+
+  it('renders the shared breadcrumb for the community resources route', async () => {
+    window.history.pushState({}, '', '/community-support-team/resources')
+
+    renderWithProviders(<App />)
+
+    expect(
+      await screen.findByRole('heading', {
+        name: /resources & support/i,
+      }),
+    ).toBeDefined()
+    const breadcrumb = await findBreadcrumbNavigation()
+    expect(within(breadcrumb).getByRole('link', { name: /^home$/i }).getAttribute('href')).toBe(
+      '/home',
+    )
+    expect(
+      within(breadcrumb)
+        .getByRole('link', { name: /community support team/i })
+        .getAttribute('href'),
+    ).toBe('/community-support-team')
+    expect(within(breadcrumb).getByText(/resources & support/i)).toBeDefined()
   })
 
   it('renders the press archive module route and keeps the news menu item active', async () => {

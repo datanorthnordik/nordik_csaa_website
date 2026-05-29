@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import cstLogo from '../assets/community-support-team-logo.png'
+import { useTranslation } from 'react-i18next'
 import {
   publicResourcesApi,
   type PublicResourceCategory,
@@ -7,7 +7,9 @@ import {
   type PublicResourceListPageMeta,
   resolvePublicResourceContentUrl,
 } from '../api/resourcesApi'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { DocumentViewerModal } from '../components/documents/DocumentViewerModal'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import { downloadPublicFile } from '../lib/fileDownload'
 import styles from './ResourcesPage.module.css'
 
@@ -23,6 +25,7 @@ const defaultPagination: PublicResourceListPageMeta = {
 }
 
 export function CommunityResourcesPage() {
+  const { t } = useTranslation()
   const [resources, setResources] = useState<PublicResourceEntry[]>([])
   const [pagination, setPagination] = useState<PublicResourceListPageMeta>(defaultPagination)
   const [searchTerm, setSearchTerm] = useState('')
@@ -33,6 +36,16 @@ export function CommunityResourcesPage() {
   const [selectedDocument, setSelectedDocument] = useState<PublicResourceEntry | null>(null)
 
   const normalizedSearchTerm = searchTerm.trim().toLowerCase()
+
+  usePageBreadcrumbs([
+    {
+      label: t('site.breadcrumbs.communitySupportTeam'),
+      href: '/community-support-team',
+    },
+    {
+      label: t('site.breadcrumbs.resourcesSupport'),
+    },
+  ])
 
   usePageMeta({
     title: 'Resources & Support | Children of Shingwauk Alumni Association',
@@ -167,7 +180,7 @@ export function CommunityResourcesPage() {
       <section className={styles.supportSection} aria-labelledby="community-support-title">
         <div className={styles.supportMedia}>
           <img
-            src={cstLogo}
+            src={WEBSITE_ASSET_URLS.communitySupportTeamLogo}
             alt="Community Support Team logo"
             className={styles.supportLogo}
             loading="lazy"

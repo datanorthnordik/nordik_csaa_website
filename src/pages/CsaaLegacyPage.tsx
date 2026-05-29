@@ -11,19 +11,22 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useTranslation } from 'react-i18next'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 
 // ── Artwork layers (transparent PNGs) ────────────────────────────────────────
-import canoeImg  from '../assets/canoe_vector.png'
-import trainImg  from '../assets/train_vector.png'
-import planeImg  from '../assets/plane_vector.png'
-import schoolImg from '../assets/irs_vector.png'
-import scene2Img from '../assets/returnHome_vector.png'
-import scene3Img from '../assets/remeber_vector.jpeg'
-import shirleySignature from "../assets/shirley' signature.png"
+const canoeImg = WEBSITE_ASSET_URLS.canoeVector
+const trainImg = WEBSITE_ASSET_URLS.trainVector
+const planeImg = WEBSITE_ASSET_URLS.planeVector
+const schoolImg = WEBSITE_ASSET_URLS.irsVectorPng
+const scene2Img = WEBSITE_ASSET_URLS.returnHomeVector
+const scene3Img = WEBSITE_ASSET_URLS.rememberVector
+const shirleySignature = WEBSITE_ASSET_URLS.shirleySignature
 
 // ── Static assets ─────────────────────────────────────────────────────────────
-import shingwaukHeroImg from '../assets/shingwaukhall-hero.jpg'
-import drHornImg        from "../assets/Dr Shirley Horn.jpg"
+const shingwaukHeroImg = WEBSITE_ASSET_URLS.shingwaukHallHero
+const drHornImg = WEBSITE_ASSET_URLS.drShirleyHorn
 
 import styles from './CsaaLegacyPage.module.css'
 
@@ -159,6 +162,7 @@ const S3_HOTSPOTS: Hotspot[] = [
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export function CsaaLegacyPage() {
+  const { t } = useTranslation()
   const scrollTrackRef  = useRef<HTMLDivElement>(null)
   const stickyCanvasRef = useRef<HTMLDivElement>(null)
 
@@ -167,6 +171,16 @@ export function CsaaLegacyPage() {
   const [isMuted,       setIsMuted]       = useState(true)
   const [showIdleNudge, setShowIdleNudge] = useState(false)
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  usePageBreadcrumbs([
+    {
+      label: t('site.breadcrumbs.ourStory'),
+      href: '/our-story',
+    },
+    {
+      label: t('ourStory.legacy.csaaLegacy.title'),
+    },
+  ])
 
   // Audio refs (swap src paths when files are available)
   const audioWater = useRef<HTMLAudioElement>(null)

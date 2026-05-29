@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { eventsApi, type EventDetailResponse } from '../api/eventsApi'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import {
   DocumentShowcase,
   type DocumentShowcaseItem,
@@ -35,6 +36,16 @@ export function EventDetailPage() {
   const locale = i18n.resolvedLanguage ?? i18n.language
   const parsedEventId = Number.parseInt(eventId ?? '', 10)
   const invalidEventId = !Number.isFinite(parsedEventId)
+
+  usePageBreadcrumbs([
+    {
+      label: t('site.nav.gatherings'),
+      href: '/events',
+    },
+    {
+      label: event?.title.trim() || t('site.breadcrumbs.eventDetail'),
+    },
+  ])
 
   useEffect(() => {
     if (invalidEventId) {
@@ -138,10 +149,6 @@ export function EventDetailPage() {
 
   return (
     <div className={styles.page}>
-      <Link to="/events" className={styles.backLink}>
-        {t('eventDetail.backToGatherings')}
-      </Link>
-
       <section className={styles.hero}>
         {displayImageUrl ? (
           <div className={styles.heroMedia}>

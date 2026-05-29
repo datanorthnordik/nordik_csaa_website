@@ -4,8 +4,8 @@ import {
   publicMemorialsApi,
   type PublicMemorialEntry,
 } from '../api/memorialsApi'
-import memorialFlower from '../assets/memorial_flower.png'
-import watercolorMeadow from '../assets/watercolor_meadow.png'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import styles from './InMemorialPage.module.css'
 
 const MEMORIAL_PAGE_SIZE = 100
@@ -81,6 +81,20 @@ export function InMemorialPage() {
   const [particles, setParticles] = useState<Particle[]>([])
   const nextId = useRef(0)
 
+  usePageBreadcrumbs([
+    {
+      label: t('site.breadcrumbs.ourStory'),
+      href: '/our-story',
+    },
+    {
+      label: t('healingMemorials.hero.title'),
+      href: '/our-story/healing-memorials',
+    },
+    {
+      label: t('healingMemorials.pillars.inMemorial.title'),
+    },
+  ])
+
   useEffect(() => {
     let ignore = false
 
@@ -136,7 +150,7 @@ export function InMemorialPage() {
           <h1 className={styles.heroMemory}>{t('inMemorial.hero.memory')}</h1>
           <p className={styles.heroTagline}>{t('inMemorial.hero.tagline')}</p>
           <img
-            src={memorialFlower}
+            src={WEBSITE_ASSET_URLS.memorialFlower}
             alt={t('inMemorial.hero.imageAlt')}
             className={styles.heroFlower}
           />
@@ -199,7 +213,7 @@ export function InMemorialPage() {
         <div className={styles.gardenCard}>
           <h2 className={styles.gardenTitle}>{t('inMemorial.garden.title')}</h2>
           <div className={styles.gardenMeadow}>
-            <img src={watercolorMeadow} alt="" className={styles.meadowImage} />
+            <img src={WEBSITE_ASSET_URLS.watercolorMeadow} alt="" className={styles.meadowImage} />
           </div>
           <div className={styles.gardenAction}>
             {particles.map((particle) => (

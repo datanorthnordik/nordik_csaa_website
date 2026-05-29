@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import {
   eventsApi,
   type EventDetailResponse,
@@ -15,7 +16,7 @@ import {
   getRegistrationState,
 } from '../lib/eventsDate'
 import { isImageMedia, resolveEventMediaUrl } from '../lib/eventMedia'
-import heroStageImage from '../assets/gatherings-hero-stage.jpg'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import styles from './GatheringsPage.module.css'
 
 const PAGE_SIZE = 10
@@ -41,6 +42,12 @@ export function GatheringsPage() {
   )
   const hasMoreUpcomingEvents = upcomingEvents.length > visibleUpcomingEvents.length
   const hasMoreArchivedEvents = archivePagination?.has_next ?? false
+
+  usePageBreadcrumbs([
+    {
+      label: t('site.nav.gatherings'),
+    },
+  ])
 
   useEffect(() => {
     let ignore = false
@@ -160,7 +167,7 @@ export function GatheringsPage() {
               <span>HD</span>
             </div>
             <img
-              src={heroStageImage}
+              src={WEBSITE_ASSET_URLS.gatheringsHeroStage}
               alt={t('gatherings.hero.imageAlt')}
               className={styles.heroImage}
             />

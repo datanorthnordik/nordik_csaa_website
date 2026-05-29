@@ -20,6 +20,16 @@
       "sustainability": "Sustainability",
       "about": "About"
     },
+    "breadcrumbs": {
+      "ariaLabel": "Breadcrumb",
+      "home": "Home",
+      "ourStory": "Our Story",
+      "communitySupportTeam": "Community Support Team",
+      "resourcesSupport": "Resources & Support",
+      "eventDetail": "Event Details",
+      "newsletterDetail": "Newsletter Details",
+      "pressArchiveDetail": "Archive Entry"
+    },
     "footer": {
       "title": "CSAA Community",
       "copy": "Community events, cultural resources, and shared moments in one place.",

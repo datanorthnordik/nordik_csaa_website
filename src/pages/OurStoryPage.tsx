@@ -1,12 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import shingwaukHero from '../assets/irs_vector.png'
-import missionImg from '../assets/makwa17.jpg'
-import legacyImg from '../assets/canoe_vector.png'
-import memorialsImg from '../assets/every-child-matters-hero.jpg'
-import archivesImg from '../assets/srsc_logo.png'
-import csaaLogo from '../assets/csaa_logo.png'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import styles from './OurStoryPage.module.css'
 
 /* S-curve wave: starts mid-left, dips down, rises back up on the right */
@@ -44,6 +40,12 @@ function WaveDivider() {
 export function OurStoryPage() {
   const { t } = useTranslation()
 
+  usePageBreadcrumbs([
+    {
+      label: t('site.breadcrumbs.ourStory'),
+    },
+  ])
+
   return (
     <div className={styles.page}>
 
@@ -51,7 +53,7 @@ export function OurStoryPage() {
       <section className={styles.hero}>
         <div
           className={styles.heroImage}
-          style={{ backgroundImage: `url(${shingwaukHero})` }}
+          style={{ backgroundImage: `url(${WEBSITE_ASSET_URLS.irsVector})` }}
           aria-hidden="true"
         />
         <div className={styles.heroOverlay} aria-hidden="true" />
@@ -79,7 +81,7 @@ export function OurStoryPage() {
           <div className={styles.missionImageWrap}>
             <div className={styles.missionImageGlow} aria-hidden="true" />
             <img
-              src={missionImg}
+              src={WEBSITE_ASSET_URLS.makwa17}
               alt={t('ourStory.mission.imageAlt')}
               className={styles.missionImage}
             />
@@ -95,21 +97,21 @@ export function OurStoryPage() {
         </div>
         <div className={styles.legacyGrid}>
           <LegacyCard
-            imageSrc={legacyImg}
+            imageSrc={WEBSITE_ASSET_URLS.watercolorMeadow}
             title={t('ourStory.legacy.csaaLegacy.title')}
             description={t('ourStory.legacy.csaaLegacy.description')}
             href="/our-story/csaa-legacy"
             action={t('ourStory.legacy.csaaLegacy.action')}
           />
           <LegacyCard
-            imageSrc={memorialsImg}
+            imageSrc={WEBSITE_ASSET_URLS.cryingRockHero}
             title={t('ourStory.legacy.healingMemorials.title')}
             description={t('ourStory.legacy.healingMemorials.description')}
             href="/our-story/healing-memorials"
             action={t('ourStory.legacy.healingMemorials.action')}
           />
           <LegacyCard
-            imageSrc={archivesImg}
+            imageSrc={WEBSITE_ASSET_URLS.everyChildMattersHero}
             title={t('ourStory.legacy.archives.title')}
             description={t('ourStory.legacy.archives.description')}
             href="https://srsc.algomau.ca/"
@@ -151,7 +153,11 @@ export function OurStoryPage() {
 
       {/* ── Solemn Dedication ── */}
       <section className={styles.dedicationSection}>
-        <img src={csaaLogo} alt="CSAA Logo" className={styles.dedicationLogo} />
+        <img
+          src={WEBSITE_ASSET_URLS.csaaLogo}
+          alt="CSAA Logo"
+          className={styles.dedicationLogo}
+        />
         <blockquote className={styles.dedicationQuote}>
           {t('ourStory.dedication.quote')}
         </blockquote>

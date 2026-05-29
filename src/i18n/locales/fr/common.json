@@ -20,6 +20,16 @@
       "sustainability": "Durabilite",
       "about": "A propos"
     },
+    "breadcrumbs": {
+      "ariaLabel": "Fil d'Ariane",
+      "home": "Accueil",
+      "ourStory": "Notre histoire",
+      "communitySupportTeam": "Equipe de soutien communautaire",
+      "resourcesSupport": "Ressources et soutien",
+      "eventDetail": "Details de l'evenement",
+      "newsletterDetail": "Details du bulletin",
+      "pressArchiveDetail": "Entree d'archive"
+    },
     "footer": {
       "title": "CSAA Community",
       "copy": "Evenements, ressources culturelles et moments partages au meme endroit.",

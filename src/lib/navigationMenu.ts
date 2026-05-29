@@ -167,6 +167,20 @@ export function findMenuItemByPath(
   return bestMatch
 }
 
+export function findMenuTrailByPath(items: MenuItem[], pathname: string): MenuItem[] {
+  const normalizedPath = normalizeInternalPath(pathname)
+
+  for (const item of sortMenuItems(items)) {
+    const trail = findMenuTrailForItem(item, normalizedPath)
+
+    if (trail.length) {
+      return trail
+    }
+  }
+
+  return []
+}
+
 export function getInitialMenuHref(items: MenuItem[]): string {
   const firstInternalItem = sortMenuItems(items).find((item) => !isExternalMenuItem(item))
   return firstInternalItem ? normalizeInternalPath(getMenuItemHref(firstInternalItem)) : '/events'
@@ -185,4 +199,25 @@ export function formatPathLabel(pathname: string) {
     .filter(Boolean)
     .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
     .join(' ')
+}
+
+function findMenuTrailForItem(item: MenuItem, pathname: string): MenuItem[] {
+  if (isExternalMenuItem(item)) {
+    return []
+  }
+
+  for (const child of sortMenuItems(item.children ?? [])) {
+    const childTrail = findMenuTrailForItem(child, pathname)
+
+    if (childTrail.length) {
+      return [item, ...childTrail]
+    }
+  }
+
+  const href = getMenuItemHref(item)
+  const matchesPath = matchesMenuPath(pathname, href)
+  const matchesModulePath =
+    isModuleMenuItem(item) && matchesModuleSectionPath(pathname, href)
+
+  return matchesPath || matchesModulePath ? [item] : []
 }

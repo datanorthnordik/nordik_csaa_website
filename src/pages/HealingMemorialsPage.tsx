@@ -1,39 +1,9 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import healingHero from '../assets/healing hero section.jpg'
-import shingwaukHallImg from '../assets/shingwaukhall-hero.jpg'
-import everyChildImg from '../assets/every-child-matters-hero.jpg'
-import wawnoshImg from '../assets/wawnosh-hero-section.jpg'
-import cryingRockImg from '../assets/cryingrock-hero.png'
-import watercolorMeadow from '../assets/watercolor_meadow.png'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
+import { SharedImageHero } from '../components/SharedImageHero'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import styles from './HealingMemorialsPage.module.css'
-
-/* ─── Wave SVG divider ─── */
-const WAVE_CURVE = 'M0,45 C400,45 450,95 700,95 C1000,95 1100,25 1300,25 C1380,25 1410,35 1440,35'
-
-function WaveDivider() {
-  return (
-    <div className={styles.waveDivider}>
-      <svg
-        viewBox="0 0 1440 120"
-        preserveAspectRatio="none"
-        className={styles.waveSvg}
-        aria-hidden="true"
-      >
-        <path d={`${WAVE_CURVE} L1440,120 L0,120 Z`} fill="#ffffff" />
-        <path
-          d={WAVE_CURVE}
-          fill="none"
-          stroke="#9c0000"
-          strokeWidth="5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          vectorEffect="non-scaling-stroke"
-        />
-      </svg>
-    </div>
-  )
-}
 
 type Pillar = {
   key: string
@@ -46,31 +16,31 @@ const PILLARS: Pillar[] = [
   {
     key: 'inMemorial',
     href: '/our-story/healing-memorials/in-memorial',
-    imageSrc: watercolorMeadow,
+    imageSrc: WEBSITE_ASSET_URLS.watercolorMeadow,
     gradient: 'linear-gradient(160deg, #2a2018 0%, #3e2e20 50%, #1a1510 100%)',
   },
   {
     key: 'exhibition',
     href: '/our-story/healing-memorials/shingwauk-hall-exhibition',
-    imageSrc: shingwaukHallImg,
+    imageSrc: WEBSITE_ASSET_URLS.shingwaukHallHero,
     gradient: 'linear-gradient(160deg, #c8b89a 0%, #9a8870 40%, #5a4838 100%)',
   },
   {
     key: 'everyChild',
     href: '/our-story/healing-memorials/every-child-matters',
-    imageSrc: everyChildImg,
+    imageSrc: WEBSITE_ASSET_URLS.everyChildMattersHero,
     gradient: 'linear-gradient(160deg, #c84800 0%, #a03810 50%, #6a2808 100%)',
   },
   {
     key: 'cryingRock',
     href: '/our-story/healing-memorials/crying-rock',
-    imageSrc: cryingRockImg,
+    imageSrc: WEBSITE_ASSET_URLS.cryingRockHero,
     gradient: 'linear-gradient(160deg, #1a3018 0%, #2a4828 50%, #0a1808 100%)',
   },
   {
     key: 'wawnosh',
     href: '/our-story/healing-memorials/wawanosh-memorial-project',
-    imageSrc: wawnoshImg,
+    imageSrc: WEBSITE_ASSET_URLS.wawnoshHeroSection,
     gradient: 'linear-gradient(160deg, #1a2830 0%, #2a3840 50%, #0a1820 100%)',
   },
 ]
@@ -79,26 +49,27 @@ const PILLARS: Pillar[] = [
 export function HealingMemorialsPage() {
   const { t } = useTranslation()
 
+  usePageBreadcrumbs([
+    {
+      label: t('site.breadcrumbs.ourStory'),
+      href: '/our-story',
+    },
+    {
+      label: t('healingMemorials.hero.title'),
+    },
+  ])
+
   return (
     <div className={styles.page}>
-
-      {/* ── Hero ── */}
-      <section className={styles.hero}>
-        <div
-          className={styles.heroImage}
-          style={{ backgroundImage: `url(${healingHero})` }}
-          aria-hidden="true"
-        />
-        <div className={styles.heroOverlay} aria-hidden="true" />
-        <div className={styles.heroContent}>
-          <h1 className={styles.heroTitle}>{t('healingMemorials.hero.title')}</h1>
-          <p className={styles.heroDescription}>{t('healingMemorials.hero.description')}</p>
-          <a href="#pillars" className={styles.heroCta}>
-            {t('healingMemorials.hero.cta')}
-          </a>
-        </div>
-        <WaveDivider />
-      </section>
+      <SharedImageHero
+        title={t('healingMemorials.hero.title')}
+        description={t('healingMemorials.hero.description')}
+        backgroundImageUrl={WEBSITE_ASSET_URLS.healingHeroSection}
+        cta={{
+          href: '#pillars',
+          label: t('healingMemorials.hero.cta'),
+        }}
+      />
 
       {/* ── Community Pillars ── */}
       <section id="pillars" className={styles.pillarsSection} aria-label={t('healingMemorials.pillars.label')}>

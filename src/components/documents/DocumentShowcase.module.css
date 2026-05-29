@@ -87,7 +87,7 @@
 }
 
 .showcaseControl:focus-visible,
-.showcaseSlide:focus-visible,
+.showcasePreviewButton:focus-visible,
 .showcaseDownloadAction:focus-visible,
 .viewerHeader button:focus-visible,
 .viewerControls button:focus-visible {
@@ -96,6 +96,7 @@
 }
 
 .showcaseSlide img,
+.showcasePreviewFrame,
 .showcaseDocumentPreview {
   position: absolute;
   inset: 0;
@@ -106,6 +107,12 @@
 
 .showcaseSlide img {
   object-fit: cover;
+}
+
+.showcasePreviewFrame {
+  border: 0;
+  background: #ffffff;
+  pointer-events: none;
 }
 
 .showcaseDocumentSlide {
@@ -145,23 +152,33 @@
   background: rgba(31, 31, 35, 0.28);
 }
 
+.showcasePreviewButton {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
 .showcaseFileBadge {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  top: 18px;
+  right: 18px;
+  z-index: 3;
+  pointer-events: none;
   display: inline-flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 70px;
-  min-height: 86px;
+  gap: 8px;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  min-height: 0;
+  padding: 8px 12px;
+  border-radius: 999px;
   background: rgba(255, 255, 255, 0.94);
   color: var(--color-primary);
   font-size: 0.82rem;
   font-weight: 800;
-  transform: translate(-50%, -50%);
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
 }
 
@@ -171,14 +188,14 @@
 
 .showcaseFileBadge::before {
   content: '';
-  width: 24px;
-  height: 30px;
+  width: 16px;
+  height: 20px;
   border: 2px solid currentColor;
   border-radius: 2px;
   background:
     linear-gradient(135deg, transparent 0 70%, currentColor 71% 78%, transparent 79%),
-    linear-gradient(currentColor 0 0) center 10px / 12px 2px no-repeat,
-    linear-gradient(currentColor 0 0) center 16px / 12px 2px no-repeat;
+    linear-gradient(currentColor 0 0) center 6px / 8px 2px no-repeat,
+    linear-gradient(currentColor 0 0) center 11px / 8px 2px no-repeat;
 }
 
 .showcaseDownloadCard {
@@ -348,6 +365,42 @@
   min-height: 70vh;
   border: 0;
   background: var(--color-surface);
+}
+
+.viewerFallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 70vh;
+  padding: 24px;
+  background:
+    linear-gradient(135deg, rgba(122, 31, 36, 0.06), rgba(63, 111, 63, 0.12)),
+    var(--color-surface-alt);
+}
+
+.viewerFallbackBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--color-primary);
+  font-size: 1rem;
+  font-weight: 800;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+}
+
+.viewerFallbackBadge::before {
+  content: '';
+  width: 18px;
+  height: 22px;
+  border: 2px solid currentColor;
+  border-radius: 2px;
+  background:
+    linear-gradient(135deg, transparent 0 70%, currentColor 71% 78%, transparent 79%),
+    linear-gradient(currentColor 0 0) center 7px / 9px 2px no-repeat,
+    linear-gradient(currentColor 0 0) center 12px / 9px 2px no-repeat;
 }
 
 .viewerControls {
