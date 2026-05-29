@@ -5,6 +5,7 @@ import {
   newslettersApi,
   type NewsletterDetailResponse,
 } from '../api/newslettersApi'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { NewsletterFlipbook } from '../components/newsletters/NewsletterFlipbook'
 import {
   getNewsletterCategoryLabel,
@@ -80,6 +81,20 @@ export function DigitalNewsletterDetailPage() {
   const contentHtml = entry?.content_html.trim() ?? ''
   const fallbackExcerpt = preview?.excerpt?.trim() ?? ''
 
+  usePageBreadcrumbs([
+    {
+      label: t('newsMediaPage.hero.title'),
+      href: '/news-media',
+    },
+    {
+      label: t('newslettersPage.hero.title'),
+      href: '/news-media/digital-newsletter',
+    },
+    {
+      label: entry?.title.trim() || t('site.breadcrumbs.newsletterDetail'),
+    },
+  ])
+
   async function handleDownload() {
     if (!downloadTarget || isDownloading) {
       return
@@ -124,12 +139,6 @@ export function DigitalNewsletterDetailPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.topBar}>
-        <Link to="/news-media/digital-newsletter" className={styles.backLink}>
-          {t('newslettersPage.detail.backToList')}
-        </Link>
-      </div>
-
       <section className={styles.hero}>
         <div className={`${styles.heroLayout} ${!showHeroMedia ? styles.heroLayoutCompact : ''}`}>
           <div className={styles.heroCopy}>

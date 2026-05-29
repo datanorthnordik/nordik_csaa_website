@@ -1,9 +1,16 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import styles from './NewsMediaLandingPage.module.css'
 
 export function NewsMediaLandingPage() {
   const { t } = useTranslation()
+
+  usePageBreadcrumbs([
+    {
+      label: t('newsMediaPage.hero.title'),
+    },
+  ])
 
   return (
     <div className={styles.page}>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { pressApi, type PressDetailResponse } from '../api/pressApi'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import {
   DocumentShowcase,
   type DocumentShowcaseItem,
@@ -80,6 +81,20 @@ export function PressArchiveDetailPage() {
     [entry],
   )
 
+  usePageBreadcrumbs([
+    {
+      label: t('newsMediaPage.hero.title'),
+      href: '/news-media',
+    },
+    {
+      label: t('pressArchivePage.hero.title'),
+      href: '/news-media/press-archive',
+    },
+    {
+      label: entry?.title.trim() || t('site.breadcrumbs.pressArchiveDetail'),
+    },
+  ])
+
   if (status === 'loading') {
     return (
       <div className={styles.page}>
@@ -106,10 +121,6 @@ export function PressArchiveDetailPage() {
 
   return (
     <div className={styles.page}>
-      <Link to="/news-media/press-archive" className={styles.backLink}>
-        {t('pressArchivePage.detail.backToList')}
-      </Link>
-
       <section className={styles.hero}>
         <div className={`${styles.heroLayout} ${!heroImage ? styles.heroLayoutCompact : ''}`}>
           <div className={styles.heroCopy}>

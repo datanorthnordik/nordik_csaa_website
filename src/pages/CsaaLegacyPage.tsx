@@ -11,6 +11,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useTranslation } from 'react-i18next'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 
 // ── Artwork layers (transparent PNGs) ────────────────────────────────────────
@@ -160,12 +162,23 @@ const S3_HOTSPOTS: Hotspot[] = [
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export function CsaaLegacyPage() {
+  const { t } = useTranslation()
   const scrollTrackRef  = useRef<HTMLDivElement>(null)
   const stickyCanvasRef = useRef<HTMLDivElement>(null)
 
   const [activeScene,   setActiveScene]   = useState<1 | 2 | 3>(1)
   const [hotspotsOn,    setHotspotsOn]    = useState(false)
   const [isMuted,       setIsMuted]       = useState(true)
+
+  usePageBreadcrumbs([
+    {
+      label: t('site.breadcrumbs.ourStory'),
+      href: '/our-story',
+    },
+    {
+      label: t('ourStory.legacy.csaaLegacy.title'),
+    },
+  ])
 
   // Audio refs (swap src paths when files are available)
   const audioWater = useRef<HTMLAudioElement>(null)

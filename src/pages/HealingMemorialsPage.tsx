@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
 import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import styles from './HealingMemorialsPage.module.css'
@@ -46,6 +47,16 @@ const PILLARS: Pillar[] = [
 
 export function HealingMemorialsPage() {
   const { t } = useTranslation()
+
+  usePageBreadcrumbs([
+    {
+      label: t('site.breadcrumbs.ourStory'),
+      href: '/our-story',
+    },
+    {
+      label: t('healingMemorials.hero.title'),
+    },
+  ])
 
   return (
     <div className={styles.page}>

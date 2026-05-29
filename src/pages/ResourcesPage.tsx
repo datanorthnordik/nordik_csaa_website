@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   publicResourcesApi,
   type PublicResourceCategory,
@@ -6,6 +7,7 @@ import {
   type PublicResourceListPageMeta,
   resolvePublicResourceContentUrl,
 } from '../api/resourcesApi'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { DocumentViewerModal } from '../components/documents/DocumentViewerModal'
 import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import { downloadPublicFile } from '../lib/fileDownload'
@@ -23,6 +25,7 @@ const defaultPagination: PublicResourceListPageMeta = {
 }
 
 export function CommunityResourcesPage() {
+  const { t } = useTranslation()
   const [resources, setResources] = useState<PublicResourceEntry[]>([])
   const [pagination, setPagination] = useState<PublicResourceListPageMeta>(defaultPagination)
   const [searchTerm, setSearchTerm] = useState('')
@@ -33,6 +36,16 @@ export function CommunityResourcesPage() {
   const [selectedDocument, setSelectedDocument] = useState<PublicResourceEntry | null>(null)
 
   const normalizedSearchTerm = searchTerm.trim().toLowerCase()
+
+  usePageBreadcrumbs([
+    {
+      label: t('site.breadcrumbs.communitySupportTeam'),
+      href: '/community-support-team',
+    },
+    {
+      label: t('site.breadcrumbs.resourcesSupport'),
+    },
+  ])
 
   usePageMeta({
     title: 'Resources & Support | Children of Shingwauk Alumni Association',
