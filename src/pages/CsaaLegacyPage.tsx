@@ -11,19 +11,20 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 
 // ── Artwork layers (transparent PNGs) ────────────────────────────────────────
-import canoeImg  from '../assets/canoe_vector.png'
-import trainImg  from '../assets/train_vector.png'
-import planeImg  from '../assets/plane_vector.png'
-import schoolImg from '../assets/irs_vector.png'
-import scene2Img from '../assets/returnHome_vector.png'
-import scene3Img from '../assets/remeber_vector.jpeg'
-import shirleySignature from "../assets/shirley' signature.png"
+const canoeImg = WEBSITE_ASSET_URLS.canoeVector
+const trainImg = WEBSITE_ASSET_URLS.trainVector
+const planeImg = WEBSITE_ASSET_URLS.planeVector
+const schoolImg = WEBSITE_ASSET_URLS.irsVectorPng
+const scene2Img = WEBSITE_ASSET_URLS.returnHomeVector
+const scene3Img = WEBSITE_ASSET_URLS.rememberVector
+const shirleySignature = WEBSITE_ASSET_URLS.shirleySignature
 
 // ── Static assets ─────────────────────────────────────────────────────────────
-import shingwaukHeroImg from '../assets/shingwaukhall-hero.jpg'
-import drHornImg        from "../assets/Dr Shirley Horn.jpg"
+const shingwaukHeroImg = WEBSITE_ASSET_URLS.shingwaukHallHero
+const drHornImg = WEBSITE_ASSET_URLS.drShirleyHorn
 
 import styles from './CsaaLegacyPage.module.css'
 

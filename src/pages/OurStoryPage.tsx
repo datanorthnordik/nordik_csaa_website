@@ -1,17 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-<<<<<<< HEAD
-import { QuoteBanner } from '../components/QuoteBanner'
 import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
-=======
-import shingwaukHero from '../assets/irs_vector.png'
-import missionImg from '../assets/makwa17.jpg'
-import legacyImg from '../assets/canoe_vector.png'
-import memorialsImg from '../assets/every-child-matters-hero.jpg'
-import archivesImg from '../assets/srsc_logo.png'
-import csaaLogo from '../assets/csaa_logo.png'
->>>>>>> 6086dacde85c5965fc962fa8ced926372a0ac724
 import styles from './OurStoryPage.module.css'
 
 /* S-curve wave: starts mid-left, dips down, rises back up on the right */
