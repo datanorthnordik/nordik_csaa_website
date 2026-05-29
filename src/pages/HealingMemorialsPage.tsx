@@ -1,12 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import healingHero from '../assets/healing hero section.jpg'
-import shingwaukHallImg from '../assets/shingwaukhall-hero.jpg'
-import everyChildImg from '../assets/every-child-matters-hero.jpg'
-import wawnoshImg from '../assets/wawnosh-hero-section.jpg'
-import cryingRockImg from '../assets/cryingrock-hero.png'
-import watercolorMeadow from '../assets/watercolor_meadow.png'
 import { SharedImageHero } from '../components/SharedImageHero'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import styles from './HealingMemorialsPage.module.css'
 
 type Pillar = {
@@ -20,31 +15,31 @@ const PILLARS: Pillar[] = [
   {
     key: 'inMemorial',
     href: '/our-story/healing-memorials/in-memorial',
-    imageSrc: watercolorMeadow,
+    imageSrc: WEBSITE_ASSET_URLS.watercolorMeadow,
     gradient: 'linear-gradient(160deg, #2a2018 0%, #3e2e20 50%, #1a1510 100%)',
   },
   {
     key: 'exhibition',
     href: '/our-story/healing-memorials/shingwauk-hall-exhibition',
-    imageSrc: shingwaukHallImg,
+    imageSrc: WEBSITE_ASSET_URLS.shingwaukHallHero,
     gradient: 'linear-gradient(160deg, #c8b89a 0%, #9a8870 40%, #5a4838 100%)',
   },
   {
     key: 'everyChild',
     href: '/our-story/healing-memorials/every-child-matters',
-    imageSrc: everyChildImg,
+    imageSrc: WEBSITE_ASSET_URLS.everyChildMattersHero,
     gradient: 'linear-gradient(160deg, #c84800 0%, #a03810 50%, #6a2808 100%)',
   },
   {
     key: 'cryingRock',
     href: '/our-story/healing-memorials/crying-rock',
-    imageSrc: cryingRockImg,
+    imageSrc: WEBSITE_ASSET_URLS.cryingRockHero,
     gradient: 'linear-gradient(160deg, #1a3018 0%, #2a4828 50%, #0a1808 100%)',
   },
   {
     key: 'wawnosh',
     href: '/our-story/healing-memorials/wawanosh-memorial-project',
-    imageSrc: wawnoshImg,
+    imageSrc: WEBSITE_ASSET_URLS.wawnoshHeroSection,
     gradient: 'linear-gradient(160deg, #1a2830 0%, #2a3840 50%, #0a1820 100%)',
   },
 ]
@@ -57,7 +52,7 @@ export function HealingMemorialsPage() {
       <SharedImageHero
         title={t('healingMemorials.hero.title')}
         description={t('healingMemorials.hero.description')}
-        backgroundImageUrl={healingHero}
+        backgroundImageUrl={WEBSITE_ASSET_URLS.healingHeroSection}
         cta={{
           href: '#pillars',
           label: t('healingMemorials.hero.cta'),
