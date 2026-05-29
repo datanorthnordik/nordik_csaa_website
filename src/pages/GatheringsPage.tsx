@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import {
   eventsApi,
   type EventDetailResponse,
@@ -41,6 +42,12 @@ export function GatheringsPage() {
   )
   const hasMoreUpcomingEvents = upcomingEvents.length > visibleUpcomingEvents.length
   const hasMoreArchivedEvents = archivePagination?.has_next ?? false
+
+  usePageBreadcrumbs([
+    {
+      label: t('site.nav.gatherings'),
+    },
+  ])
 
   useEffect(() => {
     let ignore = false

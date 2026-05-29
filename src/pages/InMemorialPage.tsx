@@ -4,6 +4,7 @@ import {
   publicMemorialsApi,
   type PublicMemorialEntry,
 } from '../api/memorialsApi'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import styles from './InMemorialPage.module.css'
 
@@ -79,6 +80,20 @@ export function InMemorialPage() {
   const [error, setError] = useState<string | null>(null)
   const [particles, setParticles] = useState<Particle[]>([])
   const nextId = useRef(0)
+
+  usePageBreadcrumbs([
+    {
+      label: t('site.breadcrumbs.ourStory'),
+      href: '/our-story',
+    },
+    {
+      label: t('healingMemorials.hero.title'),
+      href: '/our-story/healing-memorials',
+    },
+    {
+      label: t('healingMemorials.pillars.inMemorial.title'),
+    },
+  ])
 
   useEffect(() => {
     let ignore = false

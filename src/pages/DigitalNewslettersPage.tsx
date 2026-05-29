@@ -5,6 +5,7 @@ import {
   newslettersApi,
   type NewsletterDetailResponse,
 } from '../api/newslettersApi'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import {
   getNewsletterCategoryLabel,
   getNewsletterYear,
@@ -89,6 +90,16 @@ export function DigitalNewslettersPage() {
     featuredEntry && !normalizedSearch && selectedYear === 'all'
       ? filteredEntries.filter((entry) => entry.id !== featuredEntry.id)
       : filteredEntries
+
+  usePageBreadcrumbs([
+    {
+      label: t('newsMediaPage.hero.title'),
+      href: '/news-media',
+    },
+    {
+      label: t('newslettersPage.hero.title'),
+    },
+  ])
 
   return (
     <div className={styles.page}>

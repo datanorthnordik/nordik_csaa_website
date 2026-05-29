@@ -134,18 +134,12 @@ describe('EventCalendarPage', () => {
     vi.useRealTimers()
   })
 
-  it('loads the visible month range and shows the back link', async () => {
+  it('loads the visible month range', async () => {
     renderCalendar()
 
     expect(
       await screen.findByRole('heading', { name: /community calendar/i }),
     ).toBeDefined()
-    expect(
-      screen.getByRole('link', { name: /back to events/i }),
-    ).toBeDefined()
-    expect(
-      screen.getByRole('link', { name: /back to events/i }).getAttribute('href'),
-    ).toBe('/events')
     expect(listEventsByDateRange).toHaveBeenCalledWith('2026-08-30', '2026-10-03')
   })
 

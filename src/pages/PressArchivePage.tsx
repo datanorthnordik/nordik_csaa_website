@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { pressApi, type PressDetailResponse } from '../api/pressApi'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { downloadPublicFile } from '../lib/fileDownload'
 import {
   getPressYear,
@@ -92,6 +93,16 @@ export function PressArchivePage() {
 
     return searchableParts.some((value) => value.toLowerCase().includes(normalizedSearch))
   })
+
+  usePageBreadcrumbs([
+    {
+      label: t('newsMediaPage.hero.title'),
+      href: '/news-media',
+    },
+    {
+      label: t('pressArchivePage.hero.title'),
+    },
+  ])
 
   return (
     <div className={styles.page}>

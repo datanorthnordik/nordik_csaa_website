@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import styles from './OurStoryPage.module.css'
 
@@ -38,6 +39,12 @@ function WaveDivider() {
 
 export function OurStoryPage() {
   const { t } = useTranslation()
+
+  usePageBreadcrumbs([
+    {
+      label: t('site.breadcrumbs.ourStory'),
+    },
+  ])
 
   return (
     <div className={styles.page}>
