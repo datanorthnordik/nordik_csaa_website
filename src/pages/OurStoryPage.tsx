@@ -146,7 +146,11 @@ export function OurStoryPage() {
 
       {/* ── Solemn Dedication ── */}
       <section className={styles.dedicationSection}>
-        <img src={csaaLogo} alt="CSAA Logo" className={styles.dedicationLogo} />
+        <img
+          src={WEBSITE_ASSET_URLS.csaaLogo}
+          alt="CSAA Logo"
+          className={styles.dedicationLogo}
+        />
         <blockquote className={styles.dedicationQuote}>
           {t('ourStory.dedication.quote')}
         </blockquote>
