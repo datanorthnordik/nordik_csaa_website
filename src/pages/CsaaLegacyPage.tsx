@@ -1,4 +1,4 @@
-/**
+﻿/**
  * CSAA Legacy — Scrollytelling Experience
  * ─────────────────────────────────────────
  * 700 vh scroll track → sticky canvas pins at 100 vh.
@@ -16,10 +16,12 @@ import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 
 // ── Artwork layers (transparent PNGs) ────────────────────────────────────────
-const canoeImg = WEBSITE_ASSET_URLS.canoeVector
-const trainImg = WEBSITE_ASSET_URLS.trainVector
-const planeImg = WEBSITE_ASSET_URLS.planeVector
-const schoolImg = WEBSITE_ASSET_URLS.irsVectorPng
+const canoeImg   = WEBSITE_ASSET_URLS.canoeVector
+const trainImg   = WEBSITE_ASSET_URLS.trainVector
+const planeImg   = WEBSITE_ASSET_URLS.planeVector
+const modelTImg  = WEBSITE_ASSET_URLS.modelTVector
+const buggyImg   = WEBSITE_ASSET_URLS.buggyVector
+const schoolImg  = WEBSITE_ASSET_URLS.irsVectorPng
 const scene2Img = WEBSITE_ASSET_URLS.returnHomeVector
 const scene3Img = WEBSITE_ASSET_URLS.rememberVector
 const shirleySignature = WEBSITE_ASSET_URLS.shirleySignature
@@ -52,7 +54,7 @@ type Hotspot = { id: string; x: string; y: string; title: string; body: string }
 const S1_HOTSPOTS: Hotspot[] = [
   {
     id: 's1-train',
-    x: '18%', y: '50%',
+    x: '8%', y: '28%',
     title: 'Came by Train',
     body: 'Many children were taken hundreds of miles by train — often for the very first time — towards an unknown destination far from their families and communities.',
   },
@@ -64,15 +66,27 @@ const S1_HOTSPOTS: Hotspot[] = [
   },
   {
     id: 's1-plane',
-    x: '80%', y: '26%',
+    x: '78%', y: '36%',
     title: 'Came by Plane',
     body: 'Children from the most remote northern communities were flown out — a journey that felt like being taken to another world entirely.',
   },
   {
     id: 's1-canoe',
-    x: '82%', y: '72%',
+    x: '91%', y: '86%',
     title: 'Came by Canoe',
     body: 'For those living along waterways, the journey began in a canoe — paddled away from their home shores, often never to return in the same way.',
+  },
+  {
+    id: 's1-modelT',
+    x: '9%', y: '73%',
+    title: 'Came by Car',
+    body: 'As roads reached more communities, Indian Agents arrived by automobile. Children were loaded into cars and driven away — the vehicle of "progress" became a tool of forced removal.',
+  },
+  {
+    id: 's1-buggy',
+    x: '35%', y: '80%',
+    title: 'Came by Buggy',
+    body: 'Before railways and roads, priests and government agents arrived by horse-drawn buggy — recording names and assessing communities. The buggy was among the first symbols of an unwanted authority.',
   },
 ]
 
@@ -169,6 +183,8 @@ export function CsaaLegacyPage() {
   const [activeScene,   setActiveScene]   = useState<1 | 2 | 3>(1)
   const [hotspotsOn,    setHotspotsOn]    = useState(false)
   const [isMuted,       setIsMuted]       = useState(true)
+  const [showIdleNudge, setShowIdleNudge] = useState(false)
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   usePageBreadcrumbs([
     {
@@ -233,6 +249,10 @@ export function CsaaLegacyPage() {
       tl.fromTo('[data-beat="intro"]', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7 }, 0)
       tl.to('[data-beat="intro"]',  { opacity: 0, y: -20, duration: 0.5 }, 0.9)
 
+      // Canvas scroll cue — appears with beat 1, fades before canoe arrives
+      tl.fromTo('[data-beat="canvas-cue"]', { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.6 }, 0.15)
+      tl.to('[data-beat="canvas-cue"]', { opacity: 0, y: -6, duration: 0.4 }, 1.1)
+
       // ── BEAT 2 (1.5–3.7): Canoe slides in from bottom-right ─────────────
       tl.fromTo('[data-beat="canoe-layer"]',
         { x: vw * 0.85, y: vh * 0.18, opacity: 0 },
@@ -261,50 +281,67 @@ export function CsaaLegacyPage() {
       tl.fromTo('[data-beat="plane-text"]', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5 }, 6.8)
       tl.to('[data-beat="plane-text"]',   { opacity: 0, duration: 0.4 }, 7.8)
 
-      // ── BEAT 5 (8.2–10.5): School drops in from above ───────────────────
+      // ── BEAT 4.5 (8.2–10.2): Model T slides in from lower-left ──────────
+      tl.fromTo('[data-beat="modelT-layer"]',
+        { x: -vw * 0.5, y: vh * 0.1, opacity: 0 },
+        { x: 0, y: 0, opacity: 1, duration: 1.2, ease: 'power2.out' },
+        8.2,
+      )
+      tl.fromTo('[data-beat="modelT-text"]', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5 }, 9.0)
+      tl.to('[data-beat="modelT-text"]',   { opacity: 0, duration: 0.4 }, 10.0)
+
+      // ── BEAT 4.7 (10.2–12.2): Buggy rises from bottom-centre-left ───────
+      tl.fromTo('[data-beat="buggy-layer"]',
+        { x: 0, y: vh * 0.35, opacity: 0 },
+        { x: 0, y: 0, opacity: 1, duration: 1.2, ease: 'power2.out' },
+        10.2,
+      )
+      tl.fromTo('[data-beat="buggy-text"]', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5 }, 11.0)
+      tl.to('[data-beat="buggy-text"]',   { opacity: 0, duration: 0.4 }, 12.0)
+
+      // ── BEAT 5 (12.2–14.5): School drops in from above ──────────────────
       tl.fromTo('[data-beat="school-layer"]',
         { y: -vh * 0.07, opacity: 0, scale: 0.97 },
         { y: 0, opacity: 1, scale: 1, duration: 1.2, ease: 'power2.out' },
-        8.2,
+        12.2,
       )
-      tl.fromTo('[data-beat="school-text"]', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5 }, 9.0)
-      tl.to('[data-beat="school-text"]',   { opacity: 0, duration: 0.4 }, 10.2)
+      tl.fromTo('[data-beat="school-text"]', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5 }, 13.0)
+      tl.to('[data-beat="school-text"]',   { opacity: 0, duration: 0.4 }, 14.2)
 
-      // ── BEAT 6 (9.5–12.0): Title appears right after school lands ───────
-      // Appears earlier (9.5 vs old 10.5) so it's clearly visible at dwell
-      tl.fromTo('[data-beat="scene1-title"]',  { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.9 }, 9.5)
-      tl.fromTo('[data-beat="artist-credit"]', { opacity: 0 }, { opacity: 1, duration: 0.8 }, 10.0)
+      // ── BEAT 6 (13.5–16.0): Title appears right after school lands ───────
+      tl.fromTo('[data-beat="scene1-title"]',  { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.9 }, 13.5)
+      tl.fromTo('[data-beat="artist-credit"]', { opacity: 0 }, { opacity: 1, duration: 0.8 }, 14.0)
 
-      // DWELL for scene 1 → 13.5
+      // DWELL for scene 1 → 18.0
 
-      // ── BEAT 7 (13.5–15.0): Scene 1 → Scene 2 (scroll-down reveal) ──────
+      // ── BEAT 7 (18.0–19.5): Scene 1 → Scene 2 (scroll-down reveal) ──────
       tl.to('[data-beat="scene1"]',
         { y: '-100%', opacity: 0, duration: 1.2, ease: 'power2.inOut' },
-        13.5,
+        18.0,
       )
       tl.fromTo('[data-beat="scene2"]',
         { y: '100%', opacity: 0 },
         { y: '0%', opacity: 1, duration: 1.2, ease: 'power2.inOut' },
-        13.5,
+        18.0,
       )
-      tl.fromTo('[data-beat="scene2-title"]', { opacity: 0, y: -22 }, { opacity: 1, y: 0, duration: 0.7 }, 14.5)
+      tl.fromTo('[data-beat="scene2-title"]', { opacity: 0, y: -22 }, { opacity: 1, y: 0, duration: 0.7 }, 19.0)
 
-      // DWELL scene 2 → 17.5
+      // DWELL scene 2 → 22.0
 
-      // ── BEAT 8 (17.5–18.8): Scene 2 → Scene 3 (scroll-down reveal) ──────
+      // ── BEAT 8 (22.0–23.5): Scene 2 → Scene 3 (scroll-down reveal) ──────
       tl.to('[data-beat="scene2"]',
         { y: '-100%', opacity: 0, duration: 1.2, ease: 'power2.inOut' },
-        17.5,
+        22.0,
       )
       tl.fromTo('[data-beat="scene3"]',
         { y: '100%', opacity: 0 },
         { y: '0%', opacity: 1, duration: 1.2, ease: 'power2.inOut' },
-        17.5,
+        22.0,
       )
-      tl.fromTo('[data-beat="scene3-title"]', { opacity: 0, y: -22 }, { opacity: 1, y: 0, duration: 0.7 }, 18.5)
+      tl.fromTo('[data-beat="scene3-title"]', { opacity: 0, y: -22 }, { opacity: 1, y: 0, duration: 0.7 }, 23.0)
 
-      // ── BEAT 9 (19.5): Artist credit fades out after all artworks ────────
-      tl.to('[data-beat="artist-credit"]', { opacity: 0, duration: 0.5 }, 19.5)
+      // ── BEAT 9 (24.0): Artist credit fades out after all artworks ────────
+      tl.to('[data-beat="artist-credit"]', { opacity: 0, duration: 0.5 }, 24.0)
 
       // ── Scene / hotspot tracker ───────────────────────────────────────────
       ScrollTrigger.create({
@@ -315,13 +352,13 @@ export function CsaaLegacyPage() {
           const p = self.progress
 
           // These thresholds match the timeline beats above
-          // progress = (scrolled vh) / (700 - 100) vh
+          // Total timeline = 25 units across 875vh
           let scene: 1 | 2 | 3 = 1
           let on = false
 
-          if (p >= 0.525 && p < 0.675) { scene = 1; on = true }        // beat 6 dwell
-          else if (p >= 0.72 && p < 0.875) { scene = 2; on = true }    // beat 7 dwell
-          else if (p >= 0.925 && p < 0.975) { scene = 3; on = true }   // beat 8 dwell
+          if (p >= 0.56 && p < 0.72) { scene = 1; on = true }          // beat 6 dwell (units 14–18)
+          else if (p >= 0.76 && p < 0.88) { scene = 2; on = true }     // beat 7 dwell (units 19–22)
+          else if (p >= 0.92 && p < 0.98) { scene = 3; on = true }     // beat 8 dwell (units 23–24.5)
 
           setActiveScene(s => s !== scene ? scene : s)
           setHotspotsOn(h => h !== on ? on : h)
@@ -331,7 +368,7 @@ export function CsaaLegacyPage() {
       // ── Audio cues (fires when muted===false at time of scroll) ──────────
       ScrollTrigger.create({
         trigger: track,
-        start: '7.5% top',   // ≈ canoe beat
+        start: '6% top',    // ≈ canoe beat (scaled for 875vh track)
         onEnter: () => {
           if (!isMuted && audioWater.current) {
             audioWater.current.currentTime = 0
@@ -341,7 +378,7 @@ export function CsaaLegacyPage() {
       })
       ScrollTrigger.create({
         trigger: track,
-        start: '18% top',   // ≈ train beat
+        start: '14% top',   // ≈ train beat
         onEnter: () => {
           if (!isMuted && audioTrain.current) {
             audioTrain.current.currentTime = 0
@@ -351,7 +388,7 @@ export function CsaaLegacyPage() {
       })
       ScrollTrigger.create({
         trigger: track,
-        start: '30% top',   // ≈ plane beat
+        start: '24% top',   // ≈ plane beat
         onEnter: () => {
           if (!isMuted && audioPlane.current) {
             audioPlane.current.currentTime = 0
@@ -402,6 +439,33 @@ export function CsaaLegacyPage() {
     }
   }, [])
 
+  // ── Idle-scroll nudge ────────────────────────────────────────────────────
+  // If the user stops scrolling for 4 s while the story canvas is active,
+  // show the "Keep scrolling" prompt. Resets immediately on any scroll event.
+  useEffect(() => {
+    const IDLE_MS = 4000
+
+    const startIdleTimer = () => {
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+      idleTimerRef.current = setTimeout(() => {
+        if (document.body.classList.contains('csaa-story-active')) {
+          setShowIdleNudge(true)
+        }
+      }, IDLE_MS)
+    }
+
+    const onScroll = () => {
+      setShowIdleNudge(false)
+      startIdleTimer()
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+    }
+  }, [])
+
   return (
     <div className={styles.page}>
 
@@ -428,10 +492,12 @@ export function CsaaLegacyPage() {
             An interactive journey through the lived experience of the Shingwauk
             Residential School — told through Dr. Shirley Horn's artwork.
           </p>
-          <div className={styles.scrollCue} aria-hidden="true">
-            <span className={styles.scrollCueWheel} />
-            <span className={styles.scrollCueLabel}>Scroll to explore</span>
-          </div>
+        </div>
+
+        {/* Scroll cue — absolute bottom-centre so it stays viewport-centred */}
+        <div className={styles.scrollCue} aria-hidden="true">
+          <span className={styles.scrollCueWheel} />
+          <span className={styles.scrollCueLabel}>Keep scrolling to explore</span>
         </div>
 
         {/* Wave transitions from dark hero → paper-white canvas */}
@@ -453,6 +519,20 @@ export function CsaaLegacyPage() {
           >
             {isMuted ? <MutedIcon /> : <UnmutedIcon />}
           </button>
+
+          {/* Canvas scroll cue — GSAP fades it in with beat 1, out before beat 2 */}
+          <div data-beat="canvas-cue" className={styles.canvasCue} aria-hidden="true">
+            <span className={styles.canvasCueWheel} />
+            <span className={styles.canvasCueLabel}>Keep scrolling to explore</span>
+          </div>
+
+          {/* Idle nudge — appears after 4 s of no scrolling, hides on next scroll */}
+          {showIdleNudge && (
+            <div className={styles.idleNudge} aria-live="polite" aria-label="Keep scrolling to explore">
+              <span className={styles.canvasCueWheel} />
+              <span className={styles.canvasCueLabel}>Keep scrolling to explore</span>
+            </div>
+          )}
 
           {/* ── SCENE 1: Taking the Children ─────────────────────────── */}
           <div data-beat="scene1" className={styles.scene}>
@@ -480,6 +560,20 @@ export function CsaaLegacyPage() {
               className={`${styles.artLayer} ${styles.layerPlane}`}
             />
             <img
+              data-beat="modelT-layer"
+              src={modelTImg}
+              alt=""
+              aria-hidden="true"
+              className={`${styles.artLayer} ${styles.layerModelT}`}
+            />
+            <img
+              data-beat="buggy-layer"
+              src={buggyImg}
+              alt=""
+              aria-hidden="true"
+              className={`${styles.artLayer} ${styles.layerBuggy}`}
+            />
+            <img
               data-beat="school-layer"
               src={schoolImg}
               alt=""
@@ -492,20 +586,39 @@ export function CsaaLegacyPage() {
               <span className={styles.captionQuote}>"Once upon a time…"</span>
             </div>
 
-            <div data-beat="canoe-text" className={`${styles.caption} ${styles.captionBottom}`} aria-hidden="true">
-              <span className={styles.captionLine}>They came in by boats.</span>
+            <div data-beat="canoe-text" className={`${styles.caption} ${styles.captionUpperCenter} ${styles.captionNarrative}`} aria-hidden="true">
+              <span className={styles.captionLine}>For generations, the waters carried us.</span>
+              <span className={styles.captionLine}>Our canoes moved with the rhythm of the land — connecting family, seasonal camps, and community.</span>
+              <span className={styles.captionLine}>But then, the waters brought a different kind of vessel. One that did not come to share the land, but to divide it.</span>
             </div>
 
-            <div data-beat="train-text" className={`${styles.caption} ${styles.captionBottom}`} aria-hidden="true">
-              <span className={styles.captionLine}>Came by train.</span>
+            <div data-beat="train-text" className={`${styles.caption} ${styles.captionUpperCenter} ${styles.captionNarrative}`} aria-hidden="true">
+              <span className={styles.captionLine}>They arrived on tracks of iron and wings of steel, cutting through the territories.</span>
+              <span className={styles.captionLine}>They brought a calculated silence. No longer just a journey, transport became a tool of separation — carrying away the laughter of our villages, one community at a time.</span>
             </div>
 
-            <div data-beat="plane-text" className={`${styles.caption} ${styles.captionBottom}`} aria-hidden="true">
-              <span className={styles.captionLine}>Came by plane.</span>
+            <div data-beat="plane-text" className={`${styles.caption} ${styles.captionUpperCenter} ${styles.captionNarrative}`} aria-hidden="true">
+              <span className={styles.captionLine}>Then came the roar from the sky.</span>
+              <span className={styles.captionLine}>Bush planes descended upon our most remote northern waters, reaching places where no tracks could go.</span>
+              <span className={styles.captionLine}>For the children of the Far North, the plane didn't mean adventure — it meant a sudden departure from the quiet of the bush, carrying them thousands of miles from the only homes they had ever known.</span>
             </div>
 
-            <div data-beat="school-text" className={`${styles.caption} ${styles.captionBottom}`} aria-hidden="true">
-              <span className={styles.captionLine}>They got locked in school.</span>
+            <div data-beat="modelT-text" className={`${styles.caption} ${styles.captionUpperCenter} ${styles.captionNarrative}`} aria-hidden="true">
+              <span className={styles.captionLine}>Then the roads brought them too.</span>
+              <span className={styles.captionLine}>As automobiles began to reach more communities, Indian Agents arrived by car — the vehicle of "progress" repurposed as a tool of removal.</span>
+              <span className={styles.captionLine}>Children were loaded in and driven away from everything familiar, the dust of the road erasing the path home.</span>
+            </div>
+
+            <div data-beat="buggy-text" className={`${styles.caption} ${styles.captionUpperCenter} ${styles.captionNarrative}`} aria-hidden="true">
+              <span className={styles.captionLine}>Before railways, before roads — the buggy came first.</span>
+              <span className={styles.captionLine}>Priests and government agents arrived by horse-drawn carriage, recording names and assessing communities across the land.</span>
+              <span className={styles.captionLine}>The creak of wheels on a dirt path became one of the earliest sounds of an authority that did not ask permission.</span>
+            </div>
+
+            <div data-beat="school-text" className={`${styles.caption} ${styles.captionUpperCenter} ${styles.captionNarrative}`} aria-hidden="true">
+              <span className={styles.captionLine}>And the doors closed.</span>
+              <span className={styles.captionLine}>Heavy stone, rigid walls, and unfamiliar rules replaced the open canopy of the forest and the warmth of the fireside.</span>
+              <span className={styles.captionLine}>The circle of the family was broken — locked inside an institution meant to erase who we were.</span>
             </div>
 
             {/* ── Scene title (appears at beat 6) ────────────────────── */}

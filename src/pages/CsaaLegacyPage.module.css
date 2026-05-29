@@ -1,4 +1,4 @@
-/* ─────────────────────────────────────────────────────────────────────────────
+﻿/* ─────────────────────────────────────────────────────────────────────────────
    CSAA Legacy — Scrollytelling
    Earth & Heritage | Montserrat + Serif
    ───────────────────────────────────────────────────────────────────────────── */
@@ -118,19 +118,30 @@
   margin-right: auto;
 }
 
-/* ── Scroll cue ── */
+/* ── Scroll cue — absolute bottom-centre of the intro hero ── */
 .scrollCue {
+  position: absolute;
+  bottom: clamp(100px, 14vh, 140px); /* sits above the wave, clearly in view */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  animation: cueFadeIn 1.2s ease 0.6s both;
 }
+@keyframes cueFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
 .scrollCueWheel {
   display: block;
-  width: 24px;
-  height: 38px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-radius: 12px;
+  width: 26px;
+  height: 40px;
+  border: 2px solid rgba(255,255,255,0.45);
+  border-radius: 13px;
   position: relative;
 }
 .scrollCueWheel::after {
@@ -140,21 +151,23 @@
   left: 50%;
   transform: translateX(-50%);
   width: 4px;
-  height: 8px;
-  background: rgba(255,255,255,0.55);
+  height: 9px;
+  background: rgba(255,255,255,0.65);
   border-radius: 2px;
   animation: wheelBounce 1.7s ease-in-out infinite;
 }
 @keyframes wheelBounce {
   0%, 100% { transform: translateX(-50%) translateY(0);    opacity: 1; }
-  60%       { transform: translateX(-50%) translateY(10px); opacity: 0.25; }
+  60%       { transform: translateX(-50%) translateY(10px); opacity: 0.2; }
 }
+
 .scrollCueLabel {
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.55);
+  white-space: nowrap;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -162,7 +175,7 @@
    ───────────────────────────────────────────────────────────────────────────── */
 .scrollTrack {
   position: relative;
-  height: 700vh;
+  height: 875vh;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -192,6 +205,107 @@
   height: 100svh !important;
   /* Sit above SiteHeader (z-index: 40) so nav is hidden behind canvas */
   z-index: 50;
+}
+
+/* ── Canvas scroll cue — bottom-centre of the sticky canvas, beat 1 only ── */
+.canvasCue {
+  position: absolute;
+  bottom: clamp(28px, 5vh, 56px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0; /* GSAP controls */
+  pointer-events: none;
+}
+
+.canvasCueWheel {
+  display: block;
+  width: 24px;
+  height: 38px;
+  border: 2px solid rgba(26, 15, 10, 0.88); /* starts dark, CSS fades it */
+  border-radius: 12px;
+  position: relative;
+  animation: scrollCueWheelFade 4s ease-out 0.3s forwards;
+}
+.canvasCueWheel::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 8px;
+  background: rgba(26, 15, 10, 0.88);
+  border-radius: 2px;
+  animation:
+    canvasWheelBounce 1.7s ease-in-out infinite,
+    scrollCueDotFade  4s ease-out 0.3s forwards;
+}
+@keyframes canvasWheelBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0);    opacity: 1; }
+  60%       { transform: translateX(-50%) translateY(10px); opacity: 0.2; }
+}
+@keyframes scrollCueWheelFade {
+  0%,  30% { border-color: rgba(26, 15, 10, 0.88); }
+  100%      { border-color: rgba(26, 15, 10, 0.28); }
+}
+@keyframes scrollCueDotFade {
+  0%,  30% { background: rgba(26, 15, 10, 0.88); }
+  100%      { background: rgba(26, 15, 10, 0.45); }
+}
+
+.canvasCueLabel {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(26, 15, 10, 0.88); /* starts dark */
+  white-space: nowrap;
+  animation: scrollCueLabelFade 4s ease-out 0.3s forwards;
+}
+@keyframes scrollCueLabelFade {
+  0%,  30% { color: rgba(26, 15, 10, 0.88); }
+  100%      { color: rgba(26, 15, 10, 0.38); }
+}
+
+/* ── Idle-scroll nudge ─────────────────────────────────────────────────────
+   Bottom-RIGHT corner — the only area clear of captions (centre),
+   artist credit (bottom-left), titles (top-centre), and mute (top-right).
+   Controlled by React state (showIdleNudge). */
+.idleNudge {
+  position: absolute;
+  bottom: clamp(28px, 5vh, 56px);
+  right: clamp(20px, 3vw, 56px);
+  z-index: 36;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+  animation: idleNudgeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes idleNudgeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.idleNudge .canvasCueWheel {
+  border-color: rgba(26, 15, 10, 0.88);
+  animation: scrollCueWheelFade 3.5s ease-out 0.2s forwards;
+}
+.idleNudge .canvasCueWheel::after {
+  background: rgba(26, 15, 10, 0.88);
+  animation:
+    canvasWheelBounce 1.7s ease-in-out infinite,
+    scrollCueDotFade  3.5s ease-out 0.2s forwards;
+}
+.idleNudge .canvasCueLabel {
+  color: rgba(26, 15, 10, 0.88);
+  animation: scrollCueLabelFade 3.5s ease-out 0.2s forwards;
 }
 
 /* ── Mute toggle ── */
@@ -293,36 +407,52 @@
 
 /* ── Train — upper-left quadrant ── */
 .layerTrain {
-  width: 41vw;
-  left: -3vw;
+  width: 34vw;
+  left: -1vw;
   top: -6vh;
   z-index: 1;
 }
 
 /* ── Plane — upper-right quadrant ── */
 .layerPlane {
-  width: 35vw;
+  width: 33vw;
   right: 0;
-  top: -10vh;
+  top: -3vh;
   z-index: 2;
 }
 
 /* ── Canoe — lower-right quadrant ── */
 .layerCanoe {
-  width: 35vw;
+  width: 28vw;
   right: 0;
-  bottom: -14vh;
+  bottom: -11vh;
   z-index: 3;
 }
 
-/* ── School — horizontal centre, lower half ──
-   Sits above all other layers (z-index: 4) so it is never overlapped.
-   left: calc(50% - half-width) centres without CSS transform,
-   keeping GSAP y/scale animations conflict-free. */
+/* ── School — near-centre, raised so buggy peeks below the base ──
+   Sits above all other layers (z-index: 5). */
 .layerSchool {
-  width: 36vw;
-  left: calc(50% - 18vw);
-  bottom: -4vh;
+  width: 38vw;
+  left: 30vw;
+  bottom: 12vh;
+  z-index: 5;
+}
+
+/* ── Model T — lower-left quadrant ── */
+.layerModelT {
+  width: 27vw;
+  left: -1vw;
+  bottom: -11vh;
+  z-index: 3;
+}
+
+/* ── Buggy — sits under school, peeks below its base ──
+   left: 26vw aligns it under the school (starts at 30vw) so
+   it doesn't bleed into the transparent side of the school PNG. */
+.layerBuggy {
+  width: 23vw;
+  left: 26vw;
+  bottom: 2vh;
   z-index: 4;
 }
 
@@ -367,6 +497,12 @@
   transform: translateX(-50%);
   text-align: center;
 }
+.captionUpperCenter {
+  top: clamp(16px, 14vh, 110px);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
 
 /* Text style */
 .captionQuote {
@@ -391,6 +527,19 @@
   text-shadow: 0 1px 8px rgba(253,251,248,0.95);
 }
 
+/* Wider container for multi-sentence narrative captions */
+.captionNarrative {
+  max-width: 680px;
+}
+.captionNarrative .captionLine {
+  font-size: clamp(0.88rem, 1.8vw, 1.3rem);
+  line-height: 1.55;
+  margin-bottom: 0.4em;
+}
+.captionNarrative .captionLine:last-child {
+  margin-bottom: 0;
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
    SCENE TITLE
    ───────────────────────────────────────────────────────────────────────────── */
@@ -403,12 +552,12 @@
   margin: 0;
   padding: 0 clamp(12px, 3vw, 40px);
   box-sizing: border-box;
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.1rem, 2.6vw, 2rem);
-  font-weight: 800;
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+  font-weight: 700;
   font-style: normal;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  text-transform: none;
+  letter-spacing: 0.01em;
   color: #1a0f0a;
   text-align: center;
   opacity: 0; /* GSAP animates in */
@@ -741,29 +890,33 @@
  * ─────────────────────────────────────────────────────────────────────────
  */
 
-/* ── Tablet landscape / small laptop (768–1024px) — ×1.15 ── */
+/* ── Tablet landscape / small laptop (768–1024px) — base ×1.15 ── */
 @media (max-width: 1024px) {
-  .layerTrain  { width: 47vw; left: -4vw;              top: -6vh;    }
-  .layerPlane  { width: 40vw; right: 0;                top: -10vh;   }
-  .layerSchool { width: 41vw; left: calc(50% - 20.5vw);bottom: -4vh; }
-  .layerCanoe  { width: 40vw; right: 0;                bottom: -14vh;}
+  .layerTrain  { width: 39vw; left: -1vw;  top: -6vh;    }
+  .layerPlane  { width: 38vw; right: 0;    top: -3vh;    }
+  .layerSchool { width: 44vw; left: 28vw;  bottom: 12vh; }
+  .layerCanoe  { width: 32vw; right: 0;    bottom: -11vh;}
+  .layerModelT { width: 31vw; left: -1vw;  bottom: -11vh;}
+  .layerBuggy  { width: 26vw; left: 28vw;  bottom: 2vh;  }
 }
 
-/* ── Tablet portrait / large mobile (480–767px) — ×1.38 ── */
+/* ── Tablet portrait / large mobile (480–767px) — base ×1.38 ── */
 @media (max-width: 767px) {
   .sceneTitle {
-    font-size: clamp(0.9rem, 3.2vw, 1.4rem);
+    font-size: clamp(1.3rem, 4.5vw, 2rem);
   }
   .captionLine, .captionQuote { font-size: clamp(0.95rem, 3.5vw, 1.3rem); }
   .captionBottom { bottom: 6vh; }
 
-  .layerTrain  { width: 57vw; left: -4vw;              top: -5vh;    }
-  .layerPlane  { width: 49vw; right: 0;                top: -9vh;    }
-  .layerSchool { width: 50vw; left: calc(50% - 25vw);  bottom: -3vh; }
-  .layerCanoe  { width: 49vw; right: 0;                bottom: -12vh;}
+  .layerTrain  { width: 47vw; left: -2vw;  top: -5vh;    }
+  .layerPlane  { width: 46vw; right: 0;    top: -2vh;    }
+  .layerSchool { width: 53vw; left: 22vw;  bottom: 10vh; }
+  .layerCanoe  { width: 39vw; right: 0;    bottom: -10vh;}
+  .layerModelT { width: 37vw; left: -2vw;  bottom: -10vh;}
+  .layerBuggy  { width: 32vw; left: 30vw;  bottom: 2vh;  }
 }
 
-/* ── Small mobile (<480px) — ×1.67 ── */
+/* ── Small mobile (<480px) — base ×1.67 ── */
 @media (max-width: 479px) {
   .intro { min-height: 90svh; }
   .hotspot { width: 24px; height: 24px; }
@@ -771,10 +924,12 @@
   .hotspotCalloutLeft { width: 180px; font-size: 0.72rem; }
   .exit { padding-top: 72px; padding-bottom: 72px; }
 
-  .layerTrain  { width: 69vw; left: -5vw;              top: -4vh;    }
-  .layerPlane  { width: 59vw; right: 0;                top: -8vh;    }
-  .layerSchool { width: 61vw; left: calc(50% - 30.5vw);bottom: -3vh; }
-  .layerCanoe  { width: 59vw; right: 0;                bottom: -10vh;}
+  .layerTrain  { width: 57vw; left: -2vw;  top: -4vh;    }
+  .layerPlane  { width: 55vw; right: 0;    top: -2vh;    }
+  .layerSchool { width: 64vw; left: 18vw;  bottom: 8vh;  }
+  .layerCanoe  { width: 47vw; right: 0;    bottom: -9vh; }
+  .layerModelT { width: 45vw; left: -2vw;  bottom: -9vh; }
+  .layerBuggy  { width: 38vw; left: 36vw;  bottom: 2vh;  }
 }
 
 /* ── Exit section — stack on smaller screens ── */
