@@ -15,7 +15,7 @@ import {
   getRegistrationState,
 } from '../lib/eventsDate'
 import { isImageMedia, resolveEventMediaUrl } from '../lib/eventMedia'
-import heroStageImage from '../assets/gatherings-hero-stage.jpg'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import styles from './GatheringsPage.module.css'
 
 const PAGE_SIZE = 10
@@ -160,7 +160,7 @@ export function GatheringsPage() {
               <span>HD</span>
             </div>
             <img
-              src={heroStageImage}
+              src={WEBSITE_ASSET_URLS.gatheringsHeroStage}
               alt={t('gatherings.hero.imageAlt')}
               className={styles.heroImage}
             />

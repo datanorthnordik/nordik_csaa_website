@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import cstLogo from '../assets/community-support-team-logo.png'
 import {
   publicResourcesApi,
   type PublicResourceCategory,
@@ -8,6 +7,7 @@ import {
   resolvePublicResourceContentUrl,
 } from '../api/resourcesApi'
 import { DocumentViewerModal } from '../components/documents/DocumentViewerModal'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import { downloadPublicFile } from '../lib/fileDownload'
 import styles from './ResourcesPage.module.css'
 
@@ -167,7 +167,7 @@ export function CommunityResourcesPage() {
       <section className={styles.supportSection} aria-labelledby="community-support-title">
         <div className={styles.supportMedia}>
           <img
-            src={cstLogo}
+            src={WEBSITE_ASSET_URLS.communitySupportTeamLogo}
             alt="Community Support Team logo"
             className={styles.supportLogo}
             loading="lazy"

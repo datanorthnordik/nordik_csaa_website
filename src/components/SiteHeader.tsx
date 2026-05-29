@@ -8,7 +8,7 @@ import {
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import type { MenuItem } from '../api/menusApi'
-import csaaLogo from '../assets/csaa_logo.png'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import {
   getInitialMenuHref,
   getMenuItemHref,
@@ -103,7 +103,7 @@ export function SiteHeader() {
           className={styles.brand}
           aria-label={t('site.header.title')}
         >
-          <img src={csaaLogo} alt="" className={styles.brandLogo} />
+          <img src={WEBSITE_ASSET_URLS.csaaLogo} alt="" className={styles.brandLogo} />
         </Link>
 
         <nav className={styles.nav} aria-label={t('site.nav.ariaLabel')}>
