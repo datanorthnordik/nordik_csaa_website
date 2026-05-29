@@ -1,8 +1,4 @@
 import type { PageSection } from '../../api/pagesApi'
-<<<<<<< HEAD
-=======
-import { resolveUploadedCmsAssetUrl } from './cmsPageMedia'
->>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
 import styles from './CmsSectionBlocks.module.css'
 
 type CmsCtaSectionProps = {
@@ -16,11 +12,6 @@ export function CmsCtaSection({ section }: CmsCtaSectionProps) {
   }
 
   const href = cta.button_url.trim()
-<<<<<<< HEAD
-=======
-  const imageUrl = resolveUploadedCmsAssetUrl(cta.image)
-  const hasImage = Boolean(imageUrl)
->>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
 
   return (
     <section className={`${styles.section} ${styles.ctaSection}`}>

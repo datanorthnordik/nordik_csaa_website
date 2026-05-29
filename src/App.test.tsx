@@ -861,81 +861,10 @@ describe('App', () => {
         .getAttribute('src'),
     ).toContain('/api/pages/26/hero/content')
     expect(
-<<<<<<< HEAD
-=======
-      within(screen.getByTestId('cms-fallback-hero')).queryByText(
-        /explore the history, stories, and legacy of the shingwauk indian residential school\./i,
-      ),
-    ).toBeNull()
-    expect(
->>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
       screen.getByText(/first major, permanent residential school survivor driven exhibition/i),
     ).toBeDefined()
   })
 
-<<<<<<< HEAD
-=======
-  it('shows the page hero when a CMS page has a non-hero header section and hero display is enabled', async () => {
-    window.history.pushState({}, '', '/community-support-team/csaa-members')
-
-    renderWithProviders(<App />)
-
-    expect(
-      await screen.findByTestId('cms-fallback-hero-background'),
-    ).toBeDefined()
-    expect(screen.getByTestId('cms-fallback-hero-background').getAttribute('src')).toContain(
-      '/api/pages/36/hero/content',
-    )
-    expect(
-      within(screen.getByTestId('cms-fallback-hero')).getByRole('heading', {
-        name: /csaa members/i,
-      }),
-    ).toBeDefined()
-    expect(
-      within(screen.getByTestId('cms-fallback-hero')).queryByText(
-        /welcome to the csaa members network\. find resources, community support tools, and updates for residential school survivors and alumni\./i,
-      ),
-    ).toBeNull()
-    expect(
-      within(screen.getByTestId('cms-fallback-hero')).getByText(/^community support team$/i),
-    ).toBeDefined()
-    expect(
-      within(screen.getByTestId('cms-fallback-hero')).getByText(
-        /resources, updates, and community care built for csaa members\./i,
-      ),
-    ).toBeDefined()
-    expect(
-      screen.getByRole('heading', {
-        name: /meet the csaa/i,
-      }),
-    ).toBeDefined()
-    expect(
-      screen.getAllByText(/resources, updates, and community care built for csaa members\./i),
-    ).toHaveLength(2)
-    expect(
-      screen.getByText(/welcome to the official children of shingwauk alumni association members portal/i),
-    ).toBeDefined()
-  })
-
-  it('promotes an h1 header into the hero area even when it was created after other sections', async () => {
-    window.history.pushState({}, '', '/community-support-team/pathways-to-healing')
-
-    renderWithProviders(<App />)
-
-    const heroHeading = await screen.findByRole('heading', {
-      name: /pathways to healing/i,
-    })
-    const bodyText = screen.getByText(
-      /this paragraph was created before the hero header, but the hero still needs to appear first\./i,
-    )
-
-    expect(screen.getByTestId('cms-header-hero-background').getAttribute('src')).toContain(
-      '/api/pages/44/hero/content',
-    )
-    expect(heroHeading.compareDocumentPosition(bodyText) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-  })
-
->>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
   it('renders the digital newsletters module route with the shared header shell', async () => {
     window.history.pushState({}, '', '/news-media/digital-newsletter')
 

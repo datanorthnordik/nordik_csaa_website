@@ -153,29 +153,11 @@ describe('CmsHeaderSection', () => {
     )
 
     expect(screen.getByRole('heading', { name: /^csaa newsletter$/i })).toBeDefined()
-<<<<<<< HEAD
     expect(screen.getAllByText(/^csaa newsletter$/i)).toHaveLength(1)
     expect(screen.queryByRole('img')).toBeNull()
     expect(queryByTestId('cms-hero-media-fallback')).toBeNull()
     expect(screen.getByRole('heading', { name: /^csaa newsletter$/i }).parentElement?.className).toContain(
       'alignLeft',
-=======
-    expect(screen.queryByText(/page level description\./i)).toBeNull()
-    expect(screen.queryByTestId('cms-header-hero-background')).toBeNull()
-  })
-
-  it('does not attach the page hero image when display is disabled', () => {
-    render(
-      <CmsHeaderSection
-        page={createPage({
-          hero_image_enabled: false,
-          hero_image_object_key: 'pages/1/hero.jpg',
-          hero_image_fetch_url: '/api/pages/1/hero/content',
-        })}
-        section={createHeaderSection()}
-        isPrimaryHeader
-      />,
->>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
     )
   })
 })

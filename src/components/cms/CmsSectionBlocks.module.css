@@ -253,8 +253,6 @@
 
 .ctaCard {
   display: grid;
-<<<<<<< HEAD
-=======
   width: auto;
   max-width: none;
   gap: clamp(32px, 5vw, 96px);
@@ -273,15 +271,10 @@
 
 .ctaCardCentered {
   grid-template-columns: minmax(0, 1fr);
->>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
   justify-items: center;
   gap: 12px;
   padding: 20px 0 8px;
   text-align: center;
-<<<<<<< HEAD
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
-=======
 }
 
 .ctaMedia {
@@ -308,16 +301,10 @@
   width: min(100%, 54rem);
   margin-inline: auto;
   justify-items: center;
->>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
 }
 
 .ctaHeading {
   margin: 0;
-<<<<<<< HEAD
-  font-size: clamp(2rem, 4vw, 3rem);
-  line-height: 1.04;
-  letter-spacing: 0;
-=======
   color: var(--color-text);
   font-family: 'Montserrat', sans-serif;
   font-size: clamp(2rem, 4vw, 3.65rem);
@@ -325,7 +312,6 @@
   line-height: 1.08;
   letter-spacing: -0.04em;
   text-wrap: balance;
->>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
 }
 
 .ctaMessage {
@@ -342,16 +328,10 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-<<<<<<< HEAD
-  min-height: 42px;
-  padding: 0 18px;
-  border-radius: 3px;
-=======
   min-height: 50px;
   width: fit-content;
   padding: 0 28px;
   border-radius: 2px;
->>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
   background: var(--color-primary);
   color: var(--color-on-primary);
   font-weight: 800;
@@ -423,8 +403,6 @@
   .heroMediaFallback {
     min-height: 260px;
   }
-<<<<<<< HEAD
-=======
 
   .ctaCardWithImage {
     grid-template-columns: 1fr;
@@ -439,7 +417,6 @@
   .ctaCardWithImage .ctaButton {
     width: fit-content;
   }
->>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
 }
 
 @media (max-width: 640px) {
@@ -470,9 +447,6 @@
     min-height: 220px;
   }
 
-<<<<<<< HEAD
-  .ctaButton {
-=======
   .ctaCard {
     padding: 44px 24px;
   }
@@ -488,7 +462,6 @@
   .ctaButton,
   .ctaCardWithImage .ctaButton,
   .ctaCardCentered .ctaButton {
->>>>>>> 7c0fbf18d0265774dcd451f52c7f4852d611d0ee
     width: 100%;
     max-width: 280px;
   }
