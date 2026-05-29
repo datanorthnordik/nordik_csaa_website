@@ -105,7 +105,6 @@ export function DigitalNewslettersPage() {
     <div className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>{t('newslettersPage.hero.eyebrow')}</p>
           <h1 className={styles.heroTitle}>{t('newslettersPage.hero.title')}</h1>
           <p className={styles.heroDescription}>
             {t('newslettersPage.hero.descriptionLead')}
