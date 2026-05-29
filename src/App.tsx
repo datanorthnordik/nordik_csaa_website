@@ -8,6 +8,7 @@ import { DigitalNewsletterDetailPage } from './pages/DigitalNewsletterDetailPage
 import { DigitalNewslettersPage } from './pages/DigitalNewslettersPage'
 import { EventDetailPage } from './pages/EventDetailPage'
 import { GatheringsPage } from './pages/GatheringsPage'
+import { CsaaLegacyPage } from './pages/CsaaLegacyPage'
 import { HealingMemorialsPage } from './pages/HealingMemorialsPage'
 import { OurStoryPage } from './pages/OurStoryPage'
 import { InMemorialPage } from './pages/InMemorialPage'
@@ -29,6 +30,9 @@ function App() {
             <Route path="/events/calendar" element={<EventCalendarPage />} />
             <Route path="/events/:eventId" element={<EventDetailPage />} />
             <Route path="/our-story" element={<OurStoryPage />} />
+            {/* Both slugs point to the same scrollytelling experience */}
+            <Route path="/our-story/csaa-legacy"     element={<CsaaLegacyPage />} />
+            <Route path="/our-story/the-csaa-legacy" element={<CsaaLegacyPage />} />
             <Route path="/our-story/healing-memorials" element={<HealingMemorialsPage />} />
             <Route path="/our-story/healing-memorials/in-memorial" element={<InMemorialPage />} />
             <Route path="/news-media" element={<NewsMediaLandingPage />} />
