@@ -108,7 +108,6 @@ export function PressArchivePage() {
     <div className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>{t('pressArchivePage.hero.eyebrow')}</p>
           <h1 className={styles.heroTitle}>{t('pressArchivePage.hero.title')}</h1>
           <p className={styles.heroDescription}>
             {t('pressArchivePage.hero.descriptionLead')}
