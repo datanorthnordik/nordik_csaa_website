@@ -141,7 +141,6 @@ export function GatheringsPage() {
     <div className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>{t('gatherings.hero.eyebrow')}</p>
           <h1 className={styles.heroTitle}>{t('gatherings.hero.title')}</h1>
           <p className={styles.heroDescription}>{t('gatherings.hero.description')}</p>
 

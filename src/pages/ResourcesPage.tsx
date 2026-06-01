@@ -111,7 +111,6 @@ export function CommunityResourcesPage() {
     <main className={styles.page}>
       <section className={styles.hero} aria-labelledby="resources-page-title">
         <div className={styles.heroInner}>
-          <p className={styles.eyebrow}>Community Support Team</p>
           <h1 id="resources-page-title" className={styles.heroTitle}>
             Resources &amp; Support
           </h1>
