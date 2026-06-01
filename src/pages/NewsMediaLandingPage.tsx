@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
+import { TextHero } from '../components/TextHero'
 import styles from './NewsMediaLandingPage.module.css'
 
 export function NewsMediaLandingPage() {
@@ -14,51 +16,63 @@ export function NewsMediaLandingPage() {
 
   return (
     <div className={styles.page}>
-      <section className={styles.hero}>
-        <h1 className={styles.heroTitle}>{t('newsMediaPage.hero.title')}</h1>
-        <p className={styles.heroDescription}>{t('newsMediaPage.hero.description')}</p>
-      </section>
+      <TextHero
+        eyebrow="News &amp; Media"
+        title={t('newsMediaPage.hero.title')}
+        description={t('newsMediaPage.hero.description')}
+        waveFill="#f8f6f4"
+      />
 
+      {/* ── Cards ── */}
       <section className={styles.cardsSection}>
-        <div className={styles.cardsGrid}>
-          <article className={styles.card}>
-            <div className={styles.iconBox}>
-              <NewsletterIcon />
-            </div>
-            <h2 className={styles.cardTitle}>{t('newsMediaPage.newsletter.title')}</h2>
-            <p className={styles.cardDescription}>{t('newsMediaPage.newsletter.description')}</p>
-            <Link to="/news-media/digital-newsletter" className={styles.primaryButton}>
-              {t('newsMediaPage.newsletter.action')}
-            </Link>
-          </article>
+        <div className={styles.cardsSectionInner}>
+          <div className={styles.cardsGrid}>
+            <article className={styles.card}>
+              <div className={styles.iconBox}>
+                <NewsletterIcon />
+              </div>
+              <h2 className={styles.cardTitle}>{t('newsMediaPage.newsletter.title')}</h2>
+              <p className={styles.cardDescription}>{t('newsMediaPage.newsletter.description')}</p>
+              <Link to="/news-media/digital-newsletter" className={styles.primaryButton}>
+                {t('newsMediaPage.newsletter.action')}
+              </Link>
+            </article>
 
-          <article className={styles.card}>
-            <div className={styles.iconBox}>
-              <PressArchiveIcon />
-            </div>
-            <h2 className={styles.cardTitle}>{t('newsMediaPage.pressArchive.title')}</h2>
-            <p className={styles.cardDescription}>{t('newsMediaPage.pressArchive.description')}</p>
-            <Link to="/news-media/press-archive" className={styles.outlineButton}>
-              {t('newsMediaPage.pressArchive.action')}
-            </Link>
-          </article>
+            <article className={styles.card}>
+              <div className={styles.iconBox}>
+                <PressArchiveIcon />
+              </div>
+              <h2 className={styles.cardTitle}>{t('newsMediaPage.pressArchive.title')}</h2>
+              <p className={styles.cardDescription}>{t('newsMediaPage.pressArchive.description')}</p>
+              <Link to="/news-media/press-archive" className={styles.outlineButton}>
+                {t('newsMediaPage.pressArchive.action')}
+              </Link>
+            </article>
+          </div>
         </div>
       </section>
 
+      {/* ── Press Inquiries ── */}
       <section className={styles.inquiries}>
-        <div className={styles.inquiriesCopy}>
-          <h2 className={styles.inquiriesTitle}>{t('newsMediaPage.pressInquiries.title')}</h2>
-          <p className={styles.inquiriesDescription}>
-            {t('newsMediaPage.pressInquiries.description')}
-          </p>
-          <Link to="/contact" className={styles.inquiriesLink}>
-            {t('newsMediaPage.pressInquiries.action')}
-            <span className={styles.arrowIcon} aria-hidden="true" />
-          </Link>
-        </div>
+        <div className={styles.inquiriesInner}>
+          <div className={styles.inquiriesCopy}>
+            <h2 className={styles.inquiriesTitle}>{t('newsMediaPage.pressInquiries.title')}</h2>
+            <p className={styles.inquiriesDescription}>
+              {t('newsMediaPage.pressInquiries.description')}
+            </p>
+            <Link to="/get-involved" className={styles.inquiriesLink}>
+              {t('newsMediaPage.pressInquiries.action')}
+              <span className={styles.arrowIcon} aria-hidden="true" />
+            </Link>
+          </div>
 
-        <div className={styles.inquiriesImageWrap}>
-          <div className={styles.inquiriesImage} role="img" aria-label={t('newsMediaPage.pressInquiries.imageAlt')} />
+          <div className={styles.inquiriesImageWrap}>
+            <img
+              src="https://storage.googleapis.com/nordik-csa-website-assets/assets/media_landing.jpg"
+              alt={t('newsMediaPage.pressInquiries.imageAlt')}
+              className={styles.inquiriesImage}
+            />
+          </div>
         </div>
       </section>
     </div>

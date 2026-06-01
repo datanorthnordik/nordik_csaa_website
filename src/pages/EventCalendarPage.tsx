@@ -151,6 +151,7 @@ export function EventCalendarPage() {
     <div className={styles.page}>
       <section className={styles.hero}>
         <div>
+          <p className={styles.eyebrow}>{t('eventCalendar.eyebrow')}</p>
           <h1>{t('eventCalendar.title')}</h1>
           <p>{t('eventCalendar.description')}</p>
         </div>

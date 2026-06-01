@@ -11,6 +11,7 @@ import {
   type PressDownloadItem,
   type PressResolvedPreview,
 } from '../lib/pressMedia'
+import { TextHero } from '../components/TextHero'
 import styles from './PressArchivePage.module.css'
 
 type LoadStatus = 'loading' | 'ready' | 'error'
@@ -106,36 +107,11 @@ export function PressArchivePage() {
 
   return (
     <div className={styles.page}>
-      <section className={styles.hero}>
-        <div className={styles.heroCopy}>
-          <h1 className={styles.heroTitle}>{t('pressArchivePage.hero.title')}</h1>
-          <p className={styles.heroDescription}>
-            {t('pressArchivePage.hero.descriptionLead')}
-          </p>
-          <p className={styles.heroDescription}>
-            {t('pressArchivePage.hero.descriptionSupport')}
-          </p>
-          <p className={styles.heroDescriptionStrong}>
-            {t('pressArchivePage.hero.descriptionCta')}
-          </p>
-        </div>
-
-        <div className={styles.heroArtwork} aria-hidden="true">
-          <div className={styles.heroPhoto} />
-          <div className={styles.heroPaperPrimary}>
-            <span />
-            <span />
-            <span />
-            <span />
-          </div>
-          <div className={styles.heroPaperSecondary}>
-            <span />
-            <span />
-            <span />
-          </div>
-          <div className={styles.heroStamp}>PRESS</div>
-        </div>
-      </section>
+      <TextHero
+        eyebrow={t('pressArchivePage.hero.eyebrow')}
+        title={t('pressArchivePage.hero.title')}
+        description={t('pressArchivePage.hero.descriptionLead')}
+      />
 
       <section className={styles.controls} aria-label={t('pressArchivePage.filters.label')}>
         <div className={styles.filterGroup}>

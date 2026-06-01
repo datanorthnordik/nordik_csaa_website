@@ -24,6 +24,8 @@ import {
   resolveEventMediaUrl,
 } from '../lib/eventMedia'
 import { downloadPublicFile } from '../lib/fileDownload'
+import { SharedImageHero } from '../components/SharedImageHero'
+import { TextHero } from '../components/TextHero'
 import styles from './EventDetailPage.module.css'
 
 export function EventDetailPage() {
@@ -149,24 +151,20 @@ export function EventDetailPage() {
 
   return (
     <div className={styles.page}>
-      <section className={styles.hero}>
-        {displayImageUrl ? (
-          <div className={styles.heroMedia}>
-            <img src={displayImageUrl} alt={event.title} className={styles.heroImage} />
-            <div className={styles.heroOverlay}>
-              <p className={styles.heroEyebrow}>{venueLabel}</p>
-              <h1 className={styles.heroTitle}>{event.title}</h1>
-              {teaser ? <p className={styles.heroDescription}>{teaser}</p> : null}
-            </div>
-          </div>
-        ) : (
-          <div className={styles.heroFallback}>
-            <p className={styles.heroEyebrow}>{venueLabel}</p>
-            <h1 className={styles.heroTitle}>{event.title}</h1>
-            {teaser ? <p className={styles.heroDescription}>{teaser}</p> : null}
-          </div>
-        )}
-      </section>
+      {displayImageUrl ? (
+        <SharedImageHero
+          eyebrow={venueLabel || undefined}
+          title={event.title}
+          description={teaser || undefined}
+          backgroundImageUrl={displayImageUrl}
+        />
+      ) : (
+        <TextHero
+          eyebrow={venueLabel || undefined}
+          title={event.title}
+          description={teaser || undefined}
+        />
+      )}
 
       <div className={styles.contentGrid}>
         <section className={styles.panel}>

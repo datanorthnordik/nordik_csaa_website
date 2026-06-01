@@ -11,6 +11,7 @@ import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { DocumentViewerModal } from '../components/documents/DocumentViewerModal'
 import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import { downloadPublicFile } from '../lib/fileDownload'
+import { TextHero } from '../components/TextHero'
 import styles from './ResourcesPage.module.css'
 
 const PAGE_SIZE = 10
@@ -109,30 +110,24 @@ export function CommunityResourcesPage() {
 
   return (
     <main className={styles.page}>
-      <section className={styles.hero} aria-labelledby="resources-page-title">
-        <div className={styles.heroInner}>
-          <h1 id="resources-page-title" className={styles.heroTitle}>
-            Resources &amp; Support
-          </h1>
-          <p className={styles.heroDescription}>
-            Tools, guides, and materials to support our community through their journey.
-            Find the help you need, when you need it most.
-          </p>
-
-          <label className={styles.searchBox}>
-            <span className={styles.searchIcon} aria-hidden="true">
-              <SearchIcon />
-            </span>
-            <span className={styles.visuallyHidden}>Search resources</span>
-            <input
-              type="search"
-              value={searchTerm}
-              placeholder="What are you looking for?"
-              onChange={(event) => setSearchTerm(event.target.value)}
-            />
-          </label>
-        </div>
-      </section>
+      <TextHero
+        eyebrow="Community Support Team"
+        title="Resources &amp; Support"
+        description="Tools, guides, and materials to support our community through their journey. Find the help you need, when you need it most."
+      >
+        <label className={styles.searchBox}>
+          <span className={styles.searchIcon} aria-hidden="true">
+            <SearchIcon />
+          </span>
+          <span className={styles.visuallyHidden}>Search resources</span>
+          <input
+            type="search"
+            value={searchTerm}
+            placeholder="What are you looking for?"
+            onChange={(event) => setSearchTerm(event.target.value)}
+          />
+        </label>
+      </TextHero>
 
       <section className={styles.resourcesSection}>
         {error ? <p className={styles.errorText}>{error}</p> : null}

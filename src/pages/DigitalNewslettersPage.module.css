@@ -17,9 +17,14 @@
 .heroCopy,
 .heroFeature,
 .controls,
+.featuredSection,
 .listSection,
 .list {
   min-width: 0;
+}
+
+.featuredSection {
+  padding: 32px 0 0;
 }
 
 .heroCopy {
