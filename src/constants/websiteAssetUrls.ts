@@ -27,6 +27,8 @@ export const WEBSITE_ASSET_URLS = {
   shingwaukHallHero: buildWebsiteAssetUrl('shingwaukhall-hero.jpg'),
   shirleySignature: buildWebsiteAssetUrl("shirley' signature.png"),
   srscLogo: buildWebsiteAssetUrl('srsc_logo.png'),
+  buggyVector: buildWebsiteAssetUrl('buggy_vector.png'),
+  modelTVector: buildWebsiteAssetUrl('model_t_vector.png'),
   trainVector: buildWebsiteAssetUrl('train_vector.png'),
   viteLogo: buildWebsiteAssetUrl('vite.svg'),
   watercolorMeadow: buildWebsiteAssetUrl('watercolor_meadow.png'),
