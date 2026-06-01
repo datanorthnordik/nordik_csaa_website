@@ -33,4 +33,5 @@ export const WEBSITE_ASSET_URLS = {
   viteLogo: buildWebsiteAssetUrl('vite.svg'),
   watercolorMeadow: buildWebsiteAssetUrl('watercolor_meadow.png'),
   wawnoshHeroSection: buildWebsiteAssetUrl('wawnosh-hero-section.jpg'),
+  mediaLanding: buildWebsiteAssetUrl('media_landing.jpg'),
 } as const

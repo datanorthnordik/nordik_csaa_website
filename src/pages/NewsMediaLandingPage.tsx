@@ -68,7 +68,7 @@ export function NewsMediaLandingPage() {
 
           <div className={styles.inquiriesImageWrap}>
             <img
-              src="https://storage.googleapis.com/nordik-csa-website-assets/assets/media_landing.jpg"
+              src={WEBSITE_ASSET_URLS.mediaLanding}
               alt={t('newsMediaPage.pressInquiries.imageAlt')}
               className={styles.inquiriesImage}
             />
