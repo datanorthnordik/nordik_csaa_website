@@ -59,9 +59,9 @@
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.42) 0%,
-    rgba(0, 0, 0, 0.22) 50%,
-    rgba(0, 0, 0, 0.62) 100%
+    rgba(0, 0, 0, 0.62) 0%,
+    rgba(0, 0, 0, 0.55) 50%,
+    rgba(0, 0, 0, 0.75) 100%
   );
 }
 
@@ -85,7 +85,7 @@
   color: #ffffff;
   line-height: 1.08;
   letter-spacing: -0.01em;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.7);
 }
 
 .heroDescription {
@@ -93,9 +93,10 @@
   font-family: 'Montserrat', sans-serif;
   font-size: 1.05rem;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.88);
+  color: #ffffff;
   line-height: 1.7;
   max-width: 660px;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.8);
 }
 
 .heroCta {

@@ -1,103 +1,91 @@
+/* ── Full-bleed image hero — matches OurStoryPage design ── */
 .hero {
   position: relative;
-  display: grid;
-  grid-template-areas: 'stack';
-  overflow: hidden;
-  margin-left: calc(-1 * var(--shell-gutter));
-  margin-right: calc(-1 * var(--shell-gutter));
-}
-
-.plainHero {
-  width: 100%;
-  padding: 16px 0 4px;
-}
-
-.plainHeroContent {
+  min-height: 100svh;
   display: flex;
-  justify-content: center;
   align-items: center;
-  text-align: center;
-}
-
-.plainHeroTitle {
-  margin: 0;
-  font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
-  font-size: clamp(2.4rem, 5vw, 4.2rem);
-  font-weight: 700;
-  line-height: 1.08;
-  color: #1b1c1c;
+  justify-content: center;
+  overflow: hidden;
+  padding-bottom: 96px;
+  /* full-bleed */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  background: #0a120a; /* fallback while image loads */
 }
 
 .heroImage {
-  grid-area: stack;
-  display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
-  min-width: 0;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  filter: grayscale(25%) brightness(0.55);
+  pointer-events: none;
+  user-select: none;
 }
 
 .heroOverlay {
-  grid-area: stack;
-  align-self: stretch;
-  justify-self: stretch;
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
-    105deg,
-    rgba(10, 18, 10, 0.82) 0%,
-    rgba(20, 32, 20, 0.6) 55%,
-    rgba(10, 20, 10, 0.2) 100%
+    to bottom,
+    rgba(0, 0, 0, 0.15) 0%,
+    rgba(0, 0, 0, 0.35) 50%,
+    rgba(0, 0, 0, 0.65) 100%
   );
 }
 
 .heroContent {
-  grid-area: stack;
-  z-index: 1;
-  align-self: start;
-  justify-self: center;
-  width: 100%;
-  max-width: 900px;
-  padding: 72px 24px 136px;
+  position: relative;
+  z-index: 5;
+  width: min(92vw, 1200px);
+  padding: 80px clamp(20px, 4vw, 60px) 40px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0;
 }
 
 .heroEyebrow {
-  margin: 0 0 16px;
+  margin: 0 0 14px;
   font-family: 'Montserrat', sans-serif;
   font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.34em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.9);
+  color: #9c0000;
 }
 
 .heroTitle {
-  margin: 0 0 20px;
-  font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
-  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  margin: 0 0 22px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(2.6rem, 6.5vw, 5.5rem);
   font-weight: 700;
   color: #ffffff;
-  line-height: 1.08;
+  line-height: 1.06;
+  width: min(88vw, 1100px);
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.85);
 }
 
 .heroDescription {
-  margin: 0 0 36px;
+  margin: 0 0 40px;
   font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.86);
-  line-height: 1.7;
-  max-width: 720px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.74;
+  width: min(72vw, 860px);
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.8);
 }
 
 .heroCta {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 48px;
-  padding: 0 28px;
+  min-height: 52px;
+  padding: 0 32px;
   border-radius: 4px;
   background: #9c0000;
   color: #ffffff;
@@ -120,29 +108,49 @@
   transform: scale(0.97);
 }
 
+/* Wave divider */
 .waveDivider {
-  grid-area: stack;
-  align-self: end;
-  z-index: 2;
+  position: absolute;
+  bottom: -1px;
+  left: 0;
   width: 100%;
   overflow: hidden;
   line-height: 0;
   pointer-events: none;
+  z-index: 10;
 }
 
 .waveSvg {
   display: block;
   width: 100%;
-  height: 96px;
+  height: 90px;
+}
+
+/* ── Plain hero (no image) ── */
+.plainHero {
+  width: 100%;
+  padding: 16px 0 4px;
+}
+
+.plainHeroContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.plainHeroTitle {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.08;
+  color: #1b1c1c;
 }
 
 @media (max-width: 640px) {
   .waveSvg {
     height: 60px;
-  }
-
-  .plainHero {
-    padding-top: 8px;
   }
 
   .heroContent {

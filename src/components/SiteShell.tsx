@@ -70,7 +70,7 @@ export function SiteShell() {
                 <div className={styles.footerBrandBlock}>
                   <p className={styles.footerBrand}>The Children of Shingwauk Alumni Association</p>
                   <p className={styles.footerTagline}>
-                    Preserving the stories and protecting the legacy of the Shingwauk Residential School survivors.
+                    {t('site.footer.copy')}
                   </p>
                 </div>
               </div>

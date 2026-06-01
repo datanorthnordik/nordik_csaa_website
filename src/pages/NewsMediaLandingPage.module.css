@@ -2,42 +2,30 @@
   display: grid;
   gap: 0;
   min-width: 0;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
 }
 
-/* ── Hero ── */
-
-.hero {
-  padding: 52px 0 48px;
-  text-align: center;
-}
-
-.heroTitle {
-  margin: 0 0 18px;
-  color: var(--color-text);
-  font-size: clamp(2.4rem, 5vw, 3.8rem);
-  font-weight: 800;
-  line-height: 1.04;
-  letter-spacing: -0.02em;
-}
-
-.heroDescription {
-  max-width: 44rem;
-  margin: 0 auto;
-  color: var(--color-text-muted);
-  font-size: 1rem;
-  line-height: 1.65;
-}
 
 /* ── Cards ── */
 
 .cardsSection {
-  padding: 40px 0 56px;
+  padding: 72px 0 64px;
+  background: #f8f6f4;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  box-sizing: border-box;
+}
+
+.cardsSectionInner {
+  max-width: min(1240px, 100%);
+  margin: 0 auto;
+  padding: 0 clamp(18px, 5vw, 80px);
 }
 
 .cardsGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: 28px;
 }
 
 .card {
@@ -45,11 +33,11 @@
   align-content: start;
   justify-items: center;
   gap: 20px;
-  padding: 40px 32px 44px;
+  padding: 48px 36px 52px;
   border: 1px solid rgba(31, 31, 35, 0.08);
-  border-radius: 24px;
-  background: var(--color-surface);
-  box-shadow: 0 4px 20px -6px rgba(31, 31, 35, 0.1);
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 4px 24px -6px rgba(31, 31, 35, 0.1);
   text-align: center;
   transition:
     transform 0.2s ease,
@@ -57,33 +45,35 @@
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px -6px rgba(31, 31, 35, 0.14);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 32px -6px rgba(31, 31, 35, 0.14);
 }
 
 .iconBox {
   display: grid;
   place-items: center;
-  width: 88px;
-  height: 88px;
-  border-radius: 18px;
-  background: var(--color-surface-alt);
-  color: var(--color-primary);
+  width: 96px;
+  height: 96px;
+  border-radius: 20px;
+  background: rgba(156, 0, 0, 0.07);
+  color: #9c0000;
 }
 
 .cardTitle {
   margin: 0;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
   color: var(--color-text);
-  font-size: 1.55rem;
+  font-size: 1.65rem;
   font-weight: 800;
   line-height: 1.1;
 }
 
 .cardDescription {
   margin: 0;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
   color: var(--color-text-muted);
-  font-size: 0.95rem;
-  line-height: 1.65;
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 .primaryButton,
@@ -91,11 +81,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 0 24px;
+  min-height: 48px;
+  padding: 0 28px;
   border-radius: 4px;
-  font-weight: 800;
-  font-size: 0.9rem;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
   text-decoration: none;
   transition:
     transform 0.18s ease,
@@ -104,64 +95,74 @@
 }
 
 .primaryButton {
-  background: var(--color-primary);
-  color: var(--color-on-primary);
+  background: #9c0000;
+  color: #ffffff;
 }
 
 .primaryButton:hover {
   transform: translateY(-1px);
-  background: var(--color-primary-hover);
+  background: #b80000;
 }
 
 .outlineButton {
-  border: 1.5px solid var(--color-primary);
+  border: 1.5px solid #9c0000;
   background: transparent;
-  color: var(--color-primary);
+  color: #9c0000;
 }
 
 .outlineButton:hover {
   transform: translateY(-1px);
-  background: var(--color-primary-tint);
+  background: rgba(156, 0, 0, 0.06);
 }
 
 /* ── Press Inquiries ── */
 
 .inquiries {
+  padding: 72px 0;
+  background: #ffffff;
+}
+
+.inquiriesInner {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 48px;
   align-items: center;
-  padding: 52px 0 48px;
+  max-width: min(1240px, 100%);
+  margin: 0 auto;
+  padding: 0 clamp(18px, 5vw, 80px);
 }
 
 .inquiriesCopy {
   display: grid;
   gap: 20px;
-  max-width: 28rem;
+  max-width: 32rem;
 }
 
 .inquiriesTitle {
   margin: 0;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
   color: var(--color-text);
-  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
   font-weight: 800;
   line-height: 1.1;
 }
 
 .inquiriesDescription {
   margin: 0;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
   color: var(--color-text-muted);
-  font-size: 0.95rem;
-  line-height: 1.65;
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 .inquiriesLink {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--color-primary);
-  font-weight: 800;
-  font-size: 0.92rem;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
+  color: #9c0000;
+  font-weight: 700;
+  font-size: 0.95rem;
   text-decoration: none;
   width: fit-content;
   transition: opacity 0.18s ease;
@@ -187,13 +188,12 @@
 
 .inquiriesImage {
   width: 100%;
-  max-width: 440px;
   aspect-ratio: 4 / 3;
-  border-radius: 14px;
-  background:
-    radial-gradient(ellipse at 25% 15%, rgba(200, 165, 95, 0.45), transparent 45%),
-    radial-gradient(ellipse at 72% 78%, rgba(90, 70, 40, 0.35), transparent 40%),
-    linear-gradient(140deg, #1c1a17 0%, #3a3228 50%, #2c2820 100%);
+  border-radius: 16px;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.18);
 }
 
 /* ── Responsive ── */
@@ -205,7 +205,7 @@
     margin: 0 auto;
   }
 
-  .inquiries {
+  .inquiriesInner {
     grid-template-columns: 1fr;
     gap: 32px;
   }
@@ -225,14 +225,10 @@
 
 @media (max-width: 600px) {
   .hero {
-    padding: 36px 0 32px;
+    padding: 72px 0 120px;
   }
 
   .card {
-    padding: 32px 24px 36px;
-  }
-
-  .inquiries {
-    padding: 40px 0 36px;
+    padding: 36px 24px 40px;
   }
 }

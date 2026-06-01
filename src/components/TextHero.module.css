@@ -1,0 +1,81 @@
+.hero {
+  position: relative;
+  margin-inline: calc(50% - 50vw);
+  padding: 74px max(24px, calc((100vw - 1180px) / 2)) 128px;
+  overflow: hidden;
+  background: #eef0ee;
+  text-align: center;
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
+  color: #9c0000;
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
+  color: var(--color-text);
+  font-size: clamp(2.6rem, 6.5vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  width: min(88vw, 1100px);
+}
+
+.description {
+  width: min(72vw, 860px);
+  margin: 0;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
+  color: var(--color-text-muted);
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  line-height: 1.7;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.waveDivider {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  pointer-events: none;
+}
+
+.waveSvg {
+  display: block;
+  width: 100%;
+  height: 70px;
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding-top: 52px;
+    padding-bottom: 100px;
+  }
+
+  .waveSvg {
+    height: 50px;
+  }
+}

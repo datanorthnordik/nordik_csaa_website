@@ -12,6 +12,7 @@ import {
   resolveNewsletterPreview,
   type NewsletterResolvedPreview,
 } from '../lib/newsletterMedia'
+import { TextHero } from '../components/TextHero'
 import styles from './DigitalNewslettersPage.module.css'
 
 type LoadStatus = 'loading' | 'ready' | 'error'
@@ -103,32 +104,11 @@ export function DigitalNewslettersPage() {
 
   return (
     <div className={styles.page}>
-      <section className={styles.hero}>
-        <div className={styles.heroCopy}>
-          <h1 className={styles.heroTitle}>{t('newslettersPage.hero.title')}</h1>
-          <p className={styles.heroDescription}>
-            {t('newslettersPage.hero.descriptionLead')}
-          </p>
-          <p className={styles.heroDescription}>
-            {t('newslettersPage.hero.descriptionSupport')}
-          </p>
-          <p className={styles.heroDescriptionStrong}>
-            {t('newslettersPage.hero.descriptionCta')}
-          </p>
-        </div>
-
-        <div className={styles.heroFeature}>
-          {status === 'loading' ? (
-            <div className={styles.heroSkeleton} aria-hidden="true" />
-          ) : featuredEntry ? (
-            <FeaturedNewsletterCard entry={featuredEntry} locale={locale} />
-          ) : (
-            <div className={styles.heroEmpty}>
-              <p>{t('newslettersPage.states.emptyDescription')}</p>
-            </div>
-          )}
-        </div>
-      </section>
+      <TextHero
+        eyebrow={t('newslettersPage.hero.eyebrow')}
+        title={t('newslettersPage.hero.title')}
+        description={t('newslettersPage.hero.descriptionLead')}
+      />
 
       <section className={styles.controls} aria-label={t('newslettersPage.filters.label')}>
         <div className={styles.yearFilters}>
@@ -170,6 +150,12 @@ export function DigitalNewslettersPage() {
           <span className={styles.searchIcon} aria-hidden="true" />
         </label>
       </section>
+
+      {status === 'ready' && featuredEntry && !normalizedSearch && selectedYear === 'all' ? (
+        <section className={styles.featuredSection}>
+          <FeaturedNewsletterCard entry={featuredEntry} locale={locale} />
+        </section>
+      ) : null}
 
       <section className={styles.listSection}>
         {status === 'loading' ? (
