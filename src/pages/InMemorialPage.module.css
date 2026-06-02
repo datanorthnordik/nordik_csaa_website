@@ -41,8 +41,8 @@
   background: #ffffff;
   padding-bottom: 96px;
   overflow: hidden;
-  margin-left: calc(-1 * var(--shell-gutter));
-  margin-right: calc(-1 * var(--shell-gutter));
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
 
 .heroContent {
@@ -403,8 +403,9 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  font-size: 1.5rem;
-  color: var(--flower-color, #7a9e72);
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--flower-color, #c0392b);
   pointer-events: none;
   user-select: none;
   animation: floatUp 1.5s ease-out forwards;

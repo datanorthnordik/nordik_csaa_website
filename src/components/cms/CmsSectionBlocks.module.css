@@ -231,6 +231,16 @@
   color: var(--color-primary);
 }
 
+.richText em,
+.richText i {
+  font-style: italic;
+}
+
+.richText strong,
+.richText b {
+  font-weight: 700;
+}
+
 .quoteCard {
   margin: 0;
   padding: 6px 0 6px 30px;

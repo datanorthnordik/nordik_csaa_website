@@ -9,7 +9,6 @@
   box-shadow: 0 12px 28px -26px rgba(122, 31, 36, 0.32);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  overflow-x: clip;
 }
 
 .headerInner {
@@ -246,6 +245,11 @@
   align-items: center;
 }
 
+.languageMobile {
+  display: none;
+  align-items: center;
+}
+
 .mobileMenuButton {
   display: none;
   width: 42px;
@@ -258,43 +262,25 @@
   color: var(--color-text);
 }
 
-.mobileBackdrop {
-  position: fixed;
-  inset: 96px 0 0;
-  background: rgba(15, 18, 24, 0.18);
-  border: 0;
-}
+/* ── Mobile panel ── */
 
 .mobilePanel {
-  width: calc(100% - 24px);
-  margin: 8px auto 0;
-  padding: 14px;
-  display: grid;
-  gap: 12px;
-  border: 1px solid rgba(24, 33, 39, 0.08);
-  border-radius: 16px;
-  background: var(--color-surface);
-  box-shadow: 0 18px 32px -24px rgba(20, 20, 30, 0.35);
-}
-
-.mobilePanelHeader {
+  position: fixed;
+  inset: 82px 0 0;
+  z-index: 50;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--color-surface-alt);
+  padding: 12px 12px 40px;
   gap: 12px;
 }
 
-.mobilePanelHeader p {
-  color: var(--color-text-muted);
-  font-size: 0.84rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
 
 .mobileList {
   display: grid;
-  gap: 6px;
+  gap: 4px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -302,15 +288,15 @@
 
 .mobileItem {
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
 .mobileRow {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 46px;
-  padding: 0 6px;
+  min-height: 52px;
+  padding: 0 12px;
   border-radius: 12px;
 }
 
@@ -322,15 +308,54 @@
   flex: 1;
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  min-height: 52px;
   color: var(--color-text);
+  font-size: 1.05rem;
   font-weight: 600;
+  text-decoration: none;
 }
 
 .mobileExpandButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 36px;
   height: 36px;
   border-radius: 8px;
+  color: var(--color-text-muted);
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mobileExpandButton:hover {
+  color: var(--color-text);
+}
+
+.plusMinusIcon {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.plusMinusHide {
+  display: none;
+}
+
+/* Nested sub-items */
+.mobileList .mobileList .mobileRow {
+  padding-left: 28px;
+  min-height: 46px;
+}
+
+.mobileList .mobileList .mobileLink {
+  font-size: 0.95rem;
+  min-height: 46px;
+  font-weight: 500;
+  color: var(--color-text-muted);
 }
 
 .navLink:focus-visible,
@@ -354,6 +379,10 @@
   .nav,
   .languageDesktop {
     display: none;
+  }
+
+  .languageMobile {
+    display: flex;
   }
 
   .brandLogo {
