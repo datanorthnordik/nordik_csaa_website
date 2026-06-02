@@ -102,9 +102,14 @@ export function HealingMemorialsPage() {
           <Link to="/get-involved#make-donations" className={styles.donateButton}>
             {t('healingMemorials.support.donate')}
           </Link>
-          <Link to="/membership" className={styles.joinButton}>
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLScW1dDZhiLBCUgaLi_NbUbOOOW-PrcOxwqC8pewhtxp95oJOw/viewform?usp=preview"
+            target="_blank"
+            rel="noreferrer"
+            className={styles.joinButton}
+          >
             {t('healingMemorials.support.join')}
-          </Link>
+          </a>
         </div>
       </section>
     </div>

@@ -157,11 +157,40 @@
   }
 
   .footer {
-    padding: 28px 0 0;
+    padding: 28px clamp(16px, 4vw, 40px) 0;
   }
 
   .footerMain {
     flex-direction: column;
     gap: 28px;
+  }
+
+  .footerLeft {
+    align-items: center;
+    gap: 14px;
+  }
+
+  .footerLogo {
+    width: 90px;
+    height: 90px;
+  }
+
+  .footerBrand {
+    font-size: 1.15rem;
+    max-width: 100%;
+  }
+
+  .footerTagline {
+    font-size: 0.9rem;
+    max-width: 100%;
+  }
+
+  .footerSocialHeading {
+    font-size: 0.85rem;
+  }
+
+  .footerBottom {
+    margin-top: 24px;
+    font-size: 0.82rem;
   }
 }
