@@ -32,16 +32,18 @@ const STORIES: Story[] = [
 ]
 
 const FLOWER_COLORS = [
-  '#e57373',
-  '#f06292',
-  '#ba68c8',
+  // Red poppies — range from deep scarlet to bright crimson
+  '#c0392b',
+  '#d32f2f',
+  '#e53935',
+  '#b71c1c',
+  '#ef5350',
+  // Blue forget-me-nots — range from soft periwinkle to cornflower
+  '#5c6bc0',
+  '#3f51b5',
   '#7986cb',
-  '#4db6ac',
-  '#81c784',
-  '#ffb74d',
-  '#ff8a65',
-  '#a1887f',
-  '#90a4ae',
+  '#42a5f5',
+  '#90caf9',
 ]
 
 type Particle = {
@@ -228,7 +230,7 @@ export function InMemorialPage() {
                 }
                 aria-hidden="true"
               >
-                *
+                ✿
               </span>
             ))}
             <button type="button" className={styles.plantButton} onClick={handlePlantFlower}>
