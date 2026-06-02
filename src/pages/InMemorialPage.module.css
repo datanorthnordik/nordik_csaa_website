@@ -41,8 +41,8 @@
   background: #ffffff;
   padding-bottom: 96px;
   overflow: hidden;
-  margin-left: calc(-1 * var(--shell-gutter));
-  margin-right: calc(-1 * var(--shell-gutter));
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
 
 .heroContent {

@@ -5,6 +5,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import type { MenuItem } from '../api/menusApi'
@@ -132,6 +133,9 @@ export function SiteHeader() {
           <div className={styles.languageDesktop}>
             <LanguageSwitcher />
           </div>
+          <div className={styles.languageMobile}>
+            <LanguageSwitcher />
+          </div>
           <button
             type="button"
             className={styles.mobileMenuButton}
@@ -146,29 +150,17 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {isMobileMenuOpen ? (
-        <>
-          <button
-            type="button"
-            className={styles.mobileBackdrop}
-            aria-label={t('site.nav.closeMenu')}
-            onClick={() => setIsMobileMenuOpen(false)}
+      {isMobileMenuOpen ? createPortal(
+        <div className={styles.mobilePanel} role="dialog" aria-modal="true" aria-label={t('site.nav.ariaLabel')}>
+          <MobileNavigationList
+            items={menu.items}
+            pathname={pathname}
+            expandedItemIds={expandedMobileItemIds}
+            onToggle={toggleMobileItem}
+            onNavigate={() => setIsMobileMenuOpen(false)}
           />
-          <div className={styles.mobilePanel}>
-            <div className={styles.mobilePanelHeader}>
-              <p>{t('site.nav.directory')}</p>
-              <LanguageSwitcher />
-            </div>
-
-            <MobileNavigationList
-              items={menu.items}
-              pathname={pathname}
-              expandedItemIds={expandedMobileItemIds}
-              onToggle={toggleMobileItem}
-              onNavigate={() => setIsMobileMenuOpen(false)}
-            />
-          </div>
-        </>
+        </div>,
+        document.body,
       ) : null}
     </header>
   )
@@ -316,7 +308,7 @@ function MobileNavigationList({
                   aria-label={t('site.nav.toggleSubmenu', { label: item.label })}
                   onClick={() => onToggle(item.id)}
                 >
-                  <ChevronIcon className={isExpanded ? styles.chevronOpen : ''} />
+                  <PlusMinusIcon open={isExpanded} />
                 </button>
               ) : null}
             </div>
@@ -407,6 +399,15 @@ function ChevronIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
       <path d="m6 9 6 6 6-6" />
+    </svg>
+  )
+}
+
+function PlusMinusIcon({ open }: { open: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.plusMinusIcon}>
+      <path d="M12 5v14" className={open ? styles.plusMinusHide : ''} />
+      <path d="M5 12h14" />
     </svg>
   )
 }
