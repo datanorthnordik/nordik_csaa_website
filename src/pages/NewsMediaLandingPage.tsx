@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
-import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import { TextHero } from '../components/TextHero'
 import styles from './NewsMediaLandingPage.module.css'
 
