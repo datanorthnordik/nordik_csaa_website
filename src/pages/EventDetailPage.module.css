@@ -196,6 +196,16 @@
   padding-left: 1.2em;
 }
 
+.richText :global(em),
+.richText :global(i) {
+  font-style: italic;
+}
+
+.richText :global(strong),
+.richText :global(b) {
+  font-weight: 700;
+}
+
 .definitionList {
   display: grid;
   gap: 18px;

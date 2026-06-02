@@ -50,8 +50,16 @@ export function CmsHeaderSection({
     )
   }
 
+  const sectionId = sectionTitle
+    ? sectionTitle
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .trim()
+        .replace(/\s+/g, '-')
+    : undefined
+
   return (
-    <section className={`${styles.section} ${styles.simpleHeaderSection}`}>
+    <section id={sectionId} className={`${styles.section} ${styles.simpleHeaderSection}`}>
       <div className={`${styles.simpleHeaderCard} ${alignmentClass}`}>
         {sectionEyebrow ? <p className={styles.sectionEyebrow}>{sectionEyebrow}</p> : null}
         {sectionTitle && <h2 className={styles.sectionTitle}>{sectionTitle}</h2>}
