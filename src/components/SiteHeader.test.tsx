@@ -1,6 +1,6 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { MenuResponse } from '../api/menusApi'
 import i18n from '../i18n'
 import { SiteHeader } from './SiteHeader'
@@ -149,6 +149,10 @@ describe('SiteHeader', () => {
     await i18n.changeLanguage('en')
   })
 
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('opens the desktop submenu on hover and reveals nested items in a right-side flyout', () => {
     renderHeader()
 
@@ -180,8 +184,42 @@ describe('SiteHeader', () => {
     fireEvent.mouseEnter(healingServicesItem)
 
     expect(screen.getByRole('link', { name: /crisis support/i })).toBeDefined()
+  })
+
+  it('keeps desktop flyouts open briefly while the pointer moves between menu panels', () => {
+    vi.useFakeTimers()
+
+    renderHeader()
+
+    const programsLink = screen.getByRole('link', { name: /^programs$/i })
+    const programsGroup = programsLink.parentElement?.parentElement
+
+    if (!programsGroup) {
+      throw new Error('Programs menu group was not rendered.')
+    }
+
+    fireEvent.mouseEnter(programsGroup)
+
+    const healingServicesLink = screen.getByRole('link', { name: /healing services/i })
+    const healingServicesItem = healingServicesLink.parentElement
+
+    if (!healingServicesItem) {
+      throw new Error('Healing Services submenu item was not rendered.')
+    }
+
+    fireEvent.mouseEnter(healingServicesItem)
+
+    expect(screen.getByRole('link', { name: /crisis support/i })).toBeDefined()
 
     fireEvent.mouseLeave(programsGroup)
+    fireEvent.mouseLeave(healingServicesItem)
+
+    expect(programsLink.getAttribute('aria-expanded')).toBe('true')
+    expect(screen.getByRole('link', { name: /crisis support/i })).toBeDefined()
+
+    act(() => {
+      vi.advanceTimersByTime(141)
+    })
 
     expect(programsLink.getAttribute('aria-expanded')).toBe('false')
     expect(screen.queryByRole('link', { name: /crisis support/i })).toBeNull()
