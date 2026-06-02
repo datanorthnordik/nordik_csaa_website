@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import { TextHero } from '../components/TextHero'
 import styles from './NewsMediaLandingPage.module.css'
 
@@ -19,7 +20,7 @@ export function NewsMediaLandingPage() {
         eyebrow="News &amp; Media"
         title={t('newsMediaPage.hero.title')}
         description={t('newsMediaPage.hero.description')}
-        waveFill="#f8f6f4"
+        waveFill="#f2f5f4"
       />
 
       {/* ── Cards ── */}
@@ -67,7 +68,7 @@ export function NewsMediaLandingPage() {
 
           <div className={styles.inquiriesImageWrap}>
             <img
-              src="https://storage.googleapis.com/nordik-csa-website-assets/assets/media_landing.jpg"
+              src={WEBSITE_ASSET_URLS.mediaLanding}
               alt={t('newsMediaPage.pressInquiries.imageAlt')}
               className={styles.inquiriesImage}
             />

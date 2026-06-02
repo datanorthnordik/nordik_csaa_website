@@ -22,7 +22,7 @@ export const WEBSITE_ASSET_URLS = {
   memorialFlower: buildWebsiteAssetUrl('memorial_flower.png'),
   planeVector: buildWebsiteAssetUrl('plane_vector.png'),
   reactLogo: buildWebsiteAssetUrl('react.svg'),
-  rememberVector: buildWebsiteAssetUrl('remeber_vector.png'),
+  rememberVector: buildWebsiteAssetUrl('remeber_vector.jpeg'),
   returnHomeVector: buildWebsiteAssetUrl('returnHome_vector.png'),
   shingwaukHallHero: buildWebsiteAssetUrl('shingwaukhall-hero.jpg'),
   shirleySignature: buildWebsiteAssetUrl("shirley' signature.png"),
@@ -33,4 +33,5 @@ export const WEBSITE_ASSET_URLS = {
   viteLogo: buildWebsiteAssetUrl('vite.svg'),
   watercolorMeadow: buildWebsiteAssetUrl('watercolor_meadow.png'),
   wawnoshHeroSection: buildWebsiteAssetUrl('wawnosh-hero-section.jpg'),
+  mediaLanding: buildWebsiteAssetUrl('media_landing.jpg'),
 } as const

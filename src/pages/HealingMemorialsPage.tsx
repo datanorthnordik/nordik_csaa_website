@@ -99,12 +99,17 @@ export function HealingMemorialsPage() {
         <h2 className={styles.supportTitle}>{t('healingMemorials.support.title')}</h2>
         <p className={styles.supportDescription}>{t('healingMemorials.support.description')}</p>
         <div className={styles.supportActions}>
-          <Link to="/donate" className={styles.donateButton}>
+          <Link to="/get-involved#make-donations" className={styles.donateButton}>
             {t('healingMemorials.support.donate')}
           </Link>
-          <Link to="/membership" className={styles.joinButton}>
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLScW1dDZhiLBCUgaLi_NbUbOOOW-PrcOxwqC8pewhtxp95oJOw/viewform?usp=preview"
+            target="_blank"
+            rel="noreferrer"
+            className={styles.joinButton}
+          >
             {t('healingMemorials.support.join')}
-          </Link>
+          </a>
         </div>
       </section>
     </div>

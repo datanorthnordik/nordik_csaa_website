@@ -18,7 +18,7 @@ export function TextHero({
   title,
   description,
   children,
-  waveFill = '#f8f6f4',
+  waveFill = '#f2f5f4',
 }: TextHeroProps) {
   return (
     <section className={styles.hero}>

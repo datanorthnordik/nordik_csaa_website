@@ -63,7 +63,7 @@ export function SharedImageHero({
           className={styles.waveSvg}
           aria-hidden="true"
         >
-          <path d={`${WAVE_CURVE} L1440,120 L0,120 Z`} fill="#ffffff" />
+          <path d={`${WAVE_CURVE} L1440,120 L0,120 Z`} fill="#f2f5f4" />
         </svg>
       </div>
     </section>

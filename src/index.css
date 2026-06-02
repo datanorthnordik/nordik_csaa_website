@@ -34,7 +34,8 @@
   color: var(--color-text);
   background: var(--color-bg);
   font: 16px/1.55 var(--font-sans);
-  font-synthesis: none;
+  font-style: normal;
+  font-synthesis: style;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -42,6 +43,16 @@
 
 * {
   box-sizing: border-box;
+}
+
+em,
+i {
+  font-style: italic;
+}
+
+strong,
+b {
+  font-weight: bold;
 }
 
 html {

@@ -106,6 +106,16 @@
   color: var(--color-primary);
 }
 
+.richText em,
+.richText i {
+  font-style: italic;
+}
+
+.richText strong,
+.richText b {
+  font-weight: 700;
+}
+
 .heroMedia {
   min-width: 0;
 }

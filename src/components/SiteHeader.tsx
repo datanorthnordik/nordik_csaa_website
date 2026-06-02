@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import type { MenuItem } from '../api/menusApi'
@@ -14,11 +15,14 @@ import { LanguageSwitcher } from './LanguageSwitcher'
 import { useNavigationMenu } from './NavigationMenuProvider'
 import styles from './SiteHeader.module.css'
 
+const DESKTOP_MENU_CLOSE_DELAY_MS = 140
+
 export function SiteHeader() {
   const { t } = useTranslation()
   const { pathname } = useLocation()
   const { menu, isLoading } = useNavigationMenu()
   const headerRef = useRef<HTMLElement | null>(null)
+  const desktopCloseTimeoutRef = useRef<number | null>(null)
   const [openDesktopMenuId, setOpenDesktopMenuId] = useState<number | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [expandedMobileItemIds, setExpandedMobileItemIds] = useState<number[]>([])
@@ -28,6 +32,14 @@ export function SiteHeader() {
     setIsMobileMenuOpen(false)
     setExpandedMobileItemIds([])
   }, [pathname])
+
+  useEffect(() => {
+    return () => {
+      if (desktopCloseTimeoutRef.current !== null) {
+        window.clearTimeout(desktopCloseTimeoutRef.current)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (!isMobileMenuOpen) {
@@ -74,11 +86,32 @@ export function SiteHeader() {
   }, [])
 
   function openDesktopMenu(itemId: number) {
+    if (desktopCloseTimeoutRef.current !== null) {
+      window.clearTimeout(desktopCloseTimeoutRef.current)
+      desktopCloseTimeoutRef.current = null
+    }
+
     setOpenDesktopMenuId(itemId)
   }
 
   function closeDesktopMenu() {
+    if (desktopCloseTimeoutRef.current !== null) {
+      window.clearTimeout(desktopCloseTimeoutRef.current)
+      desktopCloseTimeoutRef.current = null
+    }
+
     setOpenDesktopMenuId(null)
+  }
+
+  function scheduleDesktopMenuClose() {
+    if (desktopCloseTimeoutRef.current !== null) {
+      window.clearTimeout(desktopCloseTimeoutRef.current)
+    }
+
+    desktopCloseTimeoutRef.current = window.setTimeout(() => {
+      setOpenDesktopMenuId(null)
+      desktopCloseTimeoutRef.current = null
+    }, DESKTOP_MENU_CLOSE_DELAY_MS)
   }
 
   function toggleMobileMenu() {
@@ -121,6 +154,7 @@ export function SiteHeader() {
                 isOpen={openDesktopMenuId === item.id}
                 onOpen={() => openDesktopMenu(item.id)}
                 onClose={closeDesktopMenu}
+                onScheduleClose={scheduleDesktopMenuClose}
               />
             ))
           )}
@@ -128,6 +162,9 @@ export function SiteHeader() {
 
         <div className={styles.headerActions}>
           <div className={styles.languageDesktop}>
+            <LanguageSwitcher />
+          </div>
+          <div className={styles.languageMobile}>
             <LanguageSwitcher />
           </div>
           <button
@@ -144,29 +181,17 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {isMobileMenuOpen ? (
-        <>
-          <button
-            type="button"
-            className={styles.mobileBackdrop}
-            aria-label={t('site.nav.closeMenu')}
-            onClick={() => setIsMobileMenuOpen(false)}
+      {isMobileMenuOpen ? createPortal(
+        <div className={styles.mobilePanel} role="dialog" aria-modal="true" aria-label={t('site.nav.ariaLabel')}>
+          <MobileNavigationList
+            items={menu.items}
+            pathname={pathname}
+            expandedItemIds={expandedMobileItemIds}
+            onToggle={toggleMobileItem}
+            onNavigate={() => setIsMobileMenuOpen(false)}
           />
-          <div className={styles.mobilePanel}>
-            <div className={styles.mobilePanelHeader}>
-              <p>{t('site.nav.directory')}</p>
-              <LanguageSwitcher />
-            </div>
-
-            <MobileNavigationList
-              items={menu.items}
-              pathname={pathname}
-              expandedItemIds={expandedMobileItemIds}
-              onToggle={toggleMobileItem}
-              onNavigate={() => setIsMobileMenuOpen(false)}
-            />
-          </div>
-        </>
+        </div>,
+        document.body,
       ) : null}
     </header>
   )
@@ -178,12 +203,14 @@ function DesktopNavigationItem({
   isOpen,
   onOpen,
   onClose,
+  onScheduleClose,
 }: {
   item: MenuItem
   pathname: string
   isOpen: boolean
   onOpen: () => void
   onClose: () => void
+  onScheduleClose: () => void
 }) {
   const active = isMenuItemActive(item, pathname)
   const itemHasChildren = hasMenuChildren(item)
@@ -192,7 +219,7 @@ function DesktopNavigationItem({
     <div
       className={styles.navItemGroup}
       onMouseEnter={itemHasChildren ? onOpen : undefined}
-      onMouseLeave={itemHasChildren ? onClose : undefined}
+      onMouseLeave={itemHasChildren ? onScheduleClose : undefined}
       onFocus={itemHasChildren ? onOpen : undefined}
       onBlur={
         itemHasChildren
@@ -267,15 +294,44 @@ function DesktopSubmenuItem({
 }) {
   const active = isMenuItemActive(item, pathname)
   const itemHasChildren = hasMenuChildren(item)
+  const nestedCloseTimeoutRef = useRef<number | null>(null)
   const [isNestedOpen, setIsNestedOpen] = useState(false)
   const showNested = itemHasChildren && (isNestedOpen || active)
+
+  useEffect(() => {
+    return () => {
+      if (nestedCloseTimeoutRef.current !== null) {
+        window.clearTimeout(nestedCloseTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  function openNestedMenu() {
+    if (nestedCloseTimeoutRef.current !== null) {
+      window.clearTimeout(nestedCloseTimeoutRef.current)
+      nestedCloseTimeoutRef.current = null
+    }
+
+    setIsNestedOpen(true)
+  }
+
+  function scheduleNestedMenuClose() {
+    if (nestedCloseTimeoutRef.current !== null) {
+      window.clearTimeout(nestedCloseTimeoutRef.current)
+    }
+
+    nestedCloseTimeoutRef.current = window.setTimeout(() => {
+      setIsNestedOpen(false)
+      nestedCloseTimeoutRef.current = null
+    }, DESKTOP_MENU_CLOSE_DELAY_MS)
+  }
 
   return (
     <li
       className={styles.dropdownItem}
-      onMouseEnter={itemHasChildren ? () => setIsNestedOpen(true) : undefined}
-      onMouseLeave={itemHasChildren ? () => setIsNestedOpen(false) : undefined}
-      onFocus={itemHasChildren ? () => setIsNestedOpen(true) : undefined}
+      onMouseEnter={itemHasChildren ? openNestedMenu : undefined}
+      onMouseLeave={itemHasChildren ? scheduleNestedMenuClose : undefined}
+      onFocus={itemHasChildren ? openNestedMenu : undefined}
       onBlur={
         itemHasChildren
           ? (event) => {
@@ -283,7 +339,7 @@ function DesktopSubmenuItem({
                 return
               }
 
-              setIsNestedOpen(false)
+              scheduleNestedMenuClose()
             }
           : undefined
       }
@@ -353,7 +409,7 @@ function MobileNavigationList({
                   aria-label={t('site.nav.toggleSubmenu', { label: item.label })}
                   onClick={() => onToggle(item.id)}
                 >
-                  <ChevronIcon className={isExpanded ? styles.chevronOpen : ''} />
+                  <PlusMinusIcon open={isExpanded} />
                 </button>
               ) : null}
             </div>
@@ -452,6 +508,15 @@ function ChevronIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
       <path d="m6 9 6 6 6-6" />
+    </svg>
+  )
+}
+
+function PlusMinusIcon({ open }: { open: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.plusMinusIcon}>
+      <path d="M12 5v14" className={open ? styles.plusMinusHide : ''} />
+      <path d="M5 12h14" />
     </svg>
   )
 }

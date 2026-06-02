@@ -153,6 +153,16 @@ export function DigitalNewslettersPage() {
 
       {status === 'ready' && featuredEntry && !normalizedSearch && selectedYear === 'all' ? (
         <section className={styles.featuredSection}>
+          <div className={styles.featuredCallout}>
+            <p className={styles.featuredCalloutLabel}>{t('newslettersPage.hero.featuredLabel')}</p>
+            <h2 className={styles.featuredCalloutHeading}>Dive Into Our Latest Update.</h2>
+            <p className={styles.featuredCalloutDesc}>
+              Click the edition on the right to read and stay connected with the heartbeat of our association.
+            </p>
+            <p className={styles.featuredCalloutBody}>
+              Explore our latest stories of resilience, upcoming cultural gatherings, and the vital community outreach initiatives driving our mission forward this month.
+            </p>
+          </div>
           <FeaturedNewsletterCard entry={featuredEntry} locale={locale} />
         </section>
       ) : null}

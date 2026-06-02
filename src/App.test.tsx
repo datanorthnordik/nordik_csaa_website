@@ -944,7 +944,7 @@ describe('App', () => {
       'page',
     )
     expect(await findPrimaryNavigationLink(/^events$/i)).toBeDefined()
-    expect(screen.getByRole('button', { name: 'FR' })).toBeDefined()
+    expect(screen.getAllByRole('button', { name: 'FR' })[0]).toBeDefined()
   })
 
   it('switches the shared coming soon copy to french', async () => {
@@ -954,7 +954,7 @@ describe('App', () => {
       name: /welcome to the csaa newsletter/i,
     })
 
-    fireEvent.click(screen.getByRole('button', { name: 'FR' }))
+    fireEvent.click(screen.getAllByRole('button', { name: 'FR' })[0])
 
     expect(
       await screen.findByText(
