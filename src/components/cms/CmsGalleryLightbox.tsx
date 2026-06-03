@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { CmsGalleryAsset } from './cmsGalleryMedia'
 import styles from './CmsGallerySection.module.css'
@@ -12,6 +12,9 @@ type CmsGalleryLightboxProps = {
 }
 
 const slideshowIntervalMs = 4200
+const minZoom = 1
+const maxZoom = 3
+const zoomStep = 0.25
 
 export function CmsGalleryLightbox({
   items,
@@ -22,18 +25,77 @@ export function CmsGalleryLightbox({
 }: CmsGalleryLightboxProps) {
   const { t } = useTranslation()
   const panelRef = useRef<HTMLDivElement | null>(null)
+  const canvasRef = useRef<HTMLDivElement | null>(null)
+  const imageRef = useRef<HTMLImageElement | null>(null)
   const thumbRefs = useRef<Array<HTMLButtonElement | null>>([])
   const [isSlideshowPlaying, setIsSlideshowPlaying] = useState(false)
   const [showThumbnails, setShowThumbnails] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [slideshowProgress, setSlideshowProgress] = useState(0)
+  const [zoom, setZoom] = useState(1)
+  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
+  const [imageNaturalSizes, setImageNaturalSizes] = useState<
+    Record<number, {
+      width: number
+      height: number
+    }>
+  >({})
 
   const safeIndex =
     activeIndex === null || !items.length
       ? 0
       : Math.min(Math.max(activeIndex, 0), items.length - 1)
   const activeItem = items[safeIndex]
+  const activeImageNaturalSize = imageNaturalSizes[activeItem?.id ?? -1] ?? null
   const activeLabel = activeItem ? activeItem.title || activeItem.altText : ''
+  const showCaption = showTitleDescription && Boolean(activeItem?.title || activeItem?.details)
+  const captionTooltip = [activeItem?.title, activeItem?.details]
+    .filter((value, index, values): value is string => Boolean(value) && values.indexOf(value) === index)
+    .join('\n')
+
+  function cacheImageNaturalSize(
+    imageId: number,
+    naturalSize: {
+      width: number
+      height: number
+    },
+  ) {
+    if (naturalSize.width <= 0 || naturalSize.height <= 0) {
+      return
+    }
+
+    setImageNaturalSizes((current) => {
+      const existing = current[imageId]
+      if (
+        existing &&
+        existing.width === naturalSize.width &&
+        existing.height === naturalSize.height
+      ) {
+        return current
+      }
+
+      return {
+        ...current,
+        [imageId]: naturalSize,
+      }
+    })
+  }
+
+  useLayoutEffect(() => {
+    if (activeIndex === null || !activeItem) {
+      return
+    }
+
+    const currentImage = imageRef.current
+    if (!currentImage || !currentImage.complete) {
+      return
+    }
+
+    cacheImageNaturalSize(activeItem.id, {
+      width: currentImage.naturalWidth,
+      height: currentImage.naturalHeight,
+    })
+  }, [activeIndex, activeItem?.id])
 
   useEffect(() => {
     if (activeIndex !== null) {
@@ -43,6 +105,8 @@ export function CmsGalleryLightbox({
     setIsSlideshowPlaying(false)
     setShowThumbnails(false)
     setSlideshowProgress(0)
+    setZoom(1)
+    setCanvasSize({ width: 0, height: 0 })
   }, [activeIndex])
 
   useEffect(() => {
@@ -50,8 +114,24 @@ export function CmsGalleryLightbox({
       return
     }
 
+    setZoom(1)
+  }, [activeIndex, activeItem?.id])
+
+  useEffect(() => {
+    if (activeIndex === null) {
+      return
+    }
+
+    const rootElement = document.documentElement
     const previousOverflow = document.body.style.overflow
+    const previousBodyOverscrollBehavior = document.body.style.overscrollBehavior
+    const previousRootOverflow = rootElement.style.overflow
+    const previousRootOverscrollBehavior = rootElement.style.overscrollBehavior
+
     document.body.style.overflow = 'hidden'
+    document.body.style.overscrollBehavior = 'none'
+    rootElement.style.overflow = 'hidden'
+    rootElement.style.overscrollBehavior = 'none'
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
@@ -72,11 +152,26 @@ export function CmsGalleryLightbox({
           setIsSlideshowPlaying((current) => !current)
         }
       }
+      if (event.key === '+' || event.key === '=') {
+        event.preventDefault()
+        updateZoom(1)
+      }
+      if (event.key === '-') {
+        event.preventDefault()
+        updateZoom(-1)
+      }
+      if (event.key === '0') {
+        event.preventDefault()
+        resetZoom()
+      }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => {
       document.body.style.overflow = previousOverflow
+      document.body.style.overscrollBehavior = previousBodyOverscrollBehavior
+      rootElement.style.overflow = previousRootOverflow
+      rootElement.style.overscrollBehavior = previousRootOverscrollBehavior
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [activeIndex, items.length, safeIndex])
@@ -136,6 +231,39 @@ export function CmsGalleryLightbox({
     })
   }, [showThumbnails, activeIndex, items.length, safeIndex])
 
+  useEffect(() => {
+    if (activeIndex === null) {
+      return
+    }
+
+    function measureCanvas() {
+      const rect = canvasRef.current?.getBoundingClientRect()
+      if (!rect) {
+        return
+      }
+
+      const nextWidth = Math.round(rect.width)
+      const nextHeight = Math.round(rect.height)
+
+      setCanvasSize((current) =>
+        current.width === nextWidth && current.height === nextHeight
+          ? current
+          : {
+              width: nextWidth,
+              height: nextHeight,
+            },
+      )
+    }
+
+    const frameId = window.requestAnimationFrame(measureCanvas)
+
+    window.addEventListener('resize', measureCanvas)
+    return () => {
+      window.cancelAnimationFrame(frameId)
+      window.removeEventListener('resize', measureCanvas)
+    }
+  }, [activeIndex, showThumbnails, isFullscreen, safeIndex])
+
   if (activeIndex === null || !items.length || !activeItem) {
     return null
   }
@@ -150,6 +278,7 @@ export function CmsGalleryLightbox({
 
   function handleClose() {
     setIsSlideshowPlaying(false)
+    setZoom(1)
     if (document.fullscreenElement === panelRef.current) {
       void document.exitFullscreen?.()
     }
@@ -165,6 +294,19 @@ export function CmsGalleryLightbox({
     void panelRef.current?.requestFullscreen?.()
   }
 
+  function updateZoom(direction: -1 | 1) {
+    setIsSlideshowPlaying(false)
+    setZoom((current) =>
+      Math.min(maxZoom, Math.max(minZoom, Number((current + direction * zoomStep).toFixed(2)))),
+    )
+  }
+
+  function resetZoom() {
+    setZoom(1)
+  }
+
+  const fittedImageStyle = getFittedImageStyle(canvasSize, activeImageNaturalSize, zoom)
+
   return (
     <div
       className={styles.viewerOverlay}
@@ -174,21 +316,20 @@ export function CmsGalleryLightbox({
     >
       <div ref={panelRef} className={styles.viewerPanel}>
         <div className={styles.viewerTopBar}>
-          <div className={styles.viewerMeta}>
-            <span className={styles.viewerCounter}>
-              {safeIndex + 1} / {items.length}
-            </span>
-            {showTitleDescription && (activeItem.title || activeItem.details) ? (
-              <div className={styles.viewerCaption}>
-                {activeItem.title ? (
-                  <p className={styles.viewerCaptionTitle}>{activeItem.title}</p>
-                ) : null}
-                {activeItem.details && activeItem.details !== activeItem.title ? (
-                  <p className={styles.viewerCaptionText}>{activeItem.details}</p>
-                ) : null}
-              </div>
-            ) : null}
-          </div>
+          <span className={styles.viewerCounter}>
+            {safeIndex + 1} / {items.length}
+          </span>
+
+          {showCaption ? (
+            <div className={styles.viewerCaption} title={captionTooltip || undefined}>
+              {activeItem.title ? (
+                <p className={styles.viewerCaptionTitle}>{activeItem.title}</p>
+              ) : null}
+              {activeItem.details && activeItem.details !== activeItem.title ? (
+                <p className={styles.viewerCaptionText}>{activeItem.details}</p>
+              ) : null}
+            </div>
+          ) : null}
 
           <div className={styles.viewerToolbar}>
             {items.length > 1 ? (
@@ -212,6 +353,41 @@ export function CmsGalleryLightbox({
                 <ViewerIcon name={isSlideshowPlaying ? 'pause' : 'play'} />
               </button>
             ) : null}
+
+            <div className={styles.viewerZoomGroup}>
+              <button
+                type="button"
+                className={styles.viewerIconButton}
+                onClick={() => updateZoom(-1)}
+                disabled={zoom <= minZoom}
+                aria-label={t('common.zoomOut')}
+                title={t('common.zoomOut')}
+              >
+                <ViewerIcon name="minus" />
+              </button>
+
+              <button
+                type="button"
+                className={styles.viewerZoomReadout}
+                onClick={resetZoom}
+                disabled={zoom === 1}
+                aria-label={t('common.resetZoom')}
+                title={t('common.resetZoom')}
+              >
+                {Math.round(zoom * 100)}%
+              </button>
+
+              <button
+                type="button"
+                className={styles.viewerIconButton}
+                onClick={() => updateZoom(1)}
+                disabled={zoom >= maxZoom}
+                aria-label={t('common.zoomIn')}
+                title={t('common.zoomIn')}
+              >
+                <ViewerIcon name="plus" />
+              </button>
+            </div>
 
             <button
               type="button"
@@ -268,29 +444,6 @@ export function CmsGalleryLightbox({
           </div>
         ) : null}
 
-        {items.length > 1 ? (
-          <>
-            <button
-              type="button"
-              className={`${styles.viewerNavButton} ${styles.viewerNavButtonLeft}`}
-              onClick={() => move(-1)}
-              aria-label={t('common.previous')}
-              title={t('common.previous')}
-            >
-              <ViewerIcon name="arrowLeft" />
-            </button>
-            <button
-              type="button"
-              className={`${styles.viewerNavButton} ${styles.viewerNavButtonRight}`}
-              onClick={() => move(1)}
-              aria-label={t('common.next')}
-              title={t('common.next')}
-            >
-              <ViewerIcon name="arrowRight" />
-            </button>
-          </>
-        ) : null}
-
         <div
           className={`${styles.viewerWorkspace} ${
             showThumbnails && items.length > 1
@@ -299,12 +452,46 @@ export function CmsGalleryLightbox({
           }`}
         >
           <div className={styles.viewerStage}>
-            <div className={styles.viewerCanvas}>
-              <img
-                src={activeItem.imageUrl}
-                alt={activeItem.altText}
-                className={styles.viewerImage}
-              />
+            {items.length > 1 ? (
+              <>
+                <button
+                  type="button"
+                  className={`${styles.viewerNavButton} ${styles.viewerNavButtonLeft}`}
+                  onClick={() => move(-1)}
+                  aria-label={t('common.previous')}
+                  title={t('common.previous')}
+                >
+                  <ViewerIcon name="arrowLeft" />
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.viewerNavButton} ${styles.viewerNavButtonRight}`}
+                  onClick={() => move(1)}
+                  aria-label={t('common.next')}
+                  title={t('common.next')}
+                >
+                  <ViewerIcon name="arrowRight" />
+                </button>
+              </>
+            ) : null}
+
+            <div ref={canvasRef} className={styles.viewerCanvas}>
+              <div className={styles.viewerCanvasFrame}>
+                <img
+                  key={activeItem.id}
+                  ref={imageRef}
+                  src={activeItem.imageUrl}
+                  alt={activeItem.altText}
+                  className={styles.viewerImage}
+                  style={fittedImageStyle}
+                  onLoad={(event) => {
+                    cacheImageNaturalSize(activeItem.id, {
+                      width: event.currentTarget.naturalWidth,
+                      height: event.currentTarget.naturalHeight,
+                    })
+                  }}
+                />
+              </div>
             </div>
           </div>
 
@@ -367,6 +554,8 @@ function ViewerIcon({
     | 'close'
     | 'arrowLeft'
     | 'arrowRight'
+    | 'plus'
+    | 'minus'
 }) {
   return (
     <svg
@@ -436,6 +625,46 @@ function ViewerIcon({
           <path d="M15 12H6" />
         </>
       ) : null}
+      {name === 'plus' ? (
+        <>
+          <path d="M12 5v14" />
+          <path d="M5 12h14" />
+        </>
+      ) : null}
+      {name === 'minus' ? <path d="M5 12h14" /> : null}
     </svg>
   )
+}
+
+function getFittedImageStyle(
+  canvasSize: { width: number; height: number },
+  imageNaturalSize: { width: number; height: number } | null,
+  zoom: number,
+) {
+  if (
+    canvasSize.width <= 0 ||
+    canvasSize.height <= 0 ||
+    !imageNaturalSize ||
+    imageNaturalSize.width <= 0 ||
+    imageNaturalSize.height <= 0
+  ) {
+    return undefined
+  }
+
+  const fitScale = Math.min(
+    canvasSize.width / imageNaturalSize.width,
+    canvasSize.height / imageNaturalSize.height,
+  )
+
+  if (!Number.isFinite(fitScale) || fitScale <= 0) {
+    return undefined
+  }
+
+  const fittedWidth = Math.max(1, Math.floor(imageNaturalSize.width * fitScale * zoom))
+  const fittedHeight = Math.max(1, Math.floor(imageNaturalSize.height * fitScale * zoom))
+
+  return {
+    width: `${fittedWidth}px`,
+    height: `${fittedHeight}px`,
+  }
 }

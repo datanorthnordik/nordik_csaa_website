@@ -407,6 +407,7 @@
     "pauseSlideshow": "Mettre le diaporama en pause",
     "zoomIn": "Zoom avant",
     "zoomOut": "Zoom arriere",
+    "resetZoom": "Reinitialiser le zoom",
     "openFile": "Ouvrir le fichier",
     "allDay": "Toute la journee",
     "timeTbd": "Heure a confirmer",
