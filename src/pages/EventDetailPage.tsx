@@ -45,7 +45,10 @@ export function EventDetailPage() {
       href: '/events',
     },
     {
-      label: event?.title.trim() || t('site.breadcrumbs.eventDetail'),
+      label: (() => {
+        const title = event?.title.trim() || t('site.breadcrumbs.eventDetail')
+        return title.length > 10 ? `${title.slice(0, 10)}…` : title
+      })(),
     },
   ])
 
@@ -153,7 +156,6 @@ export function EventDetailPage() {
     <div className={styles.page}>
       {displayImageUrl ? (
         <SharedImageHero
-          eyebrow={venueLabel || undefined}
           title={event.title}
           description={teaser || undefined}
           backgroundImageUrl={displayImageUrl}
