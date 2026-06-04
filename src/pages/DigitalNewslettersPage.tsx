@@ -87,10 +87,9 @@ export function DigitalNewslettersPage() {
     return searchableParts.some((value) => value.toLowerCase().includes(normalizedSearch))
   })
 
-  const listEntries =
-    featuredEntry && !normalizedSearch && selectedYear === 'all'
-      ? filteredEntries.filter((entry) => entry.id !== featuredEntry.id)
-      : filteredEntries
+  const listEntries = featuredEntry
+    ? filteredEntries.filter((entry) => entry.id !== featuredEntry.id)
+    : filteredEntries
 
   usePageBreadcrumbs([
     {
@@ -109,6 +108,12 @@ export function DigitalNewslettersPage() {
         title={t('newslettersPage.hero.title')}
         description={t('newslettersPage.hero.descriptionLead')}
       />
+
+      {status === 'ready' && featuredEntry ? (
+        <section className={styles.latestSection}>
+          <FeaturedNewsletterCard entry={featuredEntry} locale={locale} />
+        </section>
+      ) : null}
 
       <section className={styles.controls} aria-label={t('newslettersPage.filters.label')}>
         <div className={styles.yearFilters}>
@@ -150,22 +155,6 @@ export function DigitalNewslettersPage() {
           <span className={styles.searchIcon} aria-hidden="true" />
         </label>
       </section>
-
-      {status === 'ready' && featuredEntry && !normalizedSearch && selectedYear === 'all' ? (
-        <section className={styles.featuredSection}>
-          <div className={styles.featuredCallout}>
-            <p className={styles.featuredCalloutLabel}>{t('newslettersPage.hero.featuredLabel')}</p>
-            <h2 className={styles.featuredCalloutHeading}>Dive Into Our Latest Update.</h2>
-            <p className={styles.featuredCalloutDesc}>
-              Click the edition on the right to read and stay connected with the heartbeat of our association.
-            </p>
-            <p className={styles.featuredCalloutBody}>
-              Explore our latest stories of resilience, upcoming cultural gatherings, and the vital community outreach initiatives driving our mission forward this month.
-            </p>
-          </div>
-          <FeaturedNewsletterCard entry={featuredEntry} locale={locale} />
-        </section>
-      ) : null}
 
       <section className={styles.listSection}>
         {status === 'loading' ? (
@@ -209,53 +198,23 @@ function FeaturedNewsletterCard({
   entry: NewsletterDetailResponse
   locale: string
 }) {
-  const { t } = useTranslation()
-  const preview = resolveNewsletterPreview(entry)
-
-  return (
-    <article className={`${styles.card} ${styles.featuredCard}`}>
-      <NewsletterPreviewSurface
-        entry={entry}
-        preview={preview}
-        title={entry.title}
-        variant="featured"
-      />
-
-      <div className={styles.featuredContent}>
-        <div className={styles.metaRow}>
-          <span className={styles.metaChip}>{t('newslettersPage.hero.featuredLabel')}</span>
-          <span className={styles.metaText}>{formatNewsletterDate(entry.send_date, locale)}</span>
-          <span className={styles.metaText}>{getNewsletterCategoryLabel(entry.category)}</span>
-        </div>
-
-        <h2 className={styles.featuredTitle}>{entry.title}</h2>
-        {preview.excerpt ? <p className={styles.featuredExcerpt}>{preview.excerpt}</p> : null}
-        <span className={styles.readLink}>{t('newslettersPage.card.readEdition')}</span>
-      </div>
-
-      <Link
-        to={`/news-media/digital-newsletter/${entry.id}`}
-        className={styles.cardHitArea}
-        target="_blank"
-        rel="noreferrer"
-        aria-label={t('newslettersPage.card.openEdition', { title: entry.title })}
-      />
-    </article>
-  )
+  return <NewsletterCard entry={entry} locale={locale} isLatest />
 }
 
 function NewsletterCard({
   entry,
   locale,
+  isLatest = false,
 }: {
   entry: NewsletterDetailResponse
   locale: string
+  isLatest?: boolean
 }) {
   const { t } = useTranslation()
   const preview = resolveNewsletterPreview(entry)
 
   return (
-    <article className={styles.card}>
+    <article className={`${styles.card} ${isLatest ? styles.latestCard : ''}`}>
       <NewsletterPreviewSurface
         entry={entry}
         preview={preview}
@@ -265,6 +224,11 @@ function NewsletterCard({
 
       <div className={styles.cardContent}>
         <div className={styles.metaRow}>
+          {isLatest ? (
+            <span className={`${styles.metaChip} ${styles.latestChip}`}>
+              {t('newslettersPage.hero.featuredLabel')}
+            </span>
+          ) : null}
           <span className={styles.metaChip}>
             {entry.category
               ? getNewsletterCategoryLabel(entry.category)
