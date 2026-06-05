@@ -61,7 +61,7 @@ describe('eventsApi', () => {
     apiGet.mockReset()
   })
 
-  it('fetches an upcoming-events page from the list API only', async () => {
+  it('fetches upcoming events from the list API only', async () => {
     const upcomingEvents = [
       createEvent(1, 'Opening Circle'),
       createEvent(2, 'Closing Circle'),
@@ -75,15 +75,15 @@ describe('eventsApi', () => {
       const params = config?.params as URLSearchParams
       expect(params.get('start_date')).toBe('2026-09-01')
       expect(params.get('sort_order')).toBe('asc')
-      expect(params.get('page')).toBe('1')
-      expect(params.get('page_size')).toBe('10')
+      expect(params.get('page')).toBeNull()
+      expect(params.get('page_size')).toBe('100')
 
       return {
         data: {
           items: upcomingEvents,
           pagination: {
             page: 1,
-            page_size: 10,
+            page_size: 100,
             total_items: 2,
             total_pages: 1,
             has_next: false,

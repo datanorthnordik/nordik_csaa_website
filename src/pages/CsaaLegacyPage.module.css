@@ -1,19 +1,17 @@
-﻿/* ─────────────────────────────────────────────────────────────────────────────
-   CSAA Legacy — Scrollytelling
-   Earth & Heritage | Montserrat + Serif
+/* ─────────────────────────────────────────────────────────────────────────────
+   CSAA Legacy — GSAP scrollytelling (Scene 1) + scroll-reveal (Scenes 2 & 3)
    ───────────────────────────────────────────────────────────────────────────── */
 
 /* ── Page wrapper ─────────────────────────────────────────────────────────── */
 .page {
   font-family: 'Montserrat', 'Segoe UI', sans-serif;
-  /* Full-bleed — breaks out of SiteShell's constrained container */
   width: 100vw;
   margin-left: calc(50% - 50vw);
-  background: #1a110d;
+  background: #fdfbf8;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   INTRO SECTION
+   HERO INTRO
    ───────────────────────────────────────────────────────────────────────────── */
 .intro {
   position: relative;
@@ -22,14 +20,12 @@
   align-items: center;
   justify-content: center;
   min-height: 100svh;
-  /* extra bottom padding accommodates the wave (90px) */
   padding: 80px clamp(20px, 6vw, 120px) 120px;
   text-align: center;
-  background: #0a120a; /* fallback while image loads */
+  background: #0a120a;
   overflow: hidden;
 }
 
-/* Hero photograph — grayscale + dimmed so text stays legible */
 .introImage {
   position: absolute;
   inset: 0;
@@ -39,7 +35,6 @@
   filter: grayscale(25%) brightness(0.55);
 }
 
-/* Dark gradient overlay, stronger at top + bottom, lighter in centre */
 .introOverlay {
   position: absolute;
   inset: 0;
@@ -51,7 +46,6 @@
   );
 }
 
-/* Wave divider — sits at the very bottom of the intro */
 .waveDivider {
   position: absolute;
   bottom: -1px;
@@ -76,16 +70,16 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.45);
+  color: rgba(255, 255, 255, 0.45);
   text-decoration: none;
   transition: color 0.18s ease;
   z-index: 5;
 }
-.backLink:hover { color: rgba(255,255,255,0.85); }
+.backLink:hover { color: rgba(255, 255, 255, 0.85); }
 
 .introContent {
   position: relative;
-  z-index: 5; /* above image + overlay */
+  z-index: 5;
   max-width: 740px;
 }
 
@@ -108,20 +102,18 @@
 }
 
 .introDesc {
-  margin: 0 0 52px;
+  margin: 0 auto 52px;
   font-size: 1rem;
   font-weight: 400;
-  color: rgba(255,255,255,0.68);
+  color: rgba(255, 255, 255, 0.68);
   line-height: 1.74;
   max-width: 520px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
-/* ── Scroll cue — absolute bottom-centre of the intro hero ── */
+/* Scroll cue */
 .scrollCue {
   position: absolute;
-  bottom: clamp(100px, 14vh, 140px); /* sits above the wave, clearly in view */
+  bottom: clamp(100px, 14vh, 140px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -140,7 +132,7 @@
   display: block;
   width: 26px;
   height: 40px;
-  border: 2px solid rgba(255,255,255,0.45);
+  border: 2px solid rgba(255, 255, 255, 0.45);
   border-radius: 13px;
   position: relative;
 }
@@ -152,7 +144,7 @@
   transform: translateX(-50%);
   width: 4px;
   height: 9px;
-  background: rgba(255,255,255,0.65);
+  background: rgba(255, 255, 255, 0.65);
   border-radius: 2px;
   animation: wheelBounce 1.7s ease-in-out infinite;
 }
@@ -166,23 +158,21 @@
   font-weight: 700;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255, 255, 255, 0.55);
   white-space: nowrap;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   SCROLL TRACK — 700 vh of scroll space that drives the pinned canvas
+   SCENE 1 — SCROLL TRACK + STICKY CANVAS
    ───────────────────────────────────────────────────────────────────────────── */
+
+/* 900 vh gives ~125 vh per beat (7 text + 6 art = 13 beats) */
 .scrollTrack {
   position: relative;
-  height: 875vh;
+  height: 900vh;
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   STICKY CANVAS — locked to viewport while the track scrolls past.
-   JavaScript (GSAP onEnter/onLeave) adds .stickyCanvasFixed to switch from
-   sticky-within-shell to a true full-viewport fixed overlay, covering the nav.
-   ───────────────────────────────────────────────────────────────────────────── */
+/* Sticky canvas — locked to viewport while user scrolls through the track */
 .stickyCanvas {
   position: sticky;
   top: 0;
@@ -190,359 +180,107 @@
   width: 100%;
   height: 100svh;
   overflow: hidden;
-  /* Paper/canvas background — the transparent PNGs sit on this */
-  background: #fdfbf8;
-  /* Smooth size/position transition on enter/exit */
-  transition: none;
+  background: #fdfbf8; /* warm paper — transparent PNGs sit on this */
 }
 
-/* Full-viewport override — applied by JS when track is active */
+/* Full-viewport fixed override — JS adds this class on ScrollTrigger enter */
 .stickyCanvasFixed {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
   width: 100vw !important;
   height: 100svh !important;
-  /* Sit above SiteHeader (z-index: 40) so nav is hidden behind canvas */
-  z-index: 50;
-}
-
-/* ── Canvas scroll cue — bottom-centre of the sticky canvas, beat 1 only ── */
-.canvasCue {
-  position: absolute;
-  bottom: clamp(28px, 5vh, 56px);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 35;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  opacity: 0; /* GSAP controls */
-  pointer-events: none;
-}
-
-.canvasCueWheel {
-  display: block;
-  width: 24px;
-  height: 38px;
-  border: 2px solid rgba(26, 15, 10, 0.88); /* starts dark, CSS fades it */
-  border-radius: 12px;
-  position: relative;
-  animation: scrollCueWheelFade 4s ease-out 0.3s forwards;
-}
-.canvasCueWheel::after {
-  content: '';
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 8px;
-  background: rgba(26, 15, 10, 0.88);
-  border-radius: 2px;
-  animation:
-    canvasWheelBounce 1.7s ease-in-out infinite,
-    scrollCueDotFade  4s ease-out 0.3s forwards;
-}
-@keyframes canvasWheelBounce {
-  0%, 100% { transform: translateX(-50%) translateY(0);    opacity: 1; }
-  60%       { transform: translateX(-50%) translateY(10px); opacity: 0.2; }
-}
-@keyframes scrollCueWheelFade {
-  0%,  30% { border-color: rgba(26, 15, 10, 0.88); }
-  100%      { border-color: rgba(26, 15, 10, 0.28); }
-}
-@keyframes scrollCueDotFade {
-  0%,  30% { background: rgba(26, 15, 10, 0.88); }
-  100%      { background: rgba(26, 15, 10, 0.45); }
-}
-
-.canvasCueLabel {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: rgba(26, 15, 10, 0.88); /* starts dark */
-  white-space: nowrap;
-  animation: scrollCueLabelFade 4s ease-out 0.3s forwards;
-}
-@keyframes scrollCueLabelFade {
-  0%,  30% { color: rgba(26, 15, 10, 0.88); }
-  100%      { color: rgba(26, 15, 10, 0.38); }
-}
-
-/* ── Idle-scroll nudge ─────────────────────────────────────────────────────
-   Bottom-RIGHT corner — the only area clear of captions (centre),
-   artist credit (bottom-left), titles (top-centre), and mute (top-right).
-   Controlled by React state (showIdleNudge). */
-.idleNudge {
-  position: absolute;
-  bottom: clamp(28px, 5vh, 56px);
-  right: clamp(20px, 3vw, 56px);
-  z-index: 36;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  pointer-events: none;
-  animation: idleNudgeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@keyframes idleNudgeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.idleNudge .canvasCueWheel {
-  border-color: rgba(26, 15, 10, 0.88);
-  animation: scrollCueWheelFade 3.5s ease-out 0.2s forwards;
-}
-.idleNudge .canvasCueWheel::after {
-  background: rgba(26, 15, 10, 0.88);
-  animation:
-    canvasWheelBounce 1.7s ease-in-out infinite,
-    scrollCueDotFade  3.5s ease-out 0.2s forwards;
-}
-.idleNudge .canvasCueLabel {
-  color: rgba(26, 15, 10, 0.88);
-  animation: scrollCueLabelFade 3.5s ease-out 0.2s forwards;
-}
-
-/* ── Mute toggle ── */
-.muteButton {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(27,28,28,0.18);
-  background: rgba(253,251,248,0.85);
-  color: rgba(27,28,28,0.7);
-  cursor: pointer;
-  backdrop-filter: blur(6px);
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-}
-.muteButton:hover {
-  background: rgba(156,0,0,0.1);
-  border-color: rgba(156,0,0,0.4);
-  color: #9c0000;
+  z-index: 50; /* sits above the site header */
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   SCENES — each scene fills the entire sticky canvas; one visible at a time
+   ART LAYERS (Scene 1)
+   All start opacity:0 — GSAP animates them in with a slide.
    ───────────────────────────────────────────────────────────────────────────── */
-.scene {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-/* Scenes 2 & 3 start off-screen below — GSAP scrolls them up into view */
-[data-beat="scene2"],
-[data-beat="scene3"] {
-  transform: translateY(100%);
-  opacity: 0;
-}
-
-/* Full-bleed image for scene 2 & 3
-   Top padding is generous so the scene title (position:absolute, top:~20px)
-   sits on the warm paper background above the artwork — no overlap. */
-.sceneFullImg {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center;
-  display: block;
-  padding: clamp(68px, 9vh, 90px) clamp(8px, 1.5vw, 24px) clamp(8px, 1.5vh, 20px);
-  box-sizing: border-box;
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   ARTWORK LAYERS (Scene 1)
-   All start opacity:0 — GSAP animates them in one by one.
-   Sizes and positions are tuned to replicate the composite reference.
-
-   Reference composite layout:
-     Train   → upper-left  (~left 42%, top 68% of canvas)
-     Plane   → upper-right (~right 44%, top 52% of canvas)
-     School  → centre      (~36% wide, anchored center-bottom)
-     Canoe   → lower-right (~44% wide, anchored right-bottom)
-   ───────────────────────────────────────────────────────────────────────────── */
-
-/*
- * ── Layer sizing — derived from measured PNG dimensions ───────────────────
- *
- * All 4 PNGs are square. Art fills ~97–100% of image WIDTH but only
- * 59–70% of image HEIGHT. Setting width + height:auto gives us a square
- * image; the offset (left/top/right/bottom) pushes the art into its
- * target quadrant. overflow:hidden on .stickyCanvas clips the bleed.
- *
- * Measured (pixels):          art W%   art H%   art-center Y%
- *   train  380×380             98%      70%       49%
- *   plane  427×427             97%      69%       48%
- *   school 358×358             99.7%    59%       43%
- *   canoe  342×342             99.7%    67%       48.5%
- *
- * Target art zones on 1440×810 canvas:
- *   train  → x 0–43vw,    y 5–64vh   → width:48vw  left:-4vw   top:-7vh
- *   plane  → x 59–100vw,  y 0–48vh   → width:41vw  right:0     top:-12vh
- *   school → x 29–71vw,   y 40–84vh  → width:42vw  centred     bottom:-5vh
- *   canoe  → x 59–100vw,  y 55–100vh → width:41vw  right:0     bottom:-17vh
- * ─────────────────────────────────────────────────────────────────────────
- */
-
 .artLayer {
   position: absolute;
   display: block;
-  opacity: 0;          /* GSAP animates to 1 */
-  height: auto;        /* square images → height = width automatically */
+  height: auto;
   pointer-events: none;
   user-select: none;
+  opacity: 0; /* GSAP takes over */
 }
 
-/* ── Train — upper-left quadrant ── */
-.layerTrain {
-  width: 34vw;
-  left: -1vw;
-  top: -6vh;
-  z-index: 1;
-}
-
-/* ── Plane — upper-right quadrant ── */
-.layerPlane {
-  width: 33vw;
-  right: 0;
-  top: -3vh;
-  z-index: 2;
-}
-
-/* ── Canoe — lower-right quadrant ── */
-.layerCanoe {
-  width: 28vw;
-  right: 0;
-  bottom: -11vh;
-  z-index: 3;
-}
-
-/* ── School — near-centre, raised so buggy peeks below the base ──
-   Sits above all other layers (z-index: 5). */
-.layerSchool {
-  width: 38vw;
-  left: 30vw;
-  bottom: 12vh;
-  z-index: 5;
-}
-
-/* ── Model T — lower-left quadrant ── */
-.layerModelT {
-  width: 27vw;
-  left: -1vw;
-  bottom: -11vh;
-  z-index: 3;
-}
-
-/* ── Buggy — sits under school, peeks below its base ──
-   left: 26vw aligns it under the school (starts at 30vw) so
-   it doesn't bleed into the transparent side of the school PNG. */
-.layerBuggy {
-  width: 23vw;
-  left: 26vw;
-  bottom: 2vh;
-  z-index: 4;
-  mix-blend-mode: multiply;
-}
+.layerTrain  { width: 34vw; left: -1vw; top: -6vh;    z-index: 1; }
+.layerPlane  { width: 33vw; right: 0;   top: -3vh;    z-index: 2; }
+.layerCanoe  { width: 28vw; right: 0;   bottom: -11vh; z-index: 3; }
+.layerModelT { width: 27vw; left: -1vw; bottom: -11vh; z-index: 3; }
+.layerBuggy  { width: 23vw; left: 26vw; bottom: 2vh;  z-index: 4; mix-blend-mode: multiply; }
+.layerSchool { width: 38vw; left: 30vw; bottom: 12vh; z-index: 5; }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   NARRATION CAPTIONS
-   Each starts opacity:0; GSAP fades in then out.
+   TEXT PANELS (Scene 1)
+   Centred on the canvas — GSAP fades in then out.
+   White background also fades with the panel (same element).
    ───────────────────────────────────────────────────────────────────────────── */
-.caption {
+.textPanel {
   position: absolute;
-  z-index: 30;
-  pointer-events: none;
-  max-width: 380px;
-  opacity: 0; /* GSAP controls */
-}
-
-/* Positions */
-.captionCenter {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  text-align: center;
-  max-width: 500px;
-}
-.captionBottomRight {
-  bottom: clamp(48px, 8vh, 90px);
-  right: clamp(16px, 5vw, 80px);
-  text-align: right;
-}
-.captionUpperLeft {
-  top: clamp(48px, 10vh, 100px);
-  left: clamp(16px, 5vw, 80px);
-  text-align: left;
-}
-.captionUpperRight {
-  top: clamp(48px, 10vh, 100px);
-  right: clamp(16px, 5vw, 80px);
-  text-align: right;
-}
-.captionBottom {
-  bottom: clamp(16px, 4vh, 48px);
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-}
-.captionUpperCenter {
-  top: clamp(16px, 14vh, 110px);
-  left: 50%;
-  transform: translateX(-50%);
+  z-index: 30;
+  width: min(600px, 88vw);
+  padding: clamp(28px, 5vh, 52px) clamp(24px, 5vw, 52px);
+  opacity: 0; /* GSAP controls */
+  pointer-events: none; /* let scroll events pass through */
   text-align: center;
 }
 
-/* Text style */
-.captionQuote {
-  display: block;
+.panelEyebrow {
+  margin: 0 0 10px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: #9c0000;
+}
+
+.panelTitle {
+  margin: 0 0 18px;
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.8rem, 4.5vw, 3rem);
+  font-weight: 700;
+  color: #1a0f0a;
+  line-height: 1.15;
+}
+
+.panelRule {
+  width: 40px;
+  height: 3px;
+  background: #9c0000;
+  border-radius: 2px;
+  margin: 0 auto 22px;
+}
+
+.panelQuote {
+  margin: 0;
+  padding: 0;
+  border: none;
   font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
-  font-size: clamp(1.5rem, 4vw, 2.6rem);
+  font-size: clamp(1.3rem, 3.2vw, 2rem);
+  font-style: italic;
+  font-weight: 400;
+  color: #1a0f0a;
+  line-height: 1.35;
+}
+
+.panelBody {
+  margin: 0;
+  font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+  font-size: clamp(0.95rem, 1.8vw, 1.15rem);
   font-weight: 400;
   font-style: italic;
-  color: #1a0f0a;
-  line-height: 1.25;
-  text-shadow: 0 2px 12px rgba(253,251,248,0.9);
-}
-
-.captionLine {
-  display: block;
-  font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
-  font-size: clamp(1.1rem, 2.8vw, 1.9rem);
-  font-weight: 400;
-  font-style: italic;
-  color: #1a0f0a;
-  line-height: 1.3;
-  text-shadow: 0 1px 8px rgba(253,251,248,0.95);
-}
-
-/* Wider container for multi-sentence narrative captions */
-.captionNarrative {
-  max-width: 680px;
-}
-.captionNarrative .captionLine {
-  font-size: clamp(0.88rem, 1.8vw, 1.3rem);
-  line-height: 1.55;
-  margin-bottom: 0.4em;
-}
-.captionNarrative .captionLine:last-child {
-  margin-bottom: 0;
+  color: #3d2b27;
+  line-height: 1.82;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   SCENE TITLE
+   SCENE TITLE — appears after all art is revealed
    ───────────────────────────────────────────────────────────────────────────── */
 .sceneTitle {
   position: absolute;
@@ -556,55 +294,44 @@
   font-family: 'Dancing Script', cursive;
   font-size: clamp(1.6rem, 3.6vw, 2.8rem);
   font-weight: 700;
-  font-style: normal;
-  text-transform: none;
-  letter-spacing: 0.01em;
   color: #1a0f0a;
   text-align: center;
-  opacity: 0; /* GSAP animates in */
-  text-shadow: 0 1px 8px rgba(253,251,248,0.9);
+  opacity: 0; /* GSAP controls */
+  text-shadow: 0 1px 8px rgba(253, 251, 248, 0.9);
+  pointer-events: none;
 }
 
-
 /* ─────────────────────────────────────────────────────────────────────────────
-   ARTIST CREDIT — signature shell, bottom-left of canvas
-   Appears at beat 6, fades out after scene 3.
-   The dashed frame is a placeholder for the actual Dr. Shirley Horn
-   signature image when it becomes available.
+   ARTIST CREDIT — bottom-left of canvas
    ───────────────────────────────────────────────────────────────────────────── */
 .artistCredit {
   position: absolute;
   bottom: clamp(14px, 2.5vh, 28px);
   left: clamp(14px, 3vw, 40px);
   z-index: 50;
-  opacity: 0; /* GSAP fades in at beat 6, out after scene 3 */
+  opacity: 0; /* GSAP controls */
 }
 
-/* Card shell */
 .signatureShell {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 5px;
   padding: 10px 16px 10px 12px;
-  background: rgba(253,251,248,0.82);
+  background: rgba(253, 251, 248, 0.88);
   backdrop-filter: blur(6px);
-  border-left: 2.5px solid rgba(156,0,0,0.5);
+  border-left: 2.5px solid rgba(156, 0, 0, 0.5);
   border-radius: 0 5px 5px 0;
-  box-shadow: 0 2px 12px rgba(26,17,13,0.1);
+  box-shadow: 0 2px 12px rgba(26, 17, 13, 0.1);
 }
 
-/* Real signature image */
 .signatureImg {
   display: block;
-  width: 148px;
+  width: 130px;
   height: auto;
-  /* Signature PNGs are typically white/light — mix-blend-mode darkens it
-     so it reads on the frosted-glass background */
   mix-blend-mode: multiply;
 }
 
-/* "— Dr. Shirley Horn —" */
 .signatureName {
   margin: 0;
   font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
@@ -612,11 +339,9 @@
   font-weight: 400;
   font-style: italic;
   color: #1a0f0a;
-  line-height: 1.2;
   letter-spacing: 0.02em;
 }
 
-/* "Artist & Elder" */
 .signatureRole {
   margin: 0;
   font-family: 'Montserrat', sans-serif;
@@ -624,18 +349,13 @@
   font-weight: 600;
   letter-spacing: 0.11em;
   text-transform: uppercase;
-  color: rgba(27,28,28,0.45);
+  color: rgba(27, 28, 28, 0.45);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   HOTSPOT DOTS — flashlight / proximity effect
-   Default state: barely visible (like marks on the canvas).
-   JS sets --spotlight (0 → 1) based on mouse distance.
-   At spotlight=1 the dot is fully lit; at 0 it fades to near-invisible.
-   No "+" icon — just a clean dot with a pulse ring.
+   HOTSPOT DOTS (Scene 1)
    ───────────────────────────────────────────────────────────────────────────── */
 .hotspot {
-  --spotlight: 0;
   position: absolute;
   z-index: 60;
   width: 20px;
@@ -646,16 +366,16 @@
   border-radius: 50%;
   cursor: pointer;
   padding: 0;
-  /* Flashlight-driven visibility: faint at rest → fully lit when near */
-  opacity: calc(0.28 + var(--spotlight) * 0.72);
-  /* Slight scale-up as the spotlight hits */
-  scale: calc(0.80 + var(--spotlight) * 0.20);
-  transition:
-    opacity 0.1s linear,
-    scale 0.1s linear;
+  opacity: 0;
+  animation: hotspotAppear 0.6s ease forwards;
+  transition: scale 0.12s linear;
+}
+.hotspot:hover { scale: 1.2; }
+@keyframes hotspotAppear {
+  from { opacity: 0; }
+  to   { opacity: 0.85; }
 }
 
-/* Subtle pulse ring — inherits parent opacity so it follows the flashlight */
 .hotspotRing {
   position: absolute;
   inset: -7px;
@@ -669,14 +389,6 @@
   100% { transform: scale(1.85); opacity: 0; }
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   HOTSPOT INLINE CALLOUT
-   Small card that appears beside the dot on hover — no overlay, no backdrop.
-   Lives inside the <button> so the mouse leaving the dot to read the text
-   doesn't close it (the callout is a descendant of the button).
-   ───────────────────────────────────────────────────────────────────────────── */
-
-/* Shared base */
 .hotspotCallout,
 .hotspotCalloutLeft {
   position: absolute;
@@ -687,26 +399,17 @@
   background: #ffffff;
   border-radius: 7px;
   padding: 14px 16px;
-  box-shadow:
-    0 6px 28px rgba(26,17,13,0.18),
-    0 1px 5px  rgba(26,17,13,0.08);
-  /* Allow the cursor to interact so hover on the card doesn't close it */
+  box-shadow: 0 6px 28px rgba(26, 17, 13, 0.18), 0 1px 5px rgba(26, 17, 13, 0.08);
   pointer-events: auto;
   text-align: left;
-  /* Small entrance animation */
   animation: calloutIn 0.15s ease;
 }
 @keyframes calloutIn {
   from { opacity: 0; transform: translateY(-50%) scale(0.97); }
-  to   { opacity: 1; transform: translateY(-50%) scale(1);    }
+  to   { opacity: 1; transform: translateY(-50%) scale(1); }
 }
-
-/* Callout to the RIGHT of the dot (x ≤ 55%) */
-.hotspotCallout {
-  left: calc(100% + 14px);
-}
-/* Arrow pointing left toward the dot */
-.hotspotCallout::before {
+.hotspotCallout          { left: calc(100% + 14px); }
+.hotspotCallout::before  {
   content: '';
   position: absolute;
   right: 100%;
@@ -715,12 +418,7 @@
   border: 7px solid transparent;
   border-right-color: #ffffff;
 }
-
-/* Callout to the LEFT of the dot (x > 55%) */
-.hotspotCalloutLeft {
-  right: calc(100% + 14px);
-}
-/* Arrow pointing right toward the dot */
+.hotspotCalloutLeft         { right: calc(100% + 14px); }
 .hotspotCalloutLeft::before {
   content: '';
   position: absolute;
@@ -731,7 +429,6 @@
   border-left-color: #ffffff;
 }
 
-/* Callout title */
 .hotspotCalloutTitle {
   display: block;
   font-family: 'Montserrat', sans-serif;
@@ -742,7 +439,6 @@
   letter-spacing: 0.02em;
 }
 
-/* Callout body text */
 .hotspotCalloutBody {
   margin: 0;
   font-family: 'Montserrat', sans-serif;
@@ -753,10 +449,126 @@
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   ABOUT THE ARTIST — two-column layout with portrait photo
+   SCENES 2 & 3 — narrative text sections
+   ───────────────────────────────────────────────────────────────────────────── */
+.narrativeSection {
+  background: #ffffff;
+  padding: clamp(64px, 10vw, 120px) clamp(20px, 6vw, 80px);
+}
+
+.narrativeSectionAlt {
+  background: #faf8f5;
+}
+
+.narrativeInner {
+  max-width: 740px;
+  margin: 0 auto;
+}
+
+.narrativeEyebrow {
+  margin: 0 0 12px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: #9c0000;
+}
+
+.narrativeTitle {
+  margin: 0 0 20px;
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  color: #1a0f0a;
+  line-height: 1.15;
+}
+
+.narrativeRule {
+  width: 48px;
+  height: 3px;
+  background: #9c0000;
+  border-radius: 2px;
+  margin: 0 0 36px;
+}
+
+.narrativePara {
+  margin: 0 0 22px;
+  font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  font-weight: 400;
+  color: #3d2b27;
+  line-height: 1.82;
+}
+.narrativePara:last-child { margin-bottom: 0; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SCENES 2 & 3 — artwork reveal
+   ───────────────────────────────────────────────────────────────────────────── */
+.artworkSection {
+  background: #fdfbf8;
+  padding: clamp(40px, 6vh, 72px) 0 0;
+}
+
+.artworkSectionAlt {
+  background: #f5f0e8;
+}
+
+.scene23Canvas {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 60px);
+  box-sizing: border-box;
+}
+
+.sceneFullImg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 78vh;
+  object-fit: contain;
+  object-position: center;
+  opacity: 0;
+  transform: scale(0.98) translateY(16px);
+  transition: opacity 1.1s ease, transform 1.1s ease;
+}
+
+.artworkVisible .sceneFullImg {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.artworkMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: clamp(20px, 3vh, 36px) clamp(20px, 5vw, 72px);
+  border-top: 1px solid rgba(156, 0, 0, 0.12);
+  margin-top: clamp(20px, 3vh, 36px);
+}
+
+.artworkTitle {
+  margin: 0;
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  font-weight: 700;
+  color: #1a0f0a;
+}
+
+.artworkCredit {
+  font-family: 'Iowan Old Style', serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  color: rgba(26, 15, 10, 0.55);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ABOUT THE ARTIST
    ───────────────────────────────────────────────────────────────────────────── */
 .exit {
-  background: #f0ede8; /* warm light gray */
+  background: #f0ede8;
   padding: 100px clamp(20px, 6vw, 120px);
 }
 
@@ -769,10 +581,7 @@
   align-items: center;
 }
 
-/* Portrait */
-.exitPortrait {
-  flex-shrink: 0;
-}
+.exitPortrait { flex-shrink: 0; }
 .exitPortraitImg {
   display: block;
   width: 100%;
@@ -780,12 +589,9 @@
   object-fit: cover;
   object-position: center top;
   border-radius: 4px;
-  box-shadow:
-    0 0 0 1px rgba(0,0,0,0.06),
-    0 12px 40px rgba(0,0,0,0.18);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 12px 40px rgba(0, 0, 0, 0.18);
 }
 
-/* Text side */
 .exitContent {
   display: flex;
   flex-direction: column;
@@ -810,7 +616,6 @@
   line-height: 1.1;
 }
 
-/* Red accent rule — sits directly below the name */
 .exitRule {
   width: 48px;
   height: 3px;
@@ -822,7 +627,6 @@
 .exitBody {
   margin: 0 0 40px;
   font-size: 1rem;
-  font-weight: 400;
   color: #5d3f3a;
   line-height: 1.78;
 }
@@ -834,7 +638,6 @@
   flex-wrap: wrap;
 }
 
-/* CTA buttons — "darker shade of white": warm parchment / cream */
 .exitPrimary {
   display: inline-flex;
   align-items: center;
@@ -843,7 +646,7 @@
   border-radius: 4px;
   background: #ddd7cc;
   color: #1a0f0a;
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   font-family: 'Montserrat', sans-serif;
   font-size: 0.875rem;
   font-weight: 700;
@@ -851,10 +654,7 @@
   text-decoration: none;
   transition: background 0.18s ease, transform 0.18s ease;
 }
-.exitPrimary:hover {
-  background: #c9c3b8;
-  transform: translateY(-1px);
-}
+.exitPrimary:hover { background: #c9c3b8; transform: translateY(-1px); }
 
 .exitSecondary {
   display: inline-flex;
@@ -864,7 +664,7 @@
   border-radius: 4px;
   background: #c5bfb4;
   color: #1a0f0a;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   font-family: 'Montserrat', sans-serif;
   font-size: 0.875rem;
   font-weight: 700;
@@ -875,85 +675,52 @@
 .exitSecondary:hover { background: #b5afa4; }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   RESPONSIVE
+   RESPONSIVE — art layer scaling
    ───────────────────────────────────────────────────────────────────────────── */
-/*
- * ── Responsive layer scaling ───────────────────────────────────────────────
- * As viewport narrows, vw-based widths shrink too. We compensate by
- * increasing width values so the art stays prominent.
- * Offsets scale proportionally with the same vw/vh units.
- *
- * Breakpoint logic (same quadrant positions, larger widths):
- *   ≥1025px  → base values above (48/41/42/41 vw)
- *   768–1024 → ×1.15 multiplier (55/47/48/47 vw)
- *   480–767  → ×1.38 multiplier (66/57/58/57 vw)
- *   <480     → ×1.67 multiplier (80/69/70/69 vw)
- * ─────────────────────────────────────────────────────────────────────────
- */
-
-/* ── Tablet landscape / small laptop (768–1024px) — base ×1.15 ── */
 @media (max-width: 1024px) {
-  .layerTrain  { width: 39vw; left: -1vw;  top: -6vh;    }
-  .layerPlane  { width: 38vw; right: 0;    top: -3vh;    }
+  .layerTrain  { width: 39vw; left: -1vw;  top: -6vh; }
+  .layerPlane  { width: 38vw; right: 0;    top: -3vh; }
   .layerSchool { width: 44vw; left: 28vw;  bottom: 12vh; }
-  .layerCanoe  { width: 32vw; right: 0;    bottom: -11vh;}
-  .layerModelT { width: 31vw; left: -1vw;  bottom: -11vh;}
-  .layerBuggy  { width: 26vw; left: 28vw;  bottom: 2vh;  }
+  .layerCanoe  { width: 32vw; right: 0;    bottom: -11vh; }
+  .layerModelT { width: 31vw; left: -1vw;  bottom: -11vh; }
+  .layerBuggy  { width: 26vw; left: 28vw;  bottom: 2vh; }
 }
 
-/* ── Tablet portrait / large mobile (480–767px) — base ×1.38 ── */
 @media (max-width: 767px) {
-  .sceneTitle {
-    font-size: clamp(1.3rem, 4.5vw, 2rem);
-  }
-  .captionLine, .captionQuote { font-size: clamp(0.95rem, 3.5vw, 1.3rem); }
-  .captionBottom { bottom: 6vh; }
-
-  .layerTrain  { width: 47vw; left: -2vw;  top: -5vh;    }
-  .layerPlane  { width: 46vw; right: 0;    top: -2vh;    }
+  .layerTrain  { width: 47vw; left: -2vw;  top: -5vh; }
+  .layerPlane  { width: 46vw; right: 0;    top: -2vh; }
   .layerSchool { width: 53vw; left: 22vw;  bottom: 10vh; }
-  .layerCanoe  { width: 39vw; right: 0;    bottom: -10vh;}
-  .layerModelT { width: 37vw; left: -2vw;  bottom: -10vh;}
-  .layerBuggy  { width: 32vw; left: 30vw;  bottom: 2vh;  }
+  .layerCanoe  { width: 39vw; right: 0;    bottom: -10vh; }
+  .layerModelT { width: 37vw; left: -2vw;  bottom: -10vh; }
+  .layerBuggy  { width: 32vw; left: 30vw;  bottom: 2vh; }
+
+  .textPanel { padding: clamp(20px, 4vh, 36px) clamp(18px, 4vw, 36px); }
+  .artworkMeta { flex-direction: column; align-items: flex-start; }
 }
 
-/* ── Small mobile (<480px) — base ×1.67 ── */
 @media (max-width: 479px) {
   .intro { min-height: 90svh; }
-  .hotspot { width: 24px; height: 24px; }
-  .hotspotCallout,
-  .hotspotCalloutLeft { width: 180px; font-size: 0.72rem; }
-  .exit { padding-top: 72px; padding-bottom: 72px; }
+  .waveSvg { height: 60px; }
 
-  .layerTrain  { width: 57vw; left: -2vw;  top: -4vh;    }
-  .layerPlane  { width: 55vw; right: 0;    top: -2vh;    }
-  .layerSchool { width: 64vw; left: 18vw;  bottom: 8vh;  }
+  .layerTrain  { width: 57vw; left: -2vw;  top: -4vh; }
+  .layerPlane  { width: 55vw; right: 0;    top: -2vh; }
+  .layerSchool { width: 64vw; left: 18vw;  bottom: 8vh; }
   .layerCanoe  { width: 47vw; right: 0;    bottom: -9vh; }
   .layerModelT { width: 45vw; left: -2vw;  bottom: -9vh; }
-  .layerBuggy  { width: 38vw; left: 36vw;  bottom: 2vh;  }
+  .layerBuggy  { width: 38vw; left: 36vw;  bottom: 2vh; }
+
+  .hotspot { width: 24px; height: 24px; }
+  .hotspotCallout,
+  .hotspotCalloutLeft { width: 180px; }
 }
 
-/* ── Exit section — stack on smaller screens ── */
 @media (max-width: 840px) {
-  .exitInner {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    text-align: center;
-  }
-  .exitContent {
-    align-items: center;
-  }
-  .exitPortraitImg {
-    width: 220px;
-    aspect-ratio: 3 / 4;
-    margin: 0 auto;
-  }
-  .exitActions {
-    justify-content: center;
-  }
+  .exitInner { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+  .exitContent { align-items: center; }
+  .exitPortraitImg { width: 220px; margin: 0 auto; }
+  .exitActions { justify-content: center; }
 }
-
 @media (max-width: 479px) {
   .exitPortraitImg { width: 180px; }
-  .waveSvg { height: 60px; }
+  .exit { padding-top: 72px; padding-bottom: 72px; }
 }
