@@ -371,6 +371,10 @@
     }
   },
   "pressArchivePage": {
+    "seo": {
+      "title": "Press Archive | Children of Shingwauk Alumni Association",
+      "description": "Browse archived press coverage, source links, and downloadable media files from the Children of Shingwauk Alumni Association."
+    },
     "hero": {
       "eyebrow": "Press archive",
       "title": "Press Archive",

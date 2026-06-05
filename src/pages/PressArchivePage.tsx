@@ -11,6 +11,7 @@ import {
   type PressDownloadItem,
   type PressResolvedPreview,
 } from '../lib/pressMedia'
+import { usePageSeo } from '../lib/usePageSeo'
 import { TextHero } from '../components/TextHero'
 import styles from './PressArchivePage.module.css'
 
@@ -25,6 +26,8 @@ export function PressArchivePage() {
   const [customYear, setCustomYear] = useState('')
 
   const locale = i18n.resolvedLanguage ?? i18n.language
+  const seoTitle = t('pressArchivePage.seo.title')
+  const seoDescription = t('pressArchivePage.seo.description')
 
   useEffect(() => {
     let ignore = false
@@ -104,6 +107,13 @@ export function PressArchivePage() {
       label: t('pressArchivePage.hero.title'),
     },
   ])
+
+  usePageSeo({
+    title: seoTitle,
+    description: seoDescription,
+    canonicalPath: '/news-media/press-archive',
+    lang: locale,
+  })
 
   return (
     <div className={styles.page}>
@@ -263,7 +273,6 @@ function PressArchiveCard({
             className={styles.cardMain}
             target="_blank"
             rel="noreferrer"
-            aria-label={`${entry.title} ${linkLabel}`}
           >
             <PressPreviewSurface entry={entry} preview={preview} />
             <div className={styles.cardContent}>
@@ -289,7 +298,6 @@ function PressArchiveCard({
             className={styles.cardMain}
             target="_blank"
             rel="noreferrer"
-            aria-label={`${entry.title} ${linkLabel}`}
           >
             <PressPreviewSurface entry={entry} preview={preview} />
             <div className={styles.cardContent}>
@@ -358,7 +366,15 @@ function PressPreviewSurface({
   return (
     <div className={styles.previewSurface} aria-hidden="true">
       {preview.previewKind === 'image' && preview.previewUrl ? (
-        <img src={preview.previewUrl} alt={entry.title} className={styles.previewImage} />
+        <img
+          src={preview.previewUrl}
+          alt={entry.title}
+          className={styles.previewImage}
+          loading="lazy"
+          decoding="async"
+          fetchPriority="low"
+          sizes="(max-width: 760px) 100vw, 260px"
+        />
       ) : null}
 
       {preview.previewKind === 'placeholder' ? (

@@ -126,30 +126,46 @@ describe('PressArchivePage', () => {
     await i18n.changeLanguage('en')
   })
 
-  it('renders external and internal archive entries with fixed previews and generic download actions', async () => {
+  it('renders external and internal archive entries with fixed previews, stable seo, and generic download actions', async () => {
     listPublishedPressEntries.mockResolvedValue(sampleEntries)
     downloadPublicFile.mockResolvedValue(undefined)
 
-    renderPage()
+    const { container } = renderPage()
 
     expect(await screen.findByRole('heading', { name: /press archive/i })).toBeDefined()
     expect(
       screen.getByText(/explore public coverage, archived articles, and press materials/i),
     ).toBeDefined()
+    expect(document.title).toBe('Press Archive | Children of Shingwauk Alumni Association')
+    expect(
+      document.head.querySelector('meta[name="description"]')?.getAttribute('content'),
+    ).toBe(
+      'Browse archived press coverage, source links, and downloadable media files from the Children of Shingwauk Alumni Association.',
+    )
+    expect(
+      document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'),
+    ).toBe(`${window.location.origin}/news-media/press-archive`)
     expect(screen.queryByTitle(/preview for archived internal release/i)).toBeNull()
     expect(screen.getAllByText(/archives? de presse|press archive/i).length).toBeGreaterThan(0)
 
     const externalLink = screen.getByRole('link', {
-      name: /community coverage feature open source/i,
+      name: /community coverage feature/i,
     })
     expect(externalLink.getAttribute('href')).toBe('https://example.com/coverage-story')
     expect(externalLink.getAttribute('target')).toBe('_blank')
+    expect(externalLink.getAttribute('aria-label')).toBeNull()
 
     const internalLink = screen.getByRole('link', {
-      name: /archived internal release read archive/i,
+      name: /archived internal release/i,
     })
     expect(internalLink.getAttribute('href')).toBe('/news-media/press-archive/92')
     expect(internalLink.getAttribute('target')).toBe('_blank')
+    expect(internalLink.getAttribute('aria-label')).toBeNull()
+
+    const previewImage = container.querySelector('img[alt="Community coverage feature"]')
+    expect(previewImage?.getAttribute('loading')).toBe('lazy')
+    expect(previewImage?.getAttribute('fetchpriority')).toBe('low')
+    expect(previewImage?.getAttribute('sizes')).toBe('(max-width: 760px) 100vw, 260px')
 
     fireEvent.click(screen.getByRole('button', { name: /download document archive pdf/i }))
 
