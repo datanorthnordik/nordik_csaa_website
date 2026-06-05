@@ -146,6 +146,8 @@ describe('GatheringsPage', () => {
     const upcomingEvents = Array.from({ length: 12 }, (_, index) =>
       createEvent(index + 1, `Upcoming Event ${index + 1}`),
     )
+    const upcomingPageOne = upcomingEvents.slice(0, 10)
+    const upcomingPageTwo = upcomingEvents.slice(10)
     const archivedPageOne = Array.from({ length: 10 }, (_, index) =>
       createEvent(index + 101, `Archived Event ${index + 1}`),
     )
@@ -153,13 +155,23 @@ describe('GatheringsPage', () => {
       createEvent(index + 111, `Archived Event ${index + 11}`),
     )
 
-    listUpcomingEvents.mockResolvedValue(
-      createListResponse(upcomingEvents, {
+    listUpcomingEvents.mockImplementation(async (_referenceDate, page = 1) => {
+      if (page === 1) {
+        return createListResponse(upcomingPageOne, {
+          page: 1,
+          totalItems: 12,
+          totalPages: 2,
+          hasNext: true,
+        })
+      }
+
+      return createListResponse(upcomingPageTwo, {
+        page: 2,
         totalItems: 12,
         totalPages: 2,
-        hasNext: true,
-      }),
-    )
+        hasPrev: true,
+      })
+    })
     listArchivedEvents.mockImplementation(async (_referenceDate, page = 1) => {
       if (page === 1) {
         return createListResponse(archivedPageOne, {
@@ -191,12 +203,13 @@ describe('GatheringsPage', () => {
         within(archiveSection).getAllByRole('link', { name: /view event summary/i }),
       ).toHaveLength(10)
     })
-    expect(listUpcomingEvents).toHaveBeenCalledWith('2026-09-10')
+    expect(listUpcomingEvents).toHaveBeenCalledWith('2026-09-10', 1, 10)
     expect(listArchivedEvents).toHaveBeenCalledWith('2026-09-09', 1, 10)
 
     fireEvent.click(within(upcomingSection).getByRole('button', { name: /show more/i }))
 
     await waitFor(() => {
+      expect(listUpcomingEvents).toHaveBeenLastCalledWith('2026-09-10', 2, 10)
       expect(
         within(upcomingSection).getAllByRole('link', { name: /view event details/i }),
       ).toHaveLength(12)

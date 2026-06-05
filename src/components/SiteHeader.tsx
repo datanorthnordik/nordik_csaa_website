@@ -134,7 +134,16 @@ export function SiteHeader() {
           className={styles.brand}
           aria-label={t('site.header.title')}
         >
-          <img src={WEBSITE_ASSET_URLS.csaaLogo} alt="" className={styles.brandLogo} />
+          <img
+            src={WEBSITE_ASSET_URLS.csaaLogo}
+            alt=""
+            className={styles.brandLogo}
+            width="84"
+            height="84"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+          />
         </Link>
 
         <nav className={styles.nav} aria-label={t('site.nav.ariaLabel')}>
