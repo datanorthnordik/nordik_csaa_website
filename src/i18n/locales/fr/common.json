@@ -170,6 +170,10 @@
     "imageCount": "{{current}} sur {{total}}"
   },
   "newslettersPage": {
+    "seo": {
+      "title": "Bulletins numeriques | Children of Shingwauk Alumni Association",
+      "description": "Parcourez les bulletins numeriques publics de la CSAA, filtrez les editions par annee et ouvrez chaque numero depuis l archive publique."
+    },
     "hero": {
       "eyebrow": "Bulletins numeriques",
       "title": "Bulletins numeriques",
@@ -324,7 +328,12 @@
     }
   },
   "newsMediaPage": {
+    "seo": {
+      "title": "Nouvelles et medias | Children of Shingwauk Alumni Association",
+      "description": "Lisez les bulletins de la CSAA, parcourez la couverture de presse et trouvez les coordonnees medias de la Children of Shingwauk Alumni Association."
+    },
     "hero": {
+      "eyebrow": "Nouvelles et medias",
       "title": "Nouvelles et médias",
       "description": "Restez informé des mises à jour de notre communauté et de la couverture médiatique externe. Découvrez les histoires qui font avancer notre patrimoine."
     },
@@ -346,6 +355,10 @@
     }
   },
   "pressArchivePage": {
+    "seo": {
+      "title": "Archives de presse | Children of Shingwauk Alumni Association",
+      "description": "Parcourez la couverture de presse archivee, les liens source et les fichiers telechargeables de la Children of Shingwauk Alumni Association."
+    },
     "hero": {
       "eyebrow": "Archives de presse",
       "title": "Archives de presse",
