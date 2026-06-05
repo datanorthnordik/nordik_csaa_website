@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type ReactNode,
-} from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -21,11 +15,14 @@ import { LanguageSwitcher } from './LanguageSwitcher'
 import { useNavigationMenu } from './NavigationMenuProvider'
 import styles from './SiteHeader.module.css'
 
+const DESKTOP_MENU_CLOSE_DELAY_MS = 140
+
 export function SiteHeader() {
   const { t } = useTranslation()
   const { pathname } = useLocation()
   const { menu, isLoading } = useNavigationMenu()
   const headerRef = useRef<HTMLElement | null>(null)
+  const desktopCloseTimeoutRef = useRef<number | null>(null)
   const [openDesktopMenuId, setOpenDesktopMenuId] = useState<number | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [expandedMobileItemIds, setExpandedMobileItemIds] = useState<number[]>([])
@@ -35,6 +32,14 @@ export function SiteHeader() {
     setIsMobileMenuOpen(false)
     setExpandedMobileItemIds([])
   }, [pathname])
+
+  useEffect(() => {
+    return () => {
+      if (desktopCloseTimeoutRef.current !== null) {
+        window.clearTimeout(desktopCloseTimeoutRef.current)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (!isMobileMenuOpen) {
@@ -80,8 +85,33 @@ export function SiteHeader() {
     }
   }, [])
 
-  function toggleDesktopMenu(itemId: number) {
-    setOpenDesktopMenuId((current) => (current === itemId ? null : itemId))
+  function openDesktopMenu(itemId: number) {
+    if (desktopCloseTimeoutRef.current !== null) {
+      window.clearTimeout(desktopCloseTimeoutRef.current)
+      desktopCloseTimeoutRef.current = null
+    }
+
+    setOpenDesktopMenuId(itemId)
+  }
+
+  function closeDesktopMenu() {
+    if (desktopCloseTimeoutRef.current !== null) {
+      window.clearTimeout(desktopCloseTimeoutRef.current)
+      desktopCloseTimeoutRef.current = null
+    }
+
+    setOpenDesktopMenuId(null)
+  }
+
+  function scheduleDesktopMenuClose() {
+    if (desktopCloseTimeoutRef.current !== null) {
+      window.clearTimeout(desktopCloseTimeoutRef.current)
+    }
+
+    desktopCloseTimeoutRef.current = window.setTimeout(() => {
+      setOpenDesktopMenuId(null)
+      desktopCloseTimeoutRef.current = null
+    }, DESKTOP_MENU_CLOSE_DELAY_MS)
   }
 
   function toggleMobileMenu() {
@@ -104,7 +134,16 @@ export function SiteHeader() {
           className={styles.brand}
           aria-label={t('site.header.title')}
         >
-          <img src={WEBSITE_ASSET_URLS.csaaLogo} alt="" className={styles.brandLogo} />
+          <img
+            src={WEBSITE_ASSET_URLS.csaaLogo}
+            alt=""
+            className={styles.brandLogo}
+            width="84"
+            height="84"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+          />
         </Link>
 
         <nav className={styles.nav} aria-label={t('site.nav.ariaLabel')}>
@@ -122,8 +161,9 @@ export function SiteHeader() {
                 item={item}
                 pathname={pathname}
                 isOpen={openDesktopMenuId === item.id}
-                onToggle={() => toggleDesktopMenu(item.id)}
-                onClose={() => setOpenDesktopMenuId(null)}
+                onOpen={() => openDesktopMenu(item.id)}
+                onClose={closeDesktopMenu}
+                onScheduleClose={scheduleDesktopMenuClose}
               />
             ))
           )}
@@ -170,37 +210,53 @@ function DesktopNavigationItem({
   item,
   pathname,
   isOpen,
+  onOpen,
   onClose,
-  onToggle,
+  onScheduleClose,
 }: {
   item: MenuItem
   pathname: string
   isOpen: boolean
+  onOpen: () => void
   onClose: () => void
-  onToggle: () => void
+  onScheduleClose: () => void
 }) {
-  const { t } = useTranslation()
   const active = isMenuItemActive(item, pathname)
   const itemHasChildren = hasMenuChildren(item)
 
   return (
-    <div className={styles.navItemGroup}>
+    <div
+      className={styles.navItemGroup}
+      onMouseEnter={itemHasChildren ? onOpen : undefined}
+      onMouseLeave={itemHasChildren ? onScheduleClose : undefined}
+      onFocus={itemHasChildren ? onOpen : undefined}
+      onBlur={
+        itemHasChildren
+          ? (event) => {
+              if (event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                return
+              }
+
+              onClose()
+            }
+          : undefined
+      }
+    >
       <div className={styles.navItemShell}>
         <MenuItemLink
           item={item}
-          className={`${styles.navLink} ${active ? styles.navLinkActive : ''}`}
+          className={`${styles.navLink} ${active ? styles.navLinkActive : ''} ${
+            isOpen ? styles.navLinkOpen : ''
+          }`}
           ariaCurrent={active ? 'page' : undefined}
+          ariaExpanded={itemHasChildren ? isOpen : undefined}
+          ariaHaspopup={itemHasChildren ? 'menu' : undefined}
+          onNavigate={onClose}
         />
         {itemHasChildren ? (
-          <button
-            type="button"
-            className={`${styles.dropdownToggle} ${active ? styles.dropdownToggleActive : ''}`}
-            aria-expanded={isOpen}
-            aria-label={t('site.nav.toggleSubmenu', { label: item.label })}
-            onClick={onToggle}
-          >
-            <ChevronIcon className={isOpen ? styles.chevronOpen : ''} />
-          </button>
+          <span className={`${styles.navChevron} ${isOpen ? styles.navChevronOpen : ''}`} aria-hidden="true">
+            <ChevronIcon />
+          </span>
         ) : null}
       </div>
 
@@ -217,50 +273,104 @@ function DesktopSubmenuList({
   items,
   pathname,
   onNavigate,
-  depth = 0,
 }: {
   items: MenuItem[]
   pathname: string
   onNavigate: () => void
-  depth?: number
 }) {
   return (
     <ul className={styles.dropdownList}>
-      {items.map((item) => {
-        const active = isMenuItemActive(item, pathname)
-        const itemHasChildren = hasMenuChildren(item)
-
-        return (
-          <li key={item.id} className={styles.dropdownItem}>
-            <MenuItemLink
-              item={item}
-              className={`${styles.dropdownLink} ${active ? styles.dropdownLinkActive : ''}`}
-              ariaCurrent={active ? 'page' : undefined}
-              style={
-                {
-                  '--submenu-depth': depth,
-                } as CSSProperties
-              }
-              onNavigate={onNavigate}
-            >
-              <span>{item.label}</span>
-              {itemHasChildren ? <ChevronIcon className={styles.dropdownChevron} /> : null}
-            </MenuItemLink>
-
-            {itemHasChildren ? (
-              <div className={styles.dropdownNested}>
-                <DesktopSubmenuList
-                  items={item.children}
-                  pathname={pathname}
-                  onNavigate={onNavigate}
-                  depth={depth + 1}
-                />
-              </div>
-            ) : null}
-          </li>
-        )
-      })}
+      {items.map((item) => (
+        <DesktopSubmenuItem
+          key={item.id}
+          item={item}
+          pathname={pathname}
+          onNavigate={onNavigate}
+        />
+      ))}
     </ul>
+  )
+}
+
+function DesktopSubmenuItem({
+  item,
+  pathname,
+  onNavigate,
+}: {
+  item: MenuItem
+  pathname: string
+  onNavigate: () => void
+}) {
+  const active = isMenuItemActive(item, pathname)
+  const itemHasChildren = hasMenuChildren(item)
+  const nestedCloseTimeoutRef = useRef<number | null>(null)
+  const [isNestedOpen, setIsNestedOpen] = useState(false)
+  const showNested = itemHasChildren && (isNestedOpen || active)
+
+  useEffect(() => {
+    return () => {
+      if (nestedCloseTimeoutRef.current !== null) {
+        window.clearTimeout(nestedCloseTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  function openNestedMenu() {
+    if (nestedCloseTimeoutRef.current !== null) {
+      window.clearTimeout(nestedCloseTimeoutRef.current)
+      nestedCloseTimeoutRef.current = null
+    }
+
+    setIsNestedOpen(true)
+  }
+
+  function scheduleNestedMenuClose() {
+    if (nestedCloseTimeoutRef.current !== null) {
+      window.clearTimeout(nestedCloseTimeoutRef.current)
+    }
+
+    nestedCloseTimeoutRef.current = window.setTimeout(() => {
+      setIsNestedOpen(false)
+      nestedCloseTimeoutRef.current = null
+    }, DESKTOP_MENU_CLOSE_DELAY_MS)
+  }
+
+  return (
+    <li
+      className={styles.dropdownItem}
+      onMouseEnter={itemHasChildren ? openNestedMenu : undefined}
+      onMouseLeave={itemHasChildren ? scheduleNestedMenuClose : undefined}
+      onFocus={itemHasChildren ? openNestedMenu : undefined}
+      onBlur={
+        itemHasChildren
+          ? (event) => {
+              if (event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                return
+              }
+
+              scheduleNestedMenuClose()
+            }
+          : undefined
+      }
+    >
+      <MenuItemLink
+        item={item}
+        className={`${styles.dropdownLink} ${
+          itemHasChildren ? styles.dropdownLinkParent : ''
+        } ${active ? styles.dropdownLinkActive : ''}`}
+        ariaCurrent={active ? 'page' : undefined}
+        onNavigate={onNavigate}
+      >
+        <span>{item.label}</span>
+        {itemHasChildren ? <ChevronIcon className={styles.dropdownChevron} /> : null}
+      </MenuItemLink>
+
+      {showNested ? (
+        <div className={styles.dropdownNested}>
+          <DesktopSubmenuList items={item.children} pathname={pathname} onNavigate={onNavigate} />
+        </div>
+      ) : null}
+    </li>
   )
 }
 
@@ -337,6 +447,8 @@ function MenuItemLink({
   children,
   style,
   onNavigate,
+  ariaExpanded,
+  ariaHaspopup,
 }: {
   item: MenuItem
   className: string
@@ -344,6 +456,8 @@ function MenuItemLink({
   children?: ReactNode
   style?: CSSProperties
   onNavigate?: () => void
+  ariaExpanded?: boolean
+  ariaHaspopup?: 'menu'
 }) {
   const content = children ?? item.label
   const href = getMenuItemHref(item)
@@ -356,6 +470,8 @@ function MenuItemLink({
         style={style}
         target={item.open_in_new_tab ? '_blank' : undefined}
         rel={item.open_in_new_tab ? 'noreferrer' : undefined}
+        aria-expanded={ariaExpanded}
+        aria-haspopup={ariaHaspopup}
         onClick={onNavigate}
       >
         {content}
@@ -369,6 +485,8 @@ function MenuItemLink({
       className={className}
       style={style}
       aria-current={ariaCurrent}
+      aria-expanded={ariaExpanded}
+      aria-haspopup={ariaHaspopup}
       onClick={onNavigate}
     >
       {content}
