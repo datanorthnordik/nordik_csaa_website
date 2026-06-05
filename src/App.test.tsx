@@ -1218,6 +1218,15 @@ describe('App', () => {
     expect(
       (await findPrimaryNavigationLink(/news & media/i)).getAttribute('aria-current'),
     ).toBe('page')
+    expect(document.title).toBe('Press Archive | Children of Shingwauk Alumni Association')
+    expect(
+      document.head.querySelector('meta[name="description"]')?.getAttribute('content'),
+    ).toBe(
+      'Browse archived press coverage, source links, and downloadable media files from the Children of Shingwauk Alumni Association.',
+    )
+    expect(
+      document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'),
+    ).toBe(`${window.location.origin}/news-media/press-archive`)
   })
 
   it('renders the press archive detail route and keeps the news menu item active', async () => {
