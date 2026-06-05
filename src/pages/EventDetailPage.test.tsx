@@ -98,6 +98,10 @@ describe('EventDetailPage', () => {
     expect(
       await screen.findByRole('heading', { name: /elders council circle/i }),
     ).toBeDefined()
+    expect(
+      screen.getByRole('link', { name: /open in maps/i }).getAttribute('href'),
+    ).toContain('google.com/maps/search/')
+    expect(screen.queryByTitle(/event location map/i)).toBeNull()
     await waitFor(() => {
       expect(document.title).toBe(
         'Elders Council Circle | Events | Children of Shingwauk Alumni Association',
