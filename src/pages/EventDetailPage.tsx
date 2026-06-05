@@ -252,12 +252,10 @@ export function EventDetailPage() {
 
                 {encodedMapQuery ? (
                   <div className={styles.compactMapBlock}>
-                    <iframe
-                      title={t('eventDetail.mapTitle')}
-                      src={`https://www.google.com/maps?q=${encodedMapQuery}&output=embed`}
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                    />
+                    <div className={styles.compactMapPreview} aria-hidden="true">
+                      <DetailIcon name="map" className={styles.compactMapPreviewIcon} />
+                    </div>
+                    <p className={styles.compactMapLabel}>{t('eventDetail.mapTitle')}</p>
                     <a
                       href={`https://www.google.com/maps/search/?api=1&query=${encodedMapQuery}`}
                       target="_blank"
