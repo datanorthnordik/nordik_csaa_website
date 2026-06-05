@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
@@ -15,7 +15,10 @@ import {
   formatEventTimeRange,
   getRegistrationState,
 } from '../lib/eventsDate'
+import { buildEventListSchema } from '../lib/eventSeo'
 import { isImageMedia, resolveEventMediaUrl } from '../lib/eventMedia'
+import { usePageSeo } from '../lib/usePageSeo'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import { TextHero } from '../components/TextHero'
 import styles from './GatheringsPage.module.css'
 
@@ -41,12 +44,33 @@ export function GatheringsPage() {
   const [archiveReferenceDate] = useState(() => getYesterdayApiDate())
   const hasMoreUpcomingEvents = upcomingPagination?.has_next ?? false
   const hasMoreArchivedEvents = archivePagination?.has_next ?? false
+  const seoTitle = t('gatherings.seo.title')
+  const seoDescription = t('gatherings.seo.description')
+  const structuredData = useMemo(
+    () =>
+      buildEventListSchema({
+        title: seoTitle,
+        description: seoDescription,
+        canonicalPath: '/events',
+        events: [...upcomingEvents, ...archivedEvents],
+      }),
+    [archivedEvents, seoDescription, seoTitle, upcomingEvents],
+  )
 
   usePageBreadcrumbs([
     {
       label: t('site.nav.gatherings'),
     },
   ])
+
+  usePageSeo({
+    title: seoTitle,
+    description: seoDescription,
+    canonicalPath: '/events',
+    image: WEBSITE_ASSET_URLS.gatheringsHeroStage,
+    lang: locale,
+    jsonLd: structuredData,
+  })
 
   useEffect(() => {
     let ignore = false

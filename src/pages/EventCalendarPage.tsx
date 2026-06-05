@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { eventsApi, type EventDetailResponse } from '../api/eventsApi'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import {
   buildVenueLabel,
   formatEventDateRange,
   formatEventTimeRange,
   isAllDayEventType,
 } from '../lib/eventsDate'
+import { usePageSeo } from '../lib/usePageSeo'
 import styles from './EventCalendarPage.module.css'
 
 type CalendarEntry = {
@@ -32,6 +34,8 @@ const DAY_IN_MS = 24 * 60 * 60 * 1000
 export function EventCalendarPage() {
   const { i18n, t } = useTranslation()
   const locale = i18n.resolvedLanguage ?? i18n.language
+  const seoTitle = t('eventCalendar.seo.title')
+  const seoDescription = t('eventCalendar.seo.description')
   const [monthValue, setMonthValue] = useState(toMonthInputValue(new Date()))
   const [events, setEvents] = useState<EventDetailResponse[]>([])
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set())
@@ -58,6 +62,14 @@ export function EventCalendarPage() {
       label: t('eventCalendar.title'),
     },
   ])
+
+  usePageSeo({
+    title: seoTitle,
+    description: seoDescription,
+    canonicalPath: '/events/calendar',
+    image: WEBSITE_ASSET_URLS.gatheringsHeroStage,
+    lang: locale,
+  })
 
   useEffect(() => {
     let ignore = false

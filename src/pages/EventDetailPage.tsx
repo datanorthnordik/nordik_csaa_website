@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { eventsApi, type EventDetailResponse } from '../api/eventsApi'
@@ -24,6 +24,9 @@ import {
   resolveEventMediaUrl,
 } from '../lib/eventMedia'
 import { downloadPublicFile } from '../lib/fileDownload'
+import { buildEventSchema } from '../lib/eventSeo'
+import { usePageSeo, SITE_NAME } from '../lib/usePageSeo'
+import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import { SharedImageHero } from '../components/SharedImageHero'
 import { TextHero } from '../components/TextHero'
 import styles from './EventDetailPage.module.css'
@@ -38,6 +41,37 @@ export function EventDetailPage() {
   const locale = i18n.resolvedLanguage ?? i18n.language
   const parsedEventId = Number.parseInt(eventId ?? '', 10)
   const invalidEventId = !Number.isFinite(parsedEventId)
+  const displayImageUrl =
+    event?.display_image && isImageMedia(event.display_image)
+      ? resolveEventMediaUrl(event.display_image)
+      : null
+  const seoTitle = invalidEventId
+    ? `${t('site.breadcrumbs.eventDetail')} | ${SITE_NAME}`
+    : event
+      ? `${event.title} | ${t('site.nav.gatherings')} | ${SITE_NAME}`
+      : `${t('eventDetail.loadingTitle')} | ${SITE_NAME}`
+  const seoDescription = event
+    ? getEventSeoDescription(event)
+    : invalidEventId
+      ? t('eventDetail.invalidId')
+      : error ?? t('eventDetail.loadingTitle')
+  const seoCanonicalPath =
+    invalidEventId || error
+      ? '/events'
+      : Number.isFinite(parsedEventId)
+        ? `/events/${parsedEventId}`
+        : '/events'
+  const structuredData = useMemo(
+    () =>
+      event
+        ? buildEventSchema(event, {
+            canonicalPath: `/events/${event.id}`,
+            description: seoDescription,
+            image: displayImageUrl ?? WEBSITE_ASSET_URLS.gatheringsHeroStage,
+          })
+        : undefined,
+    [displayImageUrl, event, seoDescription],
+  )
 
   usePageBreadcrumbs([
     {
@@ -48,6 +82,16 @@ export function EventDetailPage() {
       label: event?.title.trim() || t('site.breadcrumbs.eventDetail'),
     },
   ])
+
+  usePageSeo({
+    title: seoTitle,
+    description: seoDescription,
+    canonicalPath: seoCanonicalPath,
+    image: displayImageUrl ?? WEBSITE_ASSET_URLS.gatheringsHeroStage,
+    lang: locale,
+    noIndex: invalidEventId || Boolean(error),
+    jsonLd: structuredData,
+  })
 
   useEffect(() => {
     if (invalidEventId) {
@@ -132,10 +176,6 @@ export function EventDetailPage() {
       ? addressLines.join(', ')
       : ''
   const encodedMapQuery = mapQuery ? encodeURIComponent(mapQuery) : ''
-  const displayImageUrl =
-    event.display_image && isImageMedia(event.display_image)
-      ? resolveEventMediaUrl(event.display_image)
-      : null
   const teaser = event.teaser.trim()
   const descriptionHtml = event.description_html.trim()
   const attachmentItems: DocumentShowcaseItem[] = event.attachments.map((attachment) => ({
@@ -362,6 +402,14 @@ export function EventDetailPage() {
       </div>
 
     </div>
+  )
+}
+
+function getEventSeoDescription(event: EventDetailResponse) {
+  return (
+    event.teaser.trim() ||
+    event.description_html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() ||
+    event.title.trim()
   )
 }
 
