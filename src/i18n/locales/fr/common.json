@@ -340,7 +340,12 @@
     }
   },
   "newsMediaPage": {
+    "seo": {
+      "title": "Nouvelles et medias | Children of Shingwauk Alumni Association",
+      "description": "Lisez les bulletins de la CSAA, parcourez la couverture de presse et trouvez les coordonnees medias de la Children of Shingwauk Alumni Association."
+    },
     "hero": {
+      "eyebrow": "Nouvelles et medias",
       "title": "Nouvelles et médias",
       "description": "Restez informé des mises à jour de notre communauté et de la couverture médiatique externe. Découvrez les histoires qui font avancer notre patrimoine."
     },

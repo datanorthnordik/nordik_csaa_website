@@ -1107,6 +1107,38 @@ describe('App', () => {
     expect(heroHeading.compareDocumentPosition(bodyText) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
+  it('renders the news media landing route with stable seo metadata', async () => {
+    window.history.pushState({}, '', '/news-media')
+
+    renderWithProviders(<App />)
+
+    expect(
+      await screen.findByRole('heading', {
+        name: /news & media/i,
+      }),
+    ).toBeDefined()
+    expect(
+      (await findPrimaryNavigationLink(/news & media/i)).getAttribute('aria-current'),
+    ).toBe('page')
+    expect(document.title).toBe('News & Media | Children of Shingwauk Alumni Association')
+    expect(
+      document.head.querySelector('meta[name="description"]')?.getAttribute('content'),
+    ).toBe(
+      'Read CSAA newsletters, browse press coverage, and find media contact details from the Children of Shingwauk Alumni Association.',
+    )
+    expect(
+      document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'),
+    ).toBe(`${window.location.origin}/news-media`)
+
+    const inquiriesImage = screen.getByRole('img', {
+      name: /press and media equipment including cameras and a typewriter/i,
+    })
+    expect(inquiriesImage.getAttribute('loading')).toBe('lazy')
+    expect(inquiriesImage.getAttribute('fetchpriority')).toBe('low')
+    expect(inquiriesImage.getAttribute('width')).toBe('1200')
+    expect(inquiriesImage.getAttribute('height')).toBe('900')
+  })
+
   it('renders the digital newsletters module route with the shared header shell', async () => {
     window.history.pushState({}, '', '/news-media/digital-newsletter')
 
