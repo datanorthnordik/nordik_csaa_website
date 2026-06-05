@@ -12,6 +12,7 @@ import {
   resolveNewsletterPreview,
   type NewsletterResolvedPreview,
 } from '../lib/newsletterMedia'
+import { usePageSeo } from '../lib/usePageSeo'
 import { TextHero } from '../components/TextHero'
 import styles from './DigitalNewslettersPage.module.css'
 
@@ -25,6 +26,8 @@ export function DigitalNewslettersPage() {
   const [selectedYear, setSelectedYear] = useState<string>('all')
 
   const locale = i18n.resolvedLanguage ?? i18n.language
+  const seoTitle = t('newslettersPage.seo.title')
+  const seoDescription = t('newslettersPage.seo.description')
 
   useEffect(() => {
     let ignore = false
@@ -101,6 +104,13 @@ export function DigitalNewslettersPage() {
     },
   ])
 
+  usePageSeo({
+    title: seoTitle,
+    description: seoDescription,
+    canonicalPath: '/news-media/digital-newsletter',
+    lang: locale,
+  })
+
   return (
     <div className={styles.page}>
       <TextHero
@@ -108,6 +118,12 @@ export function DigitalNewslettersPage() {
         title={t('newslettersPage.hero.title')}
         description={t('newslettersPage.hero.descriptionLead')}
       />
+
+      {status === 'loading' ? (
+        <section className={styles.latestSection} aria-hidden="true">
+          <article className={`${styles.cardSkeleton} ${styles.featuredCardSkeleton}`} />
+        </section>
+      ) : null}
 
       {status === 'ready' && featuredEntry ? (
         <section className={styles.latestSection}>
@@ -303,20 +319,17 @@ function NewsletterPreviewSurface({
       ) : null}
 
       {variant === 'list' && preview.previewKind === 'image' && preview.previewUrl ? (
-        <img src={preview.previewUrl} alt={title} className={styles.previewImage} />
-      ) : null}
-
-      {variant === 'list' && preview.previewKind === 'iframe' && preview.previewUrl ? (
-        <iframe
+        <img
           src={preview.previewUrl}
-          title={t('newslettersPage.card.previewFrameTitle', { title })}
-          className={styles.previewFrame}
+          alt={title}
+          className={styles.previewImage}
           loading="lazy"
-          referrerPolicy="no-referrer"
+          decoding="async"
+          fetchPriority="low"
         />
       ) : null}
 
-      {variant === 'list' && preview.previewKind === 'placeholder' ? (
+      {variant === 'list' && preview.previewKind !== 'image' ? (
         <div className={styles.previewPlaceholder}>
           <span>{preview.fileTypeLabel}</span>
         </div>

@@ -178,6 +178,10 @@
     "imageCount": "{{current}} of {{total}}"
   },
   "newslettersPage": {
+    "seo": {
+      "title": "Digital Newsletters | Children of Shingwauk Alumni Association",
+      "description": "Browse published CSAA digital newsletters, filter past editions by year, and open each issue from the public newsletter archive."
+    },
     "hero": {
       "eyebrow": "Digital newsletters",
       "title": "Digital Newsletters",

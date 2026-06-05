@@ -178,6 +178,10 @@
     "imageCount": "{{current}} sur {{total}}"
   },
   "newslettersPage": {
+    "seo": {
+      "title": "Bulletins numeriques | Children of Shingwauk Alumni Association",
+      "description": "Parcourez les bulletins numeriques publics de la CSAA, filtrez les editions par annee et ouvrez chaque numero depuis l archive publique."
+    },
     "hero": {
       "eyebrow": "Bulletins numeriques",
       "title": "Bulletins numeriques",

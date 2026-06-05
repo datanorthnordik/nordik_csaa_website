@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { NavigationMenuProvider, useNavigationMenu } from './components/NavigationMenuProvider'
 import { ScrollToTop } from './components/ScrollToTop'
 import { SiteShell } from './components/SiteShell'
+import { DigitalNewslettersPage } from './pages/DigitalNewslettersPage'
 import { GatheringsPage } from './pages/GatheringsPage'
 import { NewsMediaLandingPage } from './pages/NewsMediaLandingPage'
 import { getInitialMenuHref } from './lib/navigationMenu'
@@ -20,11 +21,6 @@ const CmsPage = lazy(() =>
 const DigitalNewsletterDetailPage = lazy(() =>
   import('./pages/DigitalNewsletterDetailPage').then((module) => ({
     default: module.DigitalNewsletterDetailPage,
-  })),
-)
-const DigitalNewslettersPage = lazy(() =>
-  import('./pages/DigitalNewslettersPage').then((module) => ({
-    default: module.DigitalNewslettersPage,
   })),
 )
 const EventDetailPage = lazy(() =>
@@ -104,7 +100,7 @@ function App() {
             />
             <Route
               path="/news-media/digital-newsletter"
-              element={withSuspense(<DigitalNewslettersPage />)}
+              element={<DigitalNewslettersPage />}
             />
             <Route
               path="/news-media/press-archive/:pressId"
