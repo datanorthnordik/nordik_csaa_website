@@ -42,10 +42,6 @@
     }
   },
   "gatherings": {
-    "seo": {
-      "title": "Events | Children of Shingwauk Alumni Association",
-      "description": "Explore upcoming events, workshops, ceremonies, and archived community gatherings from the Children of Shingwauk Alumni Association."
-    },
     "hero": {
       "eyebrow": "Community events",
       "title": "Explore the Journey: Our Past & Future Events",
@@ -81,10 +77,6 @@
     }
   },
   "eventCalendar": {
-    "seo": {
-      "title": "Events Calendar | Children of Shingwauk Alumni Association",
-      "description": "Browse the CSAA events calendar to find upcoming community gatherings, workshops, and ceremonies by month."
-    },
     "eyebrow": "Events calendar",
     "title": "Community Calendar",
     "description": "Discover upcoming events, workshops, and ceremonies within our community. Connect with heritage through shared experiences.",
@@ -205,14 +197,6 @@
       "backToList": "Back to digital newsletters",
       "downloadEdition": "Download edition",
       "downloadError": "We could not download this newsletter right now. Please try again.",
-      "readerLabel": "Newsletter reader for {{title}}",
-      "readerHint": "Swipe left or right to turn pages. Use the slider to jump to any page.",
-      "firstPage": "First page",
-      "previousPage": "Previous page",
-      "nextPage": "Next page",
-      "lastPage": "Last page",
-      "pageSlider": "Page slider",
-      "pageValue": "Page {{current}} of {{total}}",
       "flipbookUnavailableTitle": "Flipbook unavailable",
       "flipbookUnavailableDescription": "A flipbook preview is not available for this edition yet."
     },
@@ -423,7 +407,6 @@
     "pauseSlideshow": "Pause slideshow",
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
-    "resetZoom": "Reset zoom",
     "openFile": "Open file",
     "allDay": "All day",
     "timeTbd": "Time to be announced",

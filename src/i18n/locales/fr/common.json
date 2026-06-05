@@ -42,10 +42,6 @@
     }
   },
   "gatherings": {
-    "seo": {
-      "title": "Evenements | Children of Shingwauk Alumni Association",
-      "description": "Explorez les evenements a venir, les ateliers, les ceremonies et les rassemblements archives de la communaute de la Children of Shingwauk Alumni Association."
-    },
     "hero": {
       "eyebrow": "Evenements communautaires",
       "title": "Explorez le parcours : nos evenements passes et futurs",
@@ -81,10 +77,6 @@
     }
   },
   "eventCalendar": {
-    "seo": {
-      "title": "Calendrier des evenements | Children of Shingwauk Alumni Association",
-      "description": "Parcourez le calendrier des evenements de la CSAA pour trouver les rassemblements communautaires, ateliers et ceremonies a venir par mois."
-    },
     "eyebrow": "Calendrier des evenements",
     "title": "Calendrier communautaire",
     "description": "Decouvrez les evenements, ateliers et ceremonies a venir au sein de notre communaute. Connectez-vous avec l heritage par des experiences partagees.",
@@ -205,14 +197,6 @@
       "backToList": "Retour aux bulletins numeriques",
       "downloadEdition": "Telecharger l edition",
       "downloadError": "Nous ne pouvons pas telecharger ce bulletin pour le moment. Veuillez reessayer.",
-      "readerLabel": "Lecteur du bulletin {{title}}",
-      "readerHint": "Glissez vers la gauche ou la droite pour tourner les pages. Utilisez le curseur pour aller directement a la page voulue.",
-      "firstPage": "Premiere page",
-      "previousPage": "Page precedente",
-      "nextPage": "Page suivante",
-      "lastPage": "Derniere page",
-      "pageSlider": "Curseur des pages",
-      "pageValue": "Page {{current}} sur {{total}}",
       "flipbookUnavailableTitle": "Flipbook indisponible",
       "flipbookUnavailableDescription": "Une previsualisation flipbook n est pas encore disponible pour cette edition."
     },
@@ -423,7 +407,6 @@
     "pauseSlideshow": "Mettre le diaporama en pause",
     "zoomIn": "Zoom avant",
     "zoomOut": "Zoom arriere",
-    "resetZoom": "Reinitialiser le zoom",
     "openFile": "Ouvrir le fichier",
     "allDay": "Toute la journee",
     "timeTbd": "Heure a confirmer",
