@@ -340,7 +340,12 @@
     }
   },
   "newsMediaPage": {
+    "seo": {
+      "title": "News & Media | Children of Shingwauk Alumni Association",
+      "description": "Read CSAA newsletters, browse press coverage, and find media contact details from the Children of Shingwauk Alumni Association."
+    },
     "hero": {
+      "eyebrow": "News & Media",
       "title": "News & Media",
       "description": "Stay informed with updates from our community and external press coverage. Discover the stories driving our heritage forward."
     },

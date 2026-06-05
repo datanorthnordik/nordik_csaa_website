@@ -4,6 +4,7 @@ import { NavigationMenuProvider, useNavigationMenu } from './components/Navigati
 import { ScrollToTop } from './components/ScrollToTop'
 import { SiteShell } from './components/SiteShell'
 import { GatheringsPage } from './pages/GatheringsPage'
+import { NewsMediaLandingPage } from './pages/NewsMediaLandingPage'
 import { getInitialMenuHref } from './lib/navigationMenu'
 
 const EventCalendarPage = lazy(() =>
@@ -51,11 +52,6 @@ const InMemorialPage = lazy(() =>
     default: module.InMemorialPage,
   })),
 )
-const NewsMediaLandingPage = lazy(() =>
-  import('./pages/NewsMediaLandingPage').then((module) => ({
-    default: module.NewsMediaLandingPage,
-  })),
-)
 const PressArchiveDetailPage = lazy(() =>
   import('./pages/PressArchiveDetailPage').then((module) => ({
     default: module.PressArchiveDetailPage,
@@ -101,7 +97,7 @@ function App() {
               path="/our-story/healing-memorials/in-memorial"
               element={withSuspense(<InMemorialPage />)}
             />
-            <Route path="/news-media" element={withSuspense(<NewsMediaLandingPage />)} />
+            <Route path="/news-media" element={<NewsMediaLandingPage />} />
             <Route
               path="/news-media/digital-newsletter/:newsletterId"
               element={withSuspense(<DigitalNewsletterDetailPage />)}
