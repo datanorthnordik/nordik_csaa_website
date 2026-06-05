@@ -2,8 +2,10 @@
  * CSAA Legacy — Scene 1 GSAP scrollytelling, Scenes 2 & 3 scroll-reveal.
  *
  * Scene 1 pattern (pinned canvas):
- *   text panel fades in → text panel fades out → art layer slides in (stays)
- *   Repeat for each beat — art accumulates on the canvas.
+ *   Panel 0: text alone on clean canvas (no art yet).
+ *   Panels 1–6: canvas overlay fades in → text fades in on overlay →
+ *               text fades out → overlay fades out → art layer slides in (stays).
+ *   Art accumulates permanently; overlay acts as a reading curtain.
  *
  * Scenes 2 & 3: IntersectionObserver fade-in reveal.
  */
@@ -74,19 +76,116 @@ const S1_HOTSPOTS: Hotspot[] = [
   },
 ]
 
+const S2_HOTSPOTS: Hotspot[] = [
+  {
+    id: 's2-tipi',
+    x: '39%', y: '43%',
+    title: 'The Tipi',
+    body: 'The tipi stands as a symbol of home and belonging — traditions the residential school system tried to erase but could never extinguish. It remains standing, as it always has.',
+  },
+  {
+    id: 's2-pumpkins',
+    x: '27%', y: '55%',
+    title: 'The Harvest',
+    body: 'Pumpkins and gathered food speak to the deep connection between the land and the people — a harvest that feeds both body and spirit.',
+  },
+  {
+    id: 's2-house',
+    x: '53%', y: '47%',
+    title: 'Coming Home',
+    body: 'The family cabin represents the long-awaited return — a place to rebuild, to heal, and to pass on what the schools tried so hard to take away.',
+  },
+  {
+    id: 's2-canoe',
+    x: '40%', y: '73%',
+    title: 'The Canoe Returns',
+    body: 'The same canoe that once carried children away now brings them home — a powerful symbol of resilience and the continuation of culture across generations.',
+  },
+  {
+    id: 's2-water',
+    x: '46%', y: '85%',
+    title: 'The Water',
+    body: 'Water is life. The river carries memory, cleansing, and renewal — a living witness to everything that was taken and everything that endured.',
+  },
+  {
+    id: 's2-fish',
+    x: '73%', y: '65%',
+    title: 'Fish & Net',
+    body: 'Traditional fishing sustained communities for millennia. The net represents an unbroken relationship with the water — a practice no school could take away.',
+  },
+]
+
+const S3_HOTSPOTS: Hotspot[] = [
+  {
+    id: 's3-dreamcatcher',
+    x: '49%', y: '20%',
+    title: 'The Dreamcatcher',
+    body: 'Hung in the window where the light passes through, the dreamcatcher filters harm and lets good spirits in — a guardian of rest, memory, and healing.',
+  },
+  {
+    id: 's3-drum',
+    x: '30%', y: '38%',
+    title: 'The Drum',
+    body: 'The drum is the heartbeat of the community. Forbidden in residential schools, here it reclaims its place at the table of renewal.',
+  },
+  {
+    id: 's3-bannock',
+    x: '30%', y: '55%',
+    title: 'Bannock',
+    body: 'Bannock is more than bread — it is a symbol of resilience and sharing, made and passed down through generations of Indigenous families.',
+  },
+  {
+    id: 's3-harvest',
+    x: '38%', y: '62%',
+    title: 'The Harvest',
+    body: 'Gathered nuts, berries, and roots speak to an unbroken relationship with the land — a relationship no school could sever.',
+  },
+  {
+    id: 's3-blueberries',
+    x: '44%', y: '41%',
+    title: 'Blueberries',
+    body: 'Blueberries hold deep cultural and medicinal significance. Their presence on the table is a quiet act of reclaiming what was always ours.',
+  },
+  {
+    id: 's3-fish',
+    x: '59%', y: '59%',
+    title: 'The Fish',
+    body: 'Fish has sustained communities for millennia. To share it at the feast table is to honour the water, the land, and those who came before.',
+  },
+  {
+    id: 's3-teapot',
+    x: '73%', y: '67%',
+    title: 'Tea & Ceremony',
+    body: 'Gathering around tea is an act of welcome — an invitation to slow down, remember, and be present with one another in healing.',
+  },
+  {
+    id: 's3-table',
+    x: '80%', y: '79%',
+    title: 'Coming to the Table',
+    body: 'A shared meal is an act of healing. Gathering around food reconnects community, memory, and belonging across generations.',
+  },
+]
+
 // ── Scroll-reveal hook (Scenes 2 & 3) ────────────────────────────────────────
-function useScrollReveal(threshold = 0.12) {
+function useScrollReveal(threshold = 0.12, onVisible?: () => void) {
   const ref = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
   useEffect(() => {
     const el = ref.current
     if (!el) return
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); obs.disconnect() } },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          onVisible?.()
+          obs.disconnect()
+        }
+      },
       { threshold },
     )
     obs.observe(el)
     return () => obs.disconnect()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [threshold])
   return { ref, isVisible }
 }
@@ -97,7 +196,7 @@ function IntroWave() {
   return (
     <div className={styles.waveDivider} aria-hidden="true">
       <svg viewBox="0 0 1440 120" preserveAspectRatio="none" className={styles.waveSvg}>
-        <path d={`${WAVE_PATH} L1440,120 L0,120 Z`} fill="#fdfbf8" />
+        <path d={`${WAVE_PATH} L1440,120 L0,120 Z`} fill="#f5f0e8" />
         <path d={WAVE_PATH} fill="none" stroke="#9c0000" strokeWidth="5"
           strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
       </svg>
@@ -121,6 +220,9 @@ export function CsaaLegacyPage() {
   // 7 text panels (panel 0 = "once upon a time" intro, panels 1–6 = one per art layer)
   const panelEls = useRef<(HTMLDivElement | null)[]>([])
 
+  // Canvas reading overlay (fades in/out around each story panel)
+  const overlayRef = useRef<HTMLDivElement>(null)
+
   // Art layer refs
   const canoeRef   = useRef<HTMLImageElement>(null)
   const buggyRef   = useRef<HTMLImageElement>(null)
@@ -133,10 +235,34 @@ export function CsaaLegacyPage() {
   const sceneTitleRef  = useRef<HTMLHeadingElement>(null)
   const artistCreditRef = useRef<HTMLDivElement>(null)
   const [showHotspots, setShowHotspots] = useState(false)
+  const [showIdleNudge, setShowIdleNudge] = useState(false)
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // ── Scenes 2 & 3 reveal ─────────────────────────────────────────────────────
-  const scene2Reveal = useScrollReveal(0.08)
-  const scene3Reveal = useScrollReveal(0.08)
+  // ── Scenes 2 & 3 (GSAP scrollytelling) ──────────────────────────────────────
+  const [showS2Hotspots, setShowS2Hotspots] = useState(false)
+  const [showS3Hotspots, setShowS3Hotspots] = useState(false)
+
+  const track2Ref    = useRef<HTMLDivElement>(null)
+  const canvas2Ref   = useRef<HTMLDivElement>(null)
+  const overlay2Ref  = useRef<HTMLDivElement>(null)
+  const s2ArtWrapRef = useRef<HTMLDivElement>(null)
+  const s2ImgRef     = useRef<HTMLImageElement>(null)
+  const s2TitleRef   = useRef<HTMLHeadingElement>(null)
+  const panelS2      = useRef<(HTMLDivElement | null)[]>([])
+
+  const track3Ref    = useRef<HTMLDivElement>(null)
+  const canvas3Ref   = useRef<HTMLDivElement>(null)
+  const overlay3Ref  = useRef<HTMLDivElement>(null)
+  const s3ArtWrapRef = useRef<HTMLDivElement>(null)
+  const s3ImgRef     = useRef<HTMLImageElement>(null)
+  const s3TitleRef   = useRef<HTMLHeadingElement>(null)
+  const panelS3      = useRef<(HTMLDivElement | null)[]>([])
+
+  // ── Fixed signature — animated across all three scenes ────────────────────
+  const fixedSigRef = useRef<HTMLDivElement>(null)
+
+  // ── About Shirley section ref (nav reappears here) ────────────────────────
+  const exitRef = useRef<HTMLElement>(null)
 
   // ── GSAP scene 1 timeline ───────────────────────────────────────────────────
   useEffect(() => {
@@ -146,25 +272,44 @@ export function CsaaLegacyPage() {
 
     // Initial states — CSS already sets artLayer opacity:0
     gsap.set(panelEls.current.filter(Boolean), { opacity: 0 })
-    gsap.set([sceneTitleRef.current, artistCreditRef.current], { opacity: 0 })
+    gsap.set(sceneTitleRef.current, { opacity: 0 })
+    gsap.set(overlayRef.current, { opacity: 0 })
+    gsap.set(fixedSigRef.current, { opacity: 0 })
 
-    // Helper: panel in → hold → out
     const PANEL_IN   = 0.9
     const PANEL_HOLD = 1.0
     const PANEL_OUT  = 0.7
+    const OVL_IN     = 0.5
+    const OVL_OUT    = 0.55
 
+    // Panel 0 only: text alone on a clean canvas (no overlay needed)
     function addPanel(tl: gsap.core.Timeline, el: HTMLDivElement | null, gap = 0.3) {
       if (!el) return
       tl.to(el, { opacity: 1, duration: PANEL_IN, ease: 'power2.inOut' }, `+=${gap}`)
         .to(el, { opacity: 0, duration: PANEL_OUT, ease: 'power2.inOut' }, `+=${PANEL_HOLD}`)
     }
 
-    // Helper: art layer slides in from a given direction and stays
+    // Panels 1–6: overlay rises as a reading curtain, text appears on it,
+    // then both dissolve together before the art slides in.
+    function addPanelWithOverlay(
+      tl: gsap.core.Timeline,
+      el: HTMLDivElement | null,
+      gap = 0.3,
+    ) {
+      if (!el) return
+      const ovl = overlayRef.current
+      tl.to(ovl,  { opacity: 1, duration: OVL_IN,   ease: 'power2.inOut' }, `+=${gap}`)
+        .to(el,   { opacity: 1, duration: PANEL_IN,  ease: 'power2.inOut' }, `-=${OVL_IN * 0.4}`)
+        .to(el,   { opacity: 0, duration: PANEL_OUT, ease: 'power2.inOut' }, `+=${PANEL_HOLD}`)
+        .to(ovl,  { opacity: 0, duration: OVL_OUT,   ease: 'power2.inOut' }, `-=${PANEL_OUT * 0.5}`)
+    }
+
+    // Art layer slides in from a given direction and stays permanently
     function addArt(
       tl: gsap.core.Timeline,
       el: HTMLImageElement | null,
       from: gsap.TweenVars,
-      gap = 0.1,
+      gap = 0.15,
     ) {
       if (!el) return
       tl.fromTo(
@@ -177,64 +322,261 @@ export function CsaaLegacyPage() {
 
     const tl = gsap.timeline()
 
-    // ── Beat 0: Intro "Once upon a time" ──────────────────────────────────────
+    // ── Beat 0: Intro "Once upon a time" — clean canvas, no overlay ──────────
     addPanel(tl, panelEls.current[0], 0)
 
-    // ── Beat 1: Canoe story → canoe slides in from right ─────────────────────
-    addPanel(tl, panelEls.current[1], 0.2)
-    addArt(tl, canoeRef.current, { x: '42vw', y: '8vh' }, 0.1)
+    // ── Beat 1: Canoe story → overlay in → text → overlay out → canoe from right
+    addPanelWithOverlay(tl, panelEls.current[1], 0.2)
+    addArt(tl, canoeRef.current, { x: '42vw', y: '8vh' })
 
-    // ── Beat 2: Buggy story → buggy rises from bottom-centre ─────────────────
-    addPanel(tl, panelEls.current[2], 0.4)
-    addArt(tl, buggyRef.current, { y: '38vh' }, 0.1)
+    // ── Beat 2: Buggy story → overlay → buggy rises from below ───────────────
+    addPanelWithOverlay(tl, panelEls.current[2], 0.4)
+    addArt(tl, buggyRef.current, { y: '38vh' })
 
-    // ── Beat 3: Train story → train slides in from left ───────────────────────
-    addPanel(tl, panelEls.current[3], 0.4)
-    addArt(tl, trainRef.current, { x: '-42vw', y: '-8vh' }, 0.1)
+    // ── Beat 3: Train story → overlay → train from left ──────────────────────
+    addPanelWithOverlay(tl, panelEls.current[3], 0.4)
+    addArt(tl, trainRef.current, { x: '-42vw', y: '-8vh' })
 
-    // ── Beat 4: Plane story → plane descends from upper-right ─────────────────
-    addPanel(tl, panelEls.current[4], 0.4)
-    addArt(tl, planeRef.current, { x: '30vw', y: '-28vh' }, 0.1)
+    // ── Beat 4: Plane story → overlay → plane descends from upper-right ──────
+    addPanelWithOverlay(tl, panelEls.current[4], 0.4)
+    addArt(tl, planeRef.current, { x: '30vw', y: '-28vh' })
 
-    // ── Beat 5: Model T story → car drives in from bottom-left ───────────────
-    addPanel(tl, panelEls.current[5], 0.4)
-    addArt(tl, modelTRef.current, { x: '-38vw', y: '18vh' }, 0.1)
+    // ── Beat 5: Model T story → overlay → car from lower-left ────────────────
+    addPanelWithOverlay(tl, panelEls.current[5], 0.4)
+    addArt(tl, modelTRef.current, { x: '-38vw', y: '18vh' })
 
-    // ── Beat 6: School story → school rises from below ────────────────────────
-    addPanel(tl, panelEls.current[6], 0.4)
-    addArt(tl, schoolRef.current, { y: '42vh' }, 0.1)
+    // ── Beat 6: School story → overlay → school rises from below ─────────────
+    addPanelWithOverlay(tl, panelEls.current[6], 0.4)
+    addArt(tl, schoolRef.current, { y: '42vh' })
 
-    // ── Final: title + artist credit fade in ─────────────────────────────────
-    tl.to(sceneTitleRef.current,   { opacity: 1, duration: 1.0, ease: 'power2.inOut' }, '+=0.6')
-      .to(artistCreditRef.current, { opacity: 1, duration: 0.8, ease: 'power2.inOut' }, '-=0.4')
-      .to({}, { duration: 2.0 }) // hold at end
+    // ── Final: title fades in, signature appears with the school (stays for rest of scene) ──
+    tl.to(sceneTitleRef.current, { opacity: 1, duration: 1.0, ease: 'power2.inOut' }, '+=0.4')
+      .to(fixedSigRef.current,   { opacity: 1, duration: 0.8, ease: 'power2.inOut' }, '-=0.6')
+      .to({}, { duration: 4.0 }) // long hold so signature is clearly visible
 
     // Total duration for hotspot threshold calculation
     const totalDur = tl.duration()
 
-    // ── ScrollTrigger ─────────────────────────────────────────────────────────
+    // ── ScrollTrigger (animation) ─────────────────────────────────────────────
     ScrollTrigger.create({
       trigger:   track,
       start:     'top top',
       end:       'bottom bottom',
       scrub:     1.5,
       animation: tl,
-      onEnter:      () => canvas.classList.add(styles.stickyCanvasFixed),
-      onLeave:      () => canvas.classList.remove(styles.stickyCanvasFixed),
-      onEnterBack:  () => canvas.classList.add(styles.stickyCanvasFixed),
-      onLeaveBack:  () => canvas.classList.remove(styles.stickyCanvasFixed),
+      onEnter:      () => { canvas.classList.add(styles.stickyCanvasFixed); document.body.classList.add('csaa-story-active') },
+      onLeave:      () => { canvas.classList.remove(styles.stickyCanvasFixed); document.body.classList.remove('csaa-story-active') },
+      onEnterBack:  () => { canvas.classList.add(styles.stickyCanvasFixed); document.body.classList.add('csaa-story-active') },
+      onLeaveBack:  () => { canvas.classList.remove(styles.stickyCanvasFixed); document.body.classList.remove('csaa-story-active') },
       // Show hotspots only in the final portion (after all art is revealed)
       onUpdate: (self) => {
-        const hotspotsAt = 1 - (2.0 / totalDur) // progress when hold begins
+        const hotspotsAt = 1 - (2.0 / totalDur)
         setShowHotspots(self.progress >= hotspotsAt)
       },
     })
+
+    // ── Header hide trigger ───────────────────────────────────────────────────
+    // Hides the nav when entering the scroll track; restores it at About Shirley
+    const headerEl = document.querySelector('header') as HTMLElement | null
+    const breadcrumbEl = document.querySelector('[data-testid="site-breadcrumbs"]') as HTMLElement | null
+    if (headerEl && exitRef.current) {
+      const hideHeader = () => {
+        gsap.to(headerEl, { y: '-100%', opacity: 0, duration: 0.35, ease: 'power2.in' })
+        headerEl.style.pointerEvents = 'none'
+        if (breadcrumbEl) {
+          gsap.to(breadcrumbEl, { opacity: 0, duration: 0.25, ease: 'power2.in' })
+          breadcrumbEl.style.pointerEvents = 'none'
+        }
+      }
+      const showHeader = () => {
+        gsap.to(headerEl, { y: '0%', opacity: 1, duration: 0.4, ease: 'power2.out' })
+        headerEl.style.pointerEvents = ''
+        if (breadcrumbEl) {
+          gsap.to(breadcrumbEl, { opacity: 1, duration: 0.35, ease: 'power2.out' })
+          breadcrumbEl.style.pointerEvents = ''
+        }
+      }
+
+      ScrollTrigger.create({
+        trigger:    track,
+        start:      'top top',
+        endTrigger: exitRef.current,
+        end:        'top 80%',
+        onEnter:      hideHeader,
+        onLeave:      showHeader,
+        onEnterBack:  hideHeader,
+        onLeaveBack:  showHeader,
+      })
+    }
 
     return () => {
       ScrollTrigger.getAll().forEach(st => st.kill())
       tl.kill()
       setShowHotspots(false)
+      document.body.classList.remove('csaa-story-active')
+      gsap.killTweensOf(fixedSigRef.current)
+      gsap.set(fixedSigRef.current, { opacity: 0 })
+      // Restore header + breadcrumbs in case component unmounts mid-scroll
+      if (headerEl) {
+        gsap.killTweensOf(headerEl)
+        gsap.set(headerEl, { clearProps: 'y,opacity' })
+        headerEl.style.pointerEvents = ''
+      }
+      if (breadcrumbEl) {
+        gsap.killTweensOf(breadcrumbEl)
+        gsap.set(breadcrumbEl, { clearProps: 'opacity' })
+        breadcrumbEl.style.pointerEvents = ''
+      }
     }
+  }, [])
+
+  // ── Idle-scroll nudge ─────────────────────────────────────────────────────────
+  useEffect(() => {
+    const IDLE_MS = 4000
+    const startIdleTimer = () => {
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+      idleTimerRef.current = setTimeout(() => {
+        if (document.body.classList.contains('csaa-story-active')) setShowIdleNudge(true)
+      }, IDLE_MS)
+    }
+    const onScroll = () => { setShowIdleNudge(false); startIdleTimer() }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+    }
+  }, [])
+
+  // ── GSAP Scene 2 timeline ────────────────────────────────────────────────────
+  useEffect(() => {
+    const track  = track2Ref.current
+    const canvas = canvas2Ref.current
+    const ovl    = overlay2Ref.current
+    if (!track || !canvas || !ovl) return
+
+    const PANEL_IN = 0.9, PANEL_HOLD = 1.0, PANEL_OUT = 0.7
+    const OVL_IN = 0.5, OVL_OUT = 0.55
+
+    gsap.set(panelS2.current.filter(Boolean), { opacity: 0 })
+    gsap.set(s2TitleRef.current, { opacity: 0 })
+    gsap.set(ovl, { opacity: 0 })
+    gsap.set(s2ArtWrapRef.current, { opacity: 0 })
+
+    function addPanel(tl: gsap.core.Timeline, el: HTMLDivElement | null, gap = 0.3) {
+      if (!el) return
+      tl.to(el, { opacity: 1, duration: PANEL_IN,  ease: 'power2.inOut' }, `+=${gap}`)
+        .to(el, { opacity: 0, duration: PANEL_OUT, ease: 'power2.inOut' }, `+=${PANEL_HOLD}`)
+    }
+    function addPanelWithOverlay(tl: gsap.core.Timeline, el: HTMLDivElement | null, gap = 0.3) {
+      if (!el) return
+      tl.to(ovl, { opacity: 1, duration: OVL_IN,   ease: 'power2.inOut' }, `+=${gap}`)
+        .to(el,  { opacity: 1, duration: PANEL_IN,  ease: 'power2.inOut' }, `-=${OVL_IN * 0.4}`)
+        .to(el,  { opacity: 0, duration: PANEL_OUT, ease: 'power2.inOut' }, `+=${PANEL_HOLD}`)
+        .to(ovl, { opacity: 0, duration: OVL_OUT,   ease: 'power2.inOut' }, `-=${PANEL_OUT * 0.5}`)
+    }
+
+    const tl = gsap.timeline()
+    addPanel(tl, panelS2.current[0], 0)
+    addPanelWithOverlay(tl, panelS2.current[1], 0.3)
+    addPanelWithOverlay(tl, panelS2.current[2], 0.4)
+    addPanelWithOverlay(tl, panelS2.current[3], 0.4)
+    tl.fromTo(s2ArtWrapRef.current,
+      { opacity: 0, y: '30vh' },
+      { opacity: 1, y: 0, duration: 1.6, ease: 'power3.out' },
+      '+=0.3',
+    )
+    tl.to(fixedSigRef.current, { opacity: 1, duration: 0.6, ease: 'power2.inOut' }, '<+=0.4')
+    tl.to(s2TitleRef.current, { opacity: 1, duration: 0.9, ease: 'power2.inOut' }, '+=0.3')
+      .to({}, { duration: 4.0 })
+
+    const totalDur = tl.duration()
+    const st = ScrollTrigger.create({
+      trigger: track, start: 'top top', end: 'bottom bottom', scrub: 1.5, animation: tl,
+      onEnter:     () => {
+        canvas.classList.add(styles.stickyCanvasFixed)
+        document.body.classList.add('csaa-story-active')
+        if (fixedSigRef.current) gsap.set(fixedSigRef.current, { opacity: 0 })
+      },
+      onLeave:     () => { canvas.classList.remove(styles.stickyCanvasFixed); document.body.classList.remove('csaa-story-active') },
+      onEnterBack: () => {
+        canvas.classList.add(styles.stickyCanvasFixed)
+        document.body.classList.add('csaa-story-active')
+      },
+      onLeaveBack: () => { canvas.classList.remove(styles.stickyCanvasFixed); document.body.classList.remove('csaa-story-active') },
+      onUpdate: (self) => {
+        const at = 1 - (2.5 / totalDur)
+        setShowS2Hotspots(self.progress >= at)
+      },
+    })
+    return () => { st.kill(); tl.kill(); setShowS2Hotspots(false) }
+  }, [])
+
+  // ── GSAP Scene 3 timeline ────────────────────────────────────────────────────
+  useEffect(() => {
+    const track  = track3Ref.current
+    const canvas = canvas3Ref.current
+    const ovl    = overlay3Ref.current
+    if (!track || !canvas || !ovl) return
+
+    const PANEL_IN = 0.9, PANEL_HOLD = 1.0, PANEL_OUT = 0.7
+    const OVL_IN = 0.5, OVL_OUT = 0.55
+
+    gsap.set(panelS3.current.filter(Boolean), { opacity: 0 })
+    gsap.set(s3TitleRef.current, { opacity: 0 })
+    gsap.set(ovl, { opacity: 0 })
+    gsap.set(s3ArtWrapRef.current, { opacity: 0 })
+
+    function addPanel(tl: gsap.core.Timeline, el: HTMLDivElement | null, gap = 0.3) {
+      if (!el) return
+      tl.to(el, { opacity: 1, duration: PANEL_IN,  ease: 'power2.inOut' }, `+=${gap}`)
+        .to(el, { opacity: 0, duration: PANEL_OUT, ease: 'power2.inOut' }, `+=${PANEL_HOLD}`)
+    }
+    function addPanelWithOverlay(tl: gsap.core.Timeline, el: HTMLDivElement | null, gap = 0.3) {
+      if (!el) return
+      tl.to(ovl, { opacity: 1, duration: OVL_IN,   ease: 'power2.inOut' }, `+=${gap}`)
+        .to(el,  { opacity: 1, duration: PANEL_IN,  ease: 'power2.inOut' }, `-=${OVL_IN * 0.4}`)
+        .to(el,  { opacity: 0, duration: PANEL_OUT, ease: 'power2.inOut' }, `+=${PANEL_HOLD}`)
+        .to(ovl, { opacity: 0, duration: OVL_OUT,   ease: 'power2.inOut' }, `-=${PANEL_OUT * 0.5}`)
+    }
+
+    const tl = gsap.timeline()
+    addPanel(tl, panelS3.current[0], 0)
+    addPanelWithOverlay(tl, panelS3.current[1], 0.3)
+    addPanelWithOverlay(tl, panelS3.current[2], 0.4)
+    addPanelWithOverlay(tl, panelS3.current[3], 0.4)
+    tl.fromTo(s3ArtWrapRef.current,
+      { opacity: 0, y: '30vh' },
+      { opacity: 1, y: 0, duration: 1.6, ease: 'power3.out' },
+      '+=0.3',
+    )
+    tl.to(fixedSigRef.current, { opacity: 1, duration: 0.6, ease: 'power2.inOut' }, '<+=0.4')
+    tl.to(s3TitleRef.current, { opacity: 1, duration: 0.9, ease: 'power2.inOut' }, '+=0.3')
+      .to({}, { duration: 4.0 })
+
+    const totalDur = tl.duration()
+    const st = ScrollTrigger.create({
+      trigger: track, start: 'top top', end: 'bottom bottom', scrub: 1.5, animation: tl,
+      onEnter:     () => {
+        canvas.classList.add(styles.stickyCanvasFixed)
+        document.body.classList.add('csaa-story-active')
+        if (fixedSigRef.current) gsap.set(fixedSigRef.current, { opacity: 0 })
+      },
+      onLeave:     () => {
+        canvas.classList.remove(styles.stickyCanvasFixed)
+        document.body.classList.remove('csaa-story-active')
+        if (fixedSigRef.current) gsap.to(fixedSigRef.current, { opacity: 0, duration: 0.5, ease: 'power2.in' })
+      },
+      onEnterBack: () => {
+        canvas.classList.add(styles.stickyCanvasFixed)
+        document.body.classList.add('csaa-story-active')
+      },
+      onLeaveBack: () => { canvas.classList.remove(styles.stickyCanvasFixed); document.body.classList.remove('csaa-story-active') },
+      onUpdate: (self) => {
+        const at = 1 - (2.5 / totalDur)
+        setShowS3Hotspots(self.progress >= at)
+      },
+    })
+    return () => { st.kill(); tl.kill(); setShowS3Hotspots(false) }
   }, [])
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -249,8 +591,6 @@ export function CsaaLegacyPage() {
           aria-hidden="true"
         />
         <div className={styles.introOverlay} aria-hidden="true" />
-        <Link to="/our-story" className={styles.backLink}>← Our Story</Link>
-
         <div className={styles.introContent}>
           <p className={styles.introEyebrow}>CSAA Legacy</p>
           <h1 className={styles.introTitle}>Artwork by Dr. Shirley Horn</h1>
@@ -289,11 +629,13 @@ export function CsaaLegacyPage() {
             alt="Shingwauk Hall residential school, artwork by Dr. Shirley Horn"
             className={`${styles.artLayer} ${styles.layerSchool}`} />
 
+          {/* ── Reading overlay — GSAP fades in/out as a curtain over the art ── */}
+          <div ref={overlayRef} className={styles.canvasOverlay} aria-hidden="true" />
+
           {/* ── Text panels — fade in / hold / fade out ── */}
 
           {/* Panel 0: Once upon a time (intro) */}
           <div ref={el => { panelEls.current[0] = el }} className={styles.textPanel}>
-            <p className={styles.panelEyebrow}>Scene One</p>
             <h2 className={styles.panelTitle}>"Taking the Children"</h2>
             <div className={styles.panelRule} aria-hidden="true" />
             <blockquote className={styles.panelQuote}>"Once upon a time…"</blockquote>
@@ -364,120 +706,130 @@ export function CsaaLegacyPage() {
             "Taking the Children"
           </h3>
 
-          {/* ── Artist credit ── */}
-          <div ref={artistCreditRef} className={styles.artistCredit}>
-            <div className={styles.signatureShell}>
-              <img
-                src={shirleySignature}
-                alt="Dr. Shirley Horn signature"
-                className={styles.signatureImg}
-              />
-              <p className={styles.signatureName}>— Dr. Shirley Horn —</p>
-              <p className={styles.signatureRole}>Artist &amp; Elder</p>
-            </div>
-          </div>
-
           {/* ── Hotspots (shown after art complete) ── */}
           {showHotspots && S1_HOTSPOTS.map(hs => (
             <HotspotDot key={hs.id} hotspot={hs} />
           ))}
-        </div>
-      </div>
 
-      {/* ══════════════════════════════════════════════════════════════════════
-          SCENE 2 — Going Home & Moving Forward
-      ══════════════════════════════════════════════════════════════════════ */}
-      <section className={`${styles.narrativeSection} ${styles.narrativeSectionAlt}`}>
-        <div className={styles.narrativeInner}>
-          <p className={styles.narrativeEyebrow}>Scene Two</p>
-          <h2 className={styles.narrativeTitle}>Going Home &amp; Moving Forward</h2>
-          <div className={styles.narrativeRule} aria-hidden="true" />
-          <p className={styles.narrativePara}>
-            The same canoe that once carried children away now brings them home. The river
-            carries memory, cleansing, and renewal in its current. Fish nets are cast again
-            in familiar waters; the harvest fills baskets as the seasons turn.
-          </p>
-          <p className={styles.narrativePara}>
-            The tipi stands where it always has. The residential school system tried to
-            erase it — along with the language, the ceremony, and the knowledge carried
-            inside it — but it remains standing, as it always will.
-          </p>
-          <p className={styles.narrativePara}>
-            The family cabin waits: a place to rebuild, to heal, and to pass on what the
-            schools tried so hard to take away. Pumpkins ripen. Smoke rises. The land
-            remembers us even when we were not allowed to remember it.
-          </p>
-        </div>
-      </section>
-
-      <div
-        ref={scene2Reveal.ref}
-        className={`${styles.artworkSection} ${styles.artworkSectionAlt} ${scene2Reveal.isVisible ? styles.artworkVisible : ''}`}
-      >
-        <div className={styles.scene23Canvas}>
-          <img
-            src={scene2Img}
-            alt="Going Home — Moving Forward, artwork by Dr. Shirley Horn"
-            className={styles.sceneFullImg}
-          />
-        </div>
-        <div className={styles.artworkMeta}>
-          <h3 className={styles.artworkTitle}>Going Home &amp; Moving Forward</h3>
-          <p className={styles.artworkCredit}>Artwork by Dr. Shirley Horn</p>
-        </div>
-      </div>
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          SCENE 3 — Remembering, and Renewal
-      ══════════════════════════════════════════════════════════════════════ */}
-      <section className={styles.narrativeSection}>
-        <div className={styles.narrativeInner}>
-          <p className={styles.narrativeEyebrow}>Scene Three</p>
-          <h2 className={styles.narrativeTitle}>Remembering, and Renewal</h2>
-          <div className={styles.narrativeRule} aria-hidden="true" />
-          <p className={styles.narrativePara}>
-            The drum beats again. Forbidden in residential schools, it reclaims its place
-            at the table — the heartbeat of the community restored to the centre of
-            gathering.
-          </p>
-          <p className={styles.narrativePara}>
-            Bannock is broken and shared. Blueberries and gathered roots speak to an
-            unbroken relationship with the land. Fish is placed with honour. Tea steeps as
-            voices come together in ceremony.
-          </p>
-          <p className={styles.narrativePara}>
-            A shared meal is an act of healing. To gather around food is to reconnect
-            memory, community, and belonging across generations. What was taken could not
-            be kept. The feast table is laid. The people have come home.
-          </p>
-        </div>
-      </section>
-
-      <div
-        ref={scene3Reveal.ref}
-        className={`${styles.artworkSection} ${scene3Reveal.isVisible ? styles.artworkVisible : ''}`}
-      >
-        <div className={styles.scene23Canvas}>
-          <img
-            src={scene3Img}
-            alt="Remembering, and Renewal, artwork by Dr. Shirley Horn"
-            className={styles.sceneFullImg}
-          />
-        </div>
-        <div className={styles.artworkMeta}>
-          <h3 className={styles.artworkTitle}>Remembering, and Renewal</h3>
-          <div className={styles.artistCredit}>
-            <img src={shirleySignature} alt="Dr. Shirley Horn signature" className={styles.signatureImg} />
-            <div>
-              <p className={styles.signatureName}>— Dr. Shirley Horn —</p>
-              <p className={styles.signatureRole}>Artist &amp; Elder</p>
+          {/* ── Idle nudge ── */}
+          {showIdleNudge && (
+            <div className={styles.idleNudge} aria-live="polite" aria-label="Keep scrolling to explore">
+              <span className={styles.canvasCueWheel} />
+              <span className={styles.canvasCueLabel}>Keep scrolling to explore</span>
             </div>
+          )}
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          SCENE 2 — Going Home & Moving Forward (GSAP pinned canvas)
+      ══════════════════════════════════════════════════════════════════════ */}
+      <div ref={track2Ref} className={styles.scrollTrack} style={{ height: '660vh' }}>
+        <div ref={canvas2Ref} className={styles.stickyCanvas}>
+          <div ref={s2ArtWrapRef} className={styles.artWrap}>
+            <img ref={s2ImgRef} src={scene2Img}
+              alt="Going Home — Moving Forward, artwork by Dr. Shirley Horn"
+              className={styles.artWrapImg} />
+            {showS2Hotspots && S2_HOTSPOTS.map(hs => (
+              <HotspotDot key={hs.id} hotspot={hs} />
+            ))}
           </div>
+          <div ref={overlay2Ref} className={styles.canvasOverlay} aria-hidden="true" />
+          <div ref={el => { panelS2.current[0] = el }} className={styles.textPanel}>
+            <h2 className={styles.panelTitle}>Going Home &amp; Moving Forward</h2>
+            <div className={styles.panelRule} aria-hidden="true" />
+          </div>
+          <div ref={el => { panelS2.current[1] = el }} className={styles.textPanel}>
+            <p className={styles.panelBody}>
+              The same canoe that once carried children away now brings them home. The river
+              carries memory, cleansing, and renewal in its current. Fish nets are cast again
+              in familiar waters; the harvest fills baskets as the seasons turn.
+            </p>
+          </div>
+          <div ref={el => { panelS2.current[2] = el }} className={styles.textPanel}>
+            <p className={styles.panelBody}>
+              The tipi stands where it always has. The residential school system tried to
+              erase it — along with the language, the ceremony, and the knowledge carried
+              inside it — but it remains standing, as it always will.
+            </p>
+          </div>
+          <div ref={el => { panelS2.current[3] = el }} className={styles.textPanel}>
+            <p className={styles.panelBody}>
+              The family cabin waits: a place to rebuild, to heal, and to pass on what the
+              schools tried so hard to take away. Pumpkins ripen. Smoke rises. The land
+              remembers us even when we were not allowed to remember it.
+            </p>
+          </div>
+          <h3 ref={s2TitleRef} className={styles.sceneTitle}>Going Home &amp; Moving Forward</h3>
+          {showIdleNudge && (
+            <div className={styles.idleNudge} aria-live="polite" aria-label="Keep scrolling to explore">
+              <span className={styles.canvasCueWheel} />
+              <span className={styles.canvasCueLabel}>Keep scrolling to explore</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          SCENE 3 — Remembering, and Renewal (GSAP pinned canvas)
+      ══════════════════════════════════════════════════════════════════════ */}
+      <div ref={track3Ref} className={styles.scrollTrack} style={{ height: '660vh' }}>
+        <div ref={canvas3Ref} className={styles.stickyCanvas}>
+          <div ref={s3ArtWrapRef} className={styles.artWrap}>
+            <img ref={s3ImgRef} src={scene3Img}
+              alt="Remembering, and Renewal, artwork by Dr. Shirley Horn"
+              className={styles.artWrapImg} />
+            {showS3Hotspots && S3_HOTSPOTS.map(hs => (
+              <HotspotDot key={hs.id} hotspot={hs} />
+            ))}
+          </div>
+          <div ref={overlay3Ref} className={styles.canvasOverlay} aria-hidden="true" />
+          <div ref={el => { panelS3.current[0] = el }} className={styles.textPanel}>
+            <h2 className={styles.panelTitle}>Remembering, and Renewal</h2>
+            <div className={styles.panelRule} aria-hidden="true" />
+          </div>
+          <div ref={el => { panelS3.current[1] = el }} className={styles.textPanel}>
+            <p className={styles.panelBody}>
+              The drum beats again. Forbidden in residential schools, it reclaims its place
+              at the table — the heartbeat of the community restored to the centre of
+              gathering.
+            </p>
+          </div>
+          <div ref={el => { panelS3.current[2] = el }} className={styles.textPanel}>
+            <p className={styles.panelBody}>
+              Bannock is broken and shared. Blueberries and gathered roots speak to an
+              unbroken relationship with the land. Fish is placed with honour. Tea steeps as
+              voices come together in ceremony.
+            </p>
+          </div>
+          <div ref={el => { panelS3.current[3] = el }} className={styles.textPanel}>
+            <p className={styles.panelBody}>
+              A shared meal is an act of healing. To gather around food is to reconnect
+              memory, community, and belonging across generations. What was taken could not
+              be kept. The feast table is laid. The people have come home.
+            </p>
+          </div>
+          <h3 ref={s3TitleRef} className={styles.sceneTitle}>Remembering, and Renewal</h3>
+          {showIdleNudge && (
+            <div className={styles.idleNudge} aria-live="polite" aria-label="Keep scrolling to explore">
+              <span className={styles.canvasCueWheel} />
+              <span className={styles.canvasCueLabel}>Keep scrolling to explore</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Fixed signature — persists across all three scene canvases ──────── */}
+      <div ref={fixedSigRef} className={styles.fixedSignature}>
+        <div className={styles.signatureShell}>
+          <img src={shirleySignature} alt="Dr. Shirley Horn signature" className={styles.signatureImg} />
+          <p className={styles.signatureName}>— Dr. Shirley Horn —</p>
+          <p className={styles.signatureRole}>Artist &amp; Elder</p>
         </div>
       </div>
 
       {/* ── About the Artist ──────────────────────────────────────────────────── */}
-      <section className={styles.exit}>
+      <section ref={exitRef} className={styles.exit}>
         <div className={styles.exitInner}>
           <div className={styles.exitPortrait}>
             <img
@@ -525,7 +877,7 @@ function HotspotDot({ hotspot }: { hotspot: Hotspot }) {
   return (
     <button
       type="button"
-      className={styles.hotspot}
+      className={`${styles.hotspot}${isOpen ? ` ${styles.hotspotOpen}` : ''}`}
       style={{ left: hotspot.x, top: hotspot.y }}
       aria-label={hotspot.title}
       aria-expanded={isOpen}

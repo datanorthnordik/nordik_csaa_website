@@ -180,7 +180,7 @@
   width: 100%;
   height: 100svh;
   overflow: hidden;
-  background: #fdfbf8; /* warm paper — transparent PNGs sit on this */
+  background: #f5f0e8;
 }
 
 /* Full-viewport fixed override — JS adds this class on ScrollTrigger enter */
@@ -210,8 +210,23 @@
 .layerPlane  { width: 33vw; right: 0;   top: -3vh;    z-index: 2; }
 .layerCanoe  { width: 28vw; right: 0;   bottom: -11vh; z-index: 3; }
 .layerModelT { width: 27vw; left: -1vw; bottom: -11vh; z-index: 3; }
-.layerBuggy  { width: 23vw; left: 26vw; bottom: 2vh;  z-index: 4; mix-blend-mode: multiply; }
-.layerSchool { width: 38vw; left: 30vw; bottom: 12vh; z-index: 5; }
+.layerBuggy  { width: 19vw; left: 26vw; bottom: 2vh;  z-index: 4; mix-blend-mode: multiply; }
+.layerSchool { width: 44vw; left: 28vw; bottom: 15vh; z-index: 5; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   READING OVERLAY (Scene 1)
+   Full-canvas curtain that fades in before each story panel so the text is
+   always read against the clean paper colour, not over accumulating artwork.
+   z-index sits above all art layers (max z-index 5) but below text panels (30).
+   ───────────────────────────────────────────────────────────────────────────── */
+.canvasOverlay {
+  position: absolute;
+  inset: 0;
+  background: #f5f0e8;
+  opacity: 0;
+  z-index: 20;
+  pointer-events: none;
+}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    TEXT PANELS (Scene 1)
@@ -358,8 +373,8 @@
 .hotspot {
   position: absolute;
   z-index: 60;
-  width: 20px;
-  height: 20px;
+  width: 14px;
+  height: 14px;
   transform: translate(-50%, -50%);
   background: rgba(156, 0, 0, 0.82);
   border: 1.5px solid rgba(255, 255, 255, 0.75);
@@ -368,25 +383,35 @@
   padding: 0;
   opacity: 0;
   animation: hotspotAppear 0.6s ease forwards;
-  transition: scale 0.12s linear;
+  transition: scale 0.15s ease, opacity 0.15s ease;
 }
-.hotspot:hover { scale: 1.2; }
+.hotspot:hover { scale: 1.4; opacity: 1 !important; }
+
+/* When callout is open, hide the dot itself so it doesn't show through the box */
+.hotspotOpen,
+.hotspotOpen:hover {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+.hotspotOpen .hotspotRing { opacity: 0 !important; }
 @keyframes hotspotAppear {
   from { opacity: 0; }
-  to   { opacity: 0.85; }
+  to   { opacity: 0.38; }
 }
 
 .hotspotRing {
   position: absolute;
-  inset: -7px;
+  inset: -6px;
   border-radius: 50%;
-  border: 1.5px solid rgba(156, 0, 0, 0.7);
-  animation: hotspotPulse 2.4s ease-out infinite;
+  border: 1px solid rgba(156, 0, 0, 0.5);
+  animation: hotspotPulse 2.6s ease-out infinite;
   pointer-events: none;
+  opacity: 0.38;
 }
 @keyframes hotspotPulse {
-  0%   { transform: scale(1);    opacity: 0.85; }
-  100% { transform: scale(1.85); opacity: 0; }
+  0%   { transform: scale(1);    opacity: 0.5; }
+  100% { transform: scale(2);    opacity: 0; }
 }
 
 .hotspotCallout,
@@ -395,11 +420,11 @@
   top: 50%;
   transform: translateY(-50%);
   z-index: 70;
-  width: 220px;
+  width: 155px;
   background: #ffffff;
-  border-radius: 7px;
-  padding: 14px 16px;
-  box-shadow: 0 6px 28px rgba(26, 17, 13, 0.18), 0 1px 5px rgba(26, 17, 13, 0.08);
+  border-radius: 6px;
+  padding: 8px 10px;
+  box-shadow: 0 4px 20px rgba(26, 17, 13, 0.22), 0 1px 4px rgba(26, 17, 13, 0.1);
   pointer-events: auto;
   text-align: left;
   animation: calloutIn 0.15s ease;
@@ -432,28 +457,158 @@
 .hotspotCalloutTitle {
   display: block;
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.8rem;
+  font-size: 0.66rem;
   font-weight: 700;
   color: #1b1c1c;
-  margin: 0 0 7px;
+  margin: 0 0 4px;
   letter-spacing: 0.02em;
 }
 
 .hotspotCalloutBody {
   margin: 0;
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.75rem;
+  font-size: 0.6rem;
   font-weight: 400;
   color: #5d3f3a;
-  line-height: 1.65;
+  line-height: 1.55;
+}
+
+/* ── Scene 2 & 3 full-canvas art layer ───────────────────────────────────────
+   Fills the entire sticky canvas with object-fit:contain so the illustration
+   is centred with the paper background letterboxing around it. */
+.layerSceneFullArt {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  opacity: 0; /* GSAP controls */
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Art wrapper for Scenes 2 & 3 ────────────────────────────────────────────
+   Leaves space at top for the scene title; hotspots positioned relative to
+   this wrapper so percentages align with the visible illustration. */
+.artWrap {
+  position: absolute;
+  top: 13vh;
+  left: 3vw;
+  right: 3vw;
+  bottom: 4vh;
+  opacity: 0; /* GSAP controls */
+}
+
+.artWrapImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Fixed signature — persists across all three scene canvases ──────────────
+   Fades in when Scene 1 art is revealed, hides during text panels,
+   re-appears when art is shown, disappears after About the Artist. */
+.fixedSignature {
+  position: fixed;
+  bottom: clamp(14px, 2.5vh, 28px);
+  left: clamp(14px, 3vw, 40px);
+  z-index: 55;
+  opacity: 0; /* GSAP controls */
+  pointer-events: none;
+}
+
+/* ── Idle-scroll nudge ────────────────────────────────────────────────────────
+   Bottom-right corner of the sticky canvas — shown after 4 s of no scrolling. */
+.idleNudge {
+  position: absolute;
+  bottom: clamp(28px, 5vh, 56px);
+  right: clamp(20px, 3vw, 56px);
+  z-index: 36;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+  animation: idleNudgeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes idleNudgeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.canvasCueWheel {
+  display: block;
+  width: 24px;
+  height: 38px;
+  border: 2px solid rgba(26, 15, 10, 0.88);
+  border-radius: 12px;
+  position: relative;
+  animation: scrollCueWheelFade 3.5s ease-out 0.2s forwards;
+}
+.canvasCueWheel::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 8px;
+  background: rgba(26, 15, 10, 0.88);
+  border-radius: 2px;
+  animation:
+    canvasWheelBounce 1.7s ease-in-out infinite,
+    scrollCueDotFade  3.5s ease-out 0.2s forwards;
+}
+@keyframes canvasWheelBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0);    opacity: 1; }
+  60%       { transform: translateX(-50%) translateY(10px); opacity: 0.2; }
+}
+@keyframes scrollCueWheelFade {
+  0%, 30% { border-color: rgba(26, 15, 10, 0.88); }
+  100%     { border-color: rgba(26, 15, 10, 0.28); }
+}
+@keyframes scrollCueDotFade {
+  0%, 30% { background: rgba(26, 15, 10, 0.88); }
+  100%     { background: rgba(26, 15, 10, 0.45); }
+}
+
+.canvasCueLabel {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(26, 15, 10, 0.88);
+  white-space: nowrap;
+  animation: scrollCueLabelFade 3.5s ease-out 0.2s forwards;
+}
+@keyframes scrollCueLabelFade {
+  0%, 30% { color: rgba(26, 15, 10, 0.88); }
+  100%     { color: rgba(26, 15, 10, 0.38); }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
    SCENES 2 & 3 — narrative text sections
    ───────────────────────────────────────────────────────────────────────────── */
 .narrativeSection {
-  background: #ffffff;
+  background: #f5f0e8;
   padding: clamp(64px, 10vw, 120px) clamp(20px, 6vw, 80px);
+}
+
+.narrativeSection .narrativeInner {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+.narrativeVisible .narrativeInner {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .narrativeSectionAlt {
@@ -505,8 +660,29 @@
    SCENES 2 & 3 — artwork reveal
    ───────────────────────────────────────────────────────────────────────────── */
 .artworkSection {
-  background: #fdfbf8;
-  padding: clamp(40px, 6vh, 72px) 0 0;
+  position: relative;
+  background: #f5f0e8;
+  padding: clamp(40px, 6vh, 72px) 0 clamp(48px, 8vh, 96px);
+}
+
+.scene23Title {
+  margin: 0 auto clamp(20px, 3vh, 36px);
+  max-width: 1100px;
+  padding: 0 clamp(16px, 4vw, 60px);
+  box-sizing: border-box;
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  color: #1a0f0a;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.scene23ArtistCredit {
+  position: absolute;
+  bottom: clamp(14px, 2.5vh, 28px);
+  left: clamp(14px, 3vw, 40px);
+  z-index: 10;
 }
 
 .artworkSectionAlt {
@@ -519,6 +695,10 @@
   margin: 0 auto;
   padding: 0 clamp(16px, 4vw, 60px);
   box-sizing: border-box;
+}
+
+.scene23CanvasHotspots {
+  position: relative;
 }
 
 .sceneFullImg {
