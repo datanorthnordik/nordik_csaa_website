@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { eventsApi, type EventDetailResponse } from '../api/eventsApi'
@@ -97,22 +97,24 @@ describe('EventDetailPage', () => {
     expect(
       await screen.findByRole('heading', { name: /elders council circle/i }),
     ).toBeDefined()
-    expect(document.title).toBe(
-      'Elders Council Circle | Events | Children of Shingwauk Alumni Association',
-    )
-    expect(
-      document.querySelector('meta[name="description"]')?.getAttribute('content'),
-    ).toBe('Join us for a day of storytelling and community wisdom.')
-    expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toMatch(
-      /\/events\/101$/,
-    )
+    await waitFor(() => {
+      expect(document.title).toBe(
+        'Elders Council Circle | Events | Children of Shingwauk Alumni Association',
+      )
+      expect(
+        document.querySelector('meta[name="description"]')?.getAttribute('content'),
+      ).toBe('Join us for a day of storytelling and community wisdom.')
+      expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toMatch(
+        /\/events\/101$/,
+      )
 
-    const structuredData = JSON.parse(
-      document.querySelector('script[data-page-seo="structured-data"]')?.textContent ?? '{}',
-    )
-    expect(structuredData['@type']).toBe('Event')
-    expect(structuredData.name).toBe('Elders Council Circle')
-    expect(structuredData.url).toMatch(/\/events\/101$/)
+      const structuredData = JSON.parse(
+        document.querySelector('script[data-page-seo="structured-data"]')?.textContent ?? '{}',
+      )
+      expect(structuredData['@type']).toBe('Event')
+      expect(structuredData.name).toBe('Elders Council Circle')
+      expect(structuredData.url).toMatch(/\/events\/101$/)
+    })
   })
 
   it('marks invalid event routes as noindex', async () => {
