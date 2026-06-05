@@ -33,6 +33,9 @@ export function CmsGalleryTile({
         className={`${styles.tileImage} ${
           variant === 'masonry' ? styles.masonryImage : ''
         }`}
+        loading="lazy"
+        decoding="async"
+        fetchPriority="low"
       />
       {showTitleDescription ? (
         <>

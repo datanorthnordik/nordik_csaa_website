@@ -14,7 +14,14 @@ export function CmsHeroMedia({
   if (imageUrl) {
     return (
       <div className={styles.heroMedia}>
-        <img src={imageUrl} alt={title} className={styles.heroImage} />
+        <img
+          src={imageUrl}
+          alt={title}
+          className={styles.heroImage}
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+        />
       </div>
     )
   }

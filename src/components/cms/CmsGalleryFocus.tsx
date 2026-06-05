@@ -46,6 +46,8 @@ export function CmsGalleryFocus({
             src={activeItem.imageUrl}
             alt={activeItem.altText}
             className={styles.focusImage}
+            loading="eager"
+            decoding="async"
           />
           {showTitleDescription ? (
             <>
@@ -104,6 +106,9 @@ export function CmsGalleryFocus({
                 src={item.imageUrl}
                 alt={item.altText}
                 className={styles.focusThumbImage}
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
               />
               {showTitleDescription ? (
                 <>

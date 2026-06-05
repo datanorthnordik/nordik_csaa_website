@@ -41,6 +41,9 @@ export function SharedImageHero({
         aria-hidden="true"
         className={styles.heroImage}
         style={{ objectPosition: backgroundPosition }}
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
         data-testid={testId ? `${testId}-background` : undefined}
       />
       <div className={styles.heroOverlay} aria-hidden="true" />

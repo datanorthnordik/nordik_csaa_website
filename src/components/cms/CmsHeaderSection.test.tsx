@@ -64,6 +64,12 @@ describe('CmsHeaderSection', () => {
     expect(
       screen.getByTestId('cms-header-hero-background').getAttribute('src'),
     ).toContain('/api/pages/1/hero/content')
+    expect(
+      screen.getByTestId('cms-header-hero-background').getAttribute('loading'),
+    ).toBe('eager')
+    expect(
+      screen.getByTestId('cms-header-hero-background').getAttribute('fetchpriority'),
+    ).toBe('high')
   })
 
   it('renders h2 headers with eyebrow, underline, description, and text alignment', () => {
