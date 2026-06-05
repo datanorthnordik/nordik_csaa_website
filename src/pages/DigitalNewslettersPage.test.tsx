@@ -114,7 +114,7 @@ describe('DigitalNewslettersPage', () => {
   it('renders the latest feature, uses image previews first, and routes editions to the detail page', async () => {
     listPublishedNewsletters.mockResolvedValue(sampleEntries)
 
-    renderPage()
+    const view = renderPage()
 
     expect(
       await screen.findByRole('heading', { name: /digital newsletters/i }),
@@ -125,9 +125,18 @@ describe('DigitalNewslettersPage', () => {
     expect(
       screen.getAllByText(/latest edition/i).length,
     ).toBeGreaterThan(0)
+    expect(view.container.querySelector('iframe')).toBeNull()
+    expect(document.title).toBe(
+      'Digital Newsletters | Children of Shingwauk Alumni Association',
+    )
     expect(
-      screen.getByTitle(/preview for archival digitization milestones/i),
-    ).toBeDefined()
+      document.head.querySelector('meta[name="description"]')?.getAttribute('content'),
+    ).toBe(
+      'Browse published CSAA digital newsletters, filter past editions by year, and open each issue from the public newsletter archive.',
+    )
+    expect(
+      document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'),
+    ).toBe(`${window.location.origin}/news-media/digital-newsletter`)
 
     const link = screen.getByRole('link', {
       name: /read community reunion highlights details/i,

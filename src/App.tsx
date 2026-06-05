@@ -2,21 +2,62 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { NavigationMenuProvider, useNavigationMenu } from './components/NavigationMenuProvider'
 import { ScrollToTop } from './components/ScrollToTop'
 import { SiteShell } from './components/SiteShell'
-import { EventCalendarPage } from './pages/EventCalendarPage'
-import { CmsPage } from './pages/CmsPage'
-import { DigitalNewsletterDetailPage } from './pages/DigitalNewsletterDetailPage'
 import { DigitalNewslettersPage } from './pages/DigitalNewslettersPage'
-import { EventDetailPage } from './pages/EventDetailPage'
 import { GatheringsPage } from './pages/GatheringsPage'
-import { CsaaLegacyPage } from './pages/CsaaLegacyPage'
-import { HealingMemorialsPage } from './pages/HealingMemorialsPage'
-import { OurStoryPage } from './pages/OurStoryPage'
-import { InMemorialPage } from './pages/InMemorialPage'
 import { NewsMediaLandingPage } from './pages/NewsMediaLandingPage'
-import { PressArchiveDetailPage } from './pages/PressArchiveDetailPage'
 import { PressArchivePage } from './pages/PressArchivePage'
 import { getInitialMenuHref } from './lib/navigationMenu'
-import { CommunityResourcesPage } from './pages/ResourcesPage'
+
+const EventCalendarPage = lazy(() =>
+  import('./pages/EventCalendarPage').then((module) => ({
+    default: module.EventCalendarPage,
+  })),
+)
+const CmsPage = lazy(() =>
+  import('./pages/CmsPage').then((module) => ({
+    default: module.CmsPage,
+  })),
+)
+const DigitalNewsletterDetailPage = lazy(() =>
+  import('./pages/DigitalNewsletterDetailPage').then((module) => ({
+    default: module.DigitalNewsletterDetailPage,
+  })),
+)
+const EventDetailPage = lazy(() =>
+  import('./pages/EventDetailPage').then((module) => ({
+    default: module.EventDetailPage,
+  })),
+)
+const CsaaLegacyPage = lazy(() =>
+  import('./pages/CsaaLegacyPage').then((module) => ({
+    default: module.CsaaLegacyPage,
+  })),
+)
+const HealingMemorialsPage = lazy(() =>
+  import('./pages/HealingMemorialsPage').then((module) => ({
+    default: module.HealingMemorialsPage,
+  })),
+)
+const OurStoryPage = lazy(() =>
+  import('./pages/OurStoryPage').then((module) => ({
+    default: module.OurStoryPage,
+  })),
+)
+const InMemorialPage = lazy(() =>
+  import('./pages/InMemorialPage').then((module) => ({
+    default: module.InMemorialPage,
+  })),
+)
+const PressArchiveDetailPage = lazy(() =>
+  import('./pages/PressArchiveDetailPage').then((module) => ({
+    default: module.PressArchiveDetailPage,
+  })),
+)
+const CommunityResourcesPage = lazy(() =>
+  import('./pages/ResourcesPage').then((module) => ({
+    default: module.CommunityResourcesPage,
+  })),
+)
 
 function App() {
   return (
@@ -31,10 +72,22 @@ function App() {
             <Route path="/events/:eventId" element={<EventDetailPage />} />
             <Route path="/our-story" element={<OurStoryPage />} />
             {/* Both slugs point to the same scrollytelling experience */}
-            <Route path="/our-story/csaa-legacy"     element={<CsaaLegacyPage />} />
-            <Route path="/our-story/the-csaa-legacy" element={<CsaaLegacyPage />} />
-            <Route path="/our-story/healing-memorials" element={<HealingMemorialsPage />} />
-            <Route path="/our-story/healing-memorials/in-memorial" element={<InMemorialPage />} />
+            <Route
+              path="/our-story/csaa-legacy"
+              element={withSuspense(<CsaaLegacyPage />)}
+            />
+            <Route
+              path="/our-story/the-csaa-legacy"
+              element={withSuspense(<CsaaLegacyPage />)}
+            />
+            <Route
+              path="/our-story/healing-memorials"
+              element={withSuspense(<HealingMemorialsPage />)}
+            />
+            <Route
+              path="/our-story/healing-memorials/in-memorial"
+              element={withSuspense(<InMemorialPage />)}
+            />
             <Route path="/news-media" element={<NewsMediaLandingPage />} />
             <Route
               path="/news-media/digital-newsletter/:newsletterId"

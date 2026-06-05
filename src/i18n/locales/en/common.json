@@ -170,6 +170,10 @@
     "imageCount": "{{current}} of {{total}}"
   },
   "newslettersPage": {
+    "seo": {
+      "title": "Digital Newsletters | Children of Shingwauk Alumni Association",
+      "description": "Browse published CSAA digital newsletters, filter past editions by year, and open each issue from the public newsletter archive."
+    },
     "hero": {
       "eyebrow": "Digital newsletters",
       "title": "Digital Newsletters",
@@ -324,7 +328,12 @@
     }
   },
   "newsMediaPage": {
+    "seo": {
+      "title": "News & Media | Children of Shingwauk Alumni Association",
+      "description": "Read CSAA newsletters, browse press coverage, and find media contact details from the Children of Shingwauk Alumni Association."
+    },
     "hero": {
+      "eyebrow": "News & Media",
       "title": "News & Media",
       "description": "Stay informed with updates from our community and external press coverage. Discover the stories driving our heritage forward."
     },
@@ -346,6 +355,10 @@
     }
   },
   "pressArchivePage": {
+    "seo": {
+      "title": "Press Archive | Children of Shingwauk Alumni Association",
+      "description": "Browse archived press coverage, source links, and downloadable media files from the Children of Shingwauk Alumni Association."
+    },
     "hero": {
       "eyebrow": "Press archive",
       "title": "Press Archive",

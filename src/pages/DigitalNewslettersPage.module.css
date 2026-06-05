@@ -614,6 +614,10 @@
   animation: shimmer 1.5s linear infinite;
 }
 
+.featuredCardSkeleton {
+  min-height: 360px;
+}
+
 .visuallyHidden {
   position: absolute;
   width: 1px;

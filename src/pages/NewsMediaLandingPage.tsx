@@ -3,10 +3,17 @@ import { useTranslation } from 'react-i18next'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import { TextHero } from '../components/TextHero'
+import { usePageSeo } from '../lib/usePageSeo'
 import styles from './NewsMediaLandingPage.module.css'
 
+const PRESS_INQUIRIES_IMAGE_WIDTH = 1200
+const PRESS_INQUIRIES_IMAGE_HEIGHT = 900
+
 export function NewsMediaLandingPage() {
-  const { t } = useTranslation()
+  const { i18n, t } = useTranslation()
+  const locale = i18n.resolvedLanguage ?? i18n.language
+  const seoTitle = t('newsMediaPage.seo.title')
+  const seoDescription = t('newsMediaPage.seo.description')
 
   usePageBreadcrumbs([
     {
@@ -14,10 +21,18 @@ export function NewsMediaLandingPage() {
     },
   ])
 
+  usePageSeo({
+    title: seoTitle,
+    description: seoDescription,
+    canonicalPath: '/news-media',
+    image: WEBSITE_ASSET_URLS.mediaLanding,
+    lang: locale,
+  })
+
   return (
     <div className={styles.page}>
       <TextHero
-        eyebrow="News &amp; Media"
+        eyebrow={t('newsMediaPage.hero.eyebrow')}
         title={t('newsMediaPage.hero.title')}
         description={t('newsMediaPage.hero.description')}
         waveFill="#f2f5f4"
@@ -71,6 +86,12 @@ export function NewsMediaLandingPage() {
               src={WEBSITE_ASSET_URLS.mediaLanding}
               alt={t('newsMediaPage.pressInquiries.imageAlt')}
               className={styles.inquiriesImage}
+              width={PRESS_INQUIRIES_IMAGE_WIDTH}
+              height={PRESS_INQUIRIES_IMAGE_HEIGHT}
+              loading="lazy"
+              decoding="async"
+              fetchPriority="low"
+              sizes="(max-width: 900px) 100vw, 440px"
             />
           </div>
         </div>
