@@ -91,7 +91,7 @@ export function NewsMediaLandingPage() {
               loading="lazy"
               decoding="async"
               fetchPriority="low"
-              sizes="(max-width: 900px) 100vw, 50vw"
+              sizes="(max-width: 900px) 100vw, 440px"
             />
           </div>
         </div>

@@ -188,6 +188,8 @@
 
 .inquiriesImage {
   width: 100%;
+  max-width: 440px;
+  height: auto;
   aspect-ratio: 4 / 3;
   border-radius: 16px;
   object-fit: cover;
