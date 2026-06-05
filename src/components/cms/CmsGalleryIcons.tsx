@@ -12,7 +12,14 @@ export function CmsGalleryIcons({ items }: CmsGalleryIconsProps) {
         const label = item.title || item.altText
         const content = (
           <>
-            <img src={item.imageUrl} alt={item.altText} className={styles.iconTileImage} />
+            <img
+              src={item.imageUrl}
+              alt={item.altText}
+              className={styles.iconTileImage}
+              loading="lazy"
+              decoding="async"
+              fetchPriority="low"
+            />
             <span className={styles.visuallyHidden}>{label}</span>
           </>
         )

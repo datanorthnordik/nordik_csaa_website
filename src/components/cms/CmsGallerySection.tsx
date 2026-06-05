@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { GalleryDetailResponse } from '../../api/galleriesApi'
 import { galleriesApi } from '../../api/galleriesApi'
@@ -11,7 +11,6 @@ import { CmsGalleryCarousel } from './CmsGalleryCarousel'
 import { CmsGalleryFocus } from './CmsGalleryFocus'
 import { CmsGalleryGrid } from './CmsGalleryGrid'
 import { CmsGalleryIcons } from './CmsGalleryIcons'
-import { CmsGalleryLightbox } from './CmsGalleryLightbox'
 import { CmsGalleryMasonry } from './CmsGalleryMasonry'
 import styles from './CmsGallerySection.module.css'
 
@@ -19,7 +18,19 @@ type CmsGallerySectionProps = {
   section: PageSection
 }
 
-type GalleryStatus = 'loading' | 'ready' | 'error'
+type GalleryStatus = 'idle' | 'loading' | 'ready' | 'error'
+
+const galleryLoadRootMargin = '900px 0px'
+
+const CmsGalleryLightbox = lazy(() =>
+  import('./CmsGalleryLightbox').then((module) => ({
+    default: module.CmsGalleryLightbox,
+  })),
+)
+
+function shouldLoadGalleryImmediately() {
+  return typeof window === 'undefined' || typeof window.IntersectionObserver === 'undefined'
+}
 
 export function CmsGallerySection({ section }: CmsGallerySectionProps) {
   const { t } = useTranslation()
@@ -28,13 +39,64 @@ export function CmsGallerySection({ section }: CmsGallerySectionProps) {
   const showTitleDescription = section.gallery?.show_title_description ?? true
   const autoScrollEnabled = section.gallery?.auto_scroll_enabled ?? false
   const [gallery, setGallery] = useState<GalleryDetailResponse | null>(null)
-  const [status, setStatus] = useState<GalleryStatus>('loading')
+  const [status, setStatus] = useState<GalleryStatus>(() =>
+    shouldLoadGalleryImmediately() ? 'loading' : 'idle',
+  )
+  const [shouldLoadGallery, setShouldLoadGallery] = useState(() =>
+    shouldLoadGalleryImmediately(),
+  )
   const [activeLightboxIndex, setActiveLightboxIndex] = useState<number | null>(null)
+  const sectionRef = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    const loadImmediately = shouldLoadGalleryImmediately()
+
+    setGallery(null)
+    setShouldLoadGallery(loadImmediately)
+    setStatus(loadImmediately ? 'loading' : 'idle')
+  }, [galleryId])
+
+  useEffect(() => {
+    if (!galleryId || shouldLoadGallery) {
+      return
+    }
+
+    const sectionElement = sectionRef.current
+    if (!sectionElement || typeof window.IntersectionObserver === 'undefined') {
+      setShouldLoadGallery(true)
+      return
+    }
+
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) {
+          return
+        }
+
+        setShouldLoadGallery(true)
+        observer.disconnect()
+      },
+      {
+        rootMargin: galleryLoadRootMargin,
+        threshold: 0.01,
+      },
+    )
+
+    observer.observe(sectionElement)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [galleryId, shouldLoadGallery])
 
   useEffect(() => {
     if (!galleryId) {
       setGallery(null)
       setStatus('error')
+      return
+    }
+
+    if (!shouldLoadGallery) {
       return
     }
 
@@ -63,7 +125,7 @@ export function CmsGallerySection({ section }: CmsGallerySectionProps) {
     return () => {
       ignore = true
     }
-  }, [galleryId])
+  }, [galleryId, shouldLoadGallery])
 
   useEffect(() => {
     setActiveLightboxIndex(null)
@@ -80,8 +142,8 @@ export function CmsGallerySection({ section }: CmsGallerySectionProps) {
   }
 
   return (
-    <section className={styles.gallerySection}>
-      {status === 'loading' ? (
+    <section ref={sectionRef} className={styles.gallerySection}>
+      {status === 'idle' || status === 'loading' ? (
         <div className={styles.galleryLoading} aria-busy="true">
           <div className={styles.loadingPulse} aria-hidden="true" />
           <div className={styles.loadingBars}>
@@ -131,14 +193,16 @@ export function CmsGallerySection({ section }: CmsGallerySectionProps) {
           ) : null}
           {viewMode === 'icons' ? <CmsGalleryIcons items={items} /> : null}
 
-          {viewMode !== 'icons' ? (
-            <CmsGalleryLightbox
-              items={items}
-              showTitleDescription={showTitleDescription}
-              activeIndex={activeLightboxIndex}
-              onClose={() => setActiveLightboxIndex(null)}
-              onSelect={setActiveLightboxIndex}
-            />
+          {viewMode !== 'icons' && activeLightboxIndex !== null ? (
+            <Suspense fallback={null}>
+              <CmsGalleryLightbox
+                items={items}
+                showTitleDescription={showTitleDescription}
+                activeIndex={activeLightboxIndex}
+                onClose={() => setActiveLightboxIndex(null)}
+                onSelect={setActiveLightboxIndex}
+              />
+            </Suspense>
           ) : null}
         </>
       ) : null}

@@ -66,6 +66,8 @@ export function CmsGalleryCarousel({
               src={activeItem.imageUrl}
               alt={activeItem.altText}
               className={styles.carouselImage}
+              loading="eager"
+              decoding="async"
             />
           </div>
           {showTitleDescription ? (
@@ -128,6 +130,9 @@ export function CmsGalleryCarousel({
                   src={item.imageUrl}
                   alt={item.altText}
                   className={styles.carouselThumbImage}
+                  loading="lazy"
+                  decoding="async"
+                  fetchPriority="low"
                 />
                 {showTitleDescription ? (
                   <>

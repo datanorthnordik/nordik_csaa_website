@@ -17,6 +17,8 @@ export function CmsTypographySection({ section }: CmsTypographySectionProps) {
     return null
   }
 
+  const resolvedHtml = html ? optimizeRichTextMedia(html) : ''
+
   const alignmentClass =
     typography.text_align === 'center'
       ? styles.alignCenter
@@ -30,7 +32,7 @@ export function CmsTypographySection({ section }: CmsTypographySectionProps) {
         {html ? (
           <div
             className={styles.richText}
-            dangerouslySetInnerHTML={{ __html: html }}
+            dangerouslySetInnerHTML={{ __html: resolvedHtml }}
           />
         ) : (
           <p className={styles.plainText}>{text}</p>
@@ -38,4 +40,32 @@ export function CmsTypographySection({ section }: CmsTypographySectionProps) {
       </div>
     </section>
   )
+}
+
+function optimizeRichTextMedia(html: string) {
+  if (!/<img\s/i.test(html) || typeof DOMParser === 'undefined') {
+    return html
+  }
+
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+  let didMutate = false
+
+  doc.body.querySelectorAll('img').forEach((image) => {
+    if (!image.getAttribute('loading')) {
+      image.setAttribute('loading', 'lazy')
+      didMutate = true
+    }
+
+    if (!image.getAttribute('decoding')) {
+      image.setAttribute('decoding', 'async')
+      didMutate = true
+    }
+
+    if (!image.getAttribute('fetchpriority')) {
+      image.setAttribute('fetchpriority', 'low')
+      didMutate = true
+    }
+  })
+
+  return didMutate ? doc.body.innerHTML : html
 }

@@ -299,12 +299,49 @@ export function CmsGalleryLightbox({
           }`}
         >
           <div className={styles.viewerStage}>
-            <div className={styles.viewerCanvas}>
-              <img
-                src={activeItem.imageUrl}
-                alt={activeItem.altText}
-                className={styles.viewerImage}
-              />
+            {items.length > 1 ? (
+              <>
+                <button
+                  type="button"
+                  className={`${styles.viewerNavButton} ${styles.viewerNavButtonLeft}`}
+                  onClick={() => move(-1)}
+                  aria-label={t('common.previous')}
+                  title={t('common.previous')}
+                >
+                  <ViewerIcon name="arrowLeft" />
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.viewerNavButton} ${styles.viewerNavButtonRight}`}
+                  onClick={() => move(1)}
+                  aria-label={t('common.next')}
+                  title={t('common.next')}
+                >
+                  <ViewerIcon name="arrowRight" />
+                </button>
+              </>
+            ) : null}
+
+            <div ref={canvasRef} className={styles.viewerCanvas}>
+              <div className={styles.viewerCanvasFrame}>
+                <img
+                  key={activeItem.id}
+                  ref={imageRef}
+                  src={activeItem.imageUrl}
+                  alt={activeItem.altText}
+                  className={styles.viewerImage}
+                  style={fittedImageStyle}
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                  onLoad={(event) => {
+                    cacheImageNaturalSize(activeItem.id, {
+                      width: event.currentTarget.naturalWidth,
+                      height: event.currentTarget.naturalHeight,
+                    })
+                  }}
+                />
+              </div>
             </div>
           </div>
 
@@ -330,6 +367,9 @@ export function CmsGalleryLightbox({
                       src={item.imageUrl}
                       alt={item.altText}
                       className={styles.viewerThumbImage}
+                      loading="lazy"
+                      decoding="async"
+                      fetchPriority="low"
                     />
                     <span className={styles.viewerThumbOverlay} aria-hidden="true" />
                     <span className={styles.viewerThumbIndex} aria-hidden="true">

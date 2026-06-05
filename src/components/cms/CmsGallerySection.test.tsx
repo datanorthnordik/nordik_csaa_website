@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import i18n from '../../i18n'
 import { galleriesApi } from '../../api/galleriesApi'
@@ -68,6 +68,10 @@ describe('CmsGallerySection', () => {
       await screen.findByRole('button', { name: /fran fletcher-luther/i }),
     ).toBeDefined()
     expect(getGallery).toHaveBeenCalledWith(5)
+    const image = screen.getByAltText(/portrait of fran fletcher-luther/i)
+    expect(image.getAttribute('loading')).toBe('lazy')
+    expect(image.getAttribute('decoding')).toBe('async')
+    expect(image.getAttribute('fetchpriority')).toBe('low')
     expect(screen.queryByRole('heading', { name: /community portraits/i })).toBeNull()
     expect(
       screen.queryByText(/portraits and exhibit images from the community archive\./i),
@@ -194,5 +198,94 @@ describe('CmsGallerySection', () => {
 
     expect(link.getAttribute('href')).toBe('https://www.mlb.com/bluejays/community/jays-care')
     expect(screen.queryByRole('dialog')).toBeNull()
+  })
+
+  it('waits until the gallery nears the viewport before fetching when intersection observers are available', async () => {
+    const originalIntersectionObserver = window.IntersectionObserver
+    const observe = vi.fn()
+    const disconnect = vi.fn()
+    let triggerIntersection: (() => void) | null = null
+
+    getGallery.mockResolvedValue({
+      id: 5,
+      name: 'Community portraits',
+      description: '',
+      published: true,
+      asset_limit: 20,
+      cover_image: null,
+      images: [
+        {
+          id: 1,
+          gallery_id: 5,
+          title: 'Fran Fletcher-Luther',
+          alt_text: 'Portrait of Fran Fletcher-Luther',
+          file_name: 'fran.jpg',
+          file_url: '/api/galleries/5/images/1/content',
+          mime_type: 'image/jpeg',
+          file_size: 0,
+          sort_order: 0,
+          created_at: '',
+          updated_at: '',
+        },
+      ],
+      created_at: '',
+      updated_at: '',
+    })
+
+    Object.defineProperty(window, 'IntersectionObserver', {
+      configurable: true,
+      writable: true,
+      value: vi.fn().mockImplementation((callback: IntersectionObserverCallback) => {
+        triggerIntersection = () =>
+          callback(
+            [
+              {
+                isIntersecting: true,
+                intersectionRatio: 1,
+              } as IntersectionObserverEntry,
+            ],
+            {
+              disconnect,
+              observe,
+              takeRecords: vi.fn(),
+              unobserve: vi.fn(),
+            } as unknown as IntersectionObserver,
+          )
+
+        return {
+          disconnect,
+          observe,
+          takeRecords: vi.fn(),
+          unobserve: vi.fn(),
+        } as unknown as IntersectionObserver
+      }),
+    })
+
+    try {
+      render(<CmsGallerySection section={createSection()} />)
+
+      await waitFor(() => {
+        expect(observe).toHaveBeenCalled()
+      })
+      expect(getGallery).not.toHaveBeenCalled()
+
+      await act(async () => {
+        triggerIntersection?.()
+      })
+
+      await waitFor(() => {
+        expect(getGallery).toHaveBeenCalledWith(5)
+      })
+    } finally {
+      if (originalIntersectionObserver) {
+        Object.defineProperty(window, 'IntersectionObserver', {
+          configurable: true,
+          writable: true,
+          value: originalIntersectionObserver,
+        })
+      } else {
+        delete (window as Window & { IntersectionObserver?: typeof IntersectionObserver }).IntersectionObserver
+      }
+    }
   })
 })
