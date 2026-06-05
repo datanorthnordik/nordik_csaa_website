@@ -67,10 +67,9 @@ export function EventDetailPage() {
         ? buildEventSchema(event, {
             canonicalPath: `/events/${event.id}`,
             description: seoDescription,
-            image: displayImageUrl ?? WEBSITE_ASSET_URLS.gatheringsHeroStage,
           })
         : undefined,
-    [displayImageUrl, event, seoDescription],
+    [event, seoDescription],
   )
 
   usePageBreadcrumbs([

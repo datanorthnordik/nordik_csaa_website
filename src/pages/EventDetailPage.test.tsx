@@ -90,6 +90,7 @@ describe('EventDetailPage', () => {
   })
 
   it('renders the event details and sets event SEO metadata', async () => {
+    const siteRoot = new URL('/', window.location.origin).toString()
     getEvent.mockResolvedValue(createEvent())
 
     renderPage()
@@ -114,6 +115,9 @@ describe('EventDetailPage', () => {
       expect(structuredData['@type']).toBe('Event')
       expect(structuredData.name).toBe('Elders Council Circle')
       expect(structuredData.url).toMatch(/\/events\/101$/)
+      expect(structuredData.image).toBeUndefined()
+      expect(structuredData.organizer.url).toBe(siteRoot)
+      expect(structuredData.location.name).toBe('Heritage Valley Grounds')
     })
   })
 
@@ -127,5 +131,24 @@ describe('EventDetailPage', () => {
       'noindex, nofollow',
     )
     expect(getEvent).not.toHaveBeenCalled()
+  })
+
+  it('skips Event structured data when the event does not have a physical venue', async () => {
+    getEvent.mockResolvedValue(
+      createEvent({
+        location_mode: 'none',
+        address: null,
+      }),
+    )
+
+    renderPage()
+
+    expect(
+      await screen.findByRole('heading', { name: /elders council circle/i }),
+    ).toBeDefined()
+
+    await waitFor(() => {
+      expect(document.querySelector('script[data-page-seo="structured-data"]')).toBeNull()
+    })
   })
 })

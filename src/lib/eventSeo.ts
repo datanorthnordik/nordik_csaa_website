@@ -20,10 +20,15 @@ type EventListSchemaOptions = {
 export function buildEventSchema(
   event: EventDetailResponse,
   options: EventSchemaOptions = {},
-) {
+): StructuredDataObject | undefined {
+  const eventSchema = buildEventSchemaObject(event, options)
+  if (!eventSchema) {
+    return undefined
+  }
+
   return {
     '@context': 'https://schema.org',
-    ...buildEventSchemaObject(event, options),
+    ...eventSchema,
   }
 }
 
@@ -32,8 +37,36 @@ export function buildEventListSchema({
   description,
   canonicalPath,
   events,
-}: EventListSchemaOptions) {
-  const visibleEvents = events.slice(0, 20)
+}: EventListSchemaOptions): StructuredDataObject {
+  const visibleEvents = events
+    .slice(0, 20)
+    .map((event) => {
+      const item = buildEventSchemaObject(event)
+      if (!item) {
+        return null
+      }
+
+      return {
+        event,
+        item,
+      }
+    })
+    .filter(
+      (
+        item,
+      ): item is {
+        event: EventDetailResponse
+        item: StructuredDataObject
+      } => Boolean(item),
+    )
+    .map(({ event, item }, index) => {
+      return {
+        '@type': 'ListItem',
+        position: index + 1,
+        url: buildAbsoluteUrl(`/events/${event.id}`),
+        item,
+      }
+    })
 
   return {
     '@context': 'https://schema.org',
@@ -45,12 +78,7 @@ export function buildEventListSchema({
       '@type': 'ItemList',
       name: `${title} listing`,
       numberOfItems: visibleEvents.length,
-      itemListElement: visibleEvents.map((event, index) => ({
-        '@type': 'ListItem',
-        position: index + 1,
-        url: buildAbsoluteUrl(`/events/${event.id}`),
-        item: buildEventSchemaObject(event),
-      })),
+      itemListElement: visibleEvents,
     },
   } satisfies StructuredDataObject
 }
@@ -58,7 +86,15 @@ export function buildEventListSchema({
 function buildEventSchemaObject(
   event: EventDetailResponse,
   options: EventSchemaOptions = {},
-) {
+): StructuredDataObject | undefined {
+  const name = cleanText(event.title)
+  const startDate = formatStructuredEventDate(event.start_at, event.event_type)
+  const location = buildLocationSchema(event.address, event.location_mode)
+  if (!name || !startDate || !location) {
+    return undefined
+  }
+
+  const url = buildAbsoluteUrl(options.canonicalPath ?? `/events/${event.id}`)
   const image = options.image ?? getEventImageUrl(event)
   const description =
     cleanText(options.description) ||
@@ -67,49 +103,90 @@ function buildEventSchemaObject(
 
   return compactStructuredData({
     '@type': 'Event',
-    name: cleanText(event.title) || `Event ${event.id}`,
+    name,
     description,
-    url: buildAbsoluteUrl(options.canonicalPath ?? `/events/${event.id}`),
-    startDate: event.start_at,
-    endDate: event.end_at || undefined,
+    url,
+    mainEntityOfPage: url,
+    startDate,
+    endDate: formatStructuredEventDate(event.end_at, event.event_type) || undefined,
     eventStatus: getEventStatus(event),
-    eventAttendanceMode:
-      event.location_mode === 'address'
-        ? 'https://schema.org/OfflineEventAttendanceMode'
-        : undefined,
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     image: image || undefined,
     keywords: event.categories.length ? event.categories.join(', ') : undefined,
-    organizer: {
+    organizer: compactStructuredData({
       '@type': 'Organization',
       name: SITE_NAME,
-    },
-    location: buildLocationSchema(event.address, event.location_mode),
+      url: buildAbsoluteUrl('/'),
+    }),
+    location,
+    offers: buildOfferSchema(event),
   })
 }
 
 function buildLocationSchema(
   address: EventAddress | null | undefined,
   locationMode: EventDetailResponse['location_mode'],
-) {
+): StructuredDataObject | undefined {
   if (locationMode !== 'address' || !address) {
     return undefined
   }
 
+  const locationName = cleanText(address.name)
   const streetAddress = [address.address_line_1, address.address_line_2]
     .filter(Boolean)
     .join(', ')
+  const addressLocality = cleanText(address.city)
+  const addressRegion = cleanText(address.province_state)
+  const hasRecognizableAddress = Boolean(streetAddress || addressLocality || addressRegion)
+  const postalAddress = compactStructuredData({
+    '@type': 'PostalAddress',
+    streetAddress: streetAddress || undefined,
+    addressLocality: addressLocality || undefined,
+    addressRegion: addressRegion || undefined,
+    postalCode: cleanText(address.postal_code) || undefined,
+    addressCountry: cleanText(address.country) || undefined,
+  })
+
+  if (!locationName || !hasRecognizableAddress) {
+    return undefined
+  }
 
   return compactStructuredData({
     '@type': 'Place',
-    name: cleanText(address.name) || undefined,
-    address: compactStructuredData({
-      '@type': 'PostalAddress',
-      streetAddress: streetAddress || undefined,
-      addressLocality: cleanText(address.city) || undefined,
-      addressRegion: cleanText(address.province_state) || undefined,
-      postalCode: cleanText(address.postal_code) || undefined,
-      addressCountry: cleanText(address.country) || undefined,
-    }),
+    name: locationName,
+    address: postalAddress,
+  })
+}
+
+function buildOfferSchema(
+  event: Pick<
+    EventDetailResponse,
+    | 'registration_enabled'
+    | 'registration_url'
+    | 'registration_start_at'
+    | 'registration_end_at'
+    | 'start_at'
+  >,
+): StructuredDataObject | undefined {
+  const registrationUrl = cleanText(event.registration_url)
+  if (!event.registration_enabled || !registrationUrl) {
+    return undefined
+  }
+
+  const now = new Date()
+  const registrationStart = parseStructuredDateTime(event.registration_start_at)
+  const registrationEnd = parseStructuredDateTime(event.registration_end_at)
+  const eventStart = parseStructuredDateTime(event.start_at)
+  const registrationIsOpen =
+    (!registrationStart || registrationStart <= now) &&
+    (!registrationEnd || registrationEnd >= now) &&
+    (!eventStart || eventStart >= now)
+
+  return compactStructuredData({
+    '@type': 'Offer',
+    url: buildAbsoluteUrl(registrationUrl),
+    availability: registrationIsOpen ? 'https://schema.org/InStock' : undefined,
+    validFrom: formatStructuredDateTime(event.registration_start_at) || undefined,
   })
 }
 
@@ -128,6 +205,45 @@ function getEventImageUrl(event: EventDetailResponse) {
   return event.display_image && isImageMedia(event.display_image)
     ? resolveEventMediaUrl(event.display_image)
     : null
+}
+
+function formatStructuredEventDate(
+  value: string | null | undefined,
+  eventType: EventDetailResponse['event_type'],
+) {
+  const normalizedValue = cleanText(value)
+  if (!normalizedValue) {
+    return null
+  }
+
+  const matchedDate = normalizedValue.match(/^(\d{4}-\d{2}-\d{2})(?:$|T)/)
+  if (isAllDayEventType(eventType)) {
+    return matchedDate?.[1] ?? null
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(normalizedValue)) {
+    return normalizedValue
+  }
+
+  return parseStructuredDateTime(normalizedValue) ? normalizedValue : null
+}
+
+function formatStructuredDateTime(value: string | null | undefined) {
+  const normalizedValue = cleanText(value)
+  return parseStructuredDateTime(normalizedValue) ? normalizedValue : null
+}
+
+function parseStructuredDateTime(value: string | null | undefined) {
+  if (!value) {
+    return null
+  }
+
+  const parsedDate = new Date(value)
+  return Number.isNaN(parsedDate.getTime()) ? null : parsedDate
+}
+
+function isAllDayEventType(eventType: EventDetailResponse['event_type']) {
+  return eventType === 'single_day_all_day' || eventType === 'multi_day_all_day'
 }
 
 function cleanText(value: string | null | undefined) {
