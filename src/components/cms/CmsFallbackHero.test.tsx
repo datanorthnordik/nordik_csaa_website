@@ -43,6 +43,12 @@ describe('CmsFallbackHero', () => {
     expect(
       screen.getByTestId('cms-fallback-hero-background').getAttribute('src'),
     ).toContain('/api/pages/1/hero/content')
+    expect(
+      screen.getByTestId('cms-fallback-hero-background').getAttribute('loading'),
+    ).toBe('eager')
+    expect(
+      screen.getByTestId('cms-fallback-hero-background').getAttribute('fetchpriority'),
+    ).toBe('high')
   })
 
   it('renders the header subheading and description when a fallback header is available', () => {

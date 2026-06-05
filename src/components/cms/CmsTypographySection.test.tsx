@@ -43,4 +43,25 @@ describe('CmsTypographySection', () => {
 
     expect(screen.getByText(/fallback body copy\./i)).toBeDefined()
   })
+
+  it('adds lazy-loading hints to rich text images', () => {
+    render(
+      <CmsTypographySection
+        section={createSection({
+          typography: {
+            html_content:
+              '<p><img src="/images/community.jpg" alt="Community archive" /></p>',
+            text_content: '',
+            text_align: 'left',
+          },
+        })}
+      />,
+    )
+
+    const image = screen.getByAltText(/community archive/i)
+
+    expect(image.getAttribute('loading')).toBe('lazy')
+    expect(image.getAttribute('decoding')).toBe('async')
+    expect(image.getAttribute('fetchpriority')).toBe('low')
+  })
 })
