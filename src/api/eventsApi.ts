@@ -217,14 +217,12 @@ async function listAllPublicEvents(
 }
 
 export const eventsApi = {
-  async listUpcomingEvents(referenceDate: string, pageSize = 100) {
-    return listAllPublicEvents((page) =>
-      buildPublicListParams('upcoming', {
-        referenceDate,
-        page,
-        pageSize,
-      }),
-    )
+  async listUpcomingEvents(referenceDate: string, page = 1, pageSize = 10) {
+    return listPublicEventsWithParams(buildPublicListParams('upcoming', {
+      referenceDate,
+      page,
+      pageSize,
+    }))
   },
 
   async listArchivedEvents(referenceDate: string, page = 1, pageSize = 10) {

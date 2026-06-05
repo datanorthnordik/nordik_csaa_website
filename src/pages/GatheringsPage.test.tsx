@@ -111,6 +111,7 @@ function createListResponse(
 }
 
 function renderGatheringsPage() {
+  window.history.pushState({}, '', '/events')
   return render(
     <MemoryRouter>
       <GatheringsPage />
@@ -146,6 +147,8 @@ describe('GatheringsPage', () => {
     const upcomingEvents = Array.from({ length: 12 }, (_, index) =>
       createEvent(index + 1, `Upcoming Event ${index + 1}`),
     )
+    const upcomingPageOne = upcomingEvents.slice(0, 10)
+    const upcomingPageTwo = upcomingEvents.slice(10)
     const archivedPageOne = Array.from({ length: 10 }, (_, index) =>
       createEvent(index + 101, `Archived Event ${index + 1}`),
     )
@@ -153,13 +156,23 @@ describe('GatheringsPage', () => {
       createEvent(index + 111, `Archived Event ${index + 11}`),
     )
 
-    listUpcomingEvents.mockResolvedValue(
-      createListResponse(upcomingEvents, {
+    listUpcomingEvents.mockImplementation(async (_referenceDate, page = 1) => {
+      if (page === 1) {
+        return createListResponse(upcomingPageOne, {
+          page: 1,
+          totalItems: 12,
+          totalPages: 2,
+          hasNext: true,
+        })
+      }
+
+      return createListResponse(upcomingPageTwo, {
+        page: 2,
         totalItems: 12,
         totalPages: 2,
-        hasNext: true,
-      }),
-    )
+        hasPrev: true,
+      })
+    })
     listArchivedEvents.mockImplementation(async (_referenceDate, page = 1) => {
       if (page === 1) {
         return createListResponse(archivedPageOne, {
@@ -191,12 +204,13 @@ describe('GatheringsPage', () => {
         within(archiveSection).getAllByRole('link', { name: /view event summary/i }),
       ).toHaveLength(10)
     })
-    expect(listUpcomingEvents).toHaveBeenCalledWith('2026-09-10')
+    expect(listUpcomingEvents).toHaveBeenCalledWith('2026-09-10', 1, 10)
     expect(listArchivedEvents).toHaveBeenCalledWith('2026-09-09', 1, 10)
 
     fireEvent.click(within(upcomingSection).getByRole('button', { name: /show more/i }))
 
     await waitFor(() => {
+      expect(listUpcomingEvents).toHaveBeenLastCalledWith('2026-09-10', 2, 10)
       expect(
         within(upcomingSection).getAllByRole('link', { name: /view event details/i }),
       ).toHaveLength(12)
@@ -249,5 +263,55 @@ describe('GatheringsPage', () => {
     expect(
       within(archiveSection).queryByRole('button', { name: /show more/i }),
     ).toBeNull()
+  })
+
+  it('sets SEO metadata and collection structured data for the events landing page', async () => {
+    listUpcomingEvents.mockResolvedValue(
+      createListResponse([createEvent(1, 'Elders Council Circle')]),
+    )
+    listArchivedEvents.mockResolvedValue(
+      createListResponse([
+        createEvent(2, 'Summer Solstice Gathering', {
+          start_at: '2025-06-21T18:00:00-04:00',
+          end_at: '2025-06-21T21:00:00-04:00',
+        }),
+      ]),
+    )
+
+    renderGatheringsPage()
+
+    expect(
+      await screen.findByRole('heading', { name: /upcoming events/i }),
+    ).toBeDefined()
+    expect(document.title).toBe('Events | Children of Shingwauk Alumni Association')
+    expect(document.documentElement.lang).toBe('en')
+    expect(
+      document.querySelector('meta[name="description"]')?.getAttribute('content'),
+    ).toBe(
+      'Explore upcoming events, workshops, ceremonies, and archived community gatherings from the Children of Shingwauk Alumni Association.',
+    )
+    expect(
+      document.querySelector('meta[property="og:title"]')?.getAttribute('content'),
+    ).toBe('Events | Children of Shingwauk Alumni Association')
+    expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toMatch(
+      /\/events$/,
+    )
+
+    expect(
+      document.querySelector('script[data-page-seo="structured-data"]'),
+    ).not.toBeNull()
+
+    await waitFor(() => {
+      const structuredDataScript = document.querySelector(
+        'script[data-page-seo="structured-data"]',
+      )
+      const structuredData = JSON.parse(structuredDataScript?.textContent ?? '{}')
+      expect(structuredData['@type']).toBe('CollectionPage')
+      expect(structuredData.mainEntity['@type']).toBe('ItemList')
+      expect(structuredData.mainEntity.itemListElement).toHaveLength(2)
+      expect(structuredData.mainEntity.itemListElement[0].item.name).toBe(
+        'Elders Council Circle',
+      )
+    })
   })
 })

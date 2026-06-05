@@ -66,6 +66,10 @@ export function SiteShell() {
                   src={WEBSITE_ASSET_URLS.csaaLogo}
                   alt="CSAA logo"
                   className={styles.footerLogo}
+                  width="130"
+                  height="130"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className={styles.footerBrandBlock}>
                   <p className={styles.footerBrand}>The Children of Shingwauk Alumni Association</p>

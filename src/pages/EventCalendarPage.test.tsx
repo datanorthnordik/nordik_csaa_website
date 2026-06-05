@@ -75,6 +75,7 @@ function createEvent(
 }
 
 function renderCalendar() {
+  window.history.pushState({}, '', '/events/calendar')
   return render(
     <MemoryRouter>
       <EventCalendarPage />
@@ -141,6 +142,15 @@ describe('EventCalendarPage', () => {
       await screen.findByRole('heading', { name: /community calendar/i }),
     ).toBeDefined()
     expect(listEventsByDateRange).toHaveBeenCalledWith('2026-08-30', '2026-10-03')
+    expect(document.title).toBe('Events Calendar | Children of Shingwauk Alumni Association')
+    expect(
+      document.querySelector('meta[name="description"]')?.getAttribute('content'),
+    ).toBe(
+      'Browse the CSAA events calendar to find upcoming community gatherings, workshops, and ceremonies by month.',
+    )
+    expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toMatch(
+      /\/events\/calendar$/,
+    )
   })
 
   it('filters events by category', async () => {
