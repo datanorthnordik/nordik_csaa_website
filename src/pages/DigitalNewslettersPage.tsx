@@ -126,7 +126,7 @@ export function DigitalNewslettersPage() {
         </section>
       ) : null}
 
-      {status === 'ready' && featuredEntry ? (
+      {status === 'ready' && featuredEntry && (normalizedSearch || selectedYear !== 'all') ? (
         <section className={styles.latestSection}>
           <FeaturedNewsletterCard entry={featuredEntry} locale={locale} />
         </section>
