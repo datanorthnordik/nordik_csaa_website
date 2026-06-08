@@ -1,11 +1,9 @@
+import { lazy, Suspense, type ReactNode } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { NavigationMenuProvider, useNavigationMenu } from './components/NavigationMenuProvider'
 import { ScrollToTop } from './components/ScrollToTop'
 import { SiteShell } from './components/SiteShell'
-import { DigitalNewslettersPage } from './pages/DigitalNewslettersPage'
 import { GatheringsPage } from './pages/GatheringsPage'
-import { NewsMediaLandingPage } from './pages/NewsMediaLandingPage'
-import { PressArchivePage } from './pages/PressArchivePage'
 import { getInitialMenuHref } from './lib/navigationMenu'
 
 const EventCalendarPage = lazy(() =>
@@ -21,6 +19,11 @@ const CmsPage = lazy(() =>
 const DigitalNewsletterDetailPage = lazy(() =>
   import('./pages/DigitalNewsletterDetailPage').then((module) => ({
     default: module.DigitalNewsletterDetailPage,
+  })),
+)
+const DigitalNewslettersPage = lazy(() =>
+  import('./pages/DigitalNewslettersPage').then((module) => ({
+    default: module.DigitalNewslettersPage,
   })),
 )
 const EventDetailPage = lazy(() =>
@@ -48,9 +51,19 @@ const InMemorialPage = lazy(() =>
     default: module.InMemorialPage,
   })),
 )
+const NewsMediaLandingPage = lazy(() =>
+  import('./pages/NewsMediaLandingPage').then((module) => ({
+    default: module.NewsMediaLandingPage,
+  })),
+)
 const PressArchiveDetailPage = lazy(() =>
   import('./pages/PressArchiveDetailPage').then((module) => ({
     default: module.PressArchiveDetailPage,
+  })),
+)
+const PressArchivePage = lazy(() =>
+  import('./pages/PressArchivePage').then((module) => ({
+    default: module.PressArchivePage,
   })),
 )
 const CommunityResourcesPage = lazy(() =>
@@ -68,9 +81,9 @@ function App() {
           <Route element={<SiteShell />}>
             <Route path="/" element={<MenuLandingRedirect />} />
             <Route path="/events" element={<GatheringsPage />} />
-            <Route path="/events/calendar" element={<EventCalendarPage />} />
-            <Route path="/events/:eventId" element={<EventDetailPage />} />
-            <Route path="/our-story" element={<OurStoryPage />} />
+            <Route path="/events/calendar" element={withSuspense(<EventCalendarPage />)} />
+            <Route path="/events/:eventId" element={withSuspense(<EventDetailPage />)} />
+            <Route path="/our-story" element={withSuspense(<OurStoryPage />)} />
             {/* Both slugs point to the same scrollytelling experience */}
             <Route
               path="/our-story/csaa-legacy"
@@ -88,27 +101,28 @@ function App() {
               path="/our-story/healing-memorials/in-memorial"
               element={withSuspense(<InMemorialPage />)}
             />
-            <Route path="/news-media" element={<NewsMediaLandingPage />} />
+            <Route path="/news-media" element={withSuspense(<NewsMediaLandingPage />)} />
             <Route
               path="/news-media/digital-newsletter/:newsletterId"
-              element={<DigitalNewsletterDetailPage />}
+              element={withSuspense(<DigitalNewsletterDetailPage />)}
             />
             <Route
               path="/news-media/digital-newsletter"
-              element={<DigitalNewslettersPage />}
+              element={withSuspense(<DigitalNewslettersPage />)}
             />
             <Route
               path="/news-media/press-archive/:pressId"
-              element={<PressArchiveDetailPage />}
+              element={withSuspense(<PressArchiveDetailPage />)}
             />
             <Route
               path="/news-media/press-archive"
-              element={<PressArchivePage />}
+              element={withSuspense(<PressArchivePage />)}
             />
             <Route
               path="/community-support-team/resources"
-              element={<CommunityResourcesPage />} />
-            <Route path="*" element={<CmsPage />} />
+              element={withSuspense(<CommunityResourcesPage />)}
+            />
+            <Route path="*" element={withSuspense(<CmsPage />)} />
           </Route>
         </Routes>
       </NavigationMenuProvider>
@@ -124,6 +138,10 @@ function MenuLandingRedirect() {
   }
 
   return <Navigate to={getInitialMenuHref(menu.items)} replace />
+}
+
+function withSuspense(content: ReactNode) {
+  return <Suspense fallback={null}>{content}</Suspense>
 }
 
 export default App
