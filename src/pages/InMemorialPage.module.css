@@ -102,6 +102,18 @@
   padding: 80px 0 100px;
 }
 
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .galleryState {
   display: grid;
   place-items: center;
@@ -348,6 +360,7 @@
 
 .gardenMeadow {
   margin: 20px 0 8px;
+  aspect-ratio: 1108 / 618;
   border-radius: 8px;
   overflow: hidden;
   background: #ffffff;
@@ -357,7 +370,7 @@
 .meadowImage {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: cover;
 }
 
@@ -375,7 +388,7 @@
   padding: 0 40px;
   border-radius: 9999px;
   border: none;
-  background: #8ba889;
+  background: #526f50;
   color: #ffffff;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
@@ -391,12 +404,17 @@
 
 .plantButton:hover {
   transform: translateY(-1px);
-  background: #7a9678;
+  background: #466043;
   box-shadow: 0 6px 16px rgba(27, 28, 28, 0.14);
 }
 
 .plantButton:active {
   transform: scale(0.97);
+}
+
+.plantButton:focus-visible {
+  outline: 3px solid #1b1c1c;
+  outline-offset: 3px;
 }
 
 .floatingFlower {
