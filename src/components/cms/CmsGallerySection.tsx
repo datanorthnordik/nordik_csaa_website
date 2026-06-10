@@ -20,7 +20,7 @@ type CmsGallerySectionProps = {
 
 type GalleryStatus = 'idle' | 'loading' | 'ready' | 'error'
 
-const galleryLoadRootMargin = '400px 0px'
+const galleryLoadRootMargin = '900px 0px'
 
 const CmsGalleryLightbox = lazy(() =>
   import('./CmsGalleryLightbox').then((module) => ({

@@ -117,59 +117,16 @@ export type PageDetailResponse = {
   page_detail?: PageContentDetail | null
 }
 
-type PageBySlugCacheEntry = {
-  page: PageDetailResponse
-  promise: Promise<PageDetailResponse>
-}
-
-const pageBySlugCache = new Map<string, Promise<PageDetailResponse> | PageBySlugCacheEntry>()
-
-function requestPageBySlug(slug: string) {
-  const cached = pageBySlugCache.get(slug)
-  if (cached) {
-    return cached instanceof Promise ? cached : cached.promise
-  }
-
-  const promise = apiClient
-    .get<PageDetailResponse>(API_ROUTES.pageBySlug, {
+export const pagesApi = {
+  async getPageBySlug(slug: string) {
+    const response = await apiClient.get<PageDetailResponse>(API_ROUTES.pageBySlug, {
       params: {
         slug,
       },
       skipAuth: true,
       skipErrorToast: true,
     })
-    .then((response) => {
-      const page = response.data
-      const resolvedPromise = Promise.resolve(page)
 
-      pageBySlugCache.set(slug, {
-        page,
-        promise: resolvedPromise,
-      })
-
-      return page
-    })
-    .catch((error) => {
-      pageBySlugCache.delete(slug)
-      throw error
-    })
-
-  pageBySlugCache.set(slug, promise)
-  return promise
-}
-
-export const pagesApi = {
-  async getPageBySlug(slug: string) {
-    return requestPageBySlug(slug)
-  },
-  preloadPageBySlug(slug: string) {
-    return requestPageBySlug(slug)
-  },
-  peekPageBySlug(slug: string) {
-    const cached = pageBySlugCache.get(slug)
-    return cached && !(cached instanceof Promise) ? cached.page : null
-  },
-  clearPageBySlugCache() {
-    pageBySlugCache.clear()
+    return response.data
   },
 }

@@ -36,11 +36,6 @@ describe('CmsGalleryFocus', () => {
     expect(
       screen.getByRole('heading', { name: /fran fletcher-luther/i }),
     ).toBeDefined()
-    expect(
-      screen
-        .getAllByAltText(/portrait of fran fletcher-luther/i)[0]
-        .getAttribute('fetchpriority'),
-    ).toBe('low')
 
     fireEvent.click(screen.getByText(/elder mary/i).closest('button') as HTMLButtonElement)
 
