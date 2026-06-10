@@ -4,10 +4,7 @@ import { NavigationMenuProvider, useNavigationMenu } from './components/Navigati
 import { ScrollToTop } from './components/ScrollToTop'
 import { SiteShell } from './components/SiteShell'
 import { pagesApi } from './api/pagesApi'
-import { DigitalNewslettersPage } from './pages/DigitalNewslettersPage'
 import { GatheringsPage } from './pages/GatheringsPage'
-import { NewsMediaLandingPage } from './pages/NewsMediaLandingPage'
-import { PressArchivePage } from './pages/PressArchivePage'
 import { getInitialMenuHref, normalizeInternalPath } from './lib/navigationMenu'
 
 const EventCalendarPage = lazy(() =>
@@ -23,6 +20,11 @@ const CmsPage = lazy(() =>
 const DigitalNewsletterDetailPage = lazy(() =>
   import('./pages/DigitalNewsletterDetailPage').then((module) => ({
     default: module.DigitalNewsletterDetailPage,
+  })),
+)
+const DigitalNewslettersPage = lazy(() =>
+  import('./pages/DigitalNewslettersPage').then((module) => ({
+    default: module.DigitalNewslettersPage,
   })),
 )
 const EventDetailPage = lazy(() =>
@@ -50,9 +52,19 @@ const InMemorialPage = lazy(() =>
     default: module.InMemorialPage,
   })),
 )
+const NewsMediaLandingPage = lazy(() =>
+  import('./pages/NewsMediaLandingPage').then((module) => ({
+    default: module.NewsMediaLandingPage,
+  })),
+)
 const PressArchiveDetailPage = lazy(() =>
   import('./pages/PressArchiveDetailPage').then((module) => ({
     default: module.PressArchiveDetailPage,
+  })),
+)
+const PressArchivePage = lazy(() =>
+  import('./pages/PressArchivePage').then((module) => ({
+    default: module.PressArchivePage,
   })),
 )
 const CommunityResourcesPage = lazy(() =>
@@ -90,14 +102,14 @@ function App() {
               path="/our-story/healing-memorials/in-memorial"
               element={withSuspense(<InMemorialPage />)}
             />
-            <Route path="/news-media" element={<NewsMediaLandingPage />} />
+            <Route path="/news-media" element={withSuspense(<NewsMediaLandingPage />)} />
             <Route
               path="/news-media/digital-newsletter/:newsletterId"
               element={withSuspense(<DigitalNewsletterDetailPage />)}
             />
             <Route
               path="/news-media/digital-newsletter"
-              element={<DigitalNewslettersPage />}
+              element={withSuspense(<DigitalNewslettersPage />)}
             />
             <Route
               path="/news-media/press-archive/:pressId"
@@ -105,7 +117,7 @@ function App() {
             />
             <Route
               path="/news-media/press-archive"
-              element={<PressArchivePage />}
+              element={withSuspense(<PressArchivePage />)}
             />
             <Route
               path="/community-support-team/resources"

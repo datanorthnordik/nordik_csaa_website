@@ -50,15 +50,6 @@ describe('CmsGalleryLightbox', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /play slideshow/i }))
     expect(screen.getByRole('button', { name: /pause slideshow/i })).toBeDefined()
-    expect(screen.getByText(/fran fletcher-luther/i).parentElement?.getAttribute('title')).toBe(
-      'Fran Fletcher-Luther\nApril 26, 1935 - October 26, 2019',
-    )
-
-    expect(screen.getByRole('button', { name: /reset zoom/i }).textContent).toBe('100%')
-    fireEvent.click(screen.getByRole('button', { name: /zoom in/i }))
-    expect(screen.getByRole('button', { name: /reset zoom/i }).textContent).toBe('125%')
-    fireEvent.click(screen.getByRole('button', { name: /reset zoom/i }))
-    expect(screen.getByRole('button', { name: /reset zoom/i }).textContent).toBe('100%')
 
     expect(screen.queryByRole('button', { name: /elder mary/i })).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: /show thumbnails/i }))

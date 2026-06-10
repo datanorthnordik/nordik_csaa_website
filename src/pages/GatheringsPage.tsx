@@ -15,25 +15,19 @@ import {
   formatEventTimeRange,
   getRegistrationState,
 } from '../lib/eventsDate'
-import { buildEventListSchema } from '../lib/eventSeo'
 import { isImageMedia, resolveEventMediaUrl } from '../lib/eventMedia'
-import { usePageSeo } from '../lib/usePageSeo'
-import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import { TextHero } from '../components/TextHero'
 import styles from './GatheringsPage.module.css'
 
 const PAGE_SIZE = 10
-const CARD_IMAGE_WIDTH = 600
-const CARD_IMAGE_HEIGHT = 480
 
 export function GatheringsPage() {
   const { i18n, t } = useTranslation()
   const [upcomingEvents, setUpcomingEvents] = useState<EventDetailResponse[]>([])
   const [archivedEvents, setArchivedEvents] = useState<EventDetailResponse[]>([])
-  const [upcomingPagination, setUpcomingPagination] = useState<EventListPageMeta | null>(null)
   const [archivePagination, setArchivePagination] = useState<EventListPageMeta | null>(null)
+  const [upcomingVisibleCount, setUpcomingVisibleCount] = useState(PAGE_SIZE)
   const [isUpcomingLoading, setIsUpcomingLoading] = useState(true)
-  const [isUpcomingLoadingMore, setIsUpcomingLoadingMore] = useState(false)
   const [isArchiveLoading, setIsArchiveLoading] = useState(true)
   const [isArchiveLoadingMore, setIsArchiveLoadingMore] = useState(false)
   const [upcomingError, setUpcomingError] = useState<string | null>(null)
@@ -42,35 +36,18 @@ export function GatheringsPage() {
   const locale = i18n.resolvedLanguage ?? i18n.language
   const [currentApiDate] = useState(() => getCurrentApiDate())
   const [archiveReferenceDate] = useState(() => getYesterdayApiDate())
-  const hasMoreUpcomingEvents = upcomingPagination?.has_next ?? false
-  const hasMoreArchivedEvents = archivePagination?.has_next ?? false
-  const seoTitle = t('gatherings.seo.title')
-  const seoDescription = t('gatherings.seo.description')
-  const structuredData = useMemo(
-    () =>
-      buildEventListSchema({
-        title: seoTitle,
-        description: seoDescription,
-        canonicalPath: '/events',
-        events: [...upcomingEvents, ...archivedEvents],
-      }),
-    [archivedEvents, seoDescription, seoTitle, upcomingEvents],
+  const visibleUpcomingEvents = useMemo(
+    () => upcomingEvents.slice(0, upcomingVisibleCount),
+    [upcomingEvents, upcomingVisibleCount],
   )
+  const hasMoreUpcomingEvents = upcomingEvents.length > visibleUpcomingEvents.length
+  const hasMoreArchivedEvents = archivePagination?.has_next ?? false
 
   usePageBreadcrumbs([
     {
       label: t('site.nav.gatherings'),
     },
   ])
-
-  usePageSeo({
-    title: seoTitle,
-    description: seoDescription,
-    canonicalPath: '/events',
-    image: WEBSITE_ASSET_URLS.gatheringsHeroStage,
-    lang: locale,
-    jsonLd: structuredData,
-  })
 
   useEffect(() => {
     let ignore = false
@@ -80,16 +57,14 @@ export function GatheringsPage() {
       setUpcomingError(null)
 
       try {
-        const response = await eventsApi.listUpcomingEvents(currentApiDate, 1, PAGE_SIZE)
+        const response = await eventsApi.listUpcomingEvents(currentApiDate)
         if (!ignore) {
           setUpcomingEvents(response.items)
-          setUpcomingPagination(response.pagination)
+          setUpcomingVisibleCount(PAGE_SIZE)
         }
       } catch (error) {
         if (!ignore) {
           setUpcomingError(getErrorMessage(error))
-          setUpcomingEvents([])
-          setUpcomingPagination(null)
         }
       } finally {
         if (!ignore) {
@@ -138,29 +113,6 @@ export function GatheringsPage() {
       ignore = true
     }
   }, [archiveReferenceDate])
-
-  async function handleUpcomingShowMore() {
-    if (!upcomingPagination?.has_next || isUpcomingLoadingMore) {
-      return
-    }
-
-    setIsUpcomingLoadingMore(true)
-    setUpcomingError(null)
-
-    try {
-      const response = await eventsApi.listUpcomingEvents(
-        currentApiDate,
-        upcomingPagination.page + 1,
-        PAGE_SIZE,
-      )
-      setUpcomingEvents((current) => mergeEvents(current, response.items))
-      setUpcomingPagination(response.pagination)
-    } catch (error) {
-      setUpcomingError(getErrorMessage(error))
-    } finally {
-      setIsUpcomingLoadingMore(false)
-    }
-  }
 
   async function handleArchiveShowMore() {
     if (!archivePagination?.has_next || isArchiveLoadingMore) {
@@ -224,7 +176,7 @@ export function GatheringsPage() {
         ) : upcomingEvents.length ? (
           <>
             <div className={styles.cardGrid}>
-              {upcomingEvents.map((event) => (
+              {visibleUpcomingEvents.map((event) => (
                 <EventCard
                   key={event.id}
                   event={event}
@@ -239,10 +191,11 @@ export function GatheringsPage() {
                 <button
                   type="button"
                   className={styles.loadMoreButton}
-                  disabled={isUpcomingLoadingMore}
-                  onClick={() => void handleUpcomingShowMore()}
+                  onClick={() =>
+                    setUpcomingVisibleCount((current) => current + PAGE_SIZE)
+                  }
                 >
-                  {isUpcomingLoadingMore ? t('common.loading') : t('common.showMore')}
+                  {t('common.showMore')}
                 </button>
               </div>
             ) : null}
@@ -330,15 +283,7 @@ function EventCard({ event, locale, variant }: EventCardProps) {
         </div>
 
         {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={event.title}
-            className={styles.cardMedia}
-            width={CARD_IMAGE_WIDTH}
-            height={CARD_IMAGE_HEIGHT}
-            loading="lazy"
-            decoding="async"
-          />
+          <img src={imageUrl} alt={event.title} className={styles.cardMedia} />
         ) : (
           <div className={styles.cardPlaceholder}>
             <span>{event.categories[0] || t('gatherings.card.placeholderTag')}</span>

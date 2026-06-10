@@ -72,8 +72,7 @@
 .navItemShell {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  min-height: 96px;
+  gap: 2px;
 }
 
 .navLink,
@@ -99,10 +98,6 @@
   color: var(--color-text);
 }
 
-.navLinkOpen {
-  color: var(--color-text);
-}
-
 .navLinkActive {
   color: var(--color-text);
   font-weight: 700;
@@ -119,7 +114,7 @@
   background: #b14d29;
 }
 
-.navChevron,
+.dropdownToggle,
 .mobileMenuButton,
 .mobileExpandButton {
   display: inline-flex;
@@ -127,18 +122,22 @@
   justify-content: center;
   background: transparent;
   color: var(--color-text-muted);
+  cursor: pointer;
   transition: color 0.18s ease;
 }
 
-.navChevron {
-  pointer-events: none;
+.dropdownToggle {
+  width: 22px;
+  height: 22px;
+  padding: 0;
 }
 
-.navChevronOpen {
+.dropdownToggle:hover,
+.dropdownToggleActive {
   color: var(--color-text);
 }
 
-.navChevron svg,
+.dropdownToggle svg,
 .mobileMenuButton svg,
 .mobileExpandButton svg,
 .dropdownChevron {
@@ -152,10 +151,6 @@
   transition: transform 0.18s ease;
 }
 
-.navChevronOpen svg {
-  transform: rotate(180deg);
-}
-
 .chevronOpen {
   transform: rotate(180deg);
 }
@@ -164,9 +159,7 @@
   position: absolute;
   top: calc(100% - 6px);
   left: 50%;
-  z-index: 2;
   min-width: 240px;
-  max-width: min(280px, calc(100vw - 48px));
   padding: 10px;
   border: 1px solid rgba(24, 33, 39, 0.08);
   border-radius: 16px;
@@ -184,7 +177,8 @@
 }
 
 .dropdownItem {
-  position: relative;
+  display: grid;
+  gap: 6px;
 }
 
 .dropdownLink {
@@ -196,69 +190,46 @@
   padding: 10px 12px;
   border-radius: 12px;
   color: var(--color-text);
-  font-size: 0.95rem;
   font-weight: 600;
-  line-height: 1.35;
   transition: background-color 0.18s ease;
-}
-
-.dropdownLinkParent {
-  padding-right: 16px;
+  padding-left: calc(12px + (var(--submenu-depth, 0) * 12px));
 }
 
 .dropdownLink:hover,
-.dropdownLink:focus-visible,
 .dropdownLinkActive {
   background: rgba(122, 31, 36, 0.08);
 }
 
 .dropdownNested {
-  position: absolute;
-  top: -10px;
-  left: calc(100% + 4px);
-  z-index: 3;
-  min-width: 220px;
-  max-width: min(280px, calc(100vw - 48px));
-  padding: 10px;
-  border: 1px solid rgba(24, 33, 39, 0.08);
-  border-radius: 16px;
-  background: var(--color-surface);
-  box-shadow: 0 18px 32px -24px rgba(20, 20, 30, 0.35);
+  display: grid;
+  gap: 6px;
+  padding: 4px 0 0 10px;
+  border-left: 1px solid rgba(24, 33, 39, 0.08);
+  max-height: 0;
+  overflow: hidden;
   opacity: 0;
   pointer-events: none;
-  transform: translateX(8px);
   transition:
-    opacity 0.18s ease,
-    transform 0.18s ease;
+    max-height 0.28s ease,
+    opacity 0.2s ease;
 }
 
-.dropdownNested::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -14px;
-  width: 14px;
-}
-
-.dropdownItem:hover > .dropdownNested,
-.dropdownItem:focus-within > .dropdownNested {
+.dropdownItem:hover .dropdownNested,
+.dropdownItem:focus-within .dropdownNested {
+  max-height: 600px;
   opacity: 1;
   pointer-events: auto;
-  transform: translateX(0);
 }
 
 .dropdownChevron {
   flex-shrink: 0;
   transform: rotate(-90deg);
-  opacity: 0.7;
   transition: transform 0.2s ease;
 }
 
-.dropdownLink:hover .dropdownChevron,
-.dropdownLink:focus-visible .dropdownChevron,
-.dropdownLinkActive .dropdownChevron {
-  transform: translateX(2px) rotate(-90deg);
+.dropdownItem:hover .dropdownChevron,
+.dropdownItem:focus-within .dropdownChevron {
+  transform: rotate(0deg);
 }
 
 .headerActions {
@@ -284,7 +255,6 @@
   width: 42px;
   height: 42px;
   border-radius: 10px;
-  cursor: pointer;
 }
 
 .mobileMenuButton:hover,
@@ -352,7 +322,6 @@
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  cursor: pointer;
   color: var(--color-text-muted);
   background: transparent;
   cursor: pointer;
@@ -392,6 +361,7 @@
 .navLink:focus-visible,
 .dropdownLink:focus-visible,
 .mobileLink:focus-visible,
+.dropdownToggle:focus-visible,
 .mobileMenuButton:focus-visible,
 .mobileExpandButton:focus-visible,
 .brand:focus-visible {
