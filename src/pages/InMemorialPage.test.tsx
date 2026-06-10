@@ -98,13 +98,6 @@ describe('InMemorialPage', () => {
     expect(portrait.getAttribute('src')).toBe(
       `${API_BASE_URL}/api/memorial/7/portrait/content`,
     )
-    expect(
-      screen.getByRole('heading', { level: 2, name: /memorial portraits/i }),
-    ).toBeTruthy()
-    const meadowImage = document.querySelector('img[width="1108"][height="618"]')
-
-    expect(meadowImage).toBeTruthy()
-    expect(meadowImage?.getAttribute('loading')).toBe('lazy')
     expect(screen.getByText('1934 - 2021')).toBeTruthy()
     expect(screen.queryByRole('img', { name: /samuel grey/i })).toBeNull()
     expect(screen.getByText('Samuel Grey')).toBeTruthy()

@@ -54,11 +54,6 @@ describe('CmsGalleryCarousel', () => {
     )
 
     expect(screen.getByRole('heading', { name: /orange shirt day/i })).toBeDefined()
-    expect(
-      screen
-        .getAllByAltText(/community gathering outside the monument/i)[0]
-        .getAttribute('fetchpriority'),
-    ).toBe('low')
 
     fireEvent.click(screen.getByRole('button', { name: /next/i }))
 

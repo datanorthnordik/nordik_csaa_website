@@ -48,7 +48,6 @@ export function CmsGalleryFocus({
             className={styles.focusImage}
             loading="eager"
             decoding="async"
-            fetchPriority="low"
           />
           {showTitleDescription ? (
             <>

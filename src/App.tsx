@@ -1,11 +1,10 @@
 import { lazy, Suspense, type ReactNode } from 'react'
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { NavigationMenuProvider, useNavigationMenu } from './components/NavigationMenuProvider'
 import { ScrollToTop } from './components/ScrollToTop'
 import { SiteShell } from './components/SiteShell'
-import { pagesApi } from './api/pagesApi'
 import { GatheringsPage } from './pages/GatheringsPage'
-import { getInitialMenuHref, normalizeInternalPath } from './lib/navigationMenu'
+import { getInitialMenuHref } from './lib/navigationMenu'
 
 const EventCalendarPage = lazy(() =>
   import('./pages/EventCalendarPage').then((module) => ({
@@ -123,7 +122,7 @@ function App() {
               path="/community-support-team/resources"
               element={withSuspense(<CommunityResourcesPage />)}
             />
-            <Route path="*" element={<CmsPageRoute />} />
+            <Route path="*" element={withSuspense(<CmsPage />)} />
           </Route>
         </Routes>
       </NavigationMenuProvider>
@@ -139,14 +138,6 @@ function MenuLandingRedirect() {
   }
 
   return <Navigate to={getInitialMenuHref(menu.items)} replace />
-}
-
-function CmsPageRoute() {
-  const { pathname } = useLocation()
-
-  void pagesApi.preloadPageBySlug(normalizeInternalPath(pathname)).catch(() => {})
-
-  return withSuspense(<CmsPage />)
 }
 
 function withSuspense(content: ReactNode) {
