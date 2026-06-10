@@ -166,30 +166,6 @@ const S3_HOTSPOTS: Hotspot[] = [
   },
 ]
 
-// ── Scroll-reveal hook (Scenes 2 & 3) ────────────────────────────────────────
-function useScrollReveal(threshold = 0.12, onVisible?: () => void) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [isVisible, setIsVisible] = useState(false)
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          onVisible?.()
-          obs.disconnect()
-        }
-      },
-      { threshold },
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [threshold])
-  return { ref, isVisible }
-}
-
 // ── Wave divider ──────────────────────────────────────────────────────────────
 const WAVE_PATH = 'M0,45 C400,45 450,95 700,95 C1000,95 1100,25 1300,25 C1380,25 1410,35 1440,35'
 function IntroWave() {
@@ -233,7 +209,6 @@ export function CsaaLegacyPage() {
 
   // End-of-scene elements
   const sceneTitleRef  = useRef<HTMLHeadingElement>(null)
-  const artistCreditRef = useRef<HTMLDivElement>(null)
   const [showHotspots, setShowHotspots] = useState(false)
   const [showIdleNudge, setShowIdleNudge] = useState(false)
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
