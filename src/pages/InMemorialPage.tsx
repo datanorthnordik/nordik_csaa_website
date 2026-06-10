@@ -54,6 +54,8 @@ type Particle = {
 
 const WAVE_PATH =
   'M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C58.47,100.8,118.42,100.34,176.49,90.47,227,81.86,276.54,64.74,321.39,56.44Z'
+const MEADOW_IMAGE_WIDTH = 1108
+const MEADOW_IMAGE_HEIGHT = 618
 
 function randomFlowerColor() {
   return FLOWER_COLORS[Math.floor(Math.random() * FLOWER_COLORS.length)]
@@ -160,7 +162,13 @@ export function InMemorialPage() {
         <WaveDivider fill="#f2f5f4" />
       </section>
 
-      <section className={styles.gallerySection} aria-label={t('inMemorial.gallery.label')}>
+      <section
+        className={styles.gallerySection}
+        aria-labelledby="in-memorial-gallery-heading"
+      >
+        <h2 id="in-memorial-gallery-heading" className={styles.visuallyHidden}>
+          {t('inMemorial.gallery.label')}
+        </h2>
         {isLoading ? (
           <div className={styles.galleryGrid} aria-label="Loading memorial portraits">
             {Array.from({ length: 8 }).map((_, index) => (
@@ -215,7 +223,15 @@ export function InMemorialPage() {
         <div className={styles.gardenCard}>
           <h2 className={styles.gardenTitle}>{t('inMemorial.garden.title')}</h2>
           <div className={styles.gardenMeadow}>
-            <img src={WEBSITE_ASSET_URLS.watercolorMeadow} alt="" className={styles.meadowImage} />
+            <img
+              src={WEBSITE_ASSET_URLS.watercolorMeadow}
+              alt=""
+              className={styles.meadowImage}
+              width={MEADOW_IMAGE_WIDTH}
+              height={MEADOW_IMAGE_HEIGHT}
+              loading="lazy"
+              decoding="async"
+            />
           </div>
           <div className={styles.gardenAction}>
             {particles.map((particle) => (
@@ -255,6 +271,7 @@ function MemorialCard({ entry }: { entry: PublicMemorialEntry }) {
           alt={entry.fullName}
           className={styles.cardPhoto}
           loading="lazy"
+          decoding="async"
         />
       ) : (
         <div className={styles.cardPlaceholder}>

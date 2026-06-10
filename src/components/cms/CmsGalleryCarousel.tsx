@@ -68,6 +68,7 @@ export function CmsGalleryCarousel({
               className={styles.carouselImage}
               loading="eager"
               decoding="async"
+              fetchPriority="low"
             />
           </div>
           {showTitleDescription ? (
