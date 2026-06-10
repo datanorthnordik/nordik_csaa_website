@@ -42,10 +42,6 @@
     }
   },
   "gatherings": {
-    "seo": {
-      "title": "Events | Children of Shingwauk Alumni Association",
-      "description": "Explore upcoming events, workshops, ceremonies, and archived community gatherings from the Children of Shingwauk Alumni Association."
-    },
     "hero": {
       "eyebrow": "Community events",
       "title": "Explore the Journey: Our Past & Future Events",
@@ -81,10 +77,6 @@
     }
   },
   "eventCalendar": {
-    "seo": {
-      "title": "Events Calendar | Children of Shingwauk Alumni Association",
-      "description": "Browse the CSAA events calendar to find upcoming community gatherings, workshops, and ceremonies by month."
-    },
     "eyebrow": "Events calendar",
     "title": "Community Calendar",
     "description": "Discover upcoming events, workshops, and ceremonies within our community. Connect with heritage through shared experiences.",
@@ -436,7 +428,6 @@
     "pauseSlideshow": "Pause slideshow",
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
-    "resetZoom": "Reset zoom",
     "openFile": "Open file",
     "allDay": "All day",
     "timeTbd": "Time to be announced",

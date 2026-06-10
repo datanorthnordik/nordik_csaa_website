@@ -484,9 +484,6 @@ export function CmsGalleryLightbox({
                   alt={activeItem.altText}
                   className={styles.viewerImage}
                   style={fittedImageStyle}
-                  loading="eager"
-                  decoding="async"
-                  fetchPriority="high"
                   onLoad={(event) => {
                     cacheImageNaturalSize(activeItem.id, {
                       width: event.currentTarget.naturalWidth,
@@ -520,9 +517,6 @@ export function CmsGalleryLightbox({
                       src={item.imageUrl}
                       alt={item.altText}
                       className={styles.viewerThumbImage}
-                      loading="lazy"
-                      decoding="async"
-                      fetchPriority="low"
                     />
                     <span className={styles.viewerThumbOverlay} aria-hidden="true" />
                     <span className={styles.viewerThumbIndex} aria-hidden="true">
