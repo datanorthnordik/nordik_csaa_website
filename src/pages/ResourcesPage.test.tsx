@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { API_BASE_URL } from '../constants/api'
 import i18n from '../i18n'
@@ -26,6 +27,16 @@ vi.mock('../lib/fileDownload', () => ({
 }))
 
 describe('CommunityResourcesPage', () => {
+  function renderPage() {
+    window.history.pushState({}, '', '/community-support-team/resources')
+
+    return render(
+      <MemoryRouter initialEntries={['/community-support-team/resources']}>
+        <CommunityResourcesPage />
+      </MemoryRouter>,
+    )
+  }
+
   beforeEach(async () => {
     vi.clearAllMocks()
     await i18n.changeLanguage('en')
@@ -62,13 +73,32 @@ describe('CommunityResourcesPage', () => {
     vi.mocked(downloadPublicFile).mockResolvedValue(undefined)
   })
 
-  it('opens uploaded resources in the shared viewer modal and downloads from the api host', async () => {
-    render(<CommunityResourcesPage />)
+  it('opens uploaded resources in the shared viewer modal, publishes stable seo metadata, and uses descriptive internal link text', async () => {
+    renderPage()
 
     const openButton = await screen.findByRole('button', {
       name: /open documents: community guide/i,
     })
     expect(openButton).toBeDefined()
+    expect(document.title).toBe(
+      'Resources & Support | Children of Shingwauk Alumni Association',
+    )
+    expect(
+      document.head.querySelector('meta[name="description"]')?.getAttribute('content'),
+    ).toBe(
+      'Browse educational resources, media, reports, and support links from the Children of Shingwauk Alumni Association Community Support Team.',
+    )
+    expect(
+      document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'),
+    ).toBe(`${window.location.origin}/community-support-team/resources`)
+    expect(
+      screen.getByRole('heading', { level: 2, name: /browse community resources/i }),
+    ).toBeDefined()
+
+    const learnMoreLink = screen.getByRole('link', {
+      name: /learn about the community support team/i,
+    })
+    expect(learnMoreLink.getAttribute('href')).toBe('/community-support-team')
 
     fireEvent.click(openButton)
 
