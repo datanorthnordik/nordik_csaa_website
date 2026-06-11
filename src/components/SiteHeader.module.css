@@ -177,6 +177,7 @@
 }
 
 .dropdownItem {
+  position: relative;
   display: grid;
   gap: 6px;
 }
@@ -201,23 +202,28 @@
 }
 
 .dropdownNested {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 14px);
+  z-index: 2;
   display: grid;
   gap: 6px;
-  padding: 4px 0 0 10px;
-  border-left: 1px solid rgba(24, 33, 39, 0.08);
-  max-height: 0;
-  overflow: hidden;
+  min-width: 240px;
+  padding: 10px;
+  border: 1px solid rgba(24, 33, 39, 0.08);
+  border-radius: 16px;
+  background: var(--color-surface);
+  box-shadow: 0 18px 32px -24px rgba(20, 20, 30, 0.35);
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition:
-    max-height 0.28s ease,
-    opacity 0.2s ease;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
 .dropdownItem:hover .dropdownNested,
 .dropdownItem:focus-within .dropdownNested {
-  max-height: 600px;
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
 }
 
