@@ -21,17 +21,32 @@ type LoadStatus = 'loading' | 'ready' | 'not-found' | 'error'
 export function CmsPage() {
   const { pathname } = useLocation()
   const { t } = useTranslation()
-  const [page, setPage] = useState<PageDetailResponse | null>(null)
-  const [status, setStatus] = useState<LoadStatus>('loading')
+  const normalizedPath = normalizeInternalPath(pathname)
+  const [page, setPage] = useState<PageDetailResponse | null>(() =>
+    pagesApi.peekPageBySlug(normalizedPath),
+  )
+  const [status, setStatus] = useState<LoadStatus>(() =>
+    resolveLoadStatus(pagesApi.peekPageBySlug(normalizedPath)),
+  )
 
   useEffect(() => {
     let ignore = false
+    const cachedPage = pagesApi.peekPageBySlug(normalizedPath)
+
+    setPage(cachedPage)
+    setStatus(resolveLoadStatus(cachedPage))
+
+    if (cachedPage) {
+      return () => {
+        ignore = true
+      }
+    }
 
     async function loadPage() {
       setStatus('loading')
 
       try {
-        const response = await pagesApi.getPageBySlug(normalizeInternalPath(pathname))
+        const response = await pagesApi.getPageBySlug(normalizedPath)
 
         if (!ignore) {
           setPage(response)
@@ -57,15 +72,10 @@ export function CmsPage() {
     return () => {
       ignore = true
     }
-  }, [pathname])
+  }, [normalizedPath])
 
   if (status === 'loading') {
-    return (
-      <div className={styles.loadingState} aria-busy="true">
-        <div className={styles.loadingPulse} aria-hidden="true" />
-        <p>{t('common.loading')}</p>
-      </div>
-    )
+    return <CmsPageSkeleton loadingLabel={t('common.loading')} />
   }
 
   if (status === 'error') {
@@ -147,6 +157,59 @@ export function CmsPage() {
             isPrimaryHeader={false}
           />
         ))}
+      </div>
+    </div>
+  )
+}
+
+function resolveLoadStatus(page: PageDetailResponse | null): LoadStatus {
+  if (!page) {
+    return 'loading'
+  }
+
+  return page.page_type === 'module' ? 'not-found' : 'ready'
+}
+
+function CmsPageSkeleton({ loadingLabel }: { loadingLabel: string }) {
+  return (
+    <div className={styles.loadingPage} aria-busy="true">
+      <div className={styles.visuallyHidden}>{loadingLabel}</div>
+
+      <section className={styles.loadingHero} aria-hidden="true">
+        <div className={styles.loadingHeroImage} />
+        <div className={styles.loadingHeroOverlay} />
+        <div className={styles.loadingHeroContent}>
+          <span className={`${styles.loadingBar} ${styles.loadingEyebrow}`} />
+          <span className={`${styles.loadingBar} ${styles.loadingTitle}`} />
+          <span className={`${styles.loadingBar} ${styles.loadingTitleShort}`} />
+          <span className={`${styles.loadingBar} ${styles.loadingBody}`} />
+          <span className={`${styles.loadingBar} ${styles.loadingBodyWide}`} />
+        </div>
+      </section>
+
+      <div className={styles.loadingSections}>
+        <section className={styles.loadingSection} aria-hidden="true">
+          <div className={styles.loadingCard}>
+            <span className={`${styles.loadingBar} ${styles.loadingSectionTitle}`} />
+            <span className={`${styles.loadingBar} ${styles.loadingSectionBody}`} />
+            <span className={`${styles.loadingBar} ${styles.loadingSectionBodyWide}`} />
+          </div>
+        </section>
+
+        <section className={styles.loadingSection} aria-hidden="true">
+          <div className={styles.loadingGalleryGrid}>
+            {Array.from({ length: 8 }).map((_, index) => (
+              <div key={index} className={styles.loadingGalleryTile} />
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.loadingSection} aria-hidden="true">
+          <div className={styles.loadingCard}>
+            <span className={`${styles.loadingBar} ${styles.loadingQuote}`} />
+            <span className={`${styles.loadingBar} ${styles.loadingQuoteShort}`} />
+          </div>
+        </section>
       </div>
     </div>
   )
