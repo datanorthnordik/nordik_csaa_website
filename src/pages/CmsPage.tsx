@@ -60,12 +60,7 @@ export function CmsPage() {
   }, [pathname])
 
   if (status === 'loading') {
-    return (
-      <div className={styles.loadingState} aria-busy="true">
-        <div className={styles.loadingPulse} aria-hidden="true" />
-        <p>{t('common.loading')}</p>
-      </div>
-    )
+    return <CmsPageSkeleton loadingLabel={t('common.loading')} />
   }
 
   if (status === 'error') {
@@ -147,6 +142,51 @@ export function CmsPage() {
             isPrimaryHeader={false}
           />
         ))}
+      </div>
+    </div>
+  )
+}
+
+function CmsPageSkeleton({ loadingLabel }: { loadingLabel: string }) {
+  return (
+    <div className={styles.loadingPage} aria-busy="true">
+      <div className={styles.visuallyHidden}>{loadingLabel}</div>
+
+      <section className={styles.loadingHero} aria-hidden="true">
+        <div className={styles.loadingHeroImage} />
+        <div className={styles.loadingHeroOverlay} />
+        <div className={styles.loadingHeroContent}>
+          <span className={`${styles.loadingBar} ${styles.loadingEyebrow}`} />
+          <span className={`${styles.loadingBar} ${styles.loadingTitle}`} />
+          <span className={`${styles.loadingBar} ${styles.loadingTitleShort}`} />
+          <span className={`${styles.loadingBar} ${styles.loadingBody}`} />
+          <span className={`${styles.loadingBar} ${styles.loadingBodyWide}`} />
+        </div>
+      </section>
+
+      <div className={styles.loadingSections}>
+        <section className={styles.loadingSection} aria-hidden="true">
+          <div className={styles.loadingCard}>
+            <span className={`${styles.loadingBar} ${styles.loadingSectionTitle}`} />
+            <span className={`${styles.loadingBar} ${styles.loadingSectionBody}`} />
+            <span className={`${styles.loadingBar} ${styles.loadingSectionBodyWide}`} />
+          </div>
+        </section>
+
+        <section className={styles.loadingSection} aria-hidden="true">
+          <div className={styles.loadingGalleryGrid}>
+            {Array.from({ length: 8 }).map((_, index) => (
+              <div key={index} className={styles.loadingGalleryTile} />
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.loadingSection} aria-hidden="true">
+          <div className={styles.loadingCard}>
+            <span className={`${styles.loadingBar} ${styles.loadingQuote}`} />
+            <span className={`${styles.loadingBar} ${styles.loadingQuoteShort}`} />
+          </div>
+        </section>
       </div>
     </div>
   )
