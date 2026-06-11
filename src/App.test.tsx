@@ -13,6 +13,8 @@ const {
   getNewsletter,
   getPressEntry,
   getPageBySlug,
+  peekPageBySlug,
+  preloadPageBySlug,
   listPublishedNewsletters,
   listPublishedPressEntries,
   listResources,
@@ -22,6 +24,8 @@ const {
 } = vi.hoisted(() => ({
   getMainMenu: vi.fn(),
   getPageBySlug: vi.fn(),
+  preloadPageBySlug: vi.fn(),
+  peekPageBySlug: vi.fn(),
   getGallery: vi.fn(),
   getNewsletter: vi.fn(),
   getPressEntry: vi.fn(),
@@ -52,6 +56,8 @@ vi.mock('./api/eventsApi', () => ({
 vi.mock('./api/pagesApi', () => ({
   pagesApi: {
     getPageBySlug,
+    preloadPageBySlug,
+    peekPageBySlug,
   },
 }))
 
@@ -802,6 +808,8 @@ const samplePressEntries = [
 beforeEach(async () => {
   getMainMenu.mockReset()
   getPageBySlug.mockReset()
+  preloadPageBySlug.mockReset()
+  peekPageBySlug.mockReset()
   getGallery.mockReset()
   getNewsletter.mockReset()
   getPressEntry.mockReset()
@@ -812,6 +820,8 @@ beforeEach(async () => {
   listArchivedEvents.mockReset()
   listEventsByDateRange.mockReset()
   getMainMenu.mockResolvedValue(sampleMenu)
+  preloadPageBySlug.mockImplementation((slug: string) => getPageBySlug(slug))
+  peekPageBySlug.mockImplementation(() => null)
   getPageBySlug.mockImplementation(async (slug: string) => {
     if (slug === '/home/contact-us') {
       return sampleChildPage
@@ -1052,6 +1062,7 @@ describe('App', () => {
 
     renderWithProviders(<App />)
 
+    expect(preloadPageBySlug).toHaveBeenCalledWith('/community-support-team/csaa-members')
     expect(
       await screen.findByTestId('cms-fallback-hero-background'),
     ).toBeDefined()

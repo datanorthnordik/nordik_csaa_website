@@ -21,17 +21,32 @@ type LoadStatus = 'loading' | 'ready' | 'not-found' | 'error'
 export function CmsPage() {
   const { pathname } = useLocation()
   const { t } = useTranslation()
-  const [page, setPage] = useState<PageDetailResponse | null>(null)
-  const [status, setStatus] = useState<LoadStatus>('loading')
+  const normalizedPath = normalizeInternalPath(pathname)
+  const [page, setPage] = useState<PageDetailResponse | null>(() =>
+    pagesApi.peekPageBySlug(normalizedPath),
+  )
+  const [status, setStatus] = useState<LoadStatus>(() =>
+    resolveLoadStatus(pagesApi.peekPageBySlug(normalizedPath)),
+  )
 
   useEffect(() => {
     let ignore = false
+    const cachedPage = pagesApi.peekPageBySlug(normalizedPath)
+
+    setPage(cachedPage)
+    setStatus(resolveLoadStatus(cachedPage))
+
+    if (cachedPage) {
+      return () => {
+        ignore = true
+      }
+    }
 
     async function loadPage() {
       setStatus('loading')
 
       try {
-        const response = await pagesApi.getPageBySlug(normalizeInternalPath(pathname))
+        const response = await pagesApi.getPageBySlug(normalizedPath)
 
         if (!ignore) {
           setPage(response)
@@ -57,7 +72,7 @@ export function CmsPage() {
     return () => {
       ignore = true
     }
-  }, [pathname])
+  }, [normalizedPath])
 
   if (status === 'loading') {
     return <CmsPageSkeleton loadingLabel={t('common.loading')} />
@@ -145,6 +160,14 @@ export function CmsPage() {
       </div>
     </div>
   )
+}
+
+function resolveLoadStatus(page: PageDetailResponse | null): LoadStatus {
+  if (!page) {
+    return 'loading'
+  }
+
+  return page.page_type === 'module' ? 'not-found' : 'ready'
 }
 
 function CmsPageSkeleton({ loadingLabel }: { loadingLabel: string }) {
