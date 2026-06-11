@@ -84,6 +84,8 @@ export function OurStoryPage() {
               src={WEBSITE_ASSET_URLS.makwa17}
               alt={t('ourStory.mission.imageAlt')}
               className={styles.missionImage}
+              loading="lazy"
+              decoding="async"
             />
           </div>
         </div>
@@ -236,7 +238,7 @@ type TimelineItemProps = {
 function TimelineItem({ label, body, accent = false }: TimelineItemProps) {
   return (
     <div className={accent ? styles.timelineItemAccent : styles.timelineItem}>
-      <h4 className={accent ? styles.timelineLabelAccent : styles.timelineLabel}>{label}</h4>
+      <h3 className={accent ? styles.timelineLabelAccent : styles.timelineLabel}>{label}</h3>
       <p className={styles.timelineBody}>{body}</p>
     </div>
   )
