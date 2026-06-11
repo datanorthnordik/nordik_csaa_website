@@ -2,8 +2,10 @@ import { lazy, Suspense, type ReactNode } from 'react'
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { pagesApi } from './api/pagesApi'
 import { NavigationMenuProvider, useNavigationMenu } from './components/NavigationMenuProvider'
+import { PageSuspenseFallback } from './components/PageSuspenseFallback'
 import { ScrollToTop } from './components/ScrollToTop'
 import { SiteShell } from './components/SiteShell'
+import { resolvePageHeroImageUrl } from './components/cms/cmsPageMedia'
 import { GatheringsPage } from './pages/GatheringsPage'
 import { getInitialMenuHref, normalizeInternalPath } from './lib/navigationMenu'
 
@@ -143,14 +145,48 @@ function MenuLandingRedirect() {
 
 function CmsPageRoute() {
   const { pathname } = useLocation()
+  const normalizedPath = normalizeInternalPath(pathname)
 
-  void pagesApi.preloadPageBySlug(normalizeInternalPath(pathname)).catch(() => {})
+  void pagesApi
+    .preloadPageBySlug(normalizedPath)
+    .then((page) => {
+      preloadRouteImage(resolvePageHeroImageUrl(page))
+    })
+    .catch(() => {})
 
   return withSuspense(<CmsPage />)
 }
 
 function withSuspense(content: ReactNode) {
-  return <Suspense fallback={null}>{content}</Suspense>
+  return <Suspense fallback={<PageSuspenseFallback />}>{content}</Suspense>
+}
+
+const preloadedRouteImages = new Set<string>()
+
+function preloadRouteImage(imageUrl?: string | null) {
+  const trimmedImageUrl = imageUrl?.trim()
+  if (!trimmedImageUrl || typeof document === 'undefined' || preloadedRouteImages.has(trimmedImageUrl)) {
+    return
+  }
+
+  preloadedRouteImages.add(trimmedImageUrl)
+
+  const existingPreload = Array.from(
+    document.head.querySelectorAll<HTMLLinkElement>('link[rel="preload"][as="image"]'),
+  ).find((link) => link.getAttribute('href') === trimmedImageUrl)
+  if (!existingPreload) {
+    const preloadLink = document.createElement('link')
+    preloadLink.rel = 'preload'
+    preloadLink.as = 'image'
+    preloadLink.href = trimmedImageUrl
+    preloadLink.setAttribute('fetchpriority', 'high')
+    document.head.appendChild(preloadLink)
+  }
+
+  const warmedImage = new Image()
+  warmedImage.decoding = 'async'
+  warmedImage.setAttribute('fetchpriority', 'high')
+  warmedImage.src = trimmedImageUrl
 }
 
 export default App
