@@ -11,8 +11,8 @@
 .cardsSection {
   padding: 72px 0 64px;
   background: #f8f6f4;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: var(--viewport-width);
+  margin-left: calc(50% - var(--viewport-half-width));
   box-sizing: border-box;
 }
 

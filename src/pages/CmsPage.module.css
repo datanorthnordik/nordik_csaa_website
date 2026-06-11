@@ -37,8 +37,8 @@
 .loadingHero {
   position: relative;
   min-height: 78svh;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: var(--viewport-width);
+  margin-left: calc(50% - var(--viewport-half-width));
   overflow: hidden;
   background: #0f1512;
 }

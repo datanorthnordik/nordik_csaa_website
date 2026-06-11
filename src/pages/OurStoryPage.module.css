@@ -42,8 +42,8 @@
   overflow: hidden;
   padding-bottom: 96px;
   /* true full-bleed regardless of frame max-width */
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: var(--viewport-width);
+  margin-left: calc(50% - var(--viewport-half-width));
 }
 
 .heroImage {
@@ -130,8 +130,8 @@
 /* ── Mission & Vision ── */
 
 .missionSection {
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: var(--viewport-width);
+  margin-left: calc(50% - var(--viewport-half-width));
   background: #f8f6f4;
   padding: 96px clamp(20px, 6vw, 120px);
 }
@@ -214,8 +214,8 @@
 /* ── Explore Our Legacy ── */
 
 .legacySection {
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: var(--viewport-width);
+  margin-left: calc(50% - var(--viewport-half-width));
   background: #ffffff;
   padding: 96px clamp(20px, 6vw, 120px) 108px;
 }
@@ -361,8 +361,8 @@
 
 .foundationsSection {
   position: relative;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: var(--viewport-width);
+  margin-left: calc(50% - var(--viewport-half-width));
   padding: 96px clamp(20px, 6vw, 120px);
   overflow: hidden;
   background: #eae8e7;
@@ -452,8 +452,8 @@
 /* ── Solemn Dedication ── */
 
 .dedicationSection {
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: var(--viewport-width);
+  margin-left: calc(50% - var(--viewport-half-width));
   background: #9c0000;
   color: #ffffff;
   padding: 100px clamp(20px, 6vw, 120px);

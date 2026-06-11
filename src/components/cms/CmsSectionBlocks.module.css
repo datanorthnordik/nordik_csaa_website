@@ -284,7 +284,7 @@
   max-width: none;
   gap: clamp(32px, 5vw, 96px);
   align-items: center;
-  margin-inline: calc(50% - 50vw + var(--shell-gutter, clamp(18px, 3vw, 40px)));
+  margin-inline: calc(50% - var(--viewport-half-width) + var(--shell-gutter, clamp(18px, 3vw, 40px)));
   padding: clamp(54px, 7vw, 82px) clamp(24px, 4vw, 72px);
   background: #f1f0ef;
 }

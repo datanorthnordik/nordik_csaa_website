@@ -11,7 +11,7 @@
  */
 
 import { createPortal } from 'react-dom'
-import { useEffect, useRef, useState } from 'react'
+import { type RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import gsap from 'gsap'
@@ -55,6 +55,16 @@ type S1LayerRects = Record<S1Layer, ImageRect>
 type S1Hotspot = Hotspot & {
   layer: S1Layer
   callout: 'right' | 'left'
+}
+
+const EMPTY_IMAGE_RECT: ImageRect = { left: 0, top: 0, width: 0, height: 0 }
+const EMPTY_S1_LAYER_RECTS: S1LayerRects = {
+  train: EMPTY_IMAGE_RECT,
+  plane: EMPTY_IMAGE_RECT,
+  school: EMPTY_IMAGE_RECT,
+  canoe: EMPTY_IMAGE_RECT,
+  modelT: EMPTY_IMAGE_RECT,
+  buggy: EMPTY_IMAGE_RECT,
 }
 
 const S1_HOTSPOTS: S1Hotspot[] = [
@@ -214,6 +224,143 @@ function IntroWave() {
   )
 }
 
+function measureRelativeRect(
+  container: HTMLElement | null,
+  element: HTMLElement | null,
+): ImageRect {
+  if (!container || !element) {
+    return EMPTY_IMAGE_RECT
+  }
+
+  const containerRect = container.getBoundingClientRect()
+  const elementRect = element.getBoundingClientRect()
+
+  return {
+    left: elementRect.left - containerRect.left,
+    top: elementRect.top - containerRect.top,
+    width: elementRect.width,
+    height: elementRect.height,
+  }
+}
+
+function useImageRect(
+  containerRef: RefObject<HTMLElement | null>,
+  imageRef: RefObject<HTMLImageElement | null>,
+  revision: unknown = 0,
+) {
+  const [rect, setRect] = useState<ImageRect>(EMPTY_IMAGE_RECT)
+
+  useLayoutEffect(() => {
+    let frameId = 0
+
+    const updateRect = () => {
+      setRect(measureRelativeRect(containerRef.current, imageRef.current))
+    }
+
+    const scheduleUpdate = () => {
+      if (frameId) {
+        window.cancelAnimationFrame(frameId)
+      }
+      frameId = window.requestAnimationFrame(updateRect)
+    }
+
+    const resizeObserver = typeof ResizeObserver === 'undefined'
+      ? null
+      : new ResizeObserver(scheduleUpdate)
+
+    if (containerRef.current) {
+      resizeObserver?.observe(containerRef.current)
+    }
+    if (imageRef.current) {
+      resizeObserver?.observe(imageRef.current)
+      imageRef.current.addEventListener('load', scheduleUpdate)
+    }
+
+    window.addEventListener('resize', scheduleUpdate)
+    scheduleUpdate()
+
+    return () => {
+      if (frameId) {
+        window.cancelAnimationFrame(frameId)
+      }
+      window.removeEventListener('resize', scheduleUpdate)
+      imageRef.current?.removeEventListener('load', scheduleUpdate)
+      resizeObserver?.disconnect()
+    }
+  }, [containerRef, imageRef, revision])
+
+  return rect
+}
+
+function useArtLayerRects(
+  canvasRef: RefObject<HTMLDivElement | null>,
+  trainRef: RefObject<HTMLImageElement | null>,
+  planeRef: RefObject<HTMLImageElement | null>,
+  schoolRef: RefObject<HTMLImageElement | null>,
+  canoeRef: RefObject<HTMLImageElement | null>,
+  modelTRef: RefObject<HTMLImageElement | null>,
+  buggyRef: RefObject<HTMLImageElement | null>,
+  revision: unknown = 0,
+) {
+  const [rects, setRects] = useState<S1LayerRects>(EMPTY_S1_LAYER_RECTS)
+
+  useLayoutEffect(() => {
+    let frameId = 0
+
+    const updateRects = () => {
+      const canvas = canvasRef.current
+
+      setRects({
+        train: measureRelativeRect(canvas, trainRef.current),
+        plane: measureRelativeRect(canvas, planeRef.current),
+        school: measureRelativeRect(canvas, schoolRef.current),
+        canoe: measureRelativeRect(canvas, canoeRef.current),
+        modelT: measureRelativeRect(canvas, modelTRef.current),
+        buggy: measureRelativeRect(canvas, buggyRef.current),
+      })
+    }
+
+    const scheduleUpdate = () => {
+      if (frameId) {
+        window.cancelAnimationFrame(frameId)
+      }
+      frameId = window.requestAnimationFrame(updateRects)
+    }
+
+    const layerRefs = [trainRef, planeRef, schoolRef, canoeRef, modelTRef, buggyRef]
+    const resizeObserver = typeof ResizeObserver === 'undefined'
+      ? null
+      : new ResizeObserver(scheduleUpdate)
+
+    if (canvasRef.current) {
+      resizeObserver?.observe(canvasRef.current)
+    }
+
+    for (const layerRef of layerRefs) {
+      if (layerRef.current) {
+        resizeObserver?.observe(layerRef.current)
+        layerRef.current.addEventListener('load', scheduleUpdate)
+      }
+    }
+
+    window.addEventListener('resize', scheduleUpdate)
+    scheduleUpdate()
+
+    return () => {
+      if (frameId) {
+        window.cancelAnimationFrame(frameId)
+      }
+      window.removeEventListener('resize', scheduleUpdate)
+      for (const layerRef of layerRefs) {
+        layerRef.current?.removeEventListener('load', scheduleUpdate)
+      }
+      resizeObserver?.disconnect()
+    }
+  }, [canvasRef, trainRef, planeRef, schoolRef, canoeRef, modelTRef, buggyRef, revision])
+
+  return rects
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 export function CsaaLegacyPage() {
   const { t } = useTranslation()
@@ -276,8 +423,8 @@ export function CsaaLegacyPage() {
     showHotspots,
   )
   // S2 & S3: single object-fit:contain image per scene
-  const s2ImageRect = useImageRect(s2ArtWrapRef, s2ImgRef)
-  const s3ImageRect = useImageRect(s3ArtWrapRef, s3ImgRef)
+  const s2ImageRect = useImageRect(s2ArtWrapRef, s2ImgRef, showS2Hotspots)
+  const s3ImageRect = useImageRect(s3ArtWrapRef, s3ImgRef, showS3Hotspots)
 
   // ── Fixed signature — animated across all three scenes ────────────────────
   const fixedSigRef = useRef<HTMLDivElement>(null)
