@@ -5,6 +5,7 @@ import { galleriesApi } from '../../api/galleriesApi'
 import type { PageSection } from '../../api/pagesApi'
 import {
   buildCmsGalleryAssets,
+  type CmsGalleryViewMode,
   normalizeGalleryViewMode,
 } from './cmsGalleryMedia'
 import { CmsGalleryCarousel } from './CmsGalleryCarousel'
@@ -20,7 +21,7 @@ type CmsGallerySectionProps = {
 
 type GalleryStatus = 'idle' | 'loading' | 'ready' | 'error'
 
-const galleryLoadRootMargin = '400px 0px'
+const galleryLoadRootMargin = '120px 0px'
 
 const CmsGalleryLightbox = lazy(() =>
   import('./CmsGalleryLightbox').then((module) => ({
@@ -145,10 +146,8 @@ export function CmsGallerySection({ section }: CmsGallerySectionProps) {
     <section ref={sectionRef} className={styles.gallerySection}>
       {status === 'idle' || status === 'loading' ? (
         <div className={styles.galleryLoading} aria-busy="true">
-          <div className={styles.loadingPulse} aria-hidden="true" />
-          <div className={styles.loadingBars}>
-            <div className={styles.loadingBar} />
-            <div className={`${styles.loadingBar} ${styles.loadingBarShort}`} />
+          <div className={styles.galleryLoadingPreview} aria-hidden="true">
+            {renderGalleryLoadingPreview(viewMode)}
           </div>
           <p className={styles.galleryStateText}>{t('cmsGallery.loading')}</p>
         </div>
@@ -207,5 +206,48 @@ export function CmsGallerySection({ section }: CmsGallerySectionProps) {
         </>
       ) : null}
     </section>
+  )
+}
+
+function renderGalleryLoadingPreview(viewMode: CmsGalleryViewMode) {
+  if (viewMode === 'masonry') {
+    return (
+      <div className={styles.galleryLoadingMasonry}>
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div key={index} className={styles.galleryLoadingMasonryItem} />
+        ))}
+      </div>
+    )
+  }
+
+  if (viewMode === 'focus' || viewMode === 'carousel') {
+    return (
+      <div className={styles.galleryLoadingFeature}>
+        <div className={styles.galleryLoadingStage} />
+        <div className={styles.galleryLoadingRail}>
+          {Array.from({ length: viewMode === 'carousel' ? 3 : 4 }).map((_, index) => (
+            <div key={index} className={styles.galleryLoadingThumb} />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (viewMode === 'icons') {
+    return (
+      <div className={styles.galleryLoadingIcons}>
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div key={index} className={styles.galleryLoadingIconTile} />
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <div className={styles.galleryLoadingGrid}>
+      {Array.from({ length: 8 }).map((_, index) => (
+        <div key={index} className={styles.galleryLoadingTile} />
+      ))}
+    </div>
   )
 }
