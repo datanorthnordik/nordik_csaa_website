@@ -200,130 +200,6 @@ const S3_HOTSPOTS: Hotspot[] = [
   },
 ]
 
-// ── Scroll-reveal hook (Scenes 2 & 3) ────────────────────────────────────────
-function useScrollReveal(threshold = 0.12, onVisible?: () => void) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [isVisible, setIsVisible] = useState(false)
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          onVisible?.()
-          obs.disconnect()
-        }
-      },
-      { threshold },
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [threshold])
-  return { ref, isVisible }
-}
-
-// ── Image-rect hook — tracks the actual rendered image bounds inside object-fit:contain ──
-function useImageRect(
-  wrapRef: React.RefObject<HTMLDivElement | null>,
-  imgRef: React.RefObject<HTMLImageElement | null>,
-): ImageRect {
-  const [rect, setRect] = useState<ImageRect>({ left: 0, top: 0, width: 0, height: 0 })
-
-  useEffect(() => {
-    const wrap = wrapRef.current
-    const img = imgRef.current
-    if (!wrap || !img) return
-
-    function compute() {
-      if (!wrap || !img) return
-      const wW = wrap.clientWidth
-      const wH = wrap.clientHeight
-      const nW = img.naturalWidth || wW
-      const nH = img.naturalHeight || wH
-      if (!nW || !nH) return
-      const scale = Math.min(wW / nW, wH / nH)
-      const iW = nW * scale
-      const iH = nH * scale
-      setRect({ left: (wW - iW) / 2, top: (wH - iH) / 2, width: iW, height: iH })
-    }
-
-    const ro = new ResizeObserver(compute)
-    ro.observe(wrap)
-
-    if (img.complete && img.naturalWidth) {
-      compute()
-    } else {
-      img.addEventListener('load', compute)
-      return () => { ro.disconnect(); img.removeEventListener('load', compute) }
-    }
-
-    return () => ro.disconnect()
-  }, [wrapRef, imgRef])
-
-  return rect
-}
-
-// ── Art-layer rects hook — tracks each S1 image's position inside the canvas ──
-/**
- * Observes the Scene 1 sticky canvas and returns the bounding rect of each
- * art-layer image *relative to the canvas*, updated on every resize.
- * Used to position S1 hotspot dots on the correct element at every screen size.
- */
-const EMPTY_LAYER_RECT: ImageRect = { left: 0, top: 0, width: 0, height: 0 }
-const EMPTY_S1_RECTS: S1LayerRects = {
-  train: EMPTY_LAYER_RECT, plane: EMPTY_LAYER_RECT, school: EMPTY_LAYER_RECT,
-  canoe: EMPTY_LAYER_RECT, modelT: EMPTY_LAYER_RECT, buggy: EMPTY_LAYER_RECT,
-}
-
-function useArtLayerRects(
-  canvasRef:  React.RefObject<HTMLDivElement    | null>,
-  trainRef:   React.RefObject<HTMLImageElement  | null>,
-  planeRef:   React.RefObject<HTMLImageElement  | null>,
-  schoolRef:  React.RefObject<HTMLImageElement  | null>,
-  canoeRef:   React.RefObject<HTMLImageElement  | null>,
-  modelTRef:  React.RefObject<HTMLImageElement  | null>,
-  buggyRef:   React.RefObject<HTMLImageElement  | null>,
-  /** Changing this value forces an immediate remeasure — pass `showHotspots`
-   *  so positions are snapped after GSAP finishes its slide-in animations. */
-  revision:   unknown,
-): S1LayerRects {
-  const [rects, setRects] = useState<S1LayerRects>(EMPTY_S1_RECTS)
-
-  useEffect(() => {
-    function compute() {
-      const canvas = canvasRef.current
-      if (!canvas) return
-      const cb = canvas.getBoundingClientRect()
-      const read = (img: HTMLImageElement | null): ImageRect => {
-        if (!img) return EMPTY_LAYER_RECT
-        const r = img.getBoundingClientRect()
-        return { left: r.left - cb.left, top: r.top - cb.top, width: r.width, height: r.height }
-      }
-      setRects({
-        train:  read(trainRef.current),
-        plane:  read(planeRef.current),
-        school: read(schoolRef.current),
-        canoe:  read(canoeRef.current),
-        modelT: read(modelTRef.current),
-        buggy:  read(buggyRef.current),
-      })
-    }
-
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ro = new ResizeObserver(compute)
-    ro.observe(canvas)
-    compute()
-    return () => ro.disconnect()
-  // refs are stable useRef values; `revision` is the intentional re-run trigger
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canvasRef, revision])
-
-  return rects
-}
-
 // ── Wave divider ──────────────────────────────────────────────────────────────
 const WAVE_PATH = 'M0,45 C400,45 450,95 700,95 C1000,95 1100,25 1300,25 C1380,25 1410,35 1440,35'
 function IntroWave() {
@@ -367,7 +243,6 @@ export function CsaaLegacyPage() {
 
   // End-of-scene elements
   const sceneTitleRef  = useRef<HTMLHeadingElement>(null)
-  const artistCreditRef = useRef<HTMLDivElement>(null)
   const [showHotspots, setShowHotspots] = useState(false)
   const [showIdleNudge, setShowIdleNudge] = useState(false)
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
