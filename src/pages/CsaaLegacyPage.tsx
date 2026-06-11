@@ -11,7 +11,7 @@
  */
 
 import { createPortal } from 'react-dom'
-import { useEffect, useRef, useState } from 'react'
+import { type RefObject, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import gsap from 'gsap'
@@ -212,6 +212,93 @@ function IntroWave() {
       </svg>
     </div>
   )
+}
+
+// ── Empty rects ───────────────────────────────────────────────────────────────
+const EMPTY_LAYER_RECT: ImageRect = { left: 0, top: 0, width: 0, height: 0 }
+const EMPTY_S1_RECTS: S1LayerRects = {
+  train: EMPTY_LAYER_RECT, plane: EMPTY_LAYER_RECT, school: EMPTY_LAYER_RECT,
+  canoe: EMPTY_LAYER_RECT, modelT: EMPTY_LAYER_RECT, buggy: EMPTY_LAYER_RECT,
+}
+
+/**
+ * Measures each S1 art-layer image rect relative to the sticky canvas.
+ * Re-runs whenever `revision` changes (pass `showHotspots` so rects are
+ * remeasured after GSAP finishes its slide-in animations).
+ */
+function useArtLayerRects(
+  canvasRef: RefObject<HTMLDivElement | null>,
+  trainRef:  RefObject<HTMLImageElement | null>,
+  planeRef:  RefObject<HTMLImageElement | null>,
+  schoolRef: RefObject<HTMLImageElement | null>,
+  canoeRef:  RefObject<HTMLImageElement | null>,
+  modelTRef: RefObject<HTMLImageElement | null>,
+  buggyRef:  RefObject<HTMLImageElement | null>,
+  revision:  unknown,
+): S1LayerRects {
+  const [rects, setRects] = useState<S1LayerRects>(EMPTY_S1_RECTS)
+  useEffect(() => {
+    function compute() {
+      const canvas = canvasRef.current
+      if (!canvas) return
+      const cb = canvas.getBoundingClientRect()
+      const read = (img: HTMLImageElement | null): ImageRect => {
+        if (!img) return EMPTY_LAYER_RECT
+        const r = img.getBoundingClientRect()
+        return { left: r.left - cb.left, top: r.top - cb.top, width: r.width, height: r.height }
+      }
+      setRects({
+        train:  read(trainRef.current),
+        plane:  read(planeRef.current),
+        school: read(schoolRef.current),
+        canoe:  read(canoeRef.current),
+        modelT: read(modelTRef.current),
+        buggy:  read(buggyRef.current),
+      })
+    }
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ro = new ResizeObserver(compute)
+    ro.observe(canvas)
+    compute()
+    return () => ro.disconnect()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canvasRef, revision])
+  return rects
+}
+
+/**
+ * Measures the actual rendered rect of an `object-fit: contain` image
+ * relative to its wrapper. Works for S2 and S3 scenes.
+ */
+function useImageRect(
+  wrapRef: RefObject<HTMLDivElement | null>,
+  imgRef:  RefObject<HTMLImageElement | null>,
+): ImageRect | undefined {
+  const [rect, setRect] = useState<ImageRect | undefined>(undefined)
+  useEffect(() => {
+    function compute() {
+      const wrap = wrapRef.current
+      const img  = imgRef.current
+      if (!wrap || !img) return
+      const wb = wrap.getBoundingClientRect()
+      const ib = img.getBoundingClientRect()
+      setRect({
+        left:   ib.left - wb.left,
+        top:    ib.top  - wb.top,
+        width:  ib.width,
+        height: ib.height,
+      })
+    }
+    const wrap = wrapRef.current
+    if (!wrap) return
+    const ro = new ResizeObserver(compute)
+    ro.observe(wrap)
+    compute()
+    return () => ro.disconnect()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wrapRef, imgRef])
+  return rect
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
