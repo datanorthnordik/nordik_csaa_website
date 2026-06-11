@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
   publicResourcesApi,
@@ -11,6 +12,7 @@ import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { DocumentViewerModal } from '../components/documents/DocumentViewerModal'
 import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
 import { downloadPublicFile } from '../lib/fileDownload'
+import { usePageSeo } from '../lib/usePageSeo'
 import { TextHero } from '../components/TextHero'
 import styles from './ResourcesPage.module.css'
 
@@ -26,7 +28,7 @@ const defaultPagination: PublicResourceListPageMeta = {
 }
 
 export function CommunityResourcesPage() {
-  const { t } = useTranslation()
+  const { i18n, t } = useTranslation()
   const [resources, setResources] = useState<PublicResourceEntry[]>([])
   const [pagination, setPagination] = useState<PublicResourceListPageMeta>(defaultPagination)
   const [searchTerm, setSearchTerm] = useState('')
@@ -37,6 +39,10 @@ export function CommunityResourcesPage() {
   const [selectedDocument, setSelectedDocument] = useState<PublicResourceEntry | null>(null)
 
   const normalizedSearchTerm = searchTerm.trim().toLowerCase()
+  const locale = i18n.resolvedLanguage ?? i18n.language
+  const seoTitle = 'Resources & Support | Children of Shingwauk Alumni Association'
+  const seoDescription =
+    'Browse educational resources, media, reports, and support links from the Children of Shingwauk Alumni Association Community Support Team.'
 
   usePageBreadcrumbs([
     {
@@ -48,10 +54,12 @@ export function CommunityResourcesPage() {
     },
   ])
 
-  usePageMeta({
-    title: 'Resources & Support | Children of Shingwauk Alumni Association',
-    description:
-      'Browse educational resources, media, reports, and support links from the Children of Shingwauk Alumni Association Community Support Team.',
+  usePageSeo({
+    title: seoTitle,
+    description: seoDescription,
+    canonicalPath: '/community-support-team/resources',
+    image: WEBSITE_ASSET_URLS.communitySupportTeamLogo,
+    lang: locale,
   })
 
   useEffect(() => {
@@ -112,7 +120,7 @@ export function CommunityResourcesPage() {
     <main className={styles.page}>
       <TextHero
         eyebrow="Community Support Team"
-        title="Resources &amp; Support"
+        title="Resources & Support"
         description="Tools, guides, and materials to support our community through their journey. Find the help you need, when you need it most."
       >
         <label className={styles.searchBox}>
@@ -130,17 +138,32 @@ export function CommunityResourcesPage() {
       </TextHero>
 
       <section className={styles.resourcesSection}>
+        <div className={styles.sectionHeader}>
+          <div>
+            <p className={styles.sectionEyebrow}>Resource Library</p>
+            <h2 id="community-resources-heading">Browse community resources</h2>
+          </div>
+          <p>
+            Explore downloadable guides, reports, media, and trusted support links
+            curated by the Community Support Team.
+          </p>
+        </div>
+
         {error ? <p className={styles.errorText}>{error}</p> : null}
 
         {isLoading ? (
-          <div className={styles.cardGrid} aria-label="Loading resources">
+          <div
+            className={styles.cardGrid}
+            aria-label="Loading resources"
+            aria-labelledby="community-resources-heading"
+          >
             {Array.from({ length: 6 }).map((_, index) => (
               <article key={index} className={styles.skeletonCard} aria-hidden="true" />
             ))}
           </div>
         ) : visibleResources.length ? (
           <>
-            <div className={styles.cardGrid}>
+            <div className={styles.cardGrid} aria-labelledby="community-resources-heading">
               {visibleResources.map((resource) => (
                 <ResourceCard
                   key={resource.id}
@@ -187,9 +210,9 @@ export function CommunityResourcesPage() {
             Our mission is rooted in honouring survivors, their families, affected
             communities, and those who never made it home.
           </p>
-          <a href="/community-support-team" className={styles.primaryAction}>
-            Learn More
-          </a>
+          <Link to="/community-support-team" className={styles.primaryAction}>
+            Learn about the Community Support Team
+          </Link>
         </div>
       </section>
 
@@ -269,30 +292,6 @@ function ResourceCard({ resource, onOpenDocument }: ResourceCardProps) {
       )}
     </article>
   )
-}
-
-function usePageMeta({ title, description }: { title: string; description: string }) {
-  useEffect(() => {
-    const previousTitle = document.title
-    document.title = title
-
-    let meta = document.querySelector<HTMLMetaElement>('meta[name="description"]')
-    const previousDescription = meta?.content
-
-    if (!meta) {
-      meta = document.createElement('meta')
-      meta.name = 'description'
-      document.head.appendChild(meta)
-    }
-    meta.content = description
-
-    return () => {
-      document.title = previousTitle
-      if (meta) {
-        meta.content = previousDescription ?? ''
-      }
-    }
-  }, [description, title])
 }
 
 function mergeResources(
