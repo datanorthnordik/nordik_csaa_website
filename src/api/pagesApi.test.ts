@@ -13,6 +13,7 @@ const apiGet = vi.mocked(apiClient.get)
 describe('pagesApi', () => {
   beforeEach(() => {
     apiGet.mockReset()
+    pagesApi.clearPageBySlugCache()
   })
 
   it('fetches public CMS pages by slug without auth', async () => {
@@ -38,5 +39,24 @@ describe('pagesApi', () => {
       page_title: 'Home',
       url_slug: '/home',
     })
+  })
+
+  it('reuses the in-flight request when a CMS page is preloaded before it renders', async () => {
+    apiGet.mockResolvedValue({
+      data: {
+        id: 36,
+        page_title: 'CSAA Members',
+        url_slug: '/community-support-team/csaa-members',
+      },
+    })
+
+    const preloadedPromise = pagesApi.preloadPageBySlug('/community-support-team/csaa-members')
+    const response = await pagesApi.getPageBySlug('/community-support-team/csaa-members')
+
+    await expect(preloadedPromise).resolves.toEqual(response)
+    expect(apiGet).toHaveBeenCalledTimes(1)
+    expect(
+      pagesApi.peekPageBySlug('/community-support-team/csaa-members'),
+    ).toEqual(response)
   })
 })
