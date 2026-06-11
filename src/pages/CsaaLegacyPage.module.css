@@ -331,8 +331,8 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 5px;
-  padding: 10px 16px 10px 12px;
+  gap: clamp(3px, 0.5vh, 6px);
+  padding: clamp(6px, 1vh, 10px) clamp(10px, 1.4vw, 16px) clamp(6px, 1vh, 10px) clamp(8px, 1vw, 12px);
   background: rgba(253, 251, 248, 0.88);
   backdrop-filter: blur(6px);
   border-left: 2.5px solid rgba(156, 0, 0, 0.5);
@@ -342,7 +342,7 @@
 
 .signatureImg {
   display: block;
-  width: 130px;
+  width: clamp(70px, 11vw, 130px);
   height: auto;
   mix-blend-mode: multiply;
 }
@@ -350,7 +350,7 @@
 .signatureName {
   margin: 0;
   font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
-  font-size: 0.84rem;
+  font-size: clamp(0.62rem, 1.1vw, 0.84rem);
   font-weight: 400;
   font-style: italic;
   color: #1a0f0a;
@@ -360,7 +360,7 @@
 .signatureRole {
   margin: 0;
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.6rem;
+  font-size: clamp(0.45rem, 0.75vw, 0.6rem);
   font-weight: 600;
   letter-spacing: 0.11em;
   text-transform: uppercase;
@@ -452,6 +452,76 @@
   transform: translateY(-50%);
   border: 7px solid transparent;
   border-left-color: #ffffff;
+}
+
+/* Fixed-position callout — escapes overflow:hidden on the sticky canvas.
+   Position (left/top) is set via inline style; JS clamps it within the
+   viewport.  Arrow direction is driven by data-callout="right|left|below". */
+.hotspotCalloutFixed {
+  position: fixed;
+  z-index: 9000;
+  width: 170px;
+  max-width: calc(100vw - 16px);
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 10px 12px;
+  box-shadow: 0 4px 20px rgba(26, 17, 13, 0.22), 0 1px 4px rgba(26, 17, 13, 0.1);
+  pointer-events: none;
+  text-align: left;
+  animation: calloutFixedIn 0.15s ease forwards;
+}
+@keyframes calloutFixedIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.hotspotCalloutFixed::before {
+  content: '';
+  position: absolute;
+  border: 7px solid transparent;
+}
+.hotspotCalloutFixed[data-callout="right"]::before {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right-color: #ffffff;
+}
+.hotspotCalloutFixed[data-callout="left"]::before {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left-color: #ffffff;
+}
+.hotspotCalloutFixed[data-callout="below"]::before {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-bottom-color: #ffffff;
+}
+
+/* Mobile — callout drops below the dot, centred */
+.hotspotCalloutBelow {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 70;
+  width: 140px;
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 8px 10px;
+  box-shadow: 0 4px 20px rgba(26, 17, 13, 0.22), 0 1px 4px rgba(26, 17, 13, 0.1);
+  pointer-events: auto;
+  text-align: left;
+  animation: calloutIn 0.15s ease;
+}
+.hotspotCalloutBelow::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 7px solid transparent;
+  border-bottom-color: #ffffff;
 }
 
 .hotspotCalloutTitle {
@@ -867,12 +937,15 @@
 }
 
 @media (max-width: 767px) {
-  .layerTrain  { width: 47vw; left: -2vw;  top: -5vh; }
-  .layerPlane  { width: 46vw; right: 0;    top: -2vh; }
-  .layerSchool { width: 53vw; left: 22vw;  bottom: 10vh; }
-  .layerCanoe  { width: 39vw; right: 0;    bottom: -10vh; }
-  .layerModelT { width: 37vw; left: -2vw;  bottom: -10vh; }
-  .layerBuggy  { width: 32vw; left: 30vw;  bottom: 2vh; }
+  /* Drop train/plane below the scene title so the heading has visual breathing
+     room at the top of the canvas. */
+  .layerTrain  { width: 50vw; left: -2vw;  top: 6vh; }
+  .layerPlane  { width: 49vw; right: 0;    top: 4vh; }
+  /* School — larger and centred; buggy placed below it, not on top of it. */
+  .layerSchool { width: 60vw; left: 20vw;  bottom: 22vh; }
+  .layerBuggy  { width: 30vw; left: 35vw;  bottom: 12vh; }
+  .layerCanoe  { width: 39vw; right: 0;    bottom: 3vh; }
+  .layerModelT { width: 37vw; left: -2vw;  bottom: 3vh; }
 
   .textPanel { padding: clamp(20px, 4vh, 36px) clamp(18px, 4vw, 36px); }
   .artworkMeta { flex-direction: column; align-items: flex-start; }
@@ -882,16 +955,20 @@
   .intro { min-height: 90svh; }
   .waveSvg { height: 60px; }
 
-  .layerTrain  { width: 57vw; left: -2vw;  top: -4vh; }
-  .layerPlane  { width: 55vw; right: 0;    top: -2vh; }
-  .layerSchool { width: 64vw; left: 18vw;  bottom: 8vh; }
-  .layerCanoe  { width: 47vw; right: 0;    bottom: -9vh; }
-  .layerModelT { width: 45vw; left: -2vw;  bottom: -9vh; }
-  .layerBuggy  { width: 38vw; left: 36vw;  bottom: 2vh; }
+  /* Train & plane: start below the scene title (~2.5vh) so the heading
+     reads on its own before the art begins. */
+  .layerTrain  { width: 60vw; left: -2vw;  top: 8vh; }
+  .layerPlane  { width: 58vw; right: 0;    top: 6vh; }
+  /* School — bigger; buggy positioned below the school's bottom edge so
+     it is never hidden behind it. */
+  .layerSchool { width: 72vw; left: 14vw;  bottom: 26vh; }
+  .layerBuggy  { width: 36vw; left: 32vw;  bottom: 14vh; }
+  /* Canoe & modelT near the bottom edge */
+  .layerCanoe  { width: 47vw; right: 0;    bottom: 3vh; }
+  .layerModelT { width: 45vw; left: -2vw;  bottom: 3vh; }
 
-  .hotspot { width: 24px; height: 24px; }
-  .hotspotCallout,
-  .hotspotCalloutLeft { width: 180px; }
+  .hotspot { width: 18px; height: 18px; }
+  .hotspotCalloutBelow { width: 130px; }
 }
 
 @media (max-width: 840px) {

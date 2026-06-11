@@ -10,6 +10,7 @@
  * Scenes 2 & 3: IntersectionObserver fade-in reveal.
  */
 
+import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -34,133 +35,166 @@ const shirleySignature = WEBSITE_ASSET_URLS.shirleySignature
 const shingwaukHeroImg = WEBSITE_ASSET_URLS.shingwaukHallHero
 const drHornImg        = WEBSITE_ASSET_URLS.drShirleyHorn
 
-// ── Hotspot data (Scene 1) ────────────────────────────────────────────────────
-type Hotspot = { id: string; x: string; y: string; title: string; body: string }
+// ── Hotspot types ─────────────────────────────────────────────────────────────
+/**
+ * x / y are percentages of the *image's own* pixel dimensions (not the wrapper).
+ * Used by S2, S3, and — via layer rect — S1.
+ */
+type Hotspot  = { id: string; x: string; y: string; title: string; body: string }
+type ImageRect = { left: number; top: number; width: number; height: number }
 
-const S1_HOTSPOTS: Hotspot[] = [
+// ── Scene 1 ───────────────────────────────────────────────────────────────────
+/** Which art-layer image each S1 hotspot belongs to. */
+type S1Layer = 'train' | 'plane' | 'school' | 'canoe' | 'modelT' | 'buggy'
+type S1LayerRects = Record<S1Layer, ImageRect>
+
+/**
+ * x / y are % within the specific art-layer image.
+ * callout controls which side the tooltip opens on.
+ */
+type S1Hotspot = Hotspot & {
+  layer: S1Layer
+  callout: 'right' | 'left'
+}
+
+const S1_HOTSPOTS: S1Hotspot[] = [
   {
     id: 's1-train',
-    x: '8%', y: '28%',
+    layer: 'train',
+    x: '50%', y: '60%',
+    callout: 'right',
     title: 'Came by Train',
     body: 'Many children were taken hundreds of miles by train — often for the very first time — towards an unknown destination far from their families.',
   },
   {
     id: 's1-school',
-    x: '50%', y: '52%',
+    layer: 'school',
+    x: '50%', y: '40%',
+    callout: 'right',
     title: 'Shingwauk Hall',
     body: 'The Shingwauk Indian Residential School in Sault Ste. Marie, Ontario, operated from 1873 to 1970. Hundreds of children were held here, separated from language, family, and culture.',
   },
   {
     id: 's1-plane',
-    x: '78%', y: '36%',
+    layer: 'plane',
+    x: '50%', y: '55%',
+    callout: 'left',
     title: 'Came by Plane',
     body: 'Children from the most remote northern communities were flown out — a journey that felt like being taken to another world entirely.',
   },
   {
     id: 's1-canoe',
-    x: '91%', y: '86%',
+    layer: 'canoe',
+    x: '50%', y: '50%',
+    callout: 'left',
     title: 'Came by Canoe',
     body: 'For those living along waterways, the journey began in a canoe — paddled away from their home shores, often never to return the same way.',
   },
   {
     id: 's1-modelT',
-    x: '9%', y: '73%',
+    layer: 'modelT',
+    x: '50%', y: '55%',
+    callout: 'right',
     title: 'Came by Car',
     body: 'As roads reached more communities, Indian Agents arrived by automobile. Children were loaded into cars and driven away from everything familiar.',
   },
   {
     id: 's1-buggy',
-    x: '35%', y: '80%',
+    layer: 'buggy',
+    x: '50%', y: '55%',
+    callout: 'right',
     title: 'Came by Buggy',
     body: 'Before railways and roads, priests and government agents arrived by horse-drawn buggy — recording names and assessing communities.',
   },
 ]
 
+// Positions are % of the image's own pixel dimensions (measured from the artwork directly)
 const S2_HOTSPOTS: Hotspot[] = [
   {
     id: 's2-tipi',
-    x: '39%', y: '43%',
+    x: '34%', y: '37%',
     title: 'The Tipi',
     body: 'The tipi stands as a symbol of home and belonging — traditions the residential school system tried to erase but could never extinguish. It remains standing, as it always has.',
   },
   {
     id: 's2-pumpkins',
-    x: '27%', y: '55%',
+    x: '22%', y: '52%',
     title: 'The Harvest',
     body: 'Pumpkins and gathered food speak to the deep connection between the land and the people — a harvest that feeds both body and spirit.',
   },
   {
     id: 's2-house',
-    x: '53%', y: '47%',
+    x: '55%', y: '42%',
     title: 'Coming Home',
     body: 'The family cabin represents the long-awaited return — a place to rebuild, to heal, and to pass on what the schools tried so hard to take away.',
   },
   {
     id: 's2-canoe',
-    x: '40%', y: '73%',
+    x: '28%', y: '76%',
     title: 'The Canoe Returns',
     body: 'The same canoe that once carried children away now brings them home — a powerful symbol of resilience and the continuation of culture across generations.',
   },
   {
     id: 's2-water',
-    x: '46%', y: '85%',
+    x: '47%', y: '86%',
     title: 'The Water',
     body: 'Water is life. The river carries memory, cleansing, and renewal — a living witness to everything that was taken and everything that endured.',
   },
   {
     id: 's2-fish',
-    x: '73%', y: '65%',
+    x: '84%', y: '64%',
     title: 'Fish & Net',
     body: 'Traditional fishing sustained communities for millennia. The net represents an unbroken relationship with the water — a practice no school could take away.',
   },
 ]
 
+// Positions are % of the image's own pixel dimensions (measured from the artwork directly)
 const S3_HOTSPOTS: Hotspot[] = [
   {
     id: 's3-dreamcatcher',
-    x: '49%', y: '20%',
+    x: '54%', y: '9%',
     title: 'The Dreamcatcher',
     body: 'Hung in the window where the light passes through, the dreamcatcher filters harm and lets good spirits in — a guardian of rest, memory, and healing.',
   },
   {
     id: 's3-drum',
-    x: '30%', y: '38%',
+    x: '13%', y: '48%',
     title: 'The Drum',
     body: 'The drum is the heartbeat of the community. Forbidden in residential schools, here it reclaims its place at the table of renewal.',
   },
   {
     id: 's3-bannock',
-    x: '30%', y: '55%',
+    x: '19%', y: '59%',
     title: 'Bannock',
     body: 'Bannock is more than bread — it is a symbol of resilience and sharing, made and passed down through generations of Indigenous families.',
   },
   {
     id: 's3-harvest',
-    x: '38%', y: '62%',
+    x: '30%', y: '56%',
     title: 'The Harvest',
     body: 'Gathered nuts, berries, and roots speak to an unbroken relationship with the land — a relationship no school could sever.',
   },
   {
     id: 's3-blueberries',
-    x: '44%', y: '41%',
+    x: '49%', y: '34%',
     title: 'Blueberries',
     body: 'Blueberries hold deep cultural and medicinal significance. Their presence on the table is a quiet act of reclaiming what was always ours.',
   },
   {
     id: 's3-fish',
-    x: '59%', y: '59%',
+    x: '66%', y: '54%',
     title: 'The Fish',
     body: 'Fish has sustained communities for millennia. To share it at the feast table is to honour the water, the land, and those who came before.',
   },
   {
     id: 's3-teapot',
-    x: '73%', y: '67%',
+    x: '86%', y: '62%',
     title: 'Tea & Ceremony',
     body: 'Gathering around tea is an act of welcome — an invitation to slow down, remember, and be present with one another in healing.',
   },
   {
     id: 's3-table',
-    x: '80%', y: '79%',
+    x: '90%', y: '47%',
     title: 'Coming to the Table',
     body: 'A shared meal is an act of healing. Gathering around food reconnects community, memory, and belonging across generations.',
   },
@@ -232,6 +266,18 @@ export function CsaaLegacyPage() {
   const s3ImgRef     = useRef<HTMLImageElement>(null)
   const s3TitleRef   = useRef<HTMLHeadingElement>(null)
   const panelS3      = useRef<(HTMLDivElement | null)[]>([])
+
+  // ── Image-rect derived values — accurate hotspot positioning ────────────────
+  // S1: each art layer tracked individually relative to the sticky canvas
+  // Pass showHotspots as the revision so rects are remeasured the moment GSAP
+  // finishes its slide-in animations — before that, transforms skew the rects.
+  const s1LayerRects = useArtLayerRects(
+    canvasRef, trainRef, planeRef, schoolRef, canoeRef, modelTRef, buggyRef,
+    showHotspots,
+  )
+  // S2 & S3: single object-fit:contain image per scene
+  const s2ImageRect = useImageRect(s2ArtWrapRef, s2ImgRef)
+  const s3ImageRect = useImageRect(s3ArtWrapRef, s3ImgRef)
 
   // ── Fixed signature — animated across all three scenes ────────────────────
   const fixedSigRef = useRef<HTMLDivElement>(null)
@@ -389,8 +435,10 @@ export function CsaaLegacyPage() {
       tl.kill()
       setShowHotspots(false)
       document.body.classList.remove('csaa-story-active')
-      gsap.killTweensOf(fixedSigRef.current)
-      gsap.set(fixedSigRef.current, { opacity: 0 })
+      if (fixedSigRef.current) {
+        gsap.killTweensOf(fixedSigRef.current)
+        gsap.set(fixedSigRef.current, { opacity: 0 })
+      }
       // Restore header + breadcrumbs in case component unmounts mid-scroll
       if (headerEl) {
         gsap.killTweensOf(headerEl)
@@ -683,7 +731,7 @@ export function CsaaLegacyPage() {
 
           {/* ── Hotspots (shown after art complete) ── */}
           {showHotspots && S1_HOTSPOTS.map(hs => (
-            <HotspotDot key={hs.id} hotspot={hs} />
+            <S1HotspotDot key={hs.id} hotspot={hs} rects={s1LayerRects} />
           ))}
 
           {/* ── Idle nudge ── */}
@@ -706,7 +754,7 @@ export function CsaaLegacyPage() {
               alt="Going Home — Moving Forward, artwork by Dr. Shirley Horn"
               className={styles.artWrapImg} />
             {showS2Hotspots && S2_HOTSPOTS.map(hs => (
-              <HotspotDot key={hs.id} hotspot={hs} />
+              <HotspotDot key={hs.id} hotspot={hs} imageRect={s2ImageRect} />
             ))}
           </div>
           <div ref={overlay2Ref} className={styles.canvasOverlay} aria-hidden="true" />
@@ -755,7 +803,7 @@ export function CsaaLegacyPage() {
               alt="Remembering, and Renewal, artwork by Dr. Shirley Horn"
               className={styles.artWrapImg} />
             {showS3Hotspots && S3_HOTSPOTS.map(hs => (
-              <HotspotDot key={hs.id} hotspot={hs} />
+              <HotspotDot key={hs.id} hotspot={hs} imageRect={s3ImageRect} />
             ))}
           </div>
           <div ref={overlay3Ref} className={styles.canvasOverlay} aria-hidden="true" />
@@ -844,29 +892,142 @@ export function CsaaLegacyPage() {
   )
 }
 
-// ── Hotspot dot component ─────────────────────────────────────────────────────
-function HotspotDot({ hotspot }: { hotspot: Hotspot }) {
-  const [isOpen, setIsOpen] = useState(false)
-  const showRight = parseFloat(hotspot.x) <= 55
+// ── Shared callout helper ─────────────────────────────────────────────────────
+/**
+ * Computes `position: fixed` inline styles for a callout box so it never gets
+ * clipped by `overflow: hidden` on the sticky canvas (or any other ancestor).
+ * The result is clamped to keep the box fully within the viewport.
+ */
+type CalloutDir = 'right' | 'left' | 'below'
+
+function computeFixedCallout(
+  btn: DOMRect,
+  dir: CalloutDir,
+  calloutW = 170,
+  calloutH = 160,
+): React.CSSProperties {
+  const gap    = 14
+  const margin = 8
+  const vpW    = window.innerWidth
+  const vpH    = window.innerHeight
+
+  const clampX = (x: number) => Math.min(Math.max(x, margin), vpW - calloutW - margin)
+  const clampY = (y: number) => Math.min(Math.max(y, margin), vpH - calloutH - margin)
+
+  if (dir === 'right') {
+    return { left: Math.min(btn.right + gap, vpW - calloutW - margin), top: clampY(btn.top + btn.height / 2 - calloutH / 2) }
+  }
+  if (dir === 'left') {
+    return { left: Math.max(btn.left - gap - calloutW, margin), top: clampY(btn.top + btn.height / 2 - calloutH / 2) }
+  }
+  // below
+  return { left: clampX(btn.left + btn.width / 2 - calloutW / 2), top: Math.min(btn.bottom + gap, vpH - calloutH - margin) }
+}
+
+// ── Scene 1 hotspot dot ───────────────────────────────────────────────────────
+function S1HotspotDot({ hotspot, rects }: { hotspot: S1Hotspot; rects: S1LayerRects }) {
+  const [calloutStyle, setCalloutStyle] = useState<React.CSSProperties | null>(null)
+  const [calloutDir,   setCalloutDir  ] = useState<CalloutDir>('right')
+  const btnRef = useRef<HTMLButtonElement>(null)
+  const rect   = rects[hotspot.layer]
+
+  const posStyle: React.CSSProperties = rect.width > 0
+    ? { left: rect.left + (parseFloat(hotspot.x) / 100) * rect.width,
+        top:  rect.top  + (parseFloat(hotspot.y) / 100) * rect.height }
+    : { display: 'none' }
+
+  function open() {
+    const btn = btnRef.current
+    if (!btn) return
+    const dir: CalloutDir = window.innerWidth < 480
+      ? 'below'
+      : hotspot.callout === 'left' ? 'left' : 'right'
+    setCalloutDir(dir)
+    setCalloutStyle(computeFixedCallout(btn.getBoundingClientRect(), dir))
+  }
 
   return (
     <button
+      ref={btnRef}
       type="button"
-      className={`${styles.hotspot}${isOpen ? ` ${styles.hotspotOpen}` : ''}`}
-      style={{ left: hotspot.x, top: hotspot.y }}
+      className={`${styles.hotspot}${calloutStyle ? ` ${styles.hotspotOpen}` : ''}`}
+      style={posStyle}
       aria-label={hotspot.title}
-      aria-expanded={isOpen}
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
-      onFocus={() => setIsOpen(true)}
-      onBlur={() => setIsOpen(false)}
+      aria-expanded={calloutStyle !== null}
+      onMouseEnter={open}
+      onMouseLeave={() => setCalloutStyle(null)}
+      onFocus={open}
+      onBlur={() => setCalloutStyle(null)}
+      onClick={() => calloutStyle ? setCalloutStyle(null) : open()}
     >
       <span className={styles.hotspotRing} aria-hidden="true" />
-      {isOpen && (
-        <div className={showRight ? styles.hotspotCallout : styles.hotspotCalloutLeft}>
+      {calloutStyle && createPortal(
+        <div
+          className={styles.hotspotCalloutFixed}
+          data-callout={calloutDir}
+          style={calloutStyle}
+        >
           <strong className={styles.hotspotCalloutTitle}>{hotspot.title}</strong>
           <p className={styles.hotspotCalloutBody}>{hotspot.body}</p>
-        </div>
+        </div>,
+        document.body,
+      )}
+    </button>
+  )
+}
+
+// ── Hotspot dot component (S2 / S3) ──────────────────────────────────────────
+function HotspotDot({
+  hotspot,
+  imageRect,
+}: {
+  hotspot: Hotspot
+  imageRect?: ImageRect
+}) {
+  const [calloutStyle, setCalloutStyle] = useState<React.CSSProperties | null>(null)
+  const [calloutDir,   setCalloutDir  ] = useState<CalloutDir>('right')
+  const btnRef = useRef<HTMLButtonElement>(null)
+
+  const posStyle: React.CSSProperties = imageRect && imageRect.width > 0
+    ? { left: imageRect.left + (parseFloat(hotspot.x) / 100) * imageRect.width,
+        top:  imageRect.top  + (parseFloat(hotspot.y) / 100) * imageRect.height }
+    : { left: hotspot.x, top: hotspot.y }
+
+  function open() {
+    const btn = btnRef.current
+    if (!btn) return
+    const dir: CalloutDir = window.innerWidth < 480
+      ? 'below'
+      : parseFloat(hotspot.x) <= 55 ? 'right' : 'left'
+    setCalloutDir(dir)
+    setCalloutStyle(computeFixedCallout(btn.getBoundingClientRect(), dir))
+  }
+
+  return (
+    <button
+      ref={btnRef}
+      type="button"
+      className={`${styles.hotspot}${calloutStyle ? ` ${styles.hotspotOpen}` : ''}`}
+      style={posStyle}
+      aria-label={hotspot.title}
+      aria-expanded={calloutStyle !== null}
+      onMouseEnter={open}
+      onMouseLeave={() => setCalloutStyle(null)}
+      onFocus={open}
+      onBlur={() => setCalloutStyle(null)}
+      onClick={() => calloutStyle ? setCalloutStyle(null) : open()}
+    >
+      <span className={styles.hotspotRing} aria-hidden="true" />
+      {calloutStyle && createPortal(
+        <div
+          className={styles.hotspotCalloutFixed}
+          data-callout={calloutDir}
+          style={calloutStyle}
+        >
+          <strong className={styles.hotspotCalloutTitle}>{hotspot.title}</strong>
+          <p className={styles.hotspotCalloutBody}>{hotspot.body}</p>
+        </div>,
+        document.body,
       )}
     </button>
   )
