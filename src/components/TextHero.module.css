@@ -1,7 +1,7 @@
 .hero {
   position: relative;
-  margin-inline: calc(50% - 50vw);
-  padding: 74px max(24px, calc((100vw - 1180px) / 2)) 128px;
+  margin-inline: calc(50% - var(--viewport-half-width));
+  padding: 74px max(24px, calc((var(--viewport-width) - 1180px) / 2)) 128px;
   overflow: hidden;
   background: #eef0ee;
   text-align: center;

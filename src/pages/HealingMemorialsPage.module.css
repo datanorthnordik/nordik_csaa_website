@@ -13,8 +13,8 @@
 }
 
 .pillarsSection {
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: var(--viewport-width);
+  margin-left: calc(50% - var(--viewport-half-width));
   background: #ffffff;
   padding: 96px clamp(20px, 6vw, 120px) 108px;
 }
@@ -156,8 +156,8 @@
   background: #eae8e7;
   padding: 100px clamp(20px, 6vw, 120px);
   text-align: center;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: var(--viewport-width);
+  margin-left: calc(50% - var(--viewport-half-width));
 }
 
 .supportTitle {

@@ -5,6 +5,7 @@
   min-height: 100svh;
   padding: 0 var(--shell-gutter) 36px;
   background: #f2f5f4;
+  overflow-x: hidden;
   overflow-x: clip;
 }
 
@@ -38,8 +39,8 @@
 .footer {
   border-top: 1px solid var(--color-border);
   /* Break out of the frame's max-width and the shell's gutter */
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: var(--viewport-width);
+  margin-left: calc(50% - var(--viewport-half-width));
   padding: 40px clamp(18px, 5vw, 80px) 0;
   min-width: 0;
   box-sizing: border-box;

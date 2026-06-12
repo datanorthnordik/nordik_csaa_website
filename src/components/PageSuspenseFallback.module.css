@@ -29,9 +29,9 @@
 }
 
 .hero {
-  width: 100vw;
+  width: var(--viewport-width);
   min-height: 72svh;
-  margin-left: calc(50% - 50vw);
+  margin-left: calc(50% - var(--viewport-half-width));
   border-radius: 0;
   background-color: #c5d0cb;
 }
