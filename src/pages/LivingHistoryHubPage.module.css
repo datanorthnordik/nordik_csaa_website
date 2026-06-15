@@ -1,0 +1,377 @@
+.page {
+  display: grid;
+  gap: 0;
+  min-width: 0;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
+}
+
+.hTrack {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: #faf7f2;
+  display: flex;
+  align-items: center;
+}
+
+/* The whole scene is wider than the viewport; GSAP pans it left.
+   Width derives from the SVG's wide aspect ratio (~2.92:1) so the
+   scene is naturally wider than the viewport. */
+.scene {
+  flex-shrink: 0;
+  height: 88%;
+  width: auto;
+  display: block;
+  will-change: transform;
+  overflow: visible;
+}
+
+.scene image {
+  will-change: transform, opacity;
+}
+
+/* ── Scroll hint ── */
+.scrollHint {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.scrollHintLine {
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: #5d3f3a;
+}
+
+.scrollHintLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #5d3f3a;
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   FEATURE SECTION — text beside historical photo
+───────────────────────────────────────────────────────────────── */
+.feature {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  background: #ffffff;
+  padding: 0 clamp(24px, 6vw, 120px);
+}
+
+.featureInner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  align-items: start;
+  gap: clamp(32px, 5vw, 80px);
+}
+
+/* Sticky photo column — pins while text blocks scroll past.
+   Vertical padding keeps breathing room so the photo never sits
+   flush against the top/bottom of the viewport while pinned. */
+.featureSticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Extra top padding clears the sticky site header; bottom padding
+     keeps the photo off the viewport edge while pinned. */
+  padding: clamp(120px, 16vh, 170px) 0 clamp(48px, 8vh, 90px);
+  box-sizing: border-box;
+}
+
+/* Scrolling text column */
+.featureBlocks {
+  display: flex;
+  flex-direction: column;
+}
+
+.featureBlock {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.featureTitle {
+  margin: 0 0 18px;
+  font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+  font-weight: 800;
+  color: #1a1208;
+  line-height: 1.15;
+}
+
+.featureRule {
+  width: 64px;
+  height: 4px;
+  background: #9c0000;
+  border-radius: 2px;
+  margin-bottom: 22px;
+}
+
+.featureSubhead {
+  margin: 0 0 20px;
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  font-weight: 700;
+  color: #9c0000;
+  line-height: 1.4;
+}
+
+.featureBody {
+  margin: 0;
+  font-size: clamp(0.92rem, 1.1vw, 1.02rem);
+  line-height: 1.85;
+  color: #4a3828;
+}
+
+.featureImageWrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: clamp(240px, 32vw, 460px);
+  height: 64vh;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+/* Images are stacked on top of each other; the active one fades in. */
+.featureImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 4px;
+  box-shadow: 0 18px 40px rgba(26, 18, 8, 0.28);
+  transition: opacity 0.6s ease;
+}
+
+/* Ken Burns–style zoom-out + slow camera pan as the image fades in */
+.zoomPan {
+  transform-origin: 60% 35%;
+  animation: lhZoomPan 8s ease-out forwards;
+}
+
+@keyframes lhZoomPan {
+  from {
+    transform: scale(1.4) translate(3%, -4%);
+  }
+  to {
+    transform: scale(1) translate(0, 0);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   FINAL REVEAL — Section A (crossfade) → photo flies to Section B.
+───────────────────────────────────────────────────────────────── */
+
+/* Section A — sketch→photo crossfade, centred */
+.flyStart {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: clamp(24px, 4vh, 56px);
+  padding: clamp(80px, 12vh, 140px) clamp(24px, 6vw, 120px);
+  box-sizing: border-box;
+}
+
+/* Intro heading — sits above the photo; fades out on scroll (via JS) */
+.revealText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 1;
+  pointer-events: none;
+}
+
+/* Section B — text column (left) + photo landing slot (right) */
+.flyEnd {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(64px, 10vh, 120px) clamp(24px, 6vw, 120px);
+  box-sizing: border-box;
+}
+
+.flyEndInner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(32px, 5vw, 80px);
+  width: 100%;
+  max-width: 1100px;
+}
+
+.flyDetail {
+  flex: 0 1 460px;
+  opacity: 0;            /* JS fades this in as the photo lands */
+  text-align: left;
+}
+
+/* Placeholder boxes — invisible, just define the photo's geometry.
+   Aspect ratio matches the photo (4:3) so there are no letterbox gutters. */
+.flySlot {
+  flex: 0 0 auto;
+  width: clamp(300px, 44vw, 640px);
+  aspect-ratio: 1195 / 896;
+}
+
+/* The flying photo itself — fixed; left/top/width/height set by JS */
+.flyImage {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.revealButton {
+  display: inline-block;
+  margin-top: 26px;
+  padding: 13px 30px;
+  background: #9c0000;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  transition: background 0.2s ease;
+}
+.revealButton:hover {
+  background: #7a0000;
+}
+
+.centeredTitle {
+  margin: 0 0 18px;
+  font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+  font-weight: 800;
+  color: #1a1208;
+  line-height: 1.15;
+  max-width: 800px;
+}
+
+.centeredRule {
+  width: 64px;
+  height: 4px;
+  background: #9c0000;
+  border-radius: 2px;
+  margin-bottom: 22px;
+}
+
+.centeredSubhead {
+  margin: 0;
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  font-weight: 700;
+  color: #9c0000;
+  line-height: 1.4;
+  max-width: 640px;
+}
+
+/* Stacked images inside the flying photo — fill the box (no gutters) */
+.revealImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Opacities are driven by JS scroll progress (reversible). Base states: */
+.revealPine { opacity: 1; }
+.revealReal { opacity: 0; }
+
+/* ── Mobile: let the scene scroll horizontally on its own, no pin ── */
+@media (max-width: 768px) {
+  .hTrack {
+    height: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .scene {
+    width: 280vw;
+    height: 60vh;
+  }
+
+  .scrollHint {
+    display: none;
+  }
+
+  .featureInner {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  /* Disable sticky on mobile — stack image above each block normally */
+  .featureSticky {
+    position: static;
+    height: auto;
+    padding: 48px 0 24px;
+  }
+
+  .featureBlock {
+    min-height: auto;
+    padding: 32px 0 48px;
+  }
+
+  .featureImageWrap {
+    width: min(360px, 80vw);
+    height: 50vh;
+    margin: 0 auto;
+  }
+
+  /* Final reveal — stack on mobile */
+  .flyEndInner {
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .flySlot {
+    width: min(360px, 80vw);
+  }
+
+  .flyDetail {
+    flex: none;
+    text-align: center;
+    max-width: min(440px, 88vw);
+  }
+}
