@@ -283,19 +283,42 @@ function useImageRect(
       if (!wrap || !img) return
       const wb = wrap.getBoundingClientRect()
       const ib = img.getBoundingClientRect()
+
+      // The <img> fills its box, but object-fit: contain renders the artwork
+      // scaled to fit and centred inside, leaving letterbox margins. Compute
+      // the *actual* rendered artwork rect so percentage-based hotspots land
+      // on the artwork at any screen size / aspect ratio.
+      const natW = img.naturalWidth
+      const natH = img.naturalHeight
+      if (!natW || !natH || !ib.width || !ib.height) return
+
+      const scale   = Math.min(ib.width / natW, ib.height / natH)
+      const renderW = natW * scale
+      const renderH = natH * scale
+      const offsetX = (ib.width  - renderW) / 2
+      const offsetY = (ib.height - renderH) / 2
+
       setRect({
-        left:   ib.left - wb.left,
-        top:    ib.top  - wb.top,
-        width:  ib.width,
-        height: ib.height,
+        left:   (ib.left - wb.left) + offsetX,
+        top:    (ib.top  - wb.top)  + offsetY,
+        width:  renderW,
+        height: renderH,
       })
     }
     const wrap = wrapRef.current
+    const img  = imgRef.current
     if (!wrap) return
     const ro = new ResizeObserver(compute)
     ro.observe(wrap)
+    // naturalWidth is only available once the image has loaded
+    if (img && !img.complete) img.addEventListener('load', compute)
+    window.addEventListener('resize', compute)
     compute()
-    return () => ro.disconnect()
+    return () => {
+      ro.disconnect()
+      if (img) img.removeEventListener('load', compute)
+      window.removeEventListener('resize', compute)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wrapRef, imgRef])
   return rect
