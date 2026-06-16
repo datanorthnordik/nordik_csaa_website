@@ -14,6 +14,8 @@ type SharedImageHeroProps = {
     label: string
   }
   testId?: string
+  /** Fill colour of the bottom wave divider — match the next section's top. */
+  waveColor?: string
 }
 
 export function SharedImageHero({
@@ -24,6 +26,7 @@ export function SharedImageHero({
   backgroundPosition = 'center 30%',
   cta,
   testId,
+  waveColor = '#f2f5f4',
 }: SharedImageHeroProps) {
   if (!backgroundImageUrl) {
     return (
@@ -66,7 +69,7 @@ export function SharedImageHero({
           className={styles.waveSvg}
           aria-hidden="true"
         >
-          <path d={`${WAVE_CURVE} L1440,120 L0,120 Z`} fill="#f2f5f4" />
+          <path d={`${WAVE_CURVE} L1440,120 L0,120 Z`} fill={waveColor} />
         </svg>
       </div>
     </section>
