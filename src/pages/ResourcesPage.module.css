@@ -5,8 +5,8 @@
 
 .hero {
   position: relative;
-  margin-inline: calc(50% - 50vw);
-  padding: 74px max(24px, calc((100vw - 1180px) / 2)) 128px;
+  margin-inline: calc(50% - var(--viewport-half-width));
+  padding: 74px max(24px, calc((var(--viewport-width) - 1180px) / 2)) 128px;
   overflow: hidden;
   background: #f8f7f6;
   text-align: center;
@@ -280,12 +280,12 @@
 }
 
 .supportSection {
-  margin-inline: calc(50% - 50vw);
+  margin-inline: calc(50% - var(--viewport-half-width));
   display: grid;
   grid-template-columns: minmax(260px, 0.82fr) minmax(0, 1fr);
   align-items: center;
   gap: 72px;
-  padding: 82px max(24px, calc((100vw - 980px) / 2));
+  padding: 82px max(24px, calc((var(--viewport-width) - 980px) / 2));
   background: #f1f0ef;
 }
 

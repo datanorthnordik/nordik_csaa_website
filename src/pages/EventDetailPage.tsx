@@ -147,12 +147,7 @@ export function EventDetailPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className={styles.loadingPanel}>
-        <p className={styles.loadingEyebrow}>{t('common.loading')}</p>
-        <h1>{t('eventDetail.loadingTitle')}</h1>
-      </div>
-    )
+    return <EventDetailPageSkeleton loadingLabel={t('common.loading')} />
   }
 
   if (!event || error) {
@@ -409,6 +404,57 @@ function getEventSeoDescription(event: EventDetailResponse) {
     event.teaser.trim() ||
     event.description_html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() ||
     event.title.trim()
+  )
+}
+
+function EventDetailPageSkeleton({ loadingLabel }: { loadingLabel: string }) {
+  return (
+    <div className={styles.page} aria-busy="true" aria-live="polite">
+      <span className={styles.visuallyHidden}>{loadingLabel}</span>
+
+      <section className={styles.skeletonHero} aria-hidden="true">
+        <div className={styles.skeletonHeroOverlay} />
+        <div className={styles.skeletonHeroContent}>
+          <span className={`${styles.skeletonBar} ${styles.skeletonEyebrow}`} />
+          <span className={`${styles.skeletonBar} ${styles.skeletonTitle}`} />
+          <span className={`${styles.skeletonBar} ${styles.skeletonTitleShort}`} />
+          <span className={`${styles.skeletonBar} ${styles.skeletonBody}`} />
+          <span className={`${styles.skeletonBar} ${styles.skeletonBodyWide}`} />
+        </div>
+      </section>
+
+      <div className={styles.contentGrid}>
+        <section className={`${styles.panel} ${styles.skeletonPanel}`} aria-hidden="true">
+          <div className={styles.panelHeader}>
+            <span className={`${styles.skeletonBar} ${styles.skeletonSectionEyebrow}`} />
+            <span className={`${styles.skeletonBar} ${styles.skeletonSectionTitle}`} />
+          </div>
+
+          <div className={styles.skeletonParagraphs}>
+            <span className={`${styles.skeletonBar} ${styles.skeletonLineFull}`} />
+            <span className={`${styles.skeletonBar} ${styles.skeletonLineFull}`} />
+            <span className={`${styles.skeletonBar} ${styles.skeletonLineWide}`} />
+            <span className={`${styles.skeletonBar} ${styles.skeletonLineMedium}`} />
+          </div>
+
+          <div className={styles.skeletonDocumentPreview} />
+        </section>
+
+        <aside className={styles.sideColumn} aria-hidden="true">
+          <section className={styles.skeletonInfoCard}>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div key={index} className={styles.skeletonInfoSection}>
+                <span className={`${styles.skeletonBar} ${styles.skeletonInfoLabel}`} />
+                <span className={`${styles.skeletonBar} ${styles.skeletonInfoValue}`} />
+                <span className={`${styles.skeletonBar} ${styles.skeletonInfoMeta}`} />
+              </div>
+            ))}
+
+            <span className={`${styles.skeletonBar} ${styles.skeletonAction}`} />
+          </section>
+        </aside>
+      </div>
+    </div>
   )
 }
 

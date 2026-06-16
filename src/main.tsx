@@ -5,11 +5,13 @@ import { Toaster } from 'react-hot-toast'
 import './index.css'
 import './i18n'
 import App from './App.tsx'
+import { ViewportWidthStyles } from './components/ViewportWidthStyles'
 import { store } from './store/store'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
+      <ViewportWidthStyles />
       <App />
       <Toaster
         position="top-right"

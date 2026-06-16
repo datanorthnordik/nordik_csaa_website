@@ -5,8 +5,8 @@
 /* ── Page wrapper ─────────────────────────────────────────────────────────── */
 .page {
   font-family: 'Montserrat', 'Segoe UI', sans-serif;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: var(--viewport-width);
+  margin-left: calc(50% - var(--viewport-half-width));
   background: #fdfbf8;
 }
 
@@ -277,7 +277,7 @@
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
-  width: 100vw !important;
+  width: var(--viewport-width) !important;
   height: 100svh !important;
   z-index: 50; /* sits above the site header */
 }
@@ -551,7 +551,7 @@
   position: fixed;
   z-index: 9000;
   width: 170px;
-  max-width: calc(100vw - 16px);
+  max-width: calc(var(--viewport-width) - 16px);
   background: #ffffff;
   border-radius: 6px;
   padding: 10px 12px;

@@ -8,8 +8,8 @@
   overflow: hidden;
   padding-bottom: 96px;
   /* full-bleed */
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: var(--viewport-width);
+  margin-left: calc(50% - var(--viewport-half-width));
   background: #0a120a; /* fallback while image loads */
 }
 

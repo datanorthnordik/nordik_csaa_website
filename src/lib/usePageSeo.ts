@@ -35,6 +35,7 @@ export function usePageSeo({
     const resolvedUrl = canonicalPath ? buildAbsoluteUrl(canonicalPath) : window.location.href
 
     cleanups.push(upsertMeta('property', 'og:title', title))
+    cleanups.push(upsertMeta('property', 'og:site_name', SITE_NAME))
     cleanups.push(upsertMeta('property', 'og:type', type))
     cleanups.push(upsertMeta('property', 'og:url', resolvedUrl))
     cleanups.push(upsertMeta('name', 'twitter:title', title))
@@ -73,6 +74,7 @@ export function usePageSeo({
 
     if (lang) {
       cleanups.push(upsertHtmlLang(lang))
+      cleanups.push(upsertMeta('property', 'og:locale', lang))
     }
 
     if (jsonLd) {

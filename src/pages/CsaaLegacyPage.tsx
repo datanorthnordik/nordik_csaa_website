@@ -1,4 +1,4 @@
-/**
+﻿/**
  * CSAA Legacy — Scene 1 GSAP scrollytelling, Scenes 2 & 3 scroll-reveal.
  *
  * Scene 1 pattern (pinned canvas):
