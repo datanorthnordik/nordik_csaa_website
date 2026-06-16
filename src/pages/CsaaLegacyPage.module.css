@@ -94,20 +94,109 @@
 
 .introTitle {
   margin: 0 0 22px;
-  font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
   font-size: clamp(2.4rem, 6vw, 4.4rem);
-  font-weight: 700;
+  font-weight: 800;
   color: #ffffff;
   line-height: 1.08;
 }
 
 .introDesc {
-  margin: 0 auto 52px;
+  margin: 0 auto 32px;
   font-size: 1rem;
   font-weight: 400;
   color: rgba(255, 255, 255, 0.68);
   line-height: 1.74;
   max-width: 520px;
+}
+
+/* Hero play prompt */
+.introActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.playBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 30px;
+  border: 0;
+  border-radius: 6px;
+  background: #9c0000;
+  color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.playBtn:hover {
+  background: #7a0000;
+  transform: translateY(-2px);
+}
+.introOr {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Floating pause / continue control while auto-playing */
+.autoControl {
+  position: fixed;
+  bottom: clamp(20px, 4vh, 36px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60; /* above the fixed canvas (z-index 50) */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 26px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  background: rgba(26, 15, 10, 0.82);
+  color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background 0.2s ease;
+}
+.autoControl:hover {
+  background: #9c0000;
+}
+
+/* Play / scroll prompt shown at the start of Scenes 2 & 3 (over the canvas) */
+.scenePrompt {
+  position: absolute;
+  top: clamp(74px, 13vh, 150px);
+  left: 0;
+  width: 100%;
+  z-index: 41;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0; /* GSAP controls visibility */
+  pointer-events: none;
+}
+.scenePrompt .playBtn {
+  pointer-events: auto;
+}
+.scenePromptOr {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(26, 15, 10, 0.55);
 }
 
 /* Scroll cue */
@@ -166,10 +255,10 @@
    SCENE 1 — SCROLL TRACK + STICKY CANVAS
    ───────────────────────────────────────────────────────────────────────────── */
 
-/* 900 vh gives ~125 vh per beat (7 text + 6 art = 13 beats) */
+/* Taller track so the longer text holds have room to read */
 .scrollTrack {
   position: relative;
-  height: 900vh;
+  height: 1200vh;
 }
 
 /* Sticky canvas — locked to viewport while user scrolls through the track */
@@ -377,8 +466,9 @@
   height: 14px;
   transform: translate(-50%, -50%);
   background: rgba(156, 0, 0, 0.82);
-  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  border: 2px solid rgba(255, 255, 255, 1);
   border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.95), 0 1px 3px rgba(0, 0, 0, 0.35);
   cursor: pointer;
   padding: 0;
   opacity: 0;
@@ -397,7 +487,7 @@
 .hotspotOpen .hotspotRing { opacity: 0 !important; }
 @keyframes hotspotAppear {
   from { opacity: 0; }
-  to   { opacity: 0.38; }
+  to   { opacity: 0.92; }
 }
 
 .hotspotRing {

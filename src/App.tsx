@@ -77,6 +77,12 @@ const CommunityResourcesPage = lazy(() =>
 const BooksTestPage = lazy(() =>
   import('./pages/BooksTestPage').then((module) => ({
     default: module.BooksTestPage,
+  }))
+)
+
+const LivingHistoryHubPage = lazy(() =>
+  import('./pages/LivingHistoryHubPage').then((module) => ({
+    default: module.LivingHistoryHubPage,
   })),
 )
 
@@ -130,6 +136,10 @@ function App() {
               element={withSuspense(<CommunityResourcesPage />)}
             />
             <Route path="/test-books" element={withSuspense(<BooksTestPage />)} />
+            <Route
+              path="/living-history-hub"
+              element={withSuspense(<LivingHistoryHubPage />)}
+            />
             <Route path="*" element={<CmsPageRoute />} />
           </Route>
         </Routes>

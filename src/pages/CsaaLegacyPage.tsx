@@ -283,19 +283,42 @@ function useImageRect(
       if (!wrap || !img) return
       const wb = wrap.getBoundingClientRect()
       const ib = img.getBoundingClientRect()
+
+      // The <img> fills its box, but object-fit: contain renders the artwork
+      // scaled to fit and centred inside, leaving letterbox margins. Compute
+      // the *actual* rendered artwork rect so percentage-based hotspots land
+      // on the artwork at any screen size / aspect ratio.
+      const natW = img.naturalWidth
+      const natH = img.naturalHeight
+      if (!natW || !natH || !ib.width || !ib.height) return
+
+      const scale   = Math.min(ib.width / natW, ib.height / natH)
+      const renderW = natW * scale
+      const renderH = natH * scale
+      const offsetX = (ib.width  - renderW) / 2
+      const offsetY = (ib.height - renderH) / 2
+
       setRect({
-        left:   ib.left - wb.left,
-        top:    ib.top  - wb.top,
-        width:  ib.width,
-        height: ib.height,
+        left:   (ib.left - wb.left) + offsetX,
+        top:    (ib.top  - wb.top)  + offsetY,
+        width:  renderW,
+        height: renderH,
       })
     }
     const wrap = wrapRef.current
+    const img  = imgRef.current
     if (!wrap) return
     const ro = new ResizeObserver(compute)
     ro.observe(wrap)
+    // naturalWidth is only available once the image has loaded
+    if (img && !img.complete) img.addEventListener('load', compute)
+    window.addEventListener('resize', compute)
     compute()
-    return () => ro.disconnect()
+    return () => {
+      ro.disconnect()
+      if (img) img.removeEventListener('load', compute)
+      window.removeEventListener('resize', compute)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wrapRef, imgRef])
   return rect
@@ -334,6 +357,20 @@ export function CsaaLegacyPage() {
   const [showIdleNudge, setShowIdleNudge] = useState(false)
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // ── Auto-play: gently auto-scrolls a scene's track so it plays itself ──
+  const [autoStarted, setAutoStarted] = useState(false)
+  const [autoPlaying, setAutoPlaying] = useState(false)
+  const autoRafRef = useRef<number | null>(null)
+  const autoTrackRef = useRef<HTMLDivElement | null>(null)
+
+  const playAnimation = (track: HTMLDivElement | null) => {
+    if (!track) return
+    // Scroll naturally so the pin engages on its own (no jump).
+    autoTrackRef.current = track
+    setAutoStarted(true)
+    setAutoPlaying(true)
+  }
+
   // ── Scenes 2 & 3 (GSAP scrollytelling) ──────────────────────────────────────
   const [showS2Hotspots, setShowS2Hotspots] = useState(false)
   const [showS3Hotspots, setShowS3Hotspots] = useState(false)
@@ -344,6 +381,7 @@ export function CsaaLegacyPage() {
   const s2ArtWrapRef = useRef<HTMLDivElement>(null)
   const s2ImgRef     = useRef<HTMLImageElement>(null)
   const s2TitleRef   = useRef<HTMLHeadingElement>(null)
+  const s2PromptRef  = useRef<HTMLDivElement>(null)
   const panelS2      = useRef<(HTMLDivElement | null)[]>([])
 
   const track3Ref    = useRef<HTMLDivElement>(null)
@@ -352,6 +390,7 @@ export function CsaaLegacyPage() {
   const s3ArtWrapRef = useRef<HTMLDivElement>(null)
   const s3ImgRef     = useRef<HTMLImageElement>(null)
   const s3TitleRef   = useRef<HTMLHeadingElement>(null)
+  const s3PromptRef  = useRef<HTMLDivElement>(null)
   const panelS3      = useRef<(HTMLDivElement | null)[]>([])
 
   // ── Image-rect derived values — accurate hotspot positioning ────────────────
@@ -385,7 +424,7 @@ export function CsaaLegacyPage() {
     gsap.set(fixedSigRef.current, { opacity: 0 })
 
     const PANEL_IN   = 0.9
-    const PANEL_HOLD = 1.0
+    const PANEL_HOLD = 3.2   // long dwell so readers can finish the text
     const PANEL_OUT  = 0.7
     const OVL_IN     = 0.5
     const OVL_OUT    = 0.55
@@ -564,11 +603,12 @@ export function CsaaLegacyPage() {
     const ovl    = overlay2Ref.current
     if (!track || !canvas || !ovl) return
 
-    const PANEL_IN = 0.9, PANEL_HOLD = 1.0, PANEL_OUT = 0.7
+    const PANEL_IN = 0.9, PANEL_HOLD = 3.2, PANEL_OUT = 0.7
     const OVL_IN = 0.5, OVL_OUT = 0.55
 
     gsap.set(panelS2.current.filter(Boolean), { opacity: 0 })
     gsap.set(s2TitleRef.current, { opacity: 0 })
+    gsap.set(s2PromptRef.current, { opacity: 1 }) // visible at the scene start
     gsap.set(ovl, { opacity: 0 })
     gsap.set(s2ArtWrapRef.current, { opacity: 0 })
 
@@ -586,6 +626,8 @@ export function CsaaLegacyPage() {
     }
 
     const tl = gsap.timeline()
+    // Play/scroll prompt is visible at the start, then fades as the scene begins
+    tl.to(s2PromptRef.current, { opacity: 0, duration: 0.6, ease: 'power2.inOut' }, 1.0)
     addPanel(tl, panelS2.current[0], 0)
     addPanelWithOverlay(tl, panelS2.current[1], 0.3)
     addPanelWithOverlay(tl, panelS2.current[2], 0.4)
@@ -628,11 +670,12 @@ export function CsaaLegacyPage() {
     const ovl    = overlay3Ref.current
     if (!track || !canvas || !ovl) return
 
-    const PANEL_IN = 0.9, PANEL_HOLD = 1.0, PANEL_OUT = 0.7
+    const PANEL_IN = 0.9, PANEL_HOLD = 3.2, PANEL_OUT = 0.7
     const OVL_IN = 0.5, OVL_OUT = 0.55
 
     gsap.set(panelS3.current.filter(Boolean), { opacity: 0 })
     gsap.set(s3TitleRef.current, { opacity: 0 })
+    gsap.set(s3PromptRef.current, { opacity: 1 }) // visible at the scene start
     gsap.set(ovl, { opacity: 0 })
     gsap.set(s3ArtWrapRef.current, { opacity: 0 })
 
@@ -650,6 +693,8 @@ export function CsaaLegacyPage() {
     }
 
     const tl = gsap.timeline()
+    // Play/scroll prompt is visible at the start, then fades as the scene begins
+    tl.to(s3PromptRef.current, { opacity: 0, duration: 0.6, ease: 'power2.inOut' }, 1.0)
     addPanel(tl, panelS3.current[0], 0)
     addPanelWithOverlay(tl, panelS3.current[1], 0.3)
     addPanelWithOverlay(tl, panelS3.current[2], 0.4)
@@ -689,6 +734,25 @@ export function CsaaLegacyPage() {
     return () => { st.kill(); tl.kill(); setShowS3Hotspots(false) }
   }, [])
 
+  // ── Auto-scroll the active scene while autoPlaying; stops at its track end ──
+  useEffect(() => {
+    if (!autoPlaying) return
+    const track = autoTrackRef.current
+    if (!track) return
+    const step = () => {
+      const end = track.offsetTop + track.offsetHeight - window.innerHeight
+      if (window.scrollY >= end - 1) {
+        setAutoPlaying(false)
+        setAutoStarted(false)
+        return
+      }
+      window.scrollBy(0, 9)
+      autoRafRef.current = requestAnimationFrame(step)
+    }
+    autoRafRef.current = requestAnimationFrame(step)
+    return () => { if (autoRafRef.current) cancelAnimationFrame(autoRafRef.current) }
+  }, [autoPlaying])
+
   // ─────────────────────────────────────────────────────────────────────────────
   return (
     <div className={styles.page}>
@@ -708,6 +772,16 @@ export function CsaaLegacyPage() {
             A journey through the lived experience of the Shingwauk Residential School —
             told through Dr. Shirley Horn's artwork.
           </p>
+          <div className={styles.introActions}>
+            <button
+              type="button"
+              className={styles.playBtn}
+              onClick={() => playAnimation(scrollTrackRef.current)}
+            >
+              ▶ Play the animation
+            </button>
+            <span className={styles.introOr}>or scroll to experience it yourself</span>
+          </div>
         </div>
 
         <div className={styles.scrollCue} aria-hidden="true">
@@ -717,6 +791,18 @@ export function CsaaLegacyPage() {
 
         <IntroWave />
       </section>
+
+      {/* ── Floating auto-play control (Pause / Continue) ── */}
+      {autoStarted && (
+        <button
+          type="button"
+          className={styles.autoControl}
+          onClick={() => setAutoPlaying((p) => !p)}
+          aria-label={autoPlaying ? 'Pause animation' : 'Continue animation'}
+        >
+          {autoPlaying ? '❚❚ Pause' : '▶ Continue'}
+        </button>
+      )}
 
       {/* ══════════════════════════════════════════════════════════════════════
           SCENE 1 — GSAP scrollytelling (pinned canvas)
@@ -834,7 +920,7 @@ export function CsaaLegacyPage() {
       {/* ══════════════════════════════════════════════════════════════════════
           SCENE 2 — Going Home & Moving Forward (GSAP pinned canvas)
       ══════════════════════════════════════════════════════════════════════ */}
-      <div ref={track2Ref} className={styles.scrollTrack} style={{ height: '660vh' }}>
+      <div ref={track2Ref} className={styles.scrollTrack} style={{ height: '900vh' }}>
         <div ref={canvas2Ref} className={styles.stickyCanvas}>
           <div ref={s2ArtWrapRef} className={styles.artWrap}>
             <img ref={s2ImgRef} src={scene2Img}
@@ -871,6 +957,16 @@ export function CsaaLegacyPage() {
             </p>
           </div>
           <h3 ref={s2TitleRef} className={styles.sceneTitle}>Going Home &amp; Moving Forward</h3>
+          <div ref={s2PromptRef} className={styles.scenePrompt}>
+            <button
+              type="button"
+              className={styles.playBtn}
+              onClick={() => playAnimation(track2Ref.current)}
+            >
+              ▶ Play the animation
+            </button>
+            <span className={styles.scenePromptOr}>or scroll to experience it yourself</span>
+          </div>
           {showIdleNudge && (
             <div className={styles.idleNudge} aria-live="polite" aria-label="Keep scrolling to explore">
               <span className={styles.canvasCueWheel} />
@@ -883,7 +979,7 @@ export function CsaaLegacyPage() {
       {/* ══════════════════════════════════════════════════════════════════════
           SCENE 3 — Remembering, and Renewal (GSAP pinned canvas)
       ══════════════════════════════════════════════════════════════════════ */}
-      <div ref={track3Ref} className={styles.scrollTrack} style={{ height: '660vh' }}>
+      <div ref={track3Ref} className={styles.scrollTrack} style={{ height: '900vh' }}>
         <div ref={canvas3Ref} className={styles.stickyCanvas}>
           <div ref={s3ArtWrapRef} className={styles.artWrap}>
             <img ref={s3ImgRef} src={scene3Img}
@@ -920,6 +1016,16 @@ export function CsaaLegacyPage() {
             </p>
           </div>
           <h3 ref={s3TitleRef} className={styles.sceneTitle}>Remembering, and Renewal</h3>
+          <div ref={s3PromptRef} className={styles.scenePrompt}>
+            <button
+              type="button"
+              className={styles.playBtn}
+              onClick={() => playAnimation(track3Ref.current)}
+            >
+              ▶ Play the animation
+            </button>
+            <span className={styles.scenePromptOr}>or scroll to experience it yourself</span>
+          </div>
           {showIdleNudge && (
             <div className={styles.idleNudge} aria-live="polite" aria-label="Keep scrolling to explore">
               <span className={styles.canvasCueWheel} />
