@@ -1,0 +1,37 @@
+.wrapper {
+  display: grid;
+  gap: 10px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.toolbarButton {
+  border: 1px solid rgba(18, 35, 63, 0.14);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #12233f;
+  padding: 7px 12px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.editor {
+  min-height: 160px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(18, 35, 63, 0.14);
+  background: #ffffff;
+  color: #162847;
+  line-height: 1.55;
+  outline: none;
+}
+
+.editor:empty::before {
+  content: attr(data-placeholder);
+  color: #7f8ea8;
+}
