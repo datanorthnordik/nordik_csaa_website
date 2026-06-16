@@ -74,6 +74,12 @@ const CommunityResourcesPage = lazy(() =>
     default: module.CommunityResourcesPage,
   })),
 )
+const BooksTestPage = lazy(() =>
+  import('./pages/BooksTestPage').then((module) => ({
+    default: module.BooksTestPage,
+  }))
+)
+
 const LivingHistoryHubPage = lazy(() =>
   import('./pages/LivingHistoryHubPage').then((module) => ({
     default: module.LivingHistoryHubPage,
@@ -92,7 +98,6 @@ function App() {
             <Route path="/events/calendar" element={withSuspense(<EventCalendarPage />)} />
             <Route path="/events/:eventId" element={withSuspense(<EventDetailPage />)} />
             <Route path="/our-story" element={withSuspense(<OurStoryPage />)} />
-            {/* Both slugs point to the same scrollytelling experience */}
             <Route
               path="/our-story/csaa-legacy"
               element={withSuspense(<CsaaLegacyPage />)}
@@ -130,12 +135,9 @@ function App() {
               path="/community-support-team/resources"
               element={withSuspense(<CommunityResourcesPage />)}
             />
+            <Route path="/test-books" element={withSuspense(<BooksTestPage />)} />
             <Route
               path="/living-history-hub"
-              element={withSuspense(<LivingHistoryHubPage />)}
-            />
-            <Route
-              path="/our-story/living-history-hub"
               element={withSuspense(<LivingHistoryHubPage />)}
             />
             <Route path="*" element={<CmsPageRoute />} />

@@ -1,0 +1,223 @@
+.page {
+  display: grid;
+  gap: 32px;
+  padding: 32px 20px 56px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 360px);
+  gap: 22px;
+}
+
+.heroCopy,
+.selectorCard,
+.viewerCard,
+.formCard,
+.placeholderCard,
+.messageCard {
+  border-radius: 28px;
+  border: 1px solid rgba(16, 31, 59, 0.1);
+  background: #ffffff;
+  box-shadow: 0 22px 38px rgba(16, 31, 59, 0.06);
+}
+
+.heroCopy {
+  padding: 30px 32px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 224, 183, 0.55), transparent 34%),
+    linear-gradient(135deg, #f7fbff 0%, #fffaf2 100%);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(20, 62, 124, 0.08);
+  color: #204278;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.heroCopy h1 {
+  margin: 14px 0 12px;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 0.98;
+  color: #11233f;
+}
+
+.heroCopy p {
+  margin: 0;
+  max-width: 780px;
+  color: #596b86;
+  line-height: 1.65;
+}
+
+.selectorCard,
+.viewerCard,
+.formCard,
+.placeholderCard,
+.messageCard {
+  padding: 24px;
+}
+
+.selectorCard {
+  display: grid;
+  gap: 18px;
+}
+
+.selectorField,
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.selectorField span,
+.field span {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #2d405d;
+}
+
+.selectorField select,
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  border: 1px solid rgba(17, 35, 63, 0.12);
+  border-radius: 18px;
+  padding: 12px 14px;
+  font: inherit;
+  color: #152744;
+  background: #ffffff;
+}
+
+.selectorMeta {
+  display: grid;
+  gap: 6px;
+  color: #5d6d89;
+}
+
+.selectorMeta strong {
+  color: #12233f;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 420px);
+  gap: 24px;
+}
+
+.viewerHeader,
+.formHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.viewerHeader h2,
+.formHeader h2 {
+  margin: 0;
+  color: #12233f;
+}
+
+.viewerHeader p,
+.formHeader p {
+  margin: 6px 0 0;
+  color: #60708c;
+  line-height: 1.55;
+}
+
+.downloadLink,
+.submitButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.downloadLink {
+  padding: 11px 18px;
+  background: #edf3ff;
+  color: #21457d;
+}
+
+.formCard {
+  display: grid;
+  gap: 18px;
+  align-self: start;
+}
+
+.toggleRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.radioLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #40516c;
+}
+
+.dynamicFields {
+  display: grid;
+  gap: 18px;
+}
+
+.successBox {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: #edf8ef;
+  color: #245f2f;
+  border: 1px solid rgba(36, 95, 47, 0.12);
+}
+
+.submitButton {
+  border: none;
+  cursor: pointer;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #224e94 0%, #132f58 100%);
+  color: #ffffff;
+  box-shadow: 0 12px 20px rgba(34, 78, 148, 0.18);
+}
+
+.submitButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1080px) {
+  .hero,
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 20px 14px 40px;
+  }
+
+  .heroCopy,
+  .selectorCard,
+  .viewerCard,
+  .formCard,
+  .placeholderCard,
+  .messageCard {
+    padding: 18px;
+  }
+
+  .viewerHeader,
+  .formHeader {
+    flex-direction: column;
+  }
+}
