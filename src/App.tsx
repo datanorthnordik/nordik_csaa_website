@@ -85,6 +85,26 @@ const LivingHistoryHubPage = lazy(() =>
     default: module.LivingHistoryHubPage,
   })),
 )
+const CommunityCirclePage = lazy(() =>
+  import('./pages/CommunityCirclePage').then((module) => ({
+    default: module.CommunityCirclePage,
+  })),
+)
+const CommunityCookbookPage = lazy(() =>
+  import('./pages/CommunityCookbookPage').then((module) => ({
+    default: module.CommunityCookbookPage,
+  })),
+)
+const CommunityGalleryPage = lazy(() =>
+  import('./pages/CommunityGalleryPage').then((module) => ({
+    default: module.CommunityGalleryPage,
+  })),
+)
+const CommunityBookshelfPage = lazy(() =>
+  import('./pages/CommunityBookshelfPage').then((module) => ({
+    default: module.CommunityBookshelfPage,
+  })),
+)
 
 function App() {
   return (
@@ -140,6 +160,26 @@ function App() {
             <Route
               path="/living-history-hub"
               element={withSuspense(<LivingHistoryHubPage />)}
+            />
+            <Route
+              path="/our-story/living-history-hub"
+              element={withSuspense(<LivingHistoryHubPage />)}
+            />
+            <Route
+              path="/community-circle"
+              element={withSuspense(<CommunityCirclePage />)}
+            />
+            <Route
+              path="/community-circle/cookbook"
+              element={withSuspense(<CommunityCookbookPage />)}
+            />
+            <Route
+              path="/community-circle/gallery"
+              element={withSuspense(<CommunityGalleryPage />)}
+            />
+            <Route
+              path="/community-circle/bookshelf"
+              element={withSuspense(<CommunityBookshelfPage />)}
             />
             <Route path="*" element={<CmsPageRoute />} />
           </Route>
