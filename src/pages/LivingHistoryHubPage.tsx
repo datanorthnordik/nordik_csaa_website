@@ -179,7 +179,6 @@ export function LivingHistoryHubPage() {
   >('idle')
   const [videosError, setVideosError] = useState<string | null>(null)
 
-  const activeVideo = videos[videoIndex] ?? null
   const isVideosLoading = videosStatus === 'loading'
 
   const blockRefs = useRef<(HTMLDivElement | null)[]>([])
@@ -202,6 +201,8 @@ export function LivingHistoryHubPage() {
   const [articlePlaying, setArticlePlaying] = useState(false)
   const [contributeSent, setContributeSent] = useState(false)
   const blogRef = useRef<HTMLDivElement>(null)
+
+  const activeVideo = videos[videoIndex] ?? null
 
   const openTheatre = (id: string) => {
     setTheatreId(id)
