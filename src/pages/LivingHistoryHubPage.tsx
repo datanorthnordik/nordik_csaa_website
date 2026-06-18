@@ -97,8 +97,6 @@ const BLOG_POSTS = [
     body: SHIRLEY_BODY,
   },
   {
-const BLOG_POSTS = [
-  {
     id: 'dan-pine',
     date: 'June 2026',
     author: 'Community Support Team',

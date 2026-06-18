@@ -160,7 +160,6 @@ function App() {
               path="/living-history-hub"
               element={withSuspense(<LivingHistoryHubPage />)}
             />
-<<<<<<< HEAD
             <Route
               path="/our-story/living-history-hub"
               element={withSuspense(<LivingHistoryHubPage />)}
@@ -181,8 +180,6 @@ function App() {
               path="/community-circle/bookshelf"
               element={withSuspense(<CommunityBookshelfPage />)}
             />
-=======
->>>>>>> 2f72a43b19d8f23e6cc9527370a43cb33799e62a
             <Route path="*" element={<CmsPageRoute />} />
           </Route>
         </Routes>
