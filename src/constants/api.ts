@@ -31,6 +31,10 @@ export const API_ROUTES = {
   newsletterById: (id: number | string) => `/api/newsletters/${id}`,
   newsletterMediaById: (id: number | string, mediaId: number | string) =>
     `/api/newsletters/${id}/media/${mediaId}/content`,
+  publicBooks: '/api/books/public',
+  publicBookById: (id: number | string) => `/api/books/public/${id}`,
+  publicBookPdfById: (id: number | string) => `/api/books/public/${id}/pdf/content`,
+  publicBookSubmissionById: (id: number | string) => `/api/books/public/${id}/submissions`,
   memorials: '/api/memorial',
   memorialById: (id: number | string) => `/api/memorial/${id}`,
   memorialPortraitById: (id: number | string) =>
