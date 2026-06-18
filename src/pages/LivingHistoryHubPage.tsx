@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
+import { buildAbsoluteUrl, SITE_NAME, usePageSeo } from '../lib/usePageSeo'
 import styles from './LivingHistoryHubPage.module.css'
 
 const danPineCoverImg = '/dan-pine-family-shingwauk.jpg'
@@ -242,6 +243,14 @@ export function LivingHistoryHubPage() {
       label: 'Living History Hub',
     },
   ])
+
+  usePageSeo({
+    title: `Living History Hub | ${SITE_NAME}`,
+    description:
+      'Stories, videos, and living history of Shingwauk — shared by Survivors and Elders, from the 1981 reunion and the tree planting to the voices that keep this history alive.',
+    canonicalPath: '/living-history-hub',
+    image: buildAbsoluteUrl(danPineCoverImg),
+  })
 
   // Auto-advance the carousel — pauses while a video plays, the archive list
   // is open, or the section is off-screen; resets when the slide changes.
