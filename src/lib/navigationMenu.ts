@@ -47,6 +47,27 @@ export const fallbackMainMenu: MenuResponse = {
       },
       children: [],
     },
+    {
+      id: 3,
+      parent_id: null,
+      label: 'Community Circle',
+      navigation_type: 'pages',
+      page_id: 9,
+      external_url: '',
+      open_in_new_tab: false,
+      sort_order: 2,
+      href: '/community-circle',
+      page_type: 'page',
+      page: {
+        id: 9,
+        page_title: 'Community Circle',
+        url_slug: '/community-circle',
+        parent_id: null,
+        page_type: 'page',
+        status: 'published',
+      },
+      children: [],
+    },
   ],
 }
 
