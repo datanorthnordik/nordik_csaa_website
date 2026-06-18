@@ -44,6 +44,7 @@ export const API_ROUTES = {
   resources: '/api/resources',
   resourceById: (id: number | string) => `/api/resources/${id}`,
   resourceContentById: (id: number | string) => `/api/resources/${id}/content`,
+  knowledgeCenterSubmissions: '/api/knowledge-center/submissions',
   videoPackageById: (id: number) => `/api/videos/${id}`,
   videoItemTeaserContent: (packageId: number, itemId: number) =>
     `/api/videos/${packageId}/items/${itemId}/teaser/content`,
