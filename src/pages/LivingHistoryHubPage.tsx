@@ -13,14 +13,11 @@ import styles from './LivingHistoryHubPage.module.css'
 const danPineCoverImg = '/dan-pine-family-shingwauk.jpg'
 
 const HISTORY_HUB_VIDEO_PACKAGE_ID = 4
-
 const ARCHIVE_VISIBLE = 6
 
 type HubVideo = {
   id: number
-  apiVideo: VideoItemResponse
   youtubeId: string
-  youtubeUrl: string
   title: string
   desc: string
   teaserUrl: string
@@ -42,11 +39,8 @@ function extractYouTubeId(url: string) {
     const pathMatch = parsed.pathname.match(/\/(?:embed|shorts)\/([^/?]+)/)
     return pathMatch?.[1] ?? ''
   } catch {
-    const fallbackMatch = url.match(
-      /(?:v=|youtu\.be\/|embed\/|shorts\/)([A-Za-z0-9_-]+)/,
-    )
-
-    return fallbackMatch?.[1] ?? ''
+    const match = url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([A-Za-z0-9_-]+)/)
+    return match?.[1] ?? ''
   }
 }
 
@@ -59,14 +53,14 @@ function mapApiVideo(video: VideoItemResponse): HubVideo | null {
 
   return {
     id: video.id,
-    apiVideo: video,
     youtubeId,
-    youtubeUrl: video.youtube_url,
     title: video.title,
     desc: video.description,
     teaserUrl: getVideoTeaserUrl(video),
   }
 }
+
+const thumbUrl = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`
 
 const embedUrl = (id: string) =>
   `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`
@@ -83,7 +77,27 @@ const DAN_PINE_BODY = [
   'When Survivors gathered at Shingwauk in 1981, they came not only to remember what had happened, but to reclaim the ground itself. From that gathering grew a simple, powerful act: the planting of a pine, the tree of Shingwaukonse, as a living monument to the children.',
 ]
 
+const SHIRLEY_BODY = [
+  'A special episode of The Human Challenge features Shirley Horn, in an episode titled "Shirley: A Residential School Story."',
+  'As we mark National Indigenous Languages Day on Turtle Island, Shirley Horn shares her residential school story, growing up in not one, but two residential schools. She would return years later to Shingwauk Hall after it became a university to pursue her education, become first chancellor, and then Chief of the Missanabie to help return land back to her community.',
+  'In this touching episode, Shirley talks about her life healing the trauma that came with the residential school system, reconnecting with Indigenous culture, and her longing for Indigenous language. Learn more about her life in a new children\'s book, "Shirley: An Indian Residential School Story," written by Joanne Robertson. Available now!',
+  'Special thank you to the Children of Shingwauk Alumni Association and Algoma University. This episode was recorded in The Elder Room at the Shingwauk Anishinaabe Students Lounge at Algoma University. Cinematography by Shae Mclurg.',
+]
+
 const BLOG_POSTS = [
+  {
+    id: 'shirley-story',
+    date: 'March 2026',
+    author: 'The Human Challenge',
+    title: 'Shirley: A Residential School Story',
+    excerpt:
+      'Shirley Horn shares her residential school story: healing, reconnecting with culture, and a longing for language.',
+    image: '/shirley-podcast.jpg',
+    caption:
+      'Shirley Horn on The Human Challenge, recorded in The Elder Room at the Shingwauk Anishinaabe Students Lounge, Algoma University.',
+    videoId: 'ftkjsjHE9yY',
+    body: SHIRLEY_BODY,
+  },
   {
     id: 'dan-pine',
     date: 'June 2026',
@@ -165,6 +179,9 @@ export function LivingHistoryHubPage() {
   >('idle')
   const [videosError, setVideosError] = useState<string | null>(null)
 
+  const activeVideo = videos[videoIndex] ?? null
+  const isVideosLoading = videosStatus === 'loading'
+
   const blockRefs = useRef<(HTMLDivElement | null)[]>([])
   const [activeBlock, setActiveBlock] = useState(0)
 
@@ -185,9 +202,6 @@ export function LivingHistoryHubPage() {
   const [articlePlaying, setArticlePlaying] = useState(false)
   const [contributeSent, setContributeSent] = useState(false)
   const blogRef = useRef<HTMLDivElement>(null)
-
-  const activeVideo = videos[videoIndex] ?? null
-  const isVideosLoading = videosStatus === 'loading'
 
   const openTheatre = (id: string) => {
     setTheatreId(id)
@@ -546,11 +560,7 @@ export function LivingHistoryHubPage() {
         <div ref={tvSlotARef} className={styles.tvSlot} aria-hidden="true" />
       </section>
 
-      <section
-        ref={videoRef}
-        className={styles.tvLand}
-        data-archive-open={archiveOpen}
-      >
+      <section ref={videoRef} className={styles.tvLand} data-archive-open={archiveOpen}>
         <div className={styles.tvLandInner}>
           <div className={styles.tvLandText}>
             <div className={styles.tvDefault} aria-hidden={archiveOpen}>
@@ -672,9 +682,7 @@ export function LivingHistoryHubPage() {
                 <>
                   <ul
                     className={styles.archiveList}
-                    data-scroll={
-                      videos.length > ARCHIVE_VISIBLE && archiveExpanded
-                    }
+                    data-scroll={videos.length > ARCHIVE_VISIBLE && archiveExpanded}
                   >
                     {(archiveExpanded
                       ? videos
@@ -715,11 +723,7 @@ export function LivingHistoryHubPage() {
 
           <div ref={tvSlotBRef} className={styles.tvSlot}>
             <div ref={tvFlyRef} className={styles.tvFly}>
-              <img
-                src="/tv-model.svg"
-                alt="Vintage television"
-                className={styles.tvFrameImg}
-              />
+              <img src="/tv-model.svg" alt="Vintage television" className={styles.tvFrameImg} />
 
               <div className={styles.tvScreen}>
                 <div className={styles.tvScreenContent}>
@@ -844,9 +848,7 @@ export function LivingHistoryHubPage() {
                       <button
                         type="button"
                         className={styles.blogVideoFacade}
-                        style={{
-                          backgroundImage: `url(https://i.ytimg.com/vi/${post.videoId}/hqdefault.jpg)`,
-                        }}
+                        style={{ backgroundImage: `url(${thumbUrl(post.videoId)})` }}
                         onClick={() => setArticlePlaying(true)}
                         aria-label={`Play ${post.title}`}
                       >
@@ -1044,8 +1046,8 @@ export function LivingHistoryHubPage() {
           <div className={styles.featureRule} aria-hidden="true" />
           <p className={styles.contributeLead}>
             Have a story, a memory, or a video you'd like to share? Tell us a
-            little about it and our team will reach out to help you add it to the
-            Living History Hub.
+            little about it and our team will reach out to help you add it to
+            the Living History Hub.
           </p>
 
           {contributeSent ? (
