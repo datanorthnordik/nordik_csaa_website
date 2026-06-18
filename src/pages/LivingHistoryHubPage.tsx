@@ -3,86 +3,91 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
+<<<<<<< HEAD
 import { buildAbsoluteUrl, SITE_NAME, usePageSeo } from '../lib/usePageSeo'
+=======
+import {
+  getVideoTeaserUrl,
+  videosApi,
+  type VideoItemResponse,
+} from '../api/videosApi'
+>>>>>>> 234aaf634c0ad2b97b4a3dcdb8e7b32690e0677a
 import styles from './LivingHistoryHubPage.module.css'
 
 const danPineCoverImg = '/dan-pine-family-shingwauk.jpg'
 
-// Archive Reel carousel — add more entries to grow the (infinite) carousel.
-// sddefault is used because maxresdefault doesn't exist for every upload.
-const VIDEOS = [
-  {
-    id: 'fsVfckxA0RQ',
-    title: 'The Story in Motion',
-    desc: 'An introduction to the living history of Shingwauk: the people, the place, and the memories that endure.',
-  },
-  {
-    id: 'ftkjsjHE9yY',
-    title: 'Shirley: A Residential School Story',
-    desc: 'Shirley Horn shares her residential school story on The Human Challenge: healing, culture, and a longing for language.',
-  },
-  {
-    id: 'PQNA9vqP42g',
-    title: 'Tree Planting, 1981 Shingwauk Reunion',
-    desc: 'Survivors gather to plant an Eastern White Pine, turning grief into a living monument to the children.',
-  },
-  {
-    id: 'ROSWdtjCTHI',
-    title: 'Mike Cachagee at the Shingwauk 1981 Reunion',
-    desc: 'Survivor and CSAA founder Mike Cachagee reflects on returning to Shingwauk and why this reunion mattered.',
-  },
-  {
-    id: 'oXoru1Nu72U',
-    title: 'Daisy Diamond Kostus Interview',
-    desc: 'Daisy Diamond Kostus shares her memories of the school and the community that carried her through.',
-  },
-  {
-    id: 'YSQ-1CugiuU',
-    title: 'Mike Cachagee Shingwauk 1981 Reunion, Part 2',
-    desc: 'Mike Cachagee continues his story, on remembrance, resilience, and the road toward healing.',
-  },
-  {
-    id: 'lGj9BK1W4hM',
-    title: 'Shirley Roach, Calvin Corbiere & Lindsay Sword, 1981 Reunion',
-    desc: 'Three Survivors recall their years at Shingwauk and the bonds that reunited them decades later.',
-  },
-  {
-    id: '1OjR5MZtZFo',
-    title: 'Don and Nellie Sands',
-    desc: 'Don and Nellie Sands speak to family, language, and keeping culture alive across generations.',
-  },
-  {
-    id: 'bOF9pkkfzj0',
-    title: 'Jack White at Shingwauk Reunion',
-    desc: 'Jack White remembers the reunion and the importance of telling these stories in his own words.',
-  },
-]
-// hqdefault is the largest size available for *every* upload (sddefault/maxres
-// are missing for some), so it's the safest choice for the carousel thumbnails.
-// Beyond this many videos the list collapses behind a "See more" toggle,
-// then becomes a fixed-height scrollable list.
+const HISTORY_HUB_VIDEO_PACKAGE_ID = 4
 const ARCHIVE_VISIBLE = 6
+
+type HubVideo = {
+  id: number
+  youtubeId: string
+  title: string
+  desc: string
+  teaserUrl: string
+}
+
+function extractYouTubeId(url: string) {
+  try {
+    const parsed = new URL(url)
+
+    if (parsed.hostname.includes('youtu.be')) {
+      return parsed.pathname.split('/').filter(Boolean)[0] ?? ''
+    }
+
+    const watchId = parsed.searchParams.get('v')
+    if (watchId) {
+      return watchId
+    }
+
+    const pathMatch = parsed.pathname.match(/\/(?:embed|shorts)\/([^/?]+)/)
+    return pathMatch?.[1] ?? ''
+  } catch {
+    const match = url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([A-Za-z0-9_-]+)/)
+    return match?.[1] ?? ''
+  }
+}
+
+function mapApiVideo(video: VideoItemResponse): HubVideo | null {
+  const youtubeId = extractYouTubeId(video.youtube_url)
+
+  if (!youtubeId) {
+    return null
+  }
+
+  return {
+    id: video.id,
+    youtubeId,
+    title: video.title,
+    desc: video.description,
+    teaserUrl: getVideoTeaserUrl(video),
+  }
+}
+
 const thumbUrl = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`
+
 const embedUrl = (id: string) =>
   `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`
 
-// In-page "Living History Journal" blog. Each post opens an article in place.
 const TREE_PLANTING_BODY = [
   'In 1981, Survivors of the Shingwauk Indian Residential School returned to the grounds for the first reunion. Among the prayers, the feasts, and the reunions of old friends came a quiet, deliberate act of reclamation: the planting of an Eastern White Pine, the tree of Chief Shingwaukonse, as a living monument to the children who never made it home.',
   'What followed was not a single moment but a story that unfolded across decades, of a tree planted, lost, and planted again, and of a community that refused to let the memory be erased.',
 ]
+
 const DAN_PINE_BODY = [
   'In the early nineteenth century, the Anishinaabe leader Chief Shingwaukonse, known as "Little Pine," walked and paddled great distances to advocate for his people. He carried a vision of a "teaching wigwam": a place where Anishinaabe children could gain the knowledge of the newcomers while remaining rooted in their own language, land, and ways of knowing.',
   'A school was eventually built in Sault Ste. Marie and given his name. But the institution that became the Shingwauk Indian Residential School betrayed that vision entirely. For nearly a century, children were taken from their families and punished for speaking their language and practising their culture. The name of a man who fought for his people came to mark one of the places where so much was taken from them.',
   'Through those years and after, Elder Dan Pine Sr. of Garden River First Nation stood as a keeper of Anishinaabe knowledge, a respected healer and teacher who quietly held the ceremonies, medicines, and teachings the schools sought to erase. His presence, and that of his family, became a thread of continuity that connected the old vision of Little Pine to the survivors who would one day return.',
   'When Survivors gathered at Shingwauk in 1981, they came not only to remember what had happened, but to reclaim the ground itself. From that gathering grew a simple, powerful act: the planting of a pine, the tree of Shingwaukonse, as a living monument to the children.',
 ]
+
 const SHIRLEY_BODY = [
-  `A special episode of The Human Challenge features Shirley Horn, in an episode titled "Shirley: A Residential School Story."`,
-  `As we mark National Indigenous Languages Day on Turtle Island, Shirley Horn shares her residential school story, growing up in not one, but two residential schools. She would return years later to Shingwauk Hall after it became a university to pursue her education, become first chancellor, and then Chief of the Missanabie to help return land back to her community.`,
-  `In this touching episode, Shirley talks about her life healing the trauma that came with the residential school system, reconnecting with Indigenous culture, and her longing for Indigenous language. Learn more about her life in a new children's book, "Shirley: An Indian Residential School Story," written by Joanne Robertson. Available now!`,
-  `Special thank you to the Children of Shingwauk Alumni Association and Algoma University. This episode was recorded in The Elder Room at the Shingwauk Anishinaabe Students Lounge at Algoma University. Cinematography by Shae Mclurg.`,
+  'A special episode of The Human Challenge features Shirley Horn, in an episode titled "Shirley: A Residential School Story."',
+  'As we mark National Indigenous Languages Day on Turtle Island, Shirley Horn shares her residential school story, growing up in not one, but two residential schools. She would return years later to Shingwauk Hall after it became a university to pursue her education, become first chancellor, and then Chief of the Missanabie to help return land back to her community.',
+  'In this touching episode, Shirley talks about her life healing the trauma that came with the residential school system, reconnecting with Indigenous culture, and her longing for Indigenous language. Learn more about her life in a new children\'s book, "Shirley: An Indian Residential School Story," written by Joanne Robertson. Available now!',
+  'Special thank you to the Children of Shingwauk Alumni Association and Algoma University. This episode was recorded in The Elder Room at the Shingwauk Anishinaabe Students Lounge at Algoma University. Cinematography by Shae Mclurg.',
 ]
+
 const BLOG_POSTS = [
   {
     id: 'shirley-story',
@@ -124,8 +129,6 @@ const BLOG_POSTS = [
   },
 ]
 
-// Text blocks that scroll past the sticky photo. Each block has its own
-// image, which crossfades into view as that block scrolls into focus.
 const FEATURE_BLOCKS = [
   {
     img: '/tree-p1.jpg',
@@ -174,16 +177,22 @@ const FEATURE_BLOCKS = [
 export function LivingHistoryHubPage() {
   const { t } = useTranslation()
 
-  // Which feature text block is currently in focus → drives sticky-image crossfade
+  const [videos, setVideos] = useState<HubVideo[]>([])
+  const [videosStatus, setVideosStatus] = useState<
+    'idle' | 'loading' | 'success' | 'error'
+  >('idle')
+  const [videosError, setVideosError] = useState<string | null>(null)
+
+  const activeVideo = videos[videoIndex] ?? null
+  const isVideosLoading = videosStatus === 'loading'
+
   const blockRefs = useRef<(HTMLDivElement | null)[]>([])
   const [activeBlock, setActiveBlock] = useState(0)
 
-  // TV that flies from centred (tvSection) into the right slot of tvLand
   const tvSlotARef = useRef<HTMLDivElement>(null)
   const tvSlotBRef = useRef<HTMLDivElement>(null)
-  const tvFlyRef   = useRef<HTMLDivElement>(null)
+  const tvFlyRef = useRef<HTMLDivElement>(null)
 
-  // Archive Reel carousel: reveal-on-scroll + click-to-play + infinite nav
   const videoRef = useRef<HTMLElement>(null)
   const [videoVisible, setVideoVisible] = useState(false)
   const [videoIndex, setVideoIndex] = useState(0)
@@ -198,10 +207,13 @@ export function LivingHistoryHubPage() {
   const [contributeSent, setContributeSent] = useState(false)
   const blogRef = useRef<HTMLDivElement>(null)
 
-  const openTheatre = (id: string) => { setTheatreId(id); setTheatre(true) }
+  const openTheatre = (id: string) => {
+    setTheatreId(id)
+    setTheatre(true)
+  }
+
   const post = BLOG_POSTS.find((p) => p.id === openPost) ?? null
 
-  // Open a post → reset its inline video and jump to the top of the article
   const showPost = (id: string) => {
     setOpenPost(id)
     setArticlePlaying(false)
@@ -211,28 +223,31 @@ export function LivingHistoryHubPage() {
   }
 
   const playActive = () => {
+    if (!activeVideo) {
+      return
+    }
+
     setVideoPlaying(true)
-    setVideoLoading(true) // cleared by the iframe's onLoad
+    setVideoLoading(true)
   }
 
   const goToVideo = (i: number) => {
+    if (!videos.length) {
+      return
+    }
+
     setVideoPlaying(false)
     setVideoLoading(false)
-    // wrap-around for an "infinite" carousel
-    setVideoIndex((i + VIDEOS.length) % VIDEOS.length)
+    setVideoIndex((i + videos.length) % videos.length)
   }
 
-  // Final reveal: everything (crossfade, header fade, flight, text) is driven
-  // by scroll progress, so it plays forward scrolling down and reverses on the
-  // way back up. slotA/slotB are layout placeholders; flyRef is a fixed element
-  // whose geometry interpolates between them.
-  const slotARef      = useRef<HTMLDivElement>(null)
-  const slotBRef      = useRef<HTMLDivElement>(null)
-  const flyRef        = useRef<HTMLDivElement>(null)
-  const detailRef     = useRef<HTMLDivElement>(null)
+  const slotARef = useRef<HTMLDivElement>(null)
+  const slotBRef = useRef<HTMLDivElement>(null)
+  const flyRef = useRef<HTMLDivElement>(null)
+  const detailRef = useRef<HTMLDivElement>(null)
   const revealTextRef = useRef<HTMLDivElement>(null)
-  const pineRef       = useRef<HTMLImageElement>(null)
-  const realRef       = useRef<HTMLImageElement>(null)
+  const pineRef = useRef<HTMLImageElement>(null)
+  const realRef = useRef<HTMLImageElement>(null)
 
   usePageBreadcrumbs([
     {
@@ -244,6 +259,7 @@ export function LivingHistoryHubPage() {
     },
   ])
 
+<<<<<<< HEAD
   usePageSeo({
     title: `Living History Hub | ${SITE_NAME}`,
     description:
@@ -254,22 +270,82 @@ export function LivingHistoryHubPage() {
 
   // Auto-advance the carousel — pauses while a video plays, the archive list
   // is open, or the section is off-screen; resets when the slide changes.
+=======
+>>>>>>> 234aaf634c0ad2b97b4a3dcdb8e7b32690e0677a
   useEffect(() => {
-    if (VIDEOS.length < 2 || !videoVisible || videoPlaying || archiveOpen) return
-    const id = window.setInterval(() => {
-      setVideoIndex((c) => (c + 1) % VIDEOS.length)
-    }, 6000)
-    return () => window.clearInterval(id)
-  }, [videoVisible, videoPlaying, videoIndex, archiveOpen])
+    let cancelled = false
 
-  // Fly the TV from its centred slot into the right slot of the next section
+    async function loadVideos() {
+      setVideosStatus('loading')
+      setVideosError(null)
+
+      try {
+        const response = await videosApi.getVideoPackage(
+          HISTORY_HUB_VIDEO_PACKAGE_ID,
+        )
+
+        if (cancelled) {
+          return
+        }
+
+        const mappedVideos = response.videos
+          .slice()
+          .sort((a, b) => a.sort_order - b.sort_order)
+          .map(mapApiVideo)
+          .filter((video): video is HubVideo => Boolean(video))
+
+        setVideos(mappedVideos)
+        setVideoIndex(0)
+        setVideoPlaying(false)
+        setVideoLoading(false)
+        setVideosStatus('success')
+      } catch {
+        if (cancelled) {
+          return
+        }
+
+        setVideos([])
+        setVideoIndex(0)
+        setVideoPlaying(false)
+        setVideoLoading(false)
+        setVideosError('Unable to load the archive videos right now.')
+        setVideosStatus('error')
+      }
+    }
+
+    void loadVideos()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   useEffect(() => {
-    const fly   = tvFlyRef.current
+    if (videoIndex >= videos.length) {
+      setVideoIndex(0)
+    }
+  }, [videoIndex, videos.length])
+
+  useEffect(() => {
+    if (videos.length < 2 || !videoVisible || videoPlaying || archiveOpen) {
+      return
+    }
+
+    const id = window.setInterval(() => {
+      setVideoIndex((current) =>
+        videos.length ? (current + 1) % videos.length : 0,
+      )
+    }, 6000)
+
+    return () => window.clearInterval(id)
+  }, [videos.length, videoVisible, videoPlaying, archiveOpen])
+
+  useEffect(() => {
+    const fly = tvFlyRef.current
     const slotA = tvSlotARef.current
     const slotB = tvSlotBRef.current
     if (!fly || !slotA || !slotB) return
 
-    // On mobile the TV is a single static section — no fly animation.
     if (window.matchMedia('(max-width: 768px)').matches) return
 
     const lerp = (a: number, b: number, f: number) => a + (b - a) * f
@@ -281,27 +357,31 @@ export function LivingHistoryHubPage() {
       const bRect = slotB.getBoundingClientRect()
 
       const vpCenter = window.innerHeight / 2
-      const aCenter  = aRect.top + aRect.height / 2
-      const bCenter  = bRect.top + bRect.height / 2
-      const span     = aCenter - bCenter
-      const f = span !== 0
-        ? Math.min(1, Math.max(0, (aCenter - vpCenter) / span))
-        : 0
+      const aCenter = aRect.top + aRect.height / 2
+      const bCenter = bRect.top + bRect.height / 2
+      const span = aCenter - bCenter
+      const f =
+        span !== 0
+          ? Math.min(1, Math.max(0, (aCenter - vpCenter) / span))
+          : 0
 
-      fly.style.left   = `${lerp(aRect.left,   bRect.left,   f)}px`
-      fly.style.top    = `${lerp(aRect.top,    bRect.top,    f)}px`
-      fly.style.width  = `${lerp(aRect.width,  bRect.width,  f)}px`
+      fly.style.left = `${lerp(aRect.left, bRect.left, f)}px`
+      fly.style.top = `${lerp(aRect.top, bRect.top, f)}px`
+      fly.style.width = `${lerp(aRect.width, bRect.width, f)}px`
       fly.style.height = `${lerp(aRect.height, bRect.height, f)}px`
 
-      // Video content only reveals once the TV nears the landing section
       const reveal = Math.max(0, Math.min(1, (f - 0.4) / 0.4))
       fly.style.setProperty('--reveal', reveal.toFixed(3))
     }
 
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update)
+    }
+
     update()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
+
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
@@ -309,21 +389,23 @@ export function LivingHistoryHubPage() {
     }
   }, [])
 
-  // Close theatre mode on Escape
   useEffect(() => {
     if (!theatre) return
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setTheatre(false) }
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setTheatre(false)
+    }
+
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [theatre])
 
-  // Mid-pan snapping: nudging into the pan zone glides the TV to the nearest
-  // end — scroll down → landing section; scroll up → initial centred state.
   useEffect(() => {
     const slotA = tvSlotARef.current
     const slotB = tvSlotBRef.current
     if (!slotA || !slotB) return
     if (window.matchMedia('(max-width: 768px)').matches) return
+
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     let lastY = window.scrollY
@@ -331,7 +413,7 @@ export function LivingHistoryHubPage() {
     let raf = 0
 
     const snapTo = (el: HTMLElement) => {
-      cooldownUntil = performance.now() + 900 // ignore events during the glide
+      cooldownUntil = performance.now() + 900
       el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' })
     }
 
@@ -351,25 +433,28 @@ export function LivingHistoryHubPage() {
       const span = aC - bC
       if (span === 0) return
 
-      // f: 0 = initial (TV centred in intro), 1 = landed
       const f = (aC - vc) / span
       if (f > 0.12 && f < 0.88) {
         snapTo(goingDown ? slotB : slotA)
       }
     }
 
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(check) }
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(check)
+    }
+
     window.addEventListener('scroll', onScroll, { passive: true })
+
     return () => {
       window.removeEventListener('scroll', onScroll)
       if (raf) cancelAnimationFrame(raf)
     }
   }, [])
 
-  // Reveal the Archive Reel as it scrolls into view
   useEffect(() => {
     const el = videoRef.current
     if (!el) return
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
@@ -379,11 +464,11 @@ export function LivingHistoryHubPage() {
       },
       { threshold: 0.3 },
     )
+
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
 
-  // Track which feature text block is centred in the viewport → crossfade image
   useEffect(() => {
     const blocks = blockRefs.current.filter(Boolean) as HTMLDivElement[]
     if (!blocks.length) return
@@ -402,23 +487,20 @@ export function LivingHistoryHubPage() {
 
     blocks.forEach((b) => observer.observe(b))
     return () => observer.disconnect()
-    // re-attach when the Tree Planting article mounts/unmounts
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openPost])
 
-  // Drive the whole final reveal from scroll progress (reversible / replayable)
   useEffect(() => {
-    const fly    = flyRef.current
-    const slotA  = slotARef.current
-    const slotB  = slotBRef.current
+    const fly = flyRef.current
+    const slotA = slotARef.current
+    const slotB = slotBRef.current
     const detail = detailRef.current
-    const intro  = revealTextRef.current
-    const pine   = pineRef.current
-    const real   = realRef.current
+    const intro = revealTextRef.current
+    const pine = pineRef.current
+    const real = realRef.current
     if (!fly || !slotA || !slotB) return
 
     const lerp = (a: number, b: number, f: number) => a + (b - a) * f
-    // smoothstep — eased 0→1 between edges a and b
+
     const ss = (a: number, b: number, x: number) => {
       const t = Math.min(1, Math.max(0, (x - a) / (b - a)))
       return t * t * (3 - 2 * t)
@@ -430,32 +512,29 @@ export function LivingHistoryHubPage() {
       const aRect = slotA.getBoundingClientRect()
       const bRect = slotB.getBoundingClientRect()
 
-      // Progress: 0 when slotA is centred in the viewport, 1 when slotB is.
       const vpCenter = window.innerHeight / 2
-      const aCenter  = aRect.top + aRect.height / 2
-      const bCenter  = bRect.top + bRect.height / 2
-      const span     = aCenter - bCenter
-      const f = span !== 0
-        ? Math.min(1, Math.max(0, (aCenter - vpCenter) / span))
-        : 0
+      const aCenter = aRect.top + aRect.height / 2
+      const bCenter = bRect.top + bRect.height / 2
+      const span = aCenter - bCenter
+      const f =
+        span !== 0
+          ? Math.min(1, Math.max(0, (aCenter - vpCenter) / span))
+          : 0
 
-      // Interpolate the fixed photo between the two slots' live positions
-      fly.style.left   = `${lerp(aRect.left,   bRect.left,   f)}px`
-      fly.style.top    = `${lerp(aRect.top,    bRect.top,    f)}px`
-      fly.style.width  = `${lerp(aRect.width,  bRect.width,  f)}px`
+      fly.style.left = `${lerp(aRect.left, bRect.left, f)}px`
+      fly.style.top = `${lerp(aRect.top, bRect.top, f)}px`
+      fly.style.width = `${lerp(aRect.width, bRect.width, f)}px`
       fly.style.height = `${lerp(aRect.height, bRect.height, f)}px`
 
-      // Intro header fades out early
       if (intro) intro.style.opacity = String(1 - ss(0.02, 0.2, f))
-      // Sketch → real crossfade (still early, near section A)
       if (pine) pine.style.opacity = String(1 - ss(0.06, 0.28, f))
       if (real) real.style.opacity = String(ss(0.1, 0.32, f))
 
-      // Shadow grows as it approaches its resting place
       const s = ss(0.4, 0.85, f)
-      fly.style.boxShadow = `0 ${24 * s}px ${50 * s}px rgba(26, 18, 8, ${0.32 * s})`
+      fly.style.boxShadow = `0 ${24 * s}px ${50 * s}px rgba(26, 18, 8, ${
+        0.32 * s
+      })`
 
-      // Text column fades in near the end of the flight
       if (detail) detail.style.opacity = String(ss(0.6, 0.9, f))
     }
 
@@ -466,13 +545,12 @@ export function LivingHistoryHubPage() {
     update()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
+
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
       if (raf) cancelAnimationFrame(raf)
     }
-    // re-attach when the Tree Planting article mounts/unmounts
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openPost])
 
   return (
@@ -486,7 +564,6 @@ export function LivingHistoryHubPage() {
         waveColor="#faf7f2"
       />
 
-      {/* ── Retro TV — centred, with intro copy (start of the fly) ── */}
       <section className={styles.tvSection}>
         <div className={styles.tvIntro}>
           <p className={styles.tvEyebrow}>Living Memory</p>
@@ -500,169 +577,238 @@ export function LivingHistoryHubPage() {
         <div ref={tvSlotARef} className={styles.tvSlot} aria-hidden="true" />
       </section>
 
-      {/* ── TV lands into the right space; text + carousel controls on the left ── */}
       <section ref={videoRef} className={styles.tvLand} data-archive-open={archiveOpen}>
         <div className={styles.tvLandInner}>
           <div className={styles.tvLandText}>
-            {/* Default: heading, copy, button, carousel controls */}
             <div className={styles.tvDefault} aria-hidden={archiveOpen}>
               <p className={styles.tvEyebrow}>Watch · In Their Words</p>
-              <h2 key={videoIndex} className={`${styles.featureTitle} ${styles.tvTitleFade}`}>
-                {VIDEOS[videoIndex].title}
-              </h2>
-              <div className={styles.featureRule} aria-hidden="true" />
-              <p className={styles.featureBody}>{VIDEOS[videoIndex].desc}</p>
-              <button type="button" className={styles.revealButton} onClick={playActive}>
-                Watch on the TV
-              </button>
 
-              {VIDEOS.length > 1 && (
-                <div className={styles.tvControls}>
+              {isVideosLoading ? (
+                <>
+                  <h2 className={styles.featureTitle}>Loading archive tapes…</h2>
+                  <div className={styles.featureRule} aria-hidden="true" />
+                  <p className={styles.featureBody}>
+                    The Living History videos are being loaded.
+                  </p>
+                </>
+              ) : videosError ? (
+                <>
+                  <h2 className={styles.featureTitle}>Archive unavailable</h2>
+                  <div className={styles.featureRule} aria-hidden="true" />
+                  <p className={styles.featureBody}>{videosError}</p>
+                </>
+              ) : activeVideo ? (
+                <>
+                  <h2
+                    key={videoIndex}
+                    className={`${styles.featureTitle} ${styles.tvTitleFade}`}
+                  >
+                    {activeVideo.title}
+                  </h2>
+                  <div className={styles.featureRule} aria-hidden="true" />
+                  <p className={styles.featureBody}>{activeVideo.desc}</p>
                   <button
                     type="button"
-                    className={styles.tvNav}
-                    onClick={() => goToVideo(videoIndex - 1)}
-                    aria-label="Previous video"
+                    className={styles.revealButton}
+                    onClick={playActive}
                   >
-                    <svg viewBox="0 0 24 24" width="20" height="20">
-                      <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor"
-                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                    Watch on the TV
                   </button>
-                  <div className={styles.tvDots}>
-                    {VIDEOS.map((v, i) => (
+
+                  {videos.length > 1 && (
+                    <div className={styles.tvControls}>
                       <button
-                        key={v.id}
                         type="button"
-                        className={styles.tvDot}
-                        data-active={i === videoIndex}
-                        onClick={() => goToVideo(i)}
-                        aria-label={`Go to ${v.title}`}
-                      />
-                    ))}
-                  </div>
-                  <button
-                    type="button"
-                    className={styles.tvNav}
-                    onClick={() => goToVideo(videoIndex + 1)}
-                    aria-label="Next video"
-                  >
-                    <svg viewBox="0 0 24 24" width="20" height="20">
-                      <path d="M9 5l7 7-7 7" fill="none" stroke="currentColor"
-                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                </div>
+                        className={styles.tvNav}
+                        onClick={() => goToVideo(videoIndex - 1)}
+                        aria-label="Previous video"
+                      >
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                          <path
+                            d="M15 5l-7 7 7 7"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+
+                      <div className={styles.tvDots}>
+                        {videos.map((v, i) => (
+                          <button
+                            key={v.id}
+                            type="button"
+                            className={styles.tvDot}
+                            data-active={i === videoIndex}
+                            onClick={() => goToVideo(i)}
+                            aria-label={`Go to ${v.title}`}
+                          />
+                        ))}
+                      </div>
+
+                      <button
+                        type="button"
+                        className={styles.tvNav}
+                        onClick={() => goToVideo(videoIndex + 1)}
+                        aria-label="Next video"
+                      >
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                          <path
+                            d="M9 5l7 7-7 7"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <h2 className={styles.featureTitle}>No archive tapes found</h2>
+                  <div className={styles.featureRule} aria-hidden="true" />
+                  <p className={styles.featureBody}>
+                    There are no videos available in this collection yet.
+                  </p>
+                </>
               )}
             </div>
 
-            {/* Archive: list of videos, replaces the copy when open */}
             <div className={styles.tvArchive} aria-hidden={!archiveOpen}>
               <div className={styles.tvArchiveHead}>
                 <p className={styles.tvEyebrow}>Archive Tapes</p>
                 <button
                   type="button"
                   className={styles.tvArchiveClose}
-                  onClick={() => { setArchiveOpen(false); setArchiveExpanded(false) }}
+                  onClick={() => {
+                    setArchiveOpen(false)
+                    setArchiveExpanded(false)
+                  }}
                   aria-label="Close list and return to overview"
                 >
                   ×
                 </button>
               </div>
-              <ul
-                className={styles.archiveList}
-                data-scroll={VIDEOS.length > ARCHIVE_VISIBLE && archiveExpanded}
-              >
-                {(archiveExpanded ? VIDEOS : VIDEOS.slice(0, ARCHIVE_VISIBLE)).map((v, i) => (
-                  <ArchiveItem
-                    key={v.id}
-                    video={v}
-                    index={i}
-                    active={i === videoIndex}
-                    onSelect={() => goToVideo(i)}
-                  />
-                ))}
-              </ul>
-              {VIDEOS.length > ARCHIVE_VISIBLE && (
-                <button
-                  type="button"
-                  className={styles.archiveSeeMore}
-                  onClick={() => setArchiveExpanded((e) => !e)}
-                  aria-expanded={archiveExpanded}
-                >
-                  {archiveExpanded ? 'See less' : `See more (${VIDEOS.length - ARCHIVE_VISIBLE})`}
-                </button>
+
+              {videos.length ? (
+                <>
+                  <ul
+                    className={styles.archiveList}
+                    data-scroll={videos.length > ARCHIVE_VISIBLE && archiveExpanded}
+                  >
+                    {(archiveExpanded
+                      ? videos
+                      : videos.slice(0, ARCHIVE_VISIBLE)
+                    ).map((v, i) => (
+                      <ArchiveItem
+                        key={v.id}
+                        video={v}
+                        index={i}
+                        active={i === videoIndex}
+                        onSelect={() => goToVideo(i)}
+                      />
+                    ))}
+                  </ul>
+
+                  {videos.length > ARCHIVE_VISIBLE && (
+                    <button
+                      type="button"
+                      className={styles.archiveSeeMore}
+                      onClick={() => setArchiveExpanded((e) => !e)}
+                      aria-expanded={archiveExpanded}
+                    >
+                      {archiveExpanded
+                        ? 'See less'
+                        : `See more (${videos.length - ARCHIVE_VISIBLE})`}
+                    </button>
+                  )}
+                </>
+              ) : (
+                <p className={styles.featureBody}>
+                  {isVideosLoading
+                    ? 'Loading archive tapes…'
+                    : 'No archive tapes are available.'}
+                </p>
               )}
             </div>
           </div>
-          {/* Landing slot holds the TV. Desktop: TV is fixed & flies into it.
-              Mobile: TV sits statically inside it (single section). */}
+
           <div ref={tvSlotBRef} className={styles.tvSlot}>
             <div ref={tvFlyRef} className={styles.tvFly}>
               <img src="/tv-model.svg" alt="Vintage television" className={styles.tvFrameImg} />
+
               <div className={styles.tvScreen}>
-                {/* Video content — only revealed once the TV lands (var --reveal) */}
                 <div className={styles.tvScreenContent}>
-                {/* Thumbnails stacked & crossfaded; active one is clickable */}
-                {VIDEOS.map((v, i) => (
-                  <button
-                    key={v.id}
-                    type="button"
-                    className={styles.videoFacade}
-                    data-active={i === videoIndex && !videoPlaying}
-                    style={{ backgroundImage: `url(${thumbUrl(v.id)})` }}
-                    onClick={() => i === videoIndex && playActive()}
-                    aria-label={`Play ${v.title}`}
-                    aria-hidden={i !== videoIndex}
-                    tabIndex={i === videoIndex ? 0 : -1}
-                  >
-                    <span className={styles.videoPlay} aria-hidden="true">
-                      <svg viewBox="0 0 24 24" width="26" height="26">
-                        <path d="M8 5v14l11-7z" fill="currentColor" />
-                      </svg>
-                    </span>
-                  </button>
-                ))}
+                  {videos.map((v, i) => (
+                    <button
+                      key={v.id}
+                      type="button"
+                      className={styles.videoFacade}
+                      data-active={i === videoIndex && !videoPlaying}
+                      style={{ backgroundImage: `url(${v.teaserUrl})` }}
+                      onClick={() => i === videoIndex && playActive()}
+                      aria-label={`Play ${v.title}`}
+                      aria-hidden={i !== videoIndex}
+                      tabIndex={i === videoIndex ? 0 : -1}
+                    >
+                      <span className={styles.videoPlay} aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="26" height="26">
+                          <path d="M8 5v14l11-7z" fill="currentColor" />
+                        </svg>
+                      </span>
+                    </button>
+                  ))}
 
-                {/* Active video plays on top once clicked */}
-                {videoPlaying && (
-                  <iframe
-                    className={styles.videoIframe}
-                    src={embedUrl(VIDEOS[videoIndex].id)}
-                    title={VIDEOS[videoIndex].title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    onLoad={() => setVideoLoading(false)}
-                  />
-                )}
+                  {videoPlaying && activeVideo && (
+                    <iframe
+                      className={styles.videoIframe}
+                      src={embedUrl(activeVideo.youtubeId)}
+                      title={activeVideo.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      onLoad={() => setVideoLoading(false)}
+                    />
+                  )}
 
-                {/* Retro "tuning in" loader until the iframe is ready */}
-                {videoPlaying && videoLoading && (
-                  <div className={styles.tvLoader} aria-hidden="true">
-                    <span className={styles.tvLoaderRing} />
-                    <span className={styles.tvLoaderText}>Tuning in…</span>
-                  </div>
-                )}
-                </div>{/* /tvScreenContent */}
+                  {videoPlaying && videoLoading && (
+                    <div className={styles.tvLoader} aria-hidden="true">
+                      <span className={styles.tvLoaderRing} />
+                      <span className={styles.tvLoaderText}>Tuning in…</span>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Button row — Theatre + Archive, aligned together */}
               <div className={styles.tvBtnRow}>
                 <button
                   type="button"
                   className={styles.theatreBtn}
-                  onClick={() => openTheatre(VIDEOS[videoIndex].id)}
+                  onClick={() => {
+                    if (activeVideo) {
+                      openTheatre(activeVideo.youtubeId)
+                    }
+                  }}
                   aria-label="Open in theatre mode"
+                  disabled={!activeVideo}
                 >
                   <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
                     <path
                       d="M4 9V5h4M20 9V5h-4M4 15v4h4M20 15v4h-4"
-                      fill="none" stroke="currentColor" strokeWidth="2"
-                      strokeLinecap="round" strokeLinejoin="round"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     />
                   </svg>
                   Theatre Mode
                 </button>
+
                 <button
                   type="button"
                   className={styles.archiveBtn}
@@ -672,8 +818,13 @@ export function LivingHistoryHubPage() {
                   aria-label="Toggle archive tape list"
                 >
                   <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
-                    <path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor"
-                      strokeWidth="2" strokeLinecap="round" />
+                    <path
+                      d="M4 6h16M4 12h16M4 18h16"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
                   </svg>
                   Archive Tapes
                 </button>
@@ -683,7 +834,6 @@ export function LivingHistoryHubPage() {
         </div>
       </section>
 
-      {/* ── Living History Journal — in-page blog ── */}
       <section ref={blogRef} className={styles.blog} data-article={openPost ?? ''}>
         <div className={styles.blogInner}>
           <p className={styles.tvEyebrow}>Living History Journal</p>
@@ -697,8 +847,10 @@ export function LivingHistoryHubPage() {
               >
                 ← All stories
               </button>
+
               <h2 className={styles.blogArticleTitle}>{post.title}</h2>
               <div className={styles.featureRule} aria-hidden="true" />
+
               {post.id === 'tree-planting' ? (
                 <>
                   <div className={styles.blogVideo}>
@@ -725,6 +877,7 @@ export function LivingHistoryHubPage() {
                       </button>
                     )}
                   </div>
+
                   <p className={styles.blogPara}>
                     In 1981, Survivors of the Shingwauk Indian Residential School
                     returned to the grounds for the first reunion. Among the
@@ -733,6 +886,7 @@ export function LivingHistoryHubPage() {
                     Eastern White Pine, the tree of Chief Shingwaukonse, as a
                     living monument to the children who never made it home.
                   </p>
+
                   <p className={styles.blogPara}>
                     What followed was not a single moment but a story that unfolded
                     across decades, of a tree planted, lost, and planted again, and
@@ -747,9 +901,13 @@ export function LivingHistoryHubPage() {
                     <img src={post.image} alt={post.title} />
                     {post.caption && <figcaption>{post.caption}</figcaption>}
                   </figure>
+
                   {post.body.map((para, i) => (
-                    <p key={i} className={styles.blogPara}>{para}</p>
+                    <p key={i} className={styles.blogPara}>
+                      {para}
+                    </p>
                   ))}
+
                   <button
                     type="button"
                     className={styles.revealButton}
@@ -764,6 +922,7 @@ export function LivingHistoryHubPage() {
             <>
               <h2 className={styles.blogHeading}>Stories &amp; Editions</h2>
               <div className={styles.featureRule} aria-hidden="true" />
+
               <div className={styles.blogGrid}>
                 {BLOG_POSTS.map((p) => (
                   <button
@@ -791,105 +950,104 @@ export function LivingHistoryHubPage() {
         </div>
       </section>
 
-      {/* ══ Tree Planting article body: the immersive scrollytelling ══ */}
-      {post?.id === 'tree-planting' && (<>
-      {/* ── Feature section: sticky photo, scrolling text blocks ── */}
-      <section className={styles.feature}>
-        <div className={styles.featureInner}>
-          {/* Sticky photo — stays in view while the text scrolls past.
-              All block images are stacked; the active one crossfades in. */}
-          <div className={styles.featureSticky}>
-            <div className={styles.featureImageWrap}>
-              {FEATURE_BLOCKS.map((block, i) => {
-                const isActive = i === activeBlock
-                const zoomPan = block.effect === 'zoomPan' && isActive
-                return (
-                  <img
-                    key={i}
-                    src={block.img}
-                    alt={isActive ? block.alt : ''}
-                    className={`${styles.featureImage} ${zoomPan ? styles.zoomPan : ''}`}
-                    style={{ opacity: isActive ? 1 : 0 }}
-                    aria-hidden={!isActive}
-                  />
-                )
-              })}
-            </div>
-          </div>
+      {post?.id === 'tree-planting' && (
+        <>
+          <section className={styles.feature}>
+            <div className={styles.featureInner}>
+              <div className={styles.featureSticky}>
+                <div className={styles.featureImageWrap}>
+                  {FEATURE_BLOCKS.map((block, i) => {
+                    const isActive = i === activeBlock
+                    const zoomPan = block.effect === 'zoomPan' && isActive
 
-          {/* Scrolling text blocks */}
-          <div className={styles.featureBlocks}>
-            {FEATURE_BLOCKS.map((block, i) => (
-              <div
-                key={i}
-                ref={el => { blockRefs.current[i] = el }}
-                className={styles.featureBlock}
-              >
-                <h2 className={styles.featureTitle}>{block.title}</h2>
-                <div className={styles.featureRule} aria-hidden="true" />
-                <p className={styles.featureSubhead}>{block.subhead}</p>
-                <p className={styles.featureBody}>{block.body}</p>
+                    return (
+                      <img
+                        key={i}
+                        src={block.img}
+                        alt={isActive ? block.alt : ''}
+                        className={`${styles.featureImage} ${
+                          zoomPan ? styles.zoomPan : ''
+                        }`}
+                        style={{ opacity: isActive ? 1 : 0 }}
+                        aria-hidden={!isActive}
+                      />
+                    )
+                  })}
+                </div>
               </div>
-            ))}
+
+              <div className={styles.featureBlocks}>
+                {FEATURE_BLOCKS.map((block, i) => (
+                  <div
+                    key={i}
+                    ref={(el) => {
+                      blockRefs.current[i] = el
+                    }}
+                    className={styles.featureBlock}
+                  >
+                    <h2 className={styles.featureTitle}>{block.title}</h2>
+                    <div className={styles.featureRule} aria-hidden="true" />
+                    <p className={styles.featureSubhead}>{block.subhead}</p>
+                    <p className={styles.featureBody}>{block.body}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.flyStart}>
+            <div ref={revealTextRef} className={styles.revealText}>
+              <h2 className={styles.centeredTitle}>Living Memory</h2>
+              <div className={styles.centeredRule} aria-hidden="true" />
+              <p className={styles.centeredSubhead}>
+                The pine that stands at Shingwauk today
+              </p>
+            </div>
+            <div ref={slotARef} className={styles.flySlot} aria-hidden="true" />
+          </section>
+
+          <section className={styles.flyEnd}>
+            <div className={styles.flyEndInner}>
+              <div ref={detailRef} className={styles.flyDetail}>
+                <h2 className={styles.featureTitle}>Still Standing Today</h2>
+                <div className={styles.featureRule} aria-hidden="true" />
+                <p className={styles.featureSubhead}>
+                  Twin pines beside the 1874 foundation
+                </p>
+                <p className={styles.featureBody}>
+                  What began as a hand-drawn memory is now rooted in the earth at
+                  Algoma University. The Eastern White Pines planted by Survivors
+                  continue to grow beside the stone marker, a living reminder that
+                  this history is carried forward, season after season.
+                </p>
+                <Link
+                  to="/our-story/healing-memorials"
+                  className={styles.revealButton}
+                >
+                  Healing &amp; Memorials
+                </Link>
+              </div>
+              <div ref={slotBRef} className={styles.flySlot} aria-hidden="true" />
+            </div>
+          </section>
+
+          <div ref={flyRef} className={styles.flyImage} aria-hidden="true">
+            <img
+              ref={pineRef}
+              src="/final-pine.png"
+              alt=""
+              className={`${styles.revealImage} ${styles.revealPine}`}
+            />
+            <img
+              ref={realRef}
+              src="/final-pine-real.png"
+              alt=""
+              className={`${styles.revealImage} ${styles.revealReal}`}
+            />
           </div>
-        </div>
-      </section>
+        </>
+      )}
 
-      {/* ── Section A: sketch → real photo crossfade (centred) ── */}
-      <section className={styles.flyStart}>
-        <div ref={revealTextRef} className={styles.revealText}>
-          <h2 className={styles.centeredTitle}>Living Memory</h2>
-          <div className={styles.centeredRule} aria-hidden="true" />
-          <p className={styles.centeredSubhead}>
-            The pine that stands at Shingwauk today
-          </p>
-        </div>
-        {/* Placeholder defining the photo's starting position */}
-        <div ref={slotARef} className={styles.flySlot} aria-hidden="true" />
-      </section>
-
-      {/* ── Section B: text column + photo lands on the right ── */}
-      <section className={styles.flyEnd}>
-        <div className={styles.flyEndInner}>
-          <div ref={detailRef} className={styles.flyDetail}>
-            <h2 className={styles.featureTitle}>Still Standing Today</h2>
-            <div className={styles.featureRule} aria-hidden="true" />
-            <p className={styles.featureSubhead}>
-              Twin pines beside the 1874 foundation
-            </p>
-            <p className={styles.featureBody}>
-              What began as a hand-drawn memory is now rooted in the earth at Algoma
-              University. The Eastern White Pines planted by Survivors continue to
-              grow beside the stone marker, a living reminder that this history is
-              carried forward, season after season.
-            </p>
-            <Link to="/our-story/healing-memorials" className={styles.revealButton}>
-              Healing &amp; Memorials
-            </Link>
-          </div>
-          {/* Placeholder defining the photo's landing position */}
-          <div ref={slotBRef} className={styles.flySlot} aria-hidden="true" />
-        </div>
-      </section>
-
-      {/* The flying photo — fixed, geometry interpolated between the slots */}
-      <div ref={flyRef} className={styles.flyImage} aria-hidden="true">
-        <img
-          ref={pineRef}
-          src="/final-pine.png"
-          alt=""
-          className={`${styles.revealImage} ${styles.revealPine}`}
-        />
-        <img
-          ref={realRef}
-          src="/final-pine-real.png"
-          alt=""
-          className={`${styles.revealImage} ${styles.revealReal}`}
-        />
-      </div>
-      </>)}
-
-      {/* ── Post footer: posted-by attribution at the end of an article ── */}
       {post && (
         <div className={styles.blogFooter}>
           <div className={styles.blogFooterInner}>
@@ -898,122 +1056,140 @@ export function LivingHistoryHubPage() {
         </div>
       )}
 
-      {/* ── Contribute: form to submit a post or video (under every view) ── */}
-      {(
-        <section className={styles.contribute}>
-          <div className={styles.contributeInner}>
-            <p className={styles.tvEyebrow}>Share Your Story</p>
-            <h2 className={styles.contributeTitle}>Add to the Living History</h2>
-            <div className={styles.featureRule} aria-hidden="true" />
-            <p className={styles.contributeLead}>
-              Have a story, a memory, or a video you'd like to share? Tell us a
-              little about it and our team will reach out to help you add it to
-              the Living History Hub.
-            </p>
+      <section className={styles.contribute}>
+        <div className={styles.contributeInner}>
+          <p className={styles.tvEyebrow}>Share Your Story</p>
+          <h2 className={styles.contributeTitle}>Add to the Living History</h2>
+          <div className={styles.featureRule} aria-hidden="true" />
+          <p className={styles.contributeLead}>
+            Have a story, a memory, or a video you'd like to share? Tell us a
+            little about it and our team will reach out to help you add it to
+            the Living History Hub.
+          </p>
 
-            {contributeSent ? (
-              <div className={styles.contributeThanks} role="status">
-                <strong>Miigwetch — thank you.</strong>
-                <p>We've received your submission and will be in touch soon.</p>
-              </div>
-            ) : (
-              <form
-                className={styles.contributeForm}
-                onSubmit={(e) => { e.preventDefault(); setContributeSent(true) }}
-              >
-                <div className={styles.formRow}>
-                  <label className={styles.formField}>
-                    <span>Name</span>
-                    <input type="text" name="name" required autoComplete="name" />
-                  </label>
-                  <label className={styles.formField}>
-                    <span>Email</span>
-                    <input type="email" name="email" required autoComplete="email" />
-                  </label>
-                </div>
-                <div className={styles.formRow}>
-                  <label className={styles.formField}>
-                    <span>Phone (optional)</span>
-                    <input type="tel" name="phone" autoComplete="tel" />
-                  </label>
-                  <label className={styles.formField}>
-                    <span>I'd like to submit</span>
-                    <select name="type" defaultValue="post">
-                      <option value="post">A written post / story</option>
-                      <option value="video">A video</option>
-                      <option value="both">Both a post and a video</option>
-                    </select>
-                  </label>
-                </div>
+          {contributeSent ? (
+            <div className={styles.contributeThanks} role="status">
+              <strong>Miigwetch — thank you.</strong>
+              <p>We've received your submission and will be in touch soon.</p>
+            </div>
+          ) : (
+            <form
+              className={styles.contributeForm}
+              onSubmit={(e) => {
+                e.preventDefault()
+                setContributeSent(true)
+              }}
+            >
+              <div className={styles.formRow}>
                 <label className={styles.formField}>
-                  <span>Tell us about it</span>
-                  <textarea name="message" rows={5} required />
+                  <span>Name</span>
+                  <input type="text" name="name" required autoComplete="name" />
                 </label>
-                <button type="submit" className={styles.revealButton}>
-                  Submit
-                </button>
-              </form>
-            )}
-          </div>
-        </section>
-      )}
+                <label className={styles.formField}>
+                  <span>Email</span>
+                  <input type="email" name="email" required autoComplete="email" />
+                </label>
+              </div>
 
-      {/* ── Theatre mode overlay ── */}
-      {theatre && (() => {
-        const tId = theatreId ?? VIDEOS[videoIndex].id
-        const tTitle = VIDEOS.find((v) => v.id === tId)?.title ?? ''
-        return (
-        <div
-          className={styles.theatre}
-          onClick={() => setTheatre(false)}
-          role="dialog"
-          aria-modal="true"
-          aria-label={tTitle}
-        >
-          <button
-            type="button"
-            className={styles.theatreClose}
-            onClick={() => setTheatre(false)}
-            aria-label="Close theatre mode"
-          >
-            ×
-          </button>
-          <div className={styles.theatreFrame} onClick={(e) => e.stopPropagation()}>
-            <iframe
-              className={styles.theatreIframe}
-              src={embedUrl(tId)}
-              title={tTitle}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
+              <div className={styles.formRow}>
+                <label className={styles.formField}>
+                  <span>Phone (optional)</span>
+                  <input type="tel" name="phone" autoComplete="tel" />
+                </label>
+                <label className={styles.formField}>
+                  <span>I'd like to submit</span>
+                  <select name="type" defaultValue="post">
+                    <option value="post">A written post / story</option>
+                    <option value="video">A video</option>
+                    <option value="both">Both a post and a video</option>
+                  </select>
+                </label>
+              </div>
+
+              <label className={styles.formField}>
+                <span>Tell us about it</span>
+                <textarea name="message" rows={5} required />
+              </label>
+
+              <button type="submit" className={styles.revealButton}>
+                Submit
+              </button>
+            </form>
+          )}
         </div>
-        )
-      })()}
+      </section>
+
+      {theatre &&
+        (() => {
+          const tId = theatreId ?? activeVideo?.youtubeId ?? ''
+          const tTitle =
+            videos.find((v) => v.youtubeId === tId)?.title ??
+            BLOG_POSTS.find((p) => p.videoId === tId)?.title ??
+            ''
+
+          if (!tId) {
+            return null
+          }
+
+          return (
+            <div
+              className={styles.theatre}
+              onClick={() => setTheatre(false)}
+              role="dialog"
+              aria-modal="true"
+              aria-label={tTitle}
+            >
+              <button
+                type="button"
+                className={styles.theatreClose}
+                onClick={() => setTheatre(false)}
+                aria-label="Close theatre mode"
+              >
+                ×
+              </button>
+
+              <div
+                className={styles.theatreFrame}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <iframe
+                  className={styles.theatreIframe}
+                  src={embedUrl(tId)}
+                  title={tTitle}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          )
+        })()}
     </div>
   )
 }
 
-// ── Archive list item: title selects the video; + slides its description ──
 function ArchiveItem({
   video,
   index,
   active,
   onSelect,
 }: {
-  video: (typeof VIDEOS)[number]
+  video: HubVideo
   index: number
   active: boolean
   onSelect: () => void
 }) {
   const [open, setOpen] = useState(false)
+
   return (
     <li className={styles.archiveItem} data-active={active}>
       <div className={styles.archiveItemRow}>
         <button type="button" className={styles.archiveItemTitle} onClick={onSelect}>
-          <span className={styles.archiveItemNo}>{String(index + 1).padStart(2, '0')}</span>
+          <span className={styles.archiveItemNo}>
+            {String(index + 1).padStart(2, '0')}
+          </span>
           <span>{video.title}</span>
         </button>
+
         <button
           type="button"
           className={styles.archivePlus}
@@ -1023,11 +1199,17 @@ function ArchiveItem({
           aria-label={open ? 'Hide description' : 'Show description'}
         >
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-            <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor"
-              strokeWidth="2" strokeLinecap="round" />
+            <path
+              d="M12 5v14M5 12h14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
           </svg>
         </button>
       </div>
+
       <div className={styles.archiveDesc} data-open={open}>
         <p>{video.desc}</p>
       </div>

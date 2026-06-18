@@ -411,6 +411,26 @@
       "emptyDescription": "Try another year or search term to explore the archive."
     }
   },
+  "richText": {
+    "toolbar": "Formatting toolbar",
+    "placeholder": "Start writing...",
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "bulletList": "Bullet list",
+    "orderedList": "Numbered list",
+    "link": "Insert link",
+    "image": "Insert image",
+    "quote": "Block quote",
+    "fontSize": "Font size",
+    "fontSizeDefault": "Default size",
+    "linkUrl": "Link destination",
+    "linkUrlPlaceholder": "https://example.com or /about",
+    "applyLink": "Apply link",
+    "removeLink": "Remove link",
+    "linkPrompt": "Enter URL (leave blank to remove link)",
+    "imagePrompt": "Enter image URL"
+  },
   "common": {
     "loading": "Loading",
     "showMore": "Show more",

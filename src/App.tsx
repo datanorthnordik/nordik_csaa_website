@@ -155,6 +155,7 @@ function App() {
               path="/community-support-team/resources"
               element={withSuspense(<CommunityResourcesPage />)}
             />
+            <Route path="/test-book" element={withSuspense(<BooksTestPage />)} />
             <Route path="/test-books" element={withSuspense(<BooksTestPage />)} />
             <Route
               path="/living-history-hub"
