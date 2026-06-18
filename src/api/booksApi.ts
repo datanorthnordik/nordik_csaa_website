@@ -165,6 +165,7 @@ export const booksApi = {
   },
 
   async submitToBook(bookId: number, input: PublicBookSubmissionInput, imageFile?: File | null) {
+    const selectedImageFile = imageFile instanceof File && imageFile.size > 0 ? imageFile : null
     const payload = {
       target_section_id: input.targetSectionId,
       new_section_name: input.newSectionName,
@@ -172,21 +173,21 @@ export const booksApi = {
         field_id: value.fieldId,
         value: value.value,
       })),
-      image: imageFile
+      image: selectedImageFile
         ? {
-            file_name: imageFile.name,
-            mime_type: imageFile.type,
-            file_size: imageFile.size,
+            file_name: selectedImageFile.name,
+            mime_type: selectedImageFile.type,
+            file_size: selectedImageFile.size,
           }
         : undefined,
     }
 
     const requestBody =
-      imageFile
+      selectedImageFile
         ? (() => {
             const form = new FormData()
             form.append('payload', JSON.stringify(payload))
-            form.append('image_file', imageFile, imageFile.name)
+            form.append('image_file', selectedImageFile, selectedImageFile.name)
             return form
           })()
         : payload

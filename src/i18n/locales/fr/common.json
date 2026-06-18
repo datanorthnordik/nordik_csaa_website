@@ -411,6 +411,26 @@
       "emptyDescription": "Essayez une autre annee ou un autre terme de recherche pour explorer l archive."
     }
   },
+  "richText": {
+    "toolbar": "Barre de formatage",
+    "placeholder": "Commencez a ecrire...",
+    "bold": "Gras",
+    "italic": "Italique",
+    "underline": "Souligne",
+    "bulletList": "Liste a puces",
+    "orderedList": "Liste numerotee",
+    "link": "Inserer un lien",
+    "image": "Inserer une image",
+    "quote": "Citation",
+    "fontSize": "Taille de police",
+    "fontSizeDefault": "Taille par defaut",
+    "linkUrl": "Destination du lien",
+    "linkUrlPlaceholder": "https://exemple.com ou /a-propos",
+    "applyLink": "Appliquer le lien",
+    "removeLink": "Retirer le lien",
+    "linkPrompt": "Entrez l URL (laissez vide pour retirer le lien)",
+    "imagePrompt": "Entrez l URL de l image"
+  },
   "common": {
     "loading": "Chargement",
     "showMore": "Afficher plus",

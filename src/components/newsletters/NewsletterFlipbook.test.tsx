@@ -60,23 +60,43 @@ vi.mock('react-pageflip', async () => {
   }
 })
 
-vi.mock('react-pdf', () => ({
-  Document: ({
-    children,
-  }: {
-    children: React.ReactNode
-  }) => <div>{children}</div>,
-  Page: ({
-    pageNumber,
-  }: {
-    pageNumber: number
-  }) => <div>PDF page {pageNumber}</div>,
-  pdfjs: {
-    GlobalWorkerOptions: {
-      workerSrc: '',
+vi.mock('react-pdf', async () => {
+  const React = await import('react')
+
+  return {
+    Document: ({
+      children,
+      onLoadSuccess,
+    }: {
+      children: React.ReactNode
+      onLoadSuccess?: ({
+        numPages,
+      }: {
+        numPages: number
+      }) => void
+    }) => {
+      React.useEffect(() => {
+        onLoadSuccess?.({
+          numPages: 4,
+        })
+      }, [onLoadSuccess])
+
+      return <div>{children}</div>
     },
-  },
-}))
+    Page: ({
+      pageNumber,
+      className,
+    }: {
+      pageNumber: number
+      className?: string
+    }) => <div className={className}>PDF page {pageNumber}</div>,
+    pdfjs: {
+      GlobalWorkerOptions: {
+        workerSrc: '',
+      },
+    },
+  }
+})
 
 const imageSource = {
   kind: 'images' as const,
@@ -100,6 +120,12 @@ const imageSource = {
       imageUrl: 'https://example.com/page-3.jpg',
     },
   ],
+}
+
+const pdfSource = {
+  kind: 'pdf' as const,
+  url: 'https://example.com/cookbook.pdf',
+  fileName: 'cookbook.pdf',
 }
 
 describe('NewsletterFlipbook', () => {
@@ -158,5 +184,13 @@ describe('NewsletterFlipbook', () => {
       deltaY: 12,
     })
     expectPageCount('2 / 3')
+  })
+
+  it('renders pdf pages after the document loads so pdf-based flipbooks stay covered', async () => {
+    render(<NewsletterFlipbook source={pdfSource} title="Community Cookbook" />)
+
+    expect(await screen.findByText('PDF page 1')).toBeDefined()
+    expectPageCount('1 / 4')
+    expect(screen.getByText('PDF page 4')).toBeDefined()
   })
 })
