@@ -1,0 +1,323 @@
+.wrapper {
+  border: 1px solid var(--color-border-input);
+  border-radius: 16px;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.wrapper.focused {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.wrapper.disabled {
+  background: var(--color-surface-alt);
+  opacity: 0.7;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 8px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
+}
+
+.toolbarGroup {
+  display: inline-flex;
+  gap: 2px;
+  padding-right: 6px;
+  margin-right: 6px;
+  border-right: 1px solid var(--color-border);
+}
+
+.toolbarGroup:last-child {
+  border-right: 0;
+  padding-right: 0;
+  margin-right: 0;
+}
+
+.toolbarButton {
+  width: 30px;
+  height: 30px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.toolbarButton:hover:not(:disabled) {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.toolbarButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.toolbarButtonActive,
+.toolbarButtonActive:hover {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-color: var(--color-primary);
+}
+
+.fontSizeContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.fontSizeButton {
+  min-width: 70px;
+  height: 30px;
+  border: 1px solid var(--color-border-input);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: 0 8px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.fontSizeButton:hover:not(:disabled) {
+  background: var(--color-surface);
+  border-color: var(--color-primary);
+}
+
+.fontSizeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fontSizeDisplay {
+  min-width: 35px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.fontSizeDropdownIcon {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.fontSizeButton:not(:disabled):hover .fontSizeDropdownIcon {
+  opacity: 1;
+}
+
+.fontSizeDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  margin-top: 2px;
+  min-width: 180px;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  padding: 4px 0;
+}
+
+.fontSizeOption {
+  width: 100%;
+  min-height: 32px;
+  padding: 0 12px;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition:
+    background 0.1s ease,
+    color 0.1s ease;
+}
+
+.fontSizeOption:hover {
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.fontSizeOptionActive {
+  background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.fontSizeOptionActive::after {
+  content: '\2713';
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.fontSizeOptionLabel {
+  flex: 1;
+}
+
+.linkEditor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface-alt) 70%, white 30%);
+}
+
+.linkField {
+  flex: 1 1 260px;
+  display: grid;
+  gap: 6px;
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.linkField input {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border-input);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+}
+
+.linkField input:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.linkActions {
+  display: flex;
+  gap: 8px;
+}
+
+.linkActionButton,
+.linkActionButtonSecondary {
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border-input);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.linkActionButton {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-color: var(--color-primary);
+}
+
+.linkActionButtonSecondary {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.linkActionButton:hover:not(:disabled),
+.linkActionButtonSecondary:hover:not(:disabled) {
+  filter: brightness(0.98);
+}
+
+.linkActionButton:disabled,
+.linkActionButtonSecondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.editor {
+  min-height: 220px;
+  padding: 14px 16px;
+  color: var(--color-text);
+  font: inherit;
+  line-height: 1.55;
+  outline: none;
+}
+
+.editor :global(p) {
+  margin: 0 0 12px;
+}
+
+.editor :global(p:last-child) {
+  margin-bottom: 0;
+}
+
+.editor[data-empty='true']::before {
+  content: attr(data-placeholder);
+  color: var(--color-text-placeholder);
+  pointer-events: none;
+}
+
+.editor blockquote {
+  border-left: 3px solid var(--color-primary);
+  padding-left: 14px;
+  margin: 12px 0;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.editor ul,
+.editor ol {
+  margin: 12px 0;
+  padding-left: 22px;
+}
+
+.editor a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.editor em,
+.editor i {
+  font-style: italic;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.underline {
+  text-decoration: underline;
+}

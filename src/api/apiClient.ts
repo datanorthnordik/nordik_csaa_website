@@ -22,9 +22,6 @@ type RefreshResponse = {
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 })
 
 let refreshPromise: Promise<string> | null = null
@@ -84,6 +81,14 @@ async function refreshAccessToken() {
 }
 
 apiClient.interceptors.request.use((config) => {
+  const headers = AxiosHeaders.from(config.headers)
+  if (config.data instanceof FormData) {
+    headers.delete('Content-Type')
+  } else if (config.data !== undefined && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json')
+  }
+  config.headers = headers
+
   if (shouldSkipAuth(config.url, config.skipAuth)) {
     return config
   }

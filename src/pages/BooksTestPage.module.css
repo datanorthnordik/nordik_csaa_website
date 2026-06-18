@@ -1,223 +1,447 @@
 .page {
   display: grid;
-  gap: 32px;
-  padding: 32px 20px 56px;
-}
-
-.hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 360px);
-  gap: 22px;
-}
-
-.heroCopy,
-.selectorCard,
-.viewerCard,
-.formCard,
-.placeholderCard,
-.messageCard {
-  border-radius: 28px;
-  border: 1px solid rgba(16, 31, 59, 0.1);
-  background: #ffffff;
-  box-shadow: 0 22px 38px rgba(16, 31, 59, 0.06);
-}
-
-.heroCopy {
-  padding: 30px 32px;
-  background:
-    radial-gradient(circle at top right, rgba(255, 224, 183, 0.55), transparent 34%),
-    linear-gradient(135deg, #f7fbff 0%, #fffaf2 100%);
-}
-
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(20, 62, 124, 0.08);
-  color: #204278;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.heroCopy h1 {
-  margin: 14px 0 12px;
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  line-height: 0.98;
-  color: #11233f;
-}
-
-.heroCopy p {
-  margin: 0;
-  max-width: 780px;
-  color: #596b86;
-  line-height: 1.65;
-}
-
-.selectorCard,
-.viewerCard,
-.formCard,
-.placeholderCard,
-.messageCard {
-  padding: 24px;
-}
-
-.selectorCard {
-  display: grid;
-  gap: 18px;
-}
-
-.selectorField,
-.field {
-  display: grid;
-  gap: 8px;
-}
-
-.selectorField span,
-.field span {
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: #2d405d;
-}
-
-.selectorField select,
-.field input,
-.field textarea,
-.field select {
-  width: 100%;
-  border: 1px solid rgba(17, 35, 63, 0.12);
-  border-radius: 18px;
-  padding: 12px 14px;
-  font: inherit;
-  color: #152744;
-  background: #ffffff;
-}
-
-.selectorMeta {
-  display: grid;
-  gap: 6px;
-  color: #5d6d89;
-}
-
-.selectorMeta strong {
-  color: #12233f;
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 420px);
   gap: 24px;
+  padding: 24px 20px 56px;
 }
 
-.viewerHeader,
-.formHeader {
+.header {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  align-items: flex-start;
-  margin-bottom: 18px;
 }
 
-.viewerHeader h2,
-.formHeader h2 {
+.title {
   margin: 0;
-  color: #12233f;
+  color: var(--color-text);
+  font-size: clamp(1.75rem, 3vw, 2.4rem);
 }
 
-.viewerHeader p,
-.formHeader p {
-  margin: 6px 0 0;
-  color: #60708c;
-  line-height: 1.55;
+.viewerCard,
+.stateCard {
+  padding: 24px;
+  border-radius: 28px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
 }
 
-.downloadLink,
-.submitButton {
+.stateCard {
+  text-align: center;
+}
+
+.addButton,
+.submitButton,
+.secondaryButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 46px;
+  border: 1px solid transparent;
   border-radius: 999px;
-  text-decoration: none;
+  padding: 11px 20px;
+  font: inherit;
   font-weight: 700;
-}
-
-.downloadLink {
-  padding: 11px 18px;
-  background: #edf3ff;
-  color: #21457d;
-}
-
-.formCard {
-  display: grid;
-  gap: 18px;
-  align-self: start;
-}
-
-.toggleRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-}
-
-.radioLabel {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #40516c;
-}
-
-.dynamicFields {
-  display: grid;
-  gap: 18px;
-}
-
-.successBox {
-  padding: 14px 16px;
-  border-radius: 18px;
-  background: #edf8ef;
-  color: #245f2f;
-  border: 1px solid rgba(36, 95, 47, 0.12);
-}
-
-.submitButton {
-  border: none;
   cursor: pointer;
-  padding: 14px 20px;
-  background: linear-gradient(135deg, #224e94 0%, #132f58 100%);
-  color: #ffffff;
-  box-shadow: 0 12px 20px rgba(34, 78, 148, 0.18);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
 }
 
-.submitButton:disabled {
+.addButton,
+.submitButton {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-color: var(--color-primary);
+}
+
+.addButton:hover:not(:disabled),
+.submitButton:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+}
+
+.secondaryButton {
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.secondaryButton:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+}
+
+.submitButton:disabled,
+.secondaryButton:disabled {
   opacity: 0.65;
   cursor: not-allowed;
 }
 
-@media (max-width: 1080px) {
-  .hero,
-  .layout {
+.successBox,
+.errorBox {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 18px;
+}
+
+.successBox {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border: 1px solid var(--color-success-border);
+}
+
+.errorBox {
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+  border: 1px solid var(--color-error-border);
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(12, 14, 18, 0.68);
+  backdrop-filter: blur(6px);
+}
+
+.modalPanel {
+  width: min(1080px, 100%);
+  max-height: calc(100vh - 32px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 24px;
+  padding: 28px clamp(20px, 3vw, 32px);
+  border: 1px solid var(--color-border);
+  border-radius: 28px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-primary) 4%, var(--color-surface)) 0%,
+    var(--color-surface) 120px
+  );
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.18),
+    0 8px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modalHeading {
+  display: grid;
+  gap: 6px;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  line-height: 1.08;
+}
+
+.modalContent {
+  min-height: 0;
+  display: grid;
+  gap: 22px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-primary) 25%, transparent) transparent;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: minmax(310px, 340px) minmax(0, 1fr);
+  gap: 24px;
+}
+
+.formSidebar,
+.formMain,
+.dynamicFields,
+.field {
+  display: grid;
+  gap: 16px;
+}
+
+.formSidebar {
+  align-content: start;
+}
+
+.formCard {
+  display: grid;
+  gap: 16px;
+  padding: 22px;
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  background: var(--color-surface);
+}
+
+.sidebarIntro {
+  gap: 14px;
+  border-color: color-mix(in srgb, var(--color-primary) 16%, var(--color-border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--color-primary) 14%, transparent), transparent 46%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-primary) 7%, var(--color-surface)) 0%,
+      var(--color-surface) 100%
+    );
+}
+
+.sidebarLabel {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sidebarIntro h3 {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.1;
+}
+
+.sidebarText {
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.sidebarBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sidebarBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 16%, var(--color-border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary) 7%, var(--color-surface));
+  color: var(--color-text);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.cardHeader {
+  display: grid;
+  gap: 6px;
+}
+
+.cardHeader h3 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 1.05rem;
+}
+
+.cardHeader p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.field span {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--color-border-input);
+  border-radius: 14px;
+  padding: 0 14px;
+  font: inherit;
+  color: var(--color-text);
+  background: var(--color-surface);
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.field textarea {
+  min-height: 120px;
+  padding: 12px 14px;
+  resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-focus-ring);
+}
+
+.toggleRow {
+  display: grid;
+  gap: 14px;
+}
+
+.field input[type='file'] {
+  padding: 10px 12px;
+}
+
+.field input[type='file']::file-selector-button {
+  margin-right: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  padding: 8px 14px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fileMetaRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+}
+
+.fileMetaName {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.fileField {
+  gap: 12px;
+  padding: 16px;
+  border: 1px dashed color-mix(in srgb, var(--color-primary) 24%, var(--color-border));
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+}
+
+.radioLabel {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.radioLabel input {
+  margin: 0;
+  accent-color: var(--color-primary);
+}
+
+.radioText {
+  display: grid;
+  gap: 4px;
+}
+
+.radioTitle {
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.radioHint {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.radioLabel:has(input:checked) {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 28%, transparent);
+  transform: translateY(-1px);
+}
+
+.radioLabel:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
+}
+
+.modalActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 4px;
+  border-top: 1px solid var(--color-border);
+}
+
+@media (max-width: 960px) {
+  .formGrid {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 720px) {
   .page {
-    padding: 20px 14px 40px;
+    padding: 20px 14px 36px;
   }
 
-  .heroCopy,
-  .selectorCard,
-  .viewerCard,
-  .formCard,
-  .placeholderCard,
-  .messageCard {
+  .header,
+  .modalHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .modalPanel {
+    width: 100%;
+    max-height: calc(100vh - 24px);
+    padding: 20px 18px;
+  }
+
+  .modalContent {
+    padding-right: 2px;
+  }
+
+  .formCard {
     padding: 18px;
   }
 
-  .viewerHeader,
-  .formHeader {
+  .fileMetaRow {
     flex-direction: column;
+    align-items: stretch;
+  }
+
+  .viewerCard,
+  .stateCard {
+    padding: 18px;
+  }
+
+  .modalOverlay {
+    padding: 12px;
   }
 }
