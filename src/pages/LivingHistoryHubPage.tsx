@@ -16,6 +16,11 @@ const VIDEOS = [
     desc: 'An introduction to the living history of Shingwauk: the people, the place, and the memories that endure.',
   },
   {
+    id: 'ftkjsjHE9yY',
+    title: 'Shirley: A Residential School Story',
+    desc: 'Shirley Horn shares her residential school story on The Human Challenge: healing, culture, and a longing for language.',
+  },
+  {
     id: 'PQNA9vqP42g',
     title: 'Tree Planting, 1981 Shingwauk Reunion',
     desc: 'Survivors gather to plant an Eastern White Pine, turning grief into a living monument to the children.',
@@ -71,7 +76,26 @@ const DAN_PINE_BODY = [
   'Through those years and after, Elder Dan Pine Sr. of Garden River First Nation stood as a keeper of Anishinaabe knowledge, a respected healer and teacher who quietly held the ceremonies, medicines, and teachings the schools sought to erase. His presence, and that of his family, became a thread of continuity that connected the old vision of Little Pine to the survivors who would one day return.',
   'When Survivors gathered at Shingwauk in 1981, they came not only to remember what had happened, but to reclaim the ground itself. From that gathering grew a simple, powerful act: the planting of a pine, the tree of Shingwaukonse, as a living monument to the children.',
 ]
+const SHIRLEY_BODY = [
+  `A special episode of The Human Challenge features Shirley Horn, in an episode titled "Shirley: A Residential School Story."`,
+  `As we mark National Indigenous Languages Day on Turtle Island, Shirley Horn shares her residential school story, growing up in not one, but two residential schools. She would return years later to Shingwauk Hall after it became a university to pursue her education, become first chancellor, and then Chief of the Missanabie to help return land back to her community.`,
+  `In this touching episode, Shirley talks about her life healing the trauma that came with the residential school system, reconnecting with Indigenous culture, and her longing for Indigenous language. Learn more about her life in a new children's book, "Shirley: An Indian Residential School Story," written by Joanne Robertson. Available now!`,
+  `Special thank you to the Children of Shingwauk Alumni Association and Algoma University. This episode was recorded in The Elder Room at the Shingwauk Anishinaabe Students Lounge at Algoma University. Cinematography by Shae Mclurg.`,
+]
 const BLOG_POSTS = [
+  {
+    id: 'shirley-story',
+    date: 'March 2026',
+    author: 'The Human Challenge',
+    title: 'Shirley: A Residential School Story',
+    excerpt:
+      'Shirley Horn shares her residential school story: healing, reconnecting with culture, and a longing for language.',
+    image: '/shirley-podcast.jpg',
+    caption:
+      'Shirley Horn on The Human Challenge, recorded in The Elder Room at the Shingwauk Anishinaabe Students Lounge, Algoma University.',
+    videoId: 'ftkjsjHE9yY',
+    body: SHIRLEY_BODY,
+  },
   {
     id: 'dan-pine',
     date: 'June 2026',
