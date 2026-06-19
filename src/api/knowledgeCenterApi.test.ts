@@ -15,6 +15,7 @@ describe('knowledgeCenterApi', () => {
     apiPost.mockReset()
     apiPost.mockResolvedValue({
       data: {
+        message: 'Knowledge center submission created successfully',
         submission: {
           id: 12,
           submitter_name: 'Alice',
@@ -32,7 +33,7 @@ describe('knowledgeCenterApi', () => {
   })
 
   it('submits the Living History contribution as public JSON', async () => {
-    await knowledgeCenterApi.submitContribution({
+    const response = await knowledgeCenterApi.submitContribution({
       name: 'Alice',
       email: 'alice@example.com',
       phone: '555-0100',
@@ -54,5 +55,21 @@ describe('knowledgeCenterApi', () => {
         skipErrorToast: true,
       },
     )
+
+    expect(response).toEqual({
+      message: 'Knowledge center submission created successfully',
+      submission: {
+        id: 12,
+        submitter_name: 'Alice',
+        submitter_email: 'alice@example.com',
+        submitter_phone: '',
+        submission_type: 'post',
+        message: 'I have a story to share.',
+        status: 'open',
+        completion_notes: '',
+        created_at: '2026-06-18T12:00:00Z',
+        updated_at: '2026-06-18T12:00:00Z',
+      },
+    })
   })
 })
