@@ -638,7 +638,7 @@ export function LivingHistoryHubPage() {
       await knowledgeCenterApi.submitContribution(contributeForm)
       setContributeForm(initialContributionForm)
       toast.success(
-        `Your request to add ${submittedType} to Living History has been submitted. Our team will be reaching out to you shortly for further details.`,
+        `Your Living History submission for ${submittedType} has been received. Our team will be reaching out to you shortly for further details.`,
       )
     } catch (error) {
       toast.error(
