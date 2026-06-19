@@ -1211,7 +1211,7 @@ describe('App', () => {
         .getByRole('link', { name: /community support team/i })
         .getAttribute('href'),
     ).toBe('/community-support-team')
-    expect(within(breadcrumb).getByText(/resources & support/i)).toBeDefined()
+    expect(await within(breadcrumb).findByText(/resources & support/i)).toBeDefined()
   })
 
   it('renders the press archive module route and keeps the news menu item active', async () => {
