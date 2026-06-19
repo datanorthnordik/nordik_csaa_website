@@ -92,7 +92,11 @@ describe('LivingHistoryHubPage', () => {
     Object.defineProperty(window, 'IntersectionObserver', {
       writable: true,
       value: class MockIntersectionObserver {
-        constructor(private readonly callback: IntersectionObserverCallback) {}
+        private readonly callback: IntersectionObserverCallback
+
+        constructor(callback: IntersectionObserverCallback) {
+          this.callback = callback
+        }
 
         observe(target: Element) {
           this.callback(
