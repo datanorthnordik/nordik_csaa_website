@@ -568,10 +568,12 @@ export function LivingHistoryHubPage() {
 
     try {
       setIsSubmittingContribution(true)
-      const response = await knowledgeCenterApi.submitContribution(contributeForm)
+      const submittedType = contributionTypeNotificationLabel(contributeForm.type)
+
+      await knowledgeCenterApi.submitContribution(contributeForm)
       setContributeForm(initialContributionForm)
       toast.success(
-        response.message || "We've received your submission and will be in touch soon.",
+        `Your Living History submission for ${submittedType} has been received. Our team will be reaching out to you shortly for further details.`,
       )
     } catch (error) {
       toast.error(
@@ -1297,4 +1299,17 @@ function ArchiveItem({
       </div>
     </li>
   )
+}
+
+function contributionTypeNotificationLabel(value: KnowledgeCenterSubmissionType) {
+  switch (value) {
+    case 'post':
+      return 'a story'
+    case 'video':
+      return 'a video'
+    case 'both':
+      return 'a story and a video'
+    default:
+      return 'your contribution'
+  }
 }
