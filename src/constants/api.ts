@@ -27,6 +27,8 @@ export const API_ROUTES = {
   pressCoverById: (id: number | string) => `/api/press/${id}/cover/content`,
   pressMediaById: (id: number | string, mediaId: number | string) =>
     `/api/press/${id}/media/${mediaId}/content`,
+  blogs: '/api/blogs',
+  blogById: (id: number | string) => `/api/blogs/${id}`,
   newsletters: '/api/newsletters',
   newsletterById: (id: number | string) => `/api/newsletters/${id}`,
   newsletterMediaById: (id: number | string, mediaId: number | string) =>

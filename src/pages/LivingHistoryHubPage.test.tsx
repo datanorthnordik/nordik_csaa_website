@@ -170,7 +170,7 @@ describe('LivingHistoryHubPage', () => {
 
     await waitFor(() => {
       expect(toastSuccess).toHaveBeenCalledWith(
-        'Knowledge center submission created successfully',
+        'Your Living History submission for a story and a video has been received. Our team will be reaching out to you shortly for further details.',
       )
     })
 
