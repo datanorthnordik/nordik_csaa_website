@@ -1,8 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
+import {
+  knowledgeCenterApi,
+  type KnowledgeCenterSubmissionType,
+} from '../api/knowledgeCenterApi'
 import {
   getVideoTeaserUrl,
   videosApi,
@@ -170,6 +175,22 @@ const FEATURE_BLOCKS = [
   },
 ]
 
+type ContributionFormState = {
+  name: string
+  email: string
+  phone: string
+  type: KnowledgeCenterSubmissionType
+  message: string
+}
+
+const initialContributionForm: ContributionFormState = {
+  name: '',
+  email: '',
+  phone: '',
+  type: 'post',
+  message: '',
+}
+
 export function LivingHistoryHubPage() {
   const { t } = useTranslation()
 
@@ -200,6 +221,9 @@ export function LivingHistoryHubPage() {
   const [openPost, setOpenPost] = useState<string | null>(null)
   const [articlePlaying, setArticlePlaying] = useState(false)
   const [contributeSent, setContributeSent] = useState(false)
+  const [contributeForm, setContributeForm] =
+    useState<ContributionFormState>(initialContributionForm)
+  const [isSubmittingContribution, setIsSubmittingContribution] = useState(false)
   const blogRef = useRef<HTMLDivElement>(null)
 
   const activeVideo = videos[videoIndex] ?? null
@@ -536,6 +560,28 @@ export function LivingHistoryHubPage() {
       if (raf) cancelAnimationFrame(raf)
     }
   }, [openPost])
+
+  async function handleContributionSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (isSubmittingContribution) {
+      return
+    }
+
+    try {
+      setIsSubmittingContribution(true)
+      await knowledgeCenterApi.submitContribution(contributeForm)
+      setContributeSent(true)
+      setContributeForm(initialContributionForm)
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : 'Unable to submit your story right now.',
+      )
+    } finally {
+      setIsSubmittingContribution(false)
+    }
+  }
 
   return (
     <div className={styles.page}>
@@ -1059,30 +1105,73 @@ export function LivingHistoryHubPage() {
           ) : (
             <form
               className={styles.contributeForm}
-              onSubmit={(e) => {
-                e.preventDefault()
-                setContributeSent(true)
+              onSubmit={(event) => {
+                void handleContributionSubmit(event)
               }}
             >
               <div className={styles.formRow}>
                 <label className={styles.formField}>
                   <span>Name</span>
-                  <input type="text" name="name" required autoComplete="name" />
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    autoComplete="name"
+                    value={contributeForm.name}
+                    onChange={(event) =>
+                      setContributeForm((current) => ({
+                        ...current,
+                        name: event.target.value,
+                      }))
+                    }
+                  />
                 </label>
                 <label className={styles.formField}>
                   <span>Email</span>
-                  <input type="email" name="email" required autoComplete="email" />
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    autoComplete="email"
+                    value={contributeForm.email}
+                    onChange={(event) =>
+                      setContributeForm((current) => ({
+                        ...current,
+                        email: event.target.value,
+                      }))
+                    }
+                  />
                 </label>
               </div>
 
               <div className={styles.formRow}>
                 <label className={styles.formField}>
                   <span>Phone (optional)</span>
-                  <input type="tel" name="phone" autoComplete="tel" />
+                  <input
+                    type="tel"
+                    name="phone"
+                    autoComplete="tel"
+                    value={contributeForm.phone}
+                    onChange={(event) =>
+                      setContributeForm((current) => ({
+                        ...current,
+                        phone: event.target.value,
+                      }))
+                    }
+                  />
                 </label>
                 <label className={styles.formField}>
                   <span>I'd like to submit</span>
-                  <select name="type" defaultValue="post">
+                  <select
+                    name="type"
+                    value={contributeForm.type}
+                    onChange={(event) =>
+                      setContributeForm((current) => ({
+                        ...current,
+                        type: event.target.value as KnowledgeCenterSubmissionType,
+                      }))
+                    }
+                  >
                     <option value="post">A written post / story</option>
                     <option value="video">A video</option>
                     <option value="both">Both a post and a video</option>
@@ -1092,11 +1181,26 @@ export function LivingHistoryHubPage() {
 
               <label className={styles.formField}>
                 <span>Tell us about it</span>
-                <textarea name="message" rows={5} required />
+                <textarea
+                  name="message"
+                  rows={5}
+                  required
+                  value={contributeForm.message}
+                  onChange={(event) =>
+                    setContributeForm((current) => ({
+                      ...current,
+                      message: event.target.value,
+                    }))
+                  }
+                />
               </label>
 
-              <button type="submit" className={styles.revealButton}>
-                Submit
+              <button
+                type="submit"
+                className={styles.revealButton}
+                disabled={isSubmittingContribution}
+              >
+                {isSubmittingContribution ? 'Submitting...' : 'Submit'}
               </button>
             </form>
           )}
