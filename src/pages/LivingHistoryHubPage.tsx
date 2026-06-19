@@ -10,7 +10,11 @@ import {
 } from '../api/blogsApi'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
-import { LivingHistoryBlogContent } from '../components/blogs/LivingHistoryBlogContent'
+import {
+  LivingHistoryBlogLayout,
+  blogHasAnimations,
+  blogHasPostAnimationContent,
+} from '../components/blogs/LivingHistoryBlogLayout'
 import {
   knowledgeCenterApi,
   type KnowledgeCenterSubmissionType,
@@ -935,7 +939,13 @@ export function LivingHistoryHubPage() {
       <section
         ref={blogRef}
         className={styles.blog}
-        data-article={selectedBlogId === null ? '' : String(selectedBlogId)}
+        data-article={
+          selectedBlog && blogHasAnimations(selectedBlog)
+            ? 'immersive'
+            : selectedBlogId === null
+              ? ''
+              : String(selectedBlogId)
+        }
       >
         <div className={styles.blogInner}>
           <p className={styles.tvEyebrow}>Living History Journal</p>
@@ -963,20 +973,21 @@ export function LivingHistoryHubPage() {
                 <h1 className={styles.blogArticleTitle}>{selectedBlog.heading}</h1>
                 <div className={styles.featureRule} aria-hidden="true" />
 
-                {(selectedBlog.cover_image_fetch_url || selectedBlog.cover_image_url) && (
-                  <figure className={styles.blogHero}>
-                    <img
-                      src={resolveBlogAssetUrl(
-                        selectedBlog.cover_image_fetch_url || selectedBlog.cover_image_url,
-                      )}
-                      alt={selectedBlog.heading}
-                    />
-                  </figure>
-                )}
+                {!blogHasAnimations(selectedBlog) &&
+                  (selectedBlog.cover_image_fetch_url || selectedBlog.cover_image_url) && (
+                    <figure className={styles.blogHero}>
+                      <img
+                        src={resolveBlogAssetUrl(
+                          selectedBlog.cover_image_fetch_url || selectedBlog.cover_image_url,
+                        )}
+                        alt={selectedBlog.heading}
+                      />
+                    </figure>
+                  )}
 
-                <p className={styles.blogPara}>{selectedBlog.description}</p>
-                <LivingHistoryBlogContent
+                <LivingHistoryBlogLayout
                   blog={selectedBlog}
+                  phase="article"
                   onOpenVideo={openTheatre}
                 />
               </article>
@@ -1031,6 +1042,28 @@ export function LivingHistoryHubPage() {
           )}
         </div>
       </section>
+
+      {selectedBlog && blogHasAnimations(selectedBlog) && (
+        <LivingHistoryBlogLayout
+          blog={selectedBlog}
+          phase="animations"
+          onOpenVideo={openTheatre}
+        />
+      )}
+
+      {selectedBlog && blogHasPostAnimationContent(selectedBlog) && (
+        <section className={`${styles.blog} ${styles.blogContinuation}`}>
+          <div className={styles.blogInner}>
+            <article className={styles.blogArticle}>
+              <LivingHistoryBlogLayout
+                blog={selectedBlog}
+                phase="after-animations"
+                onOpenVideo={openTheatre}
+              />
+            </article>
+          </div>
+        </section>
+      )}
 
       <section hidden className={styles.blog} data-article={openPost ?? ''}>
         <div className={styles.blogInner}>

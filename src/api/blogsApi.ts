@@ -1,4 +1,4 @@
-import { API_ROUTES } from '../constants/api'
+import { API_BASE_URL, API_ROUTES } from '../constants/api'
 import { apiClient } from './apiClient'
 
 export type BlogActionType = 'link' | 'video'
@@ -94,8 +94,6 @@ export type BlogDetailResponse = {
   } | null
 }
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || ''
-
 export function resolveBlogAssetUrl(value: string | null | undefined) {
   const trimmed = value?.trim() ?? ''
   if (!trimmed) {
@@ -104,9 +102,8 @@ export function resolveBlogAssetUrl(value: string | null | undefined) {
   if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed) || trimmed.startsWith('//')) {
     return trimmed
   }
-  const base = apiBaseUrl || window.location.origin
   try {
-    return new URL(trimmed, `${base.replace(/\/+$/, '')}/`).toString()
+    return new URL(trimmed, `${API_BASE_URL}/`).toString()
   } catch {
     return trimmed
   }

@@ -756,8 +756,12 @@
 }
 /* The Tree Planting article flows straight into the immersive sections —
    drop the bottom padding so there's no empty gap before them. */
-.blog[data-article='tree-planting'] {
+.blog[data-article='tree-planting'],
+.blog[data-article='immersive'] {
   padding-bottom: 0;
+}
+.blogContinuation {
+  padding-top: clamp(36px, 5vw, 64px);
 }
 
 /* Inline article video player */
@@ -947,10 +951,13 @@
   margin: 30px 0;
 }
 .blogRichText {
-  margin: 22px 0;
+  margin: 22px 0 0;
   color: #4a3828;
   font-size: clamp(0.95rem, 1.15vw, 1.06rem);
   line-height: 1.9;
+}
+.blogRichText p {
+  margin: 0 0 18px;
 }
 .blogRichText > :first-child {
   margin-top: 0;
