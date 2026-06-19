@@ -47,6 +47,6 @@ export const knowledgeCenterApi = {
       },
     )
 
-    return response.data.submission
+    return response.data
   },
 }

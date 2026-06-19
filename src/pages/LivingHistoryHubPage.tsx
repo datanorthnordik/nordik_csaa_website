@@ -220,7 +220,6 @@ export function LivingHistoryHubPage() {
   const [archiveExpanded, setArchiveExpanded] = useState(false)
   const [openPost, setOpenPost] = useState<string | null>(null)
   const [articlePlaying, setArticlePlaying] = useState(false)
-  const [contributeSent, setContributeSent] = useState(false)
   const [contributeForm, setContributeForm] =
     useState<ContributionFormState>(initialContributionForm)
   const [isSubmittingContribution, setIsSubmittingContribution] = useState(false)
@@ -569,9 +568,11 @@ export function LivingHistoryHubPage() {
 
     try {
       setIsSubmittingContribution(true)
-      await knowledgeCenterApi.submitContribution(contributeForm)
-      setContributeSent(true)
+      const response = await knowledgeCenterApi.submitContribution(contributeForm)
       setContributeForm(initialContributionForm)
+      toast.success(
+        response.message || "We've received your submission and will be in touch soon.",
+      )
     } catch (error) {
       toast.error(
         error instanceof Error
@@ -1097,113 +1098,106 @@ export function LivingHistoryHubPage() {
             the Living History Hub.
           </p>
 
-          {contributeSent ? (
-            <div className={styles.contributeThanks} role="status">
-              <strong>Miigwetch — thank you.</strong>
-              <p>We've received your submission and will be in touch soon.</p>
-            </div>
-          ) : (
-            <form
-              className={styles.contributeForm}
-              onSubmit={(event) => {
-                void handleContributionSubmit(event)
-              }}
-            >
-              <div className={styles.formRow}>
-                <label className={styles.formField}>
-                  <span>Name</span>
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    autoComplete="name"
-                    value={contributeForm.name}
-                    onChange={(event) =>
-                      setContributeForm((current) => ({
-                        ...current,
-                        name: event.target.value,
-                      }))
-                    }
-                  />
-                </label>
-                <label className={styles.formField}>
-                  <span>Email</span>
-                  <input
-                    type="email"
-                    name="email"
-                    required
-                    autoComplete="email"
-                    value={contributeForm.email}
-                    onChange={(event) =>
-                      setContributeForm((current) => ({
-                        ...current,
-                        email: event.target.value,
-                      }))
-                    }
-                  />
-                </label>
-              </div>
-
-              <div className={styles.formRow}>
-                <label className={styles.formField}>
-                  <span>Phone (optional)</span>
-                  <input
-                    type="tel"
-                    name="phone"
-                    autoComplete="tel"
-                    value={contributeForm.phone}
-                    onChange={(event) =>
-                      setContributeForm((current) => ({
-                        ...current,
-                        phone: event.target.value,
-                      }))
-                    }
-                  />
-                </label>
-                <label className={styles.formField}>
-                  <span>I'd like to submit</span>
-                  <select
-                    name="type"
-                    value={contributeForm.type}
-                    onChange={(event) =>
-                      setContributeForm((current) => ({
-                        ...current,
-                        type: event.target.value as KnowledgeCenterSubmissionType,
-                      }))
-                    }
-                  >
-                    <option value="post">A written post / story</option>
-                    <option value="video">A video</option>
-                    <option value="both">Both a post and a video</option>
-                  </select>
-                </label>
-              </div>
-
+          <form
+            className={styles.contributeForm}
+            onSubmit={(event) => {
+              void handleContributionSubmit(event)
+            }}
+          >
+            <div className={styles.formRow}>
               <label className={styles.formField}>
-                <span>Tell us about it</span>
-                <textarea
-                  name="message"
-                  rows={5}
+                <span>Name</span>
+                <input
+                  type="text"
+                  name="name"
                   required
-                  value={contributeForm.message}
+                  autoComplete="name"
+                  value={contributeForm.name}
                   onChange={(event) =>
                     setContributeForm((current) => ({
                       ...current,
-                      message: event.target.value,
+                      name: event.target.value,
                     }))
                   }
                 />
               </label>
+              <label className={styles.formField}>
+                <span>Email</span>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  autoComplete="email"
+                  value={contributeForm.email}
+                  onChange={(event) =>
+                    setContributeForm((current) => ({
+                      ...current,
+                      email: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+            </div>
 
-              <button
-                type="submit"
-                className={styles.revealButton}
-                disabled={isSubmittingContribution}
-              >
-                {isSubmittingContribution ? 'Submitting...' : 'Submit'}
-              </button>
-            </form>
-          )}
+            <div className={styles.formRow}>
+              <label className={styles.formField}>
+                <span>Phone (optional)</span>
+                <input
+                  type="tel"
+                  name="phone"
+                  autoComplete="tel"
+                  value={contributeForm.phone}
+                  onChange={(event) =>
+                    setContributeForm((current) => ({
+                      ...current,
+                      phone: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+              <label className={styles.formField}>
+                <span>I'd like to submit</span>
+                <select
+                  name="type"
+                  value={contributeForm.type}
+                  onChange={(event) =>
+                    setContributeForm((current) => ({
+                      ...current,
+                      type: event.target.value as KnowledgeCenterSubmissionType,
+                    }))
+                  }
+                >
+                  <option value="post">A written post / story</option>
+                  <option value="video">A video</option>
+                  <option value="both">Both a post and a video</option>
+                </select>
+              </label>
+            </div>
+
+            <label className={styles.formField}>
+              <span>Tell us about it</span>
+              <textarea
+                name="message"
+                rows={5}
+                required
+                value={contributeForm.message}
+                onChange={(event) =>
+                  setContributeForm((current) => ({
+                    ...current,
+                    message: event.target.value,
+                  }))
+                }
+              />
+            </label>
+
+            <button
+              type="submit"
+              className={styles.revealButton}
+              disabled={isSubmittingContribution}
+            >
+              {isSubmittingContribution ? 'Submitting...' : 'Submit'}
+            </button>
+          </form>
         </div>
       </section>
 
