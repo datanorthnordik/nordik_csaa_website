@@ -1,0 +1,465 @@
+/* ---- Recipe wizard: themed, multi-step, fading ---- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(26, 18, 8, 0.55);
+  backdrop-filter: blur(6px);
+}
+
+.panel {
+  width: min(880px, 100%);
+  max-height: calc(100vh - 32px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, #9c0000 14%, transparent);
+  background:
+    radial-gradient(circle at 8% -6%, color-mix(in srgb, #e08a1e 16%, transparent), transparent 40%),
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, #9c0000 12%, transparent), transparent 44%),
+    linear-gradient(180deg, #fffaf2 0%, #fbf6ec 100%);
+  box-shadow: 0 30px 70px -28px rgba(26, 18, 8, 0.6);
+  transform-origin: center bottom;
+  animation: bubblePop 0.46s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes bubblePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    animation: none;
+  }
+}
+
+/* Header — progress dots + close */
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px 6px;
+}
+
+.progress {
+  display: flex;
+  gap: 8px;
+}
+
+.dot {
+  width: 28px;
+  height: 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #9c0000 16%, transparent);
+  transition: background 0.25s ease, width 0.25s ease;
+}
+
+.dotActive {
+  background: linear-gradient(90deg, #9c0000, #e08a1e);
+}
+
+.closeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid color-mix(in srgb, #9c0000 16%, transparent);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+  color: #1a1208;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.closeBtn:hover:not(:disabled) {
+  background: #fff;
+  transform: translateY(-1px);
+}
+
+.closeBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Body — holds the fading step */
+.body {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 26px 4px;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, #9c0000 25%, transparent) transparent;
+}
+
+.stepFade {
+  animation: stepFade 0.42s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes stepFade {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stepFade {
+    animation: none;
+  }
+}
+
+/* Shared step typography */
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #9c0000;
+}
+
+.stepTitle {
+  margin: 0 0 10px;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  line-height: 1.12;
+  color: #1a1208;
+}
+
+.stepLead {
+  margin: 0 0 22px;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #4a3828;
+}
+
+/* Intro step */
+.intro {
+  text-align: center;
+  padding: 8px 4px 4px;
+}
+
+.introArt {
+  width: clamp(120px, 26vw, 168px);
+  height: auto;
+  margin: 0 auto 10px;
+  filter: drop-shadow(0 10px 22px rgba(26, 18, 8, 0.16));
+}
+
+.intro .stepLead {
+  max-width: 460px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tipBox {
+  max-width: 480px;
+  margin: 4px auto 0;
+  text-align: left;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, #e08a1e 32%, transparent);
+  background: color-mix(in srgb, #e08a1e 10%, #fffaf2);
+}
+
+.tipLabel {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #9c5a12;
+}
+
+.tipBox p {
+  margin: 0;
+  color: #4a3828;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Meal step — tiles */
+.tileGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.tile {
+  display: grid;
+  gap: 8px;
+  padding: 14px 12px;
+  border: 1.5px solid color-mix(in srgb, #9c0000 12%, transparent);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.tile:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, #9c0000 30%, transparent);
+  box-shadow: 0 14px 26px -18px rgba(26, 18, 8, 0.5);
+}
+
+.tileActive {
+  border-color: #9c0000;
+  background: color-mix(in srgb, #9c0000 7%, #fff);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #9c0000 35%, transparent),
+    0 16px 28px -18px rgba(156, 0, 0, 0.5);
+}
+
+.tileImgWrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  background: #fffaf2;
+  overflow: hidden;
+}
+
+.tileImg {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+}
+
+.tilePlus {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #9c0000, #e08a1e);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.tileLabel {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1a1208;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.newNameField {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.newNameField span {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1a1208;
+}
+
+.newNameField input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid color-mix(in srgb, #9c0000 18%, transparent);
+  border-radius: 14px;
+  padding: 0 14px;
+  font: inherit;
+  color: #1a1208;
+  background: #fffaf2;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.newNameField input:focus {
+  border-color: #9c0000;
+  box-shadow: 0 0 0 4px color-mix(in srgb, #9c0000 14%, transparent);
+}
+
+/* Details step */
+.fields {
+  display: grid;
+  gap: 18px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.fieldLabel {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1a1208;
+}
+
+.field input[type='text'] {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid color-mix(in srgb, #9c0000 18%, transparent);
+  border-radius: 14px;
+  padding: 0 14px;
+  font: inherit;
+  color: #1a1208;
+  background: #fffaf2;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field input[type='text']:focus {
+  border-color: #9c0000;
+  box-shadow: 0 0 0 4px color-mix(in srgb, #9c0000 14%, transparent);
+}
+
+.fileField input[type='file'] {
+  padding: 12px;
+  border: 1px dashed color-mix(in srgb, #9c0000 28%, transparent);
+  border-radius: 16px;
+  background: color-mix(in srgb, #e08a1e 6%, #fffaf2);
+  font: inherit;
+  color: #4a3828;
+}
+
+.fileField input[type='file']::file-selector-button {
+  margin-right: 12px;
+  border: 1px solid color-mix(in srgb, #9c0000 18%, transparent);
+  border-radius: 999px;
+  background: #fff;
+  color: #1a1208;
+  padding: 8px 14px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fileMetaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid color-mix(in srgb, #9c0000 12%, transparent);
+}
+
+.fileMetaName {
+  font-weight: 600;
+  color: #1a1208;
+  overflow-wrap: anywhere;
+}
+
+/* Error + footer */
+.errorBox {
+  margin: 0 26px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: color-mix(in srgb, #9c0000 10%, #fff);
+  border: 1px solid color-mix(in srgb, #9c0000 30%, transparent);
+  color: #7a1f24;
+  font-size: 0.92rem;
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 22px 20px;
+  border-top: 1px solid color-mix(in srgb, #9c0000 10%, transparent);
+}
+
+.primaryBtn,
+.ghostBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease,
+    color 0.15s ease;
+}
+
+.primaryBtn {
+  background: linear-gradient(135deg, #9c0000, #c0341a);
+  color: #fff;
+}
+
+.primaryBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px -16px rgba(156, 0, 0, 0.7);
+}
+
+.primaryBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.ghostBtn {
+  background: transparent;
+  color: #9c0000;
+  border-color: color-mix(in srgb, #9c0000 40%, transparent);
+}
+
+.ghostBtn:hover:not(:disabled) {
+  background: color-mix(in srgb, #9c0000 8%, transparent);
+  border-color: #9c0000;
+}
+
+.ghostBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 560px) {
+  .tileGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .body {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .head,
+  .foot {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .errorBox {
+    margin: 0 18px;
+  }
+}

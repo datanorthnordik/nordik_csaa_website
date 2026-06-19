@@ -3,15 +3,12 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
-<<<<<<< HEAD
 import { buildAbsoluteUrl, SITE_NAME, usePageSeo } from '../lib/usePageSeo'
-=======
 import {
   getVideoTeaserUrl,
   videosApi,
   type VideoItemResponse,
 } from '../api/videosApi'
->>>>>>> 234aaf634c0ad2b97b4a3dcdb8e7b32690e0677a
 import styles from './LivingHistoryHubPage.module.css'
 
 const danPineCoverImg = '/dan-pine-family-shingwauk.jpg'
@@ -183,7 +180,6 @@ export function LivingHistoryHubPage() {
   >('idle')
   const [videosError, setVideosError] = useState<string | null>(null)
 
-  const activeVideo = videos[videoIndex] ?? null
   const isVideosLoading = videosStatus === 'loading'
 
   const blockRefs = useRef<(HTMLDivElement | null)[]>([])
@@ -196,6 +192,12 @@ export function LivingHistoryHubPage() {
   const videoRef = useRef<HTMLElement>(null)
   const [videoVisible, setVideoVisible] = useState(false)
   const [videoIndex, setVideoIndex] = useState(0)
+  // If the video list shrinks below the current index, snap back to the first one.
+  // Done during render (not in an effect) to avoid cascading re-renders.
+  if (videos.length > 0 && videoIndex >= videos.length) {
+    setVideoIndex(0)
+  }
+  const activeVideo = videos[videoIndex] ?? null
   const [videoPlaying, setVideoPlaying] = useState(false)
   const [videoLoading, setVideoLoading] = useState(false)
   const [theatre, setTheatre] = useState(false)
@@ -259,7 +261,6 @@ export function LivingHistoryHubPage() {
     },
   ])
 
-<<<<<<< HEAD
   usePageSeo({
     title: `Living History Hub | ${SITE_NAME}`,
     description:
@@ -268,10 +269,6 @@ export function LivingHistoryHubPage() {
     image: buildAbsoluteUrl(danPineCoverImg),
   })
 
-  // Auto-advance the carousel — pauses while a video plays, the archive list
-  // is open, or the section is off-screen; resets when the slide changes.
-=======
->>>>>>> 234aaf634c0ad2b97b4a3dcdb8e7b32690e0677a
   useEffect(() => {
     let cancelled = false
 
@@ -319,12 +316,6 @@ export function LivingHistoryHubPage() {
       cancelled = true
     }
   }, [])
-
-  useEffect(() => {
-    if (videoIndex >= videos.length) {
-      setVideoIndex(0)
-    }
-  }, [videoIndex, videos.length])
 
   useEffect(() => {
     if (videos.length < 2 || !videoVisible || videoPlaying || archiveOpen) {

@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
-import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
-import { SITE_NAME, usePageSeo } from '../lib/usePageSeo'
+import { buildAbsoluteUrl, SITE_NAME, usePageSeo } from '../lib/usePageSeo'
 import styles from './CommunityCirclePage.module.css'
 
 type CircleCard = {
@@ -17,7 +16,7 @@ const CARDS: CircleCard[] = [
     img: '/cc-cookbook.png',
     title: 'Community Cookbook',
     desc: 'Share a family recipe and add it to our growing community cookbook.',
-    href: '/community-circle/cookbook',
+    href: '/community-cookbook',
   },
   {
     img: '/cc-gallery.png',
@@ -47,7 +46,7 @@ export function CommunityCirclePage() {
     description:
       'Our community interactive space — share recipes for the community cookbook, browse the photo gallery, explore living history, and read featured books.',
     canonicalPath: '/community-circle',
-    image: WEBSITE_ASSET_URLS.gatheringsHeroStage,
+    image: buildAbsoluteUrl('/community-hero.png'),
   })
 
   return (
@@ -56,7 +55,7 @@ export function CommunityCirclePage() {
         eyebrow="Community Circle"
         title="Our Community Interactive Space"
         description="A place to gather, share, and connect — where the community comes together to tell its own story."
-        backgroundImageUrl={WEBSITE_ASSET_URLS.gatheringsHeroStage}
+        backgroundImageUrl="/community-hero.png"
         backgroundPosition="center center"
       />
 

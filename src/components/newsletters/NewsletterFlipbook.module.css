@@ -56,6 +56,7 @@
 }
 
 .bookShell {
+  width: 100%;
   padding: 18px 0 0;
   border-top: 1px solid rgba(122, 31, 36, 0.12);
   background: transparent;
@@ -132,6 +133,179 @@
   color: var(--color-text-muted);
   text-align: center;
   padding: 28px 14px;
+}
+
+/* ---- Reader header + stage controls (were previously unstyled) ---- */
+.readerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.readerHeaderCopy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.readerHint {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+.readerHeaderDock {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.readerHeaderDockButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(16, 16, 20, 0.08);
+  color: var(--color-text);
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.readerHeaderDockButton:hover:not(:disabled),
+.readerHeaderDockButton:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(122, 31, 36, 0.25);
+  box-shadow: 0 10px 20px -18px rgba(31, 31, 35, 0.5);
+}
+
+.readerHeaderDockButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.readerHeaderSlider {
+  width: clamp(120px, 26vw, 240px);
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.readerHeaderSlider:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.readerStage {
+  position: relative;
+}
+
+.readerEdgeButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(16, 16, 20, 0.1);
+  color: var(--color-text);
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.readerEdgeButtonLeft {
+  left: 4px;
+}
+
+.readerEdgeButtonRight {
+  right: 4px;
+}
+
+.readerEdgeButton:hover:not(:disabled),
+.readerEdgeButton:focus-visible {
+  border-color: rgba(122, 31, 36, 0.3);
+  box-shadow: 0 12px 24px -16px rgba(31, 31, 35, 0.55);
+}
+
+.readerEdgeButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.readerControlIcon {
+  width: 20px;
+  height: 20px;
+}
+
+/* ---- Cookbook theme: cream, seamless pages + high-contrast controls ---- */
+.themeCookbook .readerHeader {
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: rgba(255, 250, 242, 0.94);
+  border: 1px solid color-mix(in srgb, #9c0000 16%, transparent);
+  box-shadow: 0 6px 18px -14px rgba(26, 18, 8, 0.5);
+}
+
+.themeCookbook .readerCount {
+  background: #9c0000;
+  color: #ffffff;
+}
+
+.themeCookbook .readerHint {
+  color: #4a3828;
+}
+
+.themeCookbook .readerHeaderDockButton,
+.themeCookbook .readerEdgeButton {
+  background: #fffaf2;
+  border-color: color-mix(in srgb, #9c0000 24%, transparent);
+  color: #9c0000;
+}
+
+.themeCookbook .readerHeaderSlider {
+  accent-color: #9c0000;
+}
+
+.themeCookbook .pageFrame {
+  /* Chrome row is hidden below, so collapse to a single full-height row
+     (otherwise .pageContent lands in the auto row and collapses to 0). */
+  grid-template-rows: 1fr;
+  background: #fbf6ec;
+  box-shadow:
+    inset 0 0 0 1px rgba(122, 31, 36, 0.08),
+    0 18px 36px rgba(31, 31, 35, 0.14);
+}
+
+.themeCookbook .pageContent,
+.themeCookbook .pdfPage,
+.themeCookbook .pageImage {
+  background: #fbf6ec;
+}
+
+.themeCookbook .pageChrome {
+  display: none;
+}
+
+.themeCookbook .bookShell {
+  border-top: none;
 }
 
 @media (max-width: 720px) {
