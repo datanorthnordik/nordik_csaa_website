@@ -250,8 +250,6 @@ export function LivingHistoryHubPage() {
   const [isSubmittingContribution, setIsSubmittingContribution] = useState(false)
   const blogRef = useRef<HTMLDivElement>(null)
 
-  const activeVideo = videos[videoIndex] ?? null
-
   const openTheatre = (videoUrlOrId: string) => {
     const id = extractYouTubeId(videoUrlOrId) || videoUrlOrId
     setTheatreId(id)
