@@ -1,6 +1,7 @@
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
 import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
+import { SITE_NAME, usePageSeo } from '../lib/usePageSeo'
 import styles from './CommunityCirclePage.module.css'
 
 export function CommunityBookshelfPage() {
@@ -8,6 +9,14 @@ export function CommunityBookshelfPage() {
     { label: 'Community Circle', href: '/community-circle' },
     { label: 'The Bookshelf' },
   ])
+
+  usePageSeo({
+    title: `The Bookshelf | ${SITE_NAME}`,
+    description:
+      'Featured books and writings that carry our history forward, curated for the community.',
+    canonicalPath: '/community-circle/bookshelf',
+    image: WEBSITE_ASSET_URLS.gatheringsHeroStage,
+  })
 
   return (
     <div className={styles.page}>

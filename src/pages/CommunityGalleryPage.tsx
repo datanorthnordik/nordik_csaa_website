@@ -1,6 +1,7 @@
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
 import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
+import { SITE_NAME, usePageSeo } from '../lib/usePageSeo'
 import styles from './CommunityCirclePage.module.css'
 
 export function CommunityGalleryPage() {
@@ -8,6 +9,14 @@ export function CommunityGalleryPage() {
     { label: 'Community Circle', href: '/community-circle' },
     { label: 'Photo Gallery' },
   ])
+
+  usePageSeo({
+    title: `Community Photo Gallery | ${SITE_NAME}`,
+    description:
+      "Faces, places, and moments from our community's history — browse the Shingwauk photo archive together.",
+    canonicalPath: '/community-circle/gallery',
+    image: WEBSITE_ASSET_URLS.gatheringsHeroStage,
+  })
 
   return (
     <div className={styles.page}>

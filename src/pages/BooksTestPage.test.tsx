@@ -100,18 +100,18 @@ describe('BooksTestPage', () => {
     })
   })
 
-  it('loads the first public book without the selector and opens the add receipe modal', async () => {
+  it('loads the first public book without the selector and opens the add recipe modal', async () => {
     render(<BooksTestPage />)
 
     expect(await screen.findByRole('heading', { level: 1, name: 'Featured Family Book' })).toBeDefined()
     expect(getPublicBook).toHaveBeenCalledWith(1)
     expect(screen.getByText('Flipbook for Featured Family Book')).toBeDefined()
-    expect(screen.getByRole('button', { name: /add your receipe/i })).toBeDefined()
+    expect(screen.getByRole('button', { name: /add your recipe/i })).toBeDefined()
     expect(screen.queryByRole('combobox')).toBeNull()
 
-    fireEvent.click(screen.getByRole('button', { name: /add your receipe/i }))
+    fireEvent.click(screen.getByRole('button', { name: /add your recipe/i }))
 
-    const dialog = screen.getByRole('dialog', { name: /add your receipe/i })
+    const dialog = screen.getByRole('dialog', { name: /add your recipe/i })
     expect(dialog).toBeDefined()
     expect(within(dialog).getByRole('combobox')).toBeDefined()
     expect(within(dialog).getByRole('textbox', { name: 'Story' })).toBeDefined()
@@ -120,9 +120,9 @@ describe('BooksTestPage', () => {
   it('submits the modal form through the public book API', async () => {
     render(<BooksTestPage />)
 
-    fireEvent.click(await screen.findByRole('button', { name: /add your receipe/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /add your recipe/i }))
 
-    const dialog = screen.getByRole('dialog', { name: /add your receipe/i })
+    const dialog = screen.getByRole('dialog', { name: /add your recipe/i })
     fireEvent.change(within(dialog).getByRole('textbox', { name: 'Story' }), {
       target: { value: 'Family soup recipe' },
     })
@@ -145,7 +145,7 @@ describe('BooksTestPage', () => {
       )
     })
 
-    expect(screen.queryByRole('dialog', { name: /add your receipe/i })).toBeNull()
+    expect(screen.queryByRole('dialog', { name: /add your recipe/i })).toBeNull()
     expect(screen.getByText('Your submission has been sent for review.')).toBeDefined()
   })
 
@@ -188,9 +188,9 @@ describe('BooksTestPage', () => {
 
     render(<BooksTestPage />)
 
-    fireEvent.click(await screen.findByRole('button', { name: /add your receipe/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /add your recipe/i }))
 
-    let dialog = screen.getByRole('dialog', { name: /add your receipe/i })
+    let dialog = screen.getByRole('dialog', { name: /add your recipe/i })
     const imageInput = within(dialog).getByLabelText('Optional image') as HTMLInputElement
     const file = new File(['image-bytes'], 'bannock.png', { type: 'image/png' })
     fireEvent.change(imageInput, {
@@ -200,9 +200,9 @@ describe('BooksTestPage', () => {
     expect(within(dialog).getByText('bannock.png')).toBeDefined()
     fireEvent.click(within(dialog).getByRole('button', { name: 'Close' }))
 
-    fireEvent.click(screen.getByRole('button', { name: /add your receipe/i }))
+    fireEvent.click(screen.getByRole('button', { name: /add your recipe/i }))
 
-    dialog = screen.getByRole('dialog', { name: /add your receipe/i })
+    dialog = screen.getByRole('dialog', { name: /add your recipe/i })
     expect(within(dialog).queryByText('bannock.png')).toBeNull()
     fireEvent.change(within(dialog).getByRole('textbox', { name: 'Story' }), {
       target: { value: 'Family soup recipe' },

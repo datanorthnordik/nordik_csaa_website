@@ -10,6 +10,7 @@ import {
 } from '../api/blogsApi'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
+import { buildAbsoluteUrl, SITE_NAME, usePageSeo } from '../lib/usePageSeo'
 import {
   LivingHistoryBlogLayout,
   blogHasAnimations,
@@ -223,6 +224,12 @@ export function LivingHistoryHubPage() {
   const videoRef = useRef<HTMLElement>(null)
   const [videoVisible, setVideoVisible] = useState(false)
   const [videoIndex, setVideoIndex] = useState(0)
+  // If the video list shrinks below the current index, snap back to the first one.
+  // Done during render (not in an effect) to avoid cascading re-renders.
+  if (videos.length > 0 && videoIndex >= videos.length) {
+    setVideoIndex(0)
+  }
+  const activeVideo = videos[videoIndex] ?? null
   const [videoPlaying, setVideoPlaying] = useState(false)
   const [videoLoading, setVideoLoading] = useState(false)
   const [theatre, setTheatre] = useState(false)
@@ -242,8 +249,6 @@ export function LivingHistoryHubPage() {
     useState<ContributionFormState>(initialContributionForm)
   const [isSubmittingContribution, setIsSubmittingContribution] = useState(false)
   const blogRef = useRef<HTMLDivElement>(null)
-
-  const activeVideo = videos[videoIndex] ?? null
 
   const openTheatre = (videoUrlOrId: string) => {
     const id = extractYouTubeId(videoUrlOrId) || videoUrlOrId
@@ -320,6 +325,14 @@ export function LivingHistoryHubPage() {
       label: 'Living History Hub',
     },
   ])
+
+  usePageSeo({
+    title: `Living History Hub | ${SITE_NAME}`,
+    description:
+      'Stories, videos, and living history of Shingwauk — shared by Survivors and Elders, from the 1981 reunion and the tree planting to the voices that keep this history alive.',
+    canonicalPath: '/living-history-hub',
+    image: buildAbsoluteUrl(danPineCoverImg),
+  })
 
   useEffect(() => {
     let cancelled = false

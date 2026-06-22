@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
-import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
+import { buildAbsoluteUrl, SITE_NAME, usePageSeo } from '../lib/usePageSeo'
 import styles from './CommunityCirclePage.module.css'
 
 type CircleCard = {
-  icon: string
+  img: string
   title: string
   desc: string
   href: string
@@ -13,25 +13,25 @@ type CircleCard = {
 
 const CARDS: CircleCard[] = [
   {
-    icon: '🍲',
+    img: '/cc-cookbook.png',
     title: 'Community Cookbook',
     desc: 'Share a family recipe and add it to our growing community cookbook.',
-    href: '/community-circle/cookbook',
+    href: '/community-cookbook',
   },
   {
-    icon: '🖼️',
+    img: '/cc-gallery.png',
     title: 'Photo Gallery',
     desc: 'Browse our community photo archive — spot the faces, places, and moments you remember.',
     href: '/community-circle/gallery',
   },
   {
-    icon: '📖',
+    img: '/cc-knowledge.png',
     title: 'Knowledge Sharing',
     desc: 'Explore stories, videos, and living history shared by Survivors and Elders.',
     href: '/living-history-hub',
   },
   {
-    icon: '📚',
+    img: '/cc-bookshelf.png',
     title: 'The Bookshelf',
     desc: 'Read featured books and writings that carry our history forward.',
     href: '/community-circle/bookshelf',
@@ -41,13 +41,21 @@ const CARDS: CircleCard[] = [
 export function CommunityCirclePage() {
   usePageBreadcrumbs([{ label: 'Community Circle' }])
 
+  usePageSeo({
+    title: `Community Circle | ${SITE_NAME}`,
+    description:
+      'Our community interactive space — share recipes for the community cookbook, browse the photo gallery, explore living history, and read featured books.',
+    canonicalPath: '/community-circle',
+    image: buildAbsoluteUrl('/community-hero.png'),
+  })
+
   return (
     <div className={styles.page}>
       <SharedImageHero
         eyebrow="Community Circle"
         title="Our Community Interactive Space"
         description="A place to gather, share, and connect — where the community comes together to tell its own story."
-        backgroundImageUrl={WEBSITE_ASSET_URLS.gatheringsHeroStage}
+        backgroundImageUrl="/community-hero.png"
         backgroundPosition="center center"
       />
 
@@ -66,10 +74,13 @@ export function CommunityCirclePage() {
         <div className={styles.cardGrid}>
           {CARDS.map((card) => (
             <Link key={card.title} to={card.href} className={styles.card}>
-              <span className={styles.cardIcon} aria-hidden="true">{card.icon}</span>
-              <h3 className={styles.cardTitle}>{card.title}</h3>
-              <p className={styles.cardDesc}>{card.desc}</p>
-              <span className={styles.cardLink}>Open →</span>
+              <span className={styles.cardImgWrap}>
+                <img src={card.img} alt="" className={styles.cardImg} />
+              </span>
+              <span className={styles.cardBody}>
+                <h3 className={styles.cardTitle}>{card.title}</h3>
+                <p className={styles.cardDesc}>{card.desc}</p>
+              </span>
             </Link>
           ))}
         </div>

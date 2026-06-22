@@ -51,24 +51,22 @@
   color: #4a3828;
 }
 
-/* Cards */
+/* Cards — illustration panel on top, text below (Dropbox-style) */
 .cardGrid {
-  max-width: 1140px;
+  max-width: 1180px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: clamp(18px, 2.5vw, 30px);
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(16px, 2vw, 28px);
 }
 
 .card {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  padding: clamp(24px, 2.5vw, 34px);
-  background: #faf7f2;
-  border: 1px solid rgba(26, 18, 8, 0.1);
+  background: #ffffff;
+  border: 1px solid rgba(26, 18, 8, 0.12);
   border-radius: 10px;
+  overflow: hidden;
   text-decoration: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
@@ -78,15 +76,31 @@
   border-color: rgba(156, 0, 0, 0.4);
 }
 
-.cardIcon {
-  font-size: 2.4rem;
-  line-height: 1;
-  margin-bottom: 6px;
+/* Illustration panel — matches the artwork's cream background */
+.cardImgWrap {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1195 / 896;
+  background: #f3f1ea;
+  border-bottom: 1px solid rgba(26, 18, 8, 0.08);
+}
+.cardImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: clamp(18px, 1.6vw, 24px);
 }
 
 .cardTitle {
   margin: 0;
-  font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+  font-size: clamp(1.05rem, 1.4vw, 1.3rem);
   font-weight: 800;
   color: #1a1208;
   line-height: 1.2;
@@ -94,16 +108,15 @@
 
 .cardDesc {
   margin: 0;
-  font-size: 0.92rem;
-  line-height: 1.7;
+  font-size: 0.9rem;
+  line-height: 1.65;
   color: #4a3828;
 }
 
-.cardLink {
-  margin-top: auto;
-  padding-top: 8px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: #9c0000;
+/* Stack to 2-up, then 1-up on smaller screens */
+@media (max-width: 900px) {
+  .cardGrid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 520px) {
+  .cardGrid { grid-template-columns: 1fr; }
 }

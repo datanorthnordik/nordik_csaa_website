@@ -6,8 +6,9 @@ export type DocumentFlipbookSource = NewsletterFlipbookSource
 type DocumentFlipbookProps = {
   source: DocumentFlipbookSource
   title: string
+  theme?: 'default' | 'cookbook'
 }
 
-export function DocumentFlipbook({ source, title }: DocumentFlipbookProps) {
-  return <NewsletterFlipbook source={source} title={title} />
+export function DocumentFlipbook({ source, title, theme }: DocumentFlipbookProps) {
+  return <NewsletterFlipbook source={source} title={title} theme={theme} />
 }

@@ -80,6 +80,12 @@ const BooksTestPage = lazy(() =>
   }))
 )
 
+const CookbookSandboxPage = lazy(() =>
+  import('./pages/CookbookSandboxPage').then((module) => ({
+    default: module.CookbookSandboxPage,
+  }))
+)
+
 const LivingHistoryHubPage = lazy(() =>
   import('./pages/LivingHistoryHubPage').then((module) => ({
     default: module.LivingHistoryHubPage,
@@ -157,6 +163,7 @@ function App() {
             />
             <Route path="/test-book" element={withSuspense(<BooksTestPage />)} />
             <Route path="/test-books" element={withSuspense(<BooksTestPage />)} />
+            <Route path="/community-cookbook" element={withSuspense(<CookbookSandboxPage />)} />
             <Route
               path="/living-history-hub"
               element={withSuspense(<LivingHistoryHubPage />)}

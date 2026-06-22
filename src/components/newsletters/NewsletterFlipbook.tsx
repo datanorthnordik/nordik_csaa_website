@@ -25,6 +25,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 type NewsletterFlipbookProps = {
   source: NewsletterFlipbookSource
   title: string
+  theme?: 'default' | 'cookbook'
 }
 
 type FlipBookRef = {
@@ -56,7 +57,7 @@ const FlipPage = forwardRef<HTMLDivElement, PageRenderProps>(function FlipPage(
   )
 })
 
-export function NewsletterFlipbook({ source, title }: NewsletterFlipbookProps) {
+export function NewsletterFlipbook({ source, title, theme = 'default' }: NewsletterFlipbookProps) {
   const { t } = useTranslation()
   const readerRef = useRef<HTMLElement | null>(null)
   const bookRef = useRef<FlipBookRef | null>(null)
@@ -235,7 +236,7 @@ export function NewsletterFlipbook({ source, title }: NewsletterFlipbookProps) {
   return (
     <section
       ref={readerRef}
-      className={styles.reader}
+      className={`${styles.reader} ${theme === 'cookbook' ? styles.themeCookbook : ''}`}
       role="region"
       aria-label={t('newslettersPage.detail.readerLabel', { title })}
     >
