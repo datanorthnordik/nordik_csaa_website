@@ -67,7 +67,7 @@ export function HomePage() {
         </div>
 
         <p className={styles.apiHint}>
-          <code>VITE_API_BASE_URL</code> {t('site.apiHint')}
+          <code>API_BASE_URL</code> / <code>VITE_API_BASE_URL</code> {t('site.apiHint')}
         </p>
       </section>
     </div>

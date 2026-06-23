@@ -1,10 +1,50 @@
-const defaultApiBaseUrl =
+const DEFAULT_API_BASE_URL =
   'https://nordikcsaaapi-724838782318.us-west1.run.app'
+const ABSOLUTE_URL_PATTERN = /^[a-z][a-z0-9+.-]*:/i
 
-const rawApiBaseUrl =
-  import.meta.env.VITE_API_BASE_URL?.trim() ?? defaultApiBaseUrl
+const normalizeApiBaseUrl = (value: string | undefined) => {
+  const trimmed = value?.trim()
+  if (!trimmed) {
+    return undefined
+  }
 
-export const API_BASE_URL = rawApiBaseUrl.replace(/\/+$/, '')
+  return trimmed.replace(/\/+$/, '')
+}
+
+const getRuntimeApiBaseUrl = () => {
+  if (typeof window === 'undefined') {
+    return undefined
+  }
+
+  return window.__APP_CONFIG__?.API_BASE_URL
+}
+
+export const resolveApiBaseUrl = () =>
+  normalizeApiBaseUrl(getRuntimeApiBaseUrl()) ??
+  normalizeApiBaseUrl(import.meta.env.VITE_API_BASE_URL) ??
+  DEFAULT_API_BASE_URL
+
+export const API_BASE_URL = resolveApiBaseUrl()
+
+export const buildApiUrl = (path: string) =>
+  new URL(path.trim().replace(/^\/+/, ''), `${API_BASE_URL}/`).toString()
+
+export const resolveApiUrl = (value: string | null | undefined) => {
+  const trimmed = value?.trim() ?? ''
+  if (!trimmed) {
+    return ''
+  }
+
+  if (ABSOLUTE_URL_PATTERN.test(trimmed) || trimmed.startsWith('//')) {
+    return trimmed
+  }
+
+  try {
+    return buildApiUrl(trimmed)
+  } catch {
+    return trimmed
+  }
+}
 
 export const API_ROUTES = {
   login: '/api/user/login',

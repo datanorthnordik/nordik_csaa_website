@@ -1,4 +1,4 @@
-import { API_ROUTES } from '../constants/api'
+import { API_ROUTES, resolveApiUrl } from '../constants/api'
 import { apiClient } from './apiClient'
 
 export type VideoPackageType = 'collection' | string
@@ -31,20 +31,8 @@ export type VideoPackageResponse = {
   updated_at: string
 }
 
-const PUBLIC_API_ORIGIN =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ||
-  'https://nordikcsaaapi-724838782318.us-west1.run.app'
-
 export function toAbsoluteApiUrl(pathOrUrl: string) {
-  if (!pathOrUrl) {
-    return ''
-  }
-
-  if (/^https?:\/\//i.test(pathOrUrl)) {
-    return pathOrUrl
-  }
-
-  return new URL(pathOrUrl, PUBLIC_API_ORIGIN).toString()
+  return resolveApiUrl(pathOrUrl)
 }
 
 export function getVideoTeaserUrl(video: VideoItemResponse) {

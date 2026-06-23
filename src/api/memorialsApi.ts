@@ -1,4 +1,4 @@
-import { API_BASE_URL, API_ROUTES } from '../constants/api'
+import { API_ROUTES, buildApiUrl, resolveApiUrl } from '../constants/api'
 import { apiClient } from './apiClient'
 
 export type PublicMemorialCategory =
@@ -187,7 +187,7 @@ export const publicMemorialsApi = {
 }
 
 function buildMemorialPortraitUrl(id: number | string) {
-  return `${API_BASE_URL}${API_ROUTES.memorialPortraitById(String(id))}`
+  return buildApiUrl(API_ROUTES.memorialPortraitById(String(id)))
 }
 
 export function resolvePublicMemorialPortraitUrl(memorial: {
@@ -205,7 +205,7 @@ export function resolvePublicMemorialPortraitUrl(memorial: {
   }
 
   if (trimmed.startsWith('/api/')) {
-    return `${API_BASE_URL}${trimmed}`
+    return resolveApiUrl(trimmed)
   }
 
   return buildMemorialPortraitUrl(memorial.id)

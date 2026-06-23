@@ -1,4 +1,4 @@
-import { API_BASE_URL, API_ROUTES } from '../constants/api'
+import { API_ROUTES, buildApiUrl, resolveApiUrl } from '../constants/api'
 import { apiClient } from './apiClient'
 
 export type PublicResourceCategory = 'educational' | 'media' | 'link' | 'report'
@@ -208,7 +208,7 @@ export const publicResourcesApi = {
 }
 
 function buildResourceContentUrl(id: number | string) {
-  return `${API_BASE_URL}${API_ROUTES.resourceContentById(String(id))}`
+  return buildApiUrl(API_ROUTES.resourceContentById(String(id)))
 }
 
 export function resolvePublicResourceContentUrl(resource: {
@@ -222,7 +222,7 @@ export function resolvePublicResourceContentUrl(resource: {
   }
 
   if (trimmed?.startsWith('/api/')) {
-    return `${API_BASE_URL}${trimmed}`
+    return resolveApiUrl(trimmed)
   }
 
   return buildResourceContentUrl(resource.id)
