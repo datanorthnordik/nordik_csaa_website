@@ -1,4 +1,4 @@
-import { API_BASE_URL, API_ROUTES } from '../constants/api'
+import { API_ROUTES, resolveApiUrl } from '../constants/api'
 import { apiClient } from './apiClient'
 
 export type BlogActionType = 'link' | 'video'
@@ -95,18 +95,7 @@ export type BlogDetailResponse = {
 }
 
 export function resolveBlogAssetUrl(value: string | null | undefined) {
-  const trimmed = value?.trim() ?? ''
-  if (!trimmed) {
-    return ''
-  }
-  if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed) || trimmed.startsWith('//')) {
-    return trimmed
-  }
-  try {
-    return new URL(trimmed, `${API_BASE_URL}/`).toString()
-  } catch {
-    return trimmed
-  }
+  return resolveApiUrl(value)
 }
 
 export const blogsApi = {

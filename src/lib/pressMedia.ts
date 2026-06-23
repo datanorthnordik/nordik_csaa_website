@@ -1,4 +1,4 @@
-import { API_BASE_URL, API_ROUTES } from '../constants/api'
+import { API_ROUTES, buildApiUrl } from '../constants/api'
 import type {
   PressDetailResponse,
   PressMediaResponse,
@@ -29,7 +29,7 @@ export function resolvePressMediaUrl(
   const trimmed = normalizeString(media.file_url).trim()
 
   if (trimmed && trimmed.startsWith('/api/')) {
-    return `${API_BASE_URL}${trimmed}`
+    return buildApiUrl(trimmed)
   }
 
   if (trimmed && /^https?:\/\//i.test(trimmed)) {
@@ -40,14 +40,14 @@ export function resolvePressMediaUrl(
     return trimmed
   }
 
-  return `${API_BASE_URL}${API_ROUTES.pressMediaById(entryId, media.id)}`
+  return buildApiUrl(API_ROUTES.pressMediaById(entryId, media.id))
 }
 
 export function resolvePressCoverUrl(
   entry: Pick<PressDetailResponse, 'id' | 'cover_image_url'>,
 ) {
   return normalizeString(entry.cover_image_url).trim()
-    ? `${API_BASE_URL}${API_ROUTES.pressCoverById(entry.id)}`
+    ? buildApiUrl(API_ROUTES.pressCoverById(entry.id))
     : null
 }
 

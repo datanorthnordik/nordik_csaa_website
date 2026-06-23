@@ -1,5 +1,5 @@
 import type { PageDetailResponse, PageDocument, PageSectionAsset } from '../../api/pagesApi'
-import { API_BASE_URL } from '../../constants/api'
+import { buildApiUrl } from '../../constants/api'
 
 export function resolveCmsAssetUrl(value?: string) {
   const trimmed = value?.trim()
@@ -8,7 +8,7 @@ export function resolveCmsAssetUrl(value?: string) {
   }
 
   if (trimmed.startsWith('/api/')) {
-    return `${API_BASE_URL}${trimmed}`
+    return buildApiUrl(trimmed)
   }
 
   if (/^https?:\/\//i.test(trimmed)) {

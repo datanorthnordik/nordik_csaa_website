@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { apiClient } from './apiClient'
-import { API_BASE_URL, API_ROUTES } from '../constants/api'
+import { API_ROUTES, resolveApiUrl } from '../constants/api'
 import type { BookFieldInputType, BookFieldPlacement } from './booksShared'
 
 export type PublicBookSummary = {
@@ -205,17 +205,7 @@ export const booksApi = {
   },
 
   resolveContentUrl(pathname: string) {
-    const trimmed = pathname.trim()
-    if (!trimmed) {
-      return trimmed
-    }
-    if (/^https?:\/\//i.test(trimmed)) {
-      return trimmed
-    }
-    if (trimmed.startsWith('/api/')) {
-      return `${API_BASE_URL}${trimmed}`
-    }
-    return `${API_BASE_URL}/${trimmed.replace(/^\/+/, '')}`
+    return resolveApiUrl(pathname)
   },
 
   async fetchBinary(pathname: string) {

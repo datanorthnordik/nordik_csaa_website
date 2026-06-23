@@ -2,7 +2,7 @@ import type {
   NewsletterDetailResponse,
   NewsletterMediaResponse,
 } from '../api/newslettersApi'
-import { API_BASE_URL, API_ROUTES } from '../constants/api'
+import { API_ROUTES, buildApiUrl } from '../constants/api'
 
 export type NewsletterPreviewKind = 'image' | 'iframe' | 'placeholder'
 
@@ -41,7 +41,7 @@ export function resolveNewsletterMediaUrl(
   const trimmed = media.file_url.trim()
 
   if (trimmed && trimmed.startsWith('/api/')) {
-    return `${API_BASE_URL}${trimmed}`
+    return buildApiUrl(trimmed)
   }
 
   if (trimmed && /^https?:\/\//i.test(trimmed)) {
@@ -52,7 +52,7 @@ export function resolveNewsletterMediaUrl(
     return trimmed
   }
 
-  return `${API_BASE_URL}${API_ROUTES.newsletterMediaById(entryId, media.id)}`
+  return buildApiUrl(API_ROUTES.newsletterMediaById(entryId, media.id))
 }
 
 export function isImageNewsletterMedia(

@@ -1,5 +1,5 @@
 import type { EventMedia } from '../api/eventsApi'
-import { API_BASE_URL, API_ROUTES } from '../constants/api'
+import { API_ROUTES, buildApiUrl } from '../constants/api'
 
 function normalizeApiPath(value?: string) {
   if (!value) {
@@ -42,7 +42,7 @@ export function resolveEventMediaUrl(media: EventMedia) {
     return path
   }
 
-  return `${API_BASE_URL}${path}`
+  return buildApiUrl(path)
 }
 
 export function isImageMedia(media?: Pick<EventMedia, 'mime_type'> | null) {
