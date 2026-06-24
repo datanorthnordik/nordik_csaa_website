@@ -1,7 +1,21 @@
-const WEBSITE_ASSET_BASE_URL =
+import {
+  getRuntimeConfigValue,
+  resolveConfiguredBaseUrl,
+} from './runtimeConfig'
+
+const DEFAULT_WEBSITE_ASSET_BASE_URL =
   'https://storage.googleapis.com/nordik-csa-website-assets/assets'
 
-function buildWebsiteAssetUrl(fileName: string) {
+export const resolveWebsiteAssetBaseUrl = () =>
+  resolveConfiguredBaseUrl({
+    runtimeValue: getRuntimeConfigValue('WEBSITE_ASSET_BASE_URL'),
+    envValue: import.meta.env.VITE_WEBSITE_ASSET_BASE_URL,
+    fallback: DEFAULT_WEBSITE_ASSET_BASE_URL,
+  })
+
+export const WEBSITE_ASSET_BASE_URL = resolveWebsiteAssetBaseUrl()
+
+export function buildWebsiteAssetUrl(fileName: string) {
   return `${WEBSITE_ASSET_BASE_URL}/${encodeURIComponent(fileName)}`
 }
 
