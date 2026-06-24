@@ -9,6 +9,7 @@ type CircleCard = {
   title: string
   desc: string
   href: string
+  openInNewTab?: boolean
 }
 
 const CARDS: CircleCard[] = [
@@ -23,6 +24,7 @@ const CARDS: CircleCard[] = [
     title: 'Photo Gallery',
     desc: 'Browse our community photo archive — spot the faces, places, and moments you remember.',
     href: '/community-circle/gallery',
+    openInNewTab: true,
   },
   {
     icon: '📖',
@@ -65,7 +67,13 @@ export function CommunityCirclePage() {
 
         <div className={styles.cardGrid}>
           {CARDS.map((card) => (
-            <Link key={card.title} to={card.href} className={styles.card}>
+            <Link
+              key={card.title}
+              to={card.href}
+              className={styles.card}
+              target={card.openInNewTab ? '_blank' : undefined}
+              rel={card.openInNewTab ? 'noopener noreferrer' : undefined}
+            >
               <span className={styles.cardIcon} aria-hidden="true">{card.icon}</span>
               <h3 className={styles.cardTitle}>{card.title}</h3>
               <p className={styles.cardDesc}>{card.desc}</p>
