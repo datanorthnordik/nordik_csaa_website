@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { Provider } from 'react-redux'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
 import i18n from './i18n'
 import { createAppStore } from './store/store'
@@ -101,6 +101,20 @@ function renderWithProviders(ui: ReactElement) {
   const store = createAppStore()
   return render(<Provider store={store}>{ui}</Provider>)
 }
+
+beforeAll(async () => {
+  await Promise.all([
+    import('./pages/CmsPage'),
+    import('./pages/DigitalNewsletterDetailPage'),
+    import('./pages/DigitalNewslettersPage'),
+    import('./pages/EventCalendarPage'),
+    import('./pages/EventDetailPage'),
+    import('./pages/NewsMediaLandingPage'),
+    import('./pages/PressArchivePage'),
+    import('./pages/PressArchiveDetailPage'),
+    import('./pages/ResourcesPage'),
+  ])
+})
 
 async function findPrimaryNavigationLink(name: string | RegExp) {
   const navigation = await screen.findByRole('navigation', {
@@ -1193,7 +1207,7 @@ describe('App', () => {
   })
 
   it('renders the shared breadcrumb for the community resources route', async () => {
-    window.history.pushState({}, '', '/community-support-team/resources')
+    window.history.pushState({}, '', '/community-circle/community-support-team/resources')
 
     renderWithProviders(<App />)
 

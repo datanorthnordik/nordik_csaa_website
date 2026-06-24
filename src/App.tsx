@@ -158,7 +158,7 @@ function App() {
               element={withSuspense(<PressArchivePage />)}
             />
             <Route
-              path="/community-support-team/resources"
+              path="/community-circle/community-support-team/resources"
               element={withSuspense(<CommunityResourcesPage />)}
             />
             <Route path="/test-book" element={withSuspense(<BooksTestPage />)} />
