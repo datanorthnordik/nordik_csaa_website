@@ -1,25 +1,16 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
-import toast from 'react-hot-toast'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
   blogsApi,
   resolveBlogAssetUrl,
-  type BlogDetailResponse,
   type BlogListItem,
 } from '../api/blogsApi'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
 import { buildAbsoluteUrl, SITE_NAME, usePageSeo } from '../lib/usePageSeo'
-import {
-  LivingHistoryBlogLayout,
-  blogHasAnimations,
-  blogHasPostAnimationContent,
-} from '../components/blogs/LivingHistoryBlogLayout'
-import {
-  knowledgeCenterApi,
-  type KnowledgeCenterSubmissionType,
-} from '../api/knowledgeCenterApi'
+import { blogDetailPath } from '../lib/blogSlug'
+import { ShareStoryForm } from '../components/blogs/ShareStoryForm'
 import {
   getVideoTeaserUrl,
   videosApi,
@@ -187,22 +178,6 @@ const FEATURE_BLOCKS = [
   },
 ]
 
-type ContributionFormState = {
-  name: string
-  email: string
-  phone: string
-  type: KnowledgeCenterSubmissionType
-  message: string
-}
-
-const initialContributionForm: ContributionFormState = {
-  name: '',
-  email: '',
-  phone: '',
-  type: 'post',
-  message: '',
-}
-
 export function LivingHistoryHubPage() {
   const { t } = useTranslation()
 
@@ -241,13 +216,6 @@ export function LivingHistoryHubPage() {
   const [blogs, setBlogs] = useState<BlogListItem[]>([])
   const [blogsStatus, setBlogsStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [blogsError, setBlogsError] = useState<string | null>(null)
-  const [selectedBlogId, setSelectedBlogId] = useState<number | null>(null)
-  const [selectedBlog, setSelectedBlog] = useState<BlogDetailResponse | null>(null)
-  const [selectedBlogLoading, setSelectedBlogLoading] = useState(false)
-  const selectedBlogRequestRef = useRef(0)
-  const [contributeForm, setContributeForm] =
-    useState<ContributionFormState>(initialContributionForm)
-  const [isSubmittingContribution, setIsSubmittingContribution] = useState(false)
   const blogRef = useRef<HTMLDivElement>(null)
 
   const openTheatre = (videoUrlOrId: string) => {
@@ -264,29 +232,6 @@ export function LivingHistoryHubPage() {
     requestAnimationFrame(() =>
       blogRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
     )
-  }
-
-  const showBlog = async (id: number) => {
-    const requestId = selectedBlogRequestRef.current + 1
-    selectedBlogRequestRef.current = requestId
-    setSelectedBlogId(id)
-    setSelectedBlog(null)
-    setSelectedBlogLoading(true)
-    requestAnimationFrame(() =>
-      blogRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-    )
-    try {
-      const detail = await blogsApi.getBlog(id)
-      if (selectedBlogRequestRef.current === requestId) {
-        setSelectedBlog(detail)
-      }
-    } catch {
-      toast.error('Unable to load this story right now.')
-    } finally {
-      if (selectedBlogRequestRef.current === requestId) {
-        setSelectedBlogLoading(false)
-      }
-    }
   }
 
   const playActive = () => {
@@ -408,12 +353,6 @@ export function LivingHistoryHubPage() {
       cancelled = true
     }
   }, [])
-
-  useEffect(() => {
-    if (videoIndex >= videos.length) {
-      setVideoIndex(0)
-    }
-  }, [videoIndex, videos.length])
 
   useEffect(() => {
     if (videos.length < 2 || !videoVisible || videoPlaying || archiveOpen) {
@@ -641,32 +580,6 @@ export function LivingHistoryHubPage() {
       if (raf) cancelAnimationFrame(raf)
     }
   }, [openPost])
-
-  async function handleContributionSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    if (isSubmittingContribution) {
-      return
-    }
-
-    try {
-      setIsSubmittingContribution(true)
-      const submittedType = contributionTypeNotificationLabel(contributeForm.type)
-
-      await knowledgeCenterApi.submitContribution(contributeForm)
-      setContributeForm(initialContributionForm)
-      toast.success(
-        `Your Living History submission for ${submittedType} has been received. Our team will be reaching out to you shortly for further details.`,
-      )
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : 'Unable to submit your story right now.',
-      )
-    } finally {
-      setIsSubmittingContribution(false)
-    }
-  }
 
   return (
     <div className={styles.page}>
@@ -949,134 +862,53 @@ export function LivingHistoryHubPage() {
         </div>
       </section>
 
-      <section
-        ref={blogRef}
-        className={styles.blog}
-        data-article={
-          selectedBlog && blogHasAnimations(selectedBlog)
-            ? 'immersive'
-            : selectedBlogId === null
-              ? ''
-              : String(selectedBlogId)
-        }
-      >
+      <section ref={blogRef} className={styles.blog}>
         <div className={styles.blogInner}>
           <p className={styles.tvEyebrow}>Living History Journal</p>
 
-          {selectedBlogId !== null ? (
-            selectedBlogLoading || !selectedBlog ? (
-              <div className={styles.blogLoading} role="status">
-                Loading story...
-              </div>
-            ) : (
-              <article className={styles.blogArticle}>
-                <button
-                  type="button"
-                  className={styles.blogBack}
-                  onClick={() => {
-                    selectedBlogRequestRef.current += 1
-                    setSelectedBlogId(null)
-                    setSelectedBlog(null)
-                    setSelectedBlogLoading(false)
-                  }}
-                >
-                  &larr; All stories
-                </button>
+          <h2 className={styles.blogHeading}>Stories &amp; Editions</h2>
+          <div className={styles.featureRule} aria-hidden="true" />
 
-                <h1 className={styles.blogArticleTitle}>{selectedBlog.heading}</h1>
-                <div className={styles.featureRule} aria-hidden="true" />
-
-                {!blogHasAnimations(selectedBlog) &&
-                  (selectedBlog.cover_image_fetch_url || selectedBlog.cover_image_url) && (
-                    <figure className={styles.blogHero}>
-                      <img
-                        src={resolveBlogAssetUrl(
-                          selectedBlog.cover_image_fetch_url || selectedBlog.cover_image_url,
-                        )}
-                        alt={selectedBlog.heading}
-                      />
-                    </figure>
-                  )}
-
-                <LivingHistoryBlogLayout
-                  blog={selectedBlog}
-                  phase="article"
-                  onOpenVideo={openTheatre}
-                />
-              </article>
-            )
+          {blogsStatus === 'loading' ? (
+            <div className={styles.blogLoading} role="status">
+              Loading stories...
+            </div>
+          ) : blogsError ? (
+            <p className={styles.blogPara}>{blogsError}</p>
+          ) : blogs.length ? (
+            <div className={styles.blogGrid}>
+              {blogs.map((blog) => {
+                const imageUrl = resolveBlogAssetUrl(
+                  blog.cover_image_fetch_url || blog.cover_image_url,
+                )
+                return (
+                  <Link
+                    key={blog.id}
+                    to={blogDetailPath(blog)}
+                    className={styles.blogCard}
+                  >
+                    <span
+                      className={styles.blogCardImg}
+                      style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
+                      aria-hidden="true"
+                    />
+                    <span className={styles.blogCardBody}>
+                      <span className={styles.blogCardDate}>
+                        {formatBlogDate(blog.publish_date)}
+                      </span>
+                      <span className={styles.blogCardTitle}>{blog.heading}</span>
+                      <span className={styles.blogCardExcerpt}>{blog.description}</span>
+                      <span className={styles.blogCardLink}>Read story &rarr;</span>
+                    </span>
+                  </Link>
+                )
+              })}
+            </div>
           ) : (
-            <>
-              <h2 className={styles.blogHeading}>Stories &amp; Editions</h2>
-              <div className={styles.featureRule} aria-hidden="true" />
-
-              {blogsStatus === 'loading' ? (
-                <div className={styles.blogLoading} role="status">
-                  Loading stories...
-                </div>
-              ) : blogsError ? (
-                <p className={styles.blogPara}>{blogsError}</p>
-              ) : blogs.length ? (
-                <div className={styles.blogGrid}>
-                  {blogs.map((blog) => {
-                    const imageUrl = resolveBlogAssetUrl(
-                      blog.cover_image_fetch_url || blog.cover_image_url,
-                    )
-                    return (
-                      <button
-                        key={blog.id}
-                        type="button"
-                        className={styles.blogCard}
-                        onClick={() => {
-                          void showBlog(blog.id)
-                        }}
-                      >
-                        <span
-                          className={styles.blogCardImg}
-                          style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
-                          aria-hidden="true"
-                        />
-                        <span className={styles.blogCardBody}>
-                          <span className={styles.blogCardDate}>
-                            {formatBlogDate(blog.publish_date)}
-                          </span>
-                          <span className={styles.blogCardTitle}>{blog.heading}</span>
-                          <span className={styles.blogCardExcerpt}>{blog.description}</span>
-                          <span className={styles.blogCardLink}>Read story &rarr;</span>
-                        </span>
-                      </button>
-                    )
-                  })}
-                </div>
-              ) : (
-                <p className={styles.blogPara}>No stories have been published yet.</p>
-              )}
-            </>
+            <p className={styles.blogPara}>No stories have been published yet.</p>
           )}
         </div>
       </section>
-
-      {selectedBlog && blogHasAnimations(selectedBlog) && (
-        <LivingHistoryBlogLayout
-          blog={selectedBlog}
-          phase="animations"
-          onOpenVideo={openTheatre}
-        />
-      )}
-
-      {selectedBlog && blogHasPostAnimationContent(selectedBlog) && (
-        <section className={`${styles.blog} ${styles.blogContinuation}`}>
-          <div className={styles.blogInner}>
-            <article className={styles.blogArticle}>
-              <LivingHistoryBlogLayout
-                blog={selectedBlog}
-                phase="after-animations"
-                onOpenVideo={openTheatre}
-              />
-            </article>
-          </div>
-        </section>
-      )}
 
       <section hidden className={styles.blog} data-article={openPost ?? ''}>
         <div className={styles.blogInner}>
@@ -1300,119 +1132,7 @@ export function LivingHistoryHubPage() {
         </div>
       )}
 
-      <section className={styles.contribute}>
-        <div className={styles.contributeInner}>
-          <p className={styles.tvEyebrow}>Share Your Story</p>
-          <h2 className={styles.contributeTitle}>Add to the Living History</h2>
-          <div className={styles.featureRule} aria-hidden="true" />
-          <p className={styles.contributeLead}>
-            Have a story, a memory, or a video you'd like to share? Tell us a
-            little about it and our team will reach out to help you add it to
-            the Living History Hub.
-          </p>
-
-          <form
-            className={styles.contributeForm}
-            onSubmit={(event) => {
-              void handleContributionSubmit(event)
-            }}
-          >
-            <div className={styles.formRow}>
-              <label className={styles.formField}>
-                <span>Name</span>
-                <input
-                  type="text"
-                  name="name"
-                  required
-                  autoComplete="name"
-                  value={contributeForm.name}
-                  onChange={(event) =>
-                    setContributeForm((current) => ({
-                      ...current,
-                      name: event.target.value,
-                    }))
-                  }
-                />
-              </label>
-              <label className={styles.formField}>
-                <span>Email</span>
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  autoComplete="email"
-                  value={contributeForm.email}
-                  onChange={(event) =>
-                    setContributeForm((current) => ({
-                      ...current,
-                      email: event.target.value,
-                    }))
-                  }
-                />
-              </label>
-            </div>
-
-            <div className={styles.formRow}>
-              <label className={styles.formField}>
-                <span>Phone (optional)</span>
-                <input
-                  type="tel"
-                  name="phone"
-                  autoComplete="tel"
-                  value={contributeForm.phone}
-                  onChange={(event) =>
-                    setContributeForm((current) => ({
-                      ...current,
-                      phone: event.target.value,
-                    }))
-                  }
-                />
-              </label>
-              <label className={styles.formField}>
-                <span>I'd like to submit</span>
-                <select
-                  name="type"
-                  value={contributeForm.type}
-                  onChange={(event) =>
-                    setContributeForm((current) => ({
-                      ...current,
-                      type: event.target.value as KnowledgeCenterSubmissionType,
-                    }))
-                  }
-                >
-                  <option value="post">A written post / story</option>
-                  <option value="video">A video</option>
-                  <option value="both">Both a post and a video</option>
-                </select>
-              </label>
-            </div>
-
-            <label className={styles.formField}>
-              <span>Tell us about it</span>
-              <textarea
-                name="message"
-                rows={5}
-                required
-                value={contributeForm.message}
-                onChange={(event) =>
-                  setContributeForm((current) => ({
-                    ...current,
-                    message: event.target.value,
-                  }))
-                }
-              />
-            </label>
-
-            <button
-              type="submit"
-              className={styles.revealButton}
-              disabled={isSubmittingContribution}
-            >
-              {isSubmittingContribution ? 'Submitting...' : 'Submit'}
-            </button>
-          </form>
-        </div>
-      </section>
+      <ShareStoryForm />
 
       {theatre &&
         (() => {
@@ -1420,7 +1140,6 @@ export function LivingHistoryHubPage() {
           const tTitle =
             videos.find((v) => v.youtubeId === tId)?.title ??
             BLOG_POSTS.find((p) => p.videoId === tId)?.title ??
-            selectedBlog?.heading ??
             ''
 
           if (!tId) {
@@ -1523,17 +1242,4 @@ function ArchiveItem({
       </div>
     </li>
   )
-}
-
-function contributionTypeNotificationLabel(value: KnowledgeCenterSubmissionType) {
-  switch (value) {
-    case 'post':
-      return 'a story'
-    case 'video':
-      return 'a video'
-    case 'both':
-      return 'a story and a video'
-    default:
-      return 'your contribution'
-  }
 }
