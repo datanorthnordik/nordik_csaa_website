@@ -1193,7 +1193,7 @@ describe('App', () => {
   })
 
   it('renders the shared breadcrumb for the community resources route', async () => {
-    window.history.pushState({}, '', '/community-support-team/resources')
+    window.history.pushState({}, '', '/community-circle/community-support-team/resources')
 
     renderWithProviders(<App />)
 

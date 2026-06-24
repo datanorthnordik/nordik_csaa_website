@@ -28,10 +28,10 @@ vi.mock('../lib/fileDownload', () => ({
 
 describe('CommunityResourcesPage', () => {
   function renderPage() {
-    window.history.pushState({}, '', '/community-support-team/resources')
+    window.history.pushState({}, '', '/community-circle/community-support-team/resources')
 
     return render(
-      <MemoryRouter initialEntries={['/community-support-team/resources']}>
+      <MemoryRouter initialEntries={['/community-circle/community-support-team/resources']}>
         <CommunityResourcesPage />
       </MemoryRouter>,
     )
@@ -90,7 +90,7 @@ describe('CommunityResourcesPage', () => {
     )
     expect(
       document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'),
-    ).toBe(`${window.location.origin}/community-support-team/resources`)
+    ).toBe(`${window.location.origin}/community-circle/community-support-team/resources`)
     expect(
       screen.getByRole('heading', { level: 2, name: /browse community resources/i }),
     ).toBeDefined()
