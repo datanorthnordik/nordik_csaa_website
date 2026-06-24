@@ -57,7 +57,7 @@ export function CommunityResourcesPage() {
   usePageSeo({
     title: seoTitle,
     description: seoDescription,
-    canonicalPath: '/community-circle/community-circle/community-support-team/resources',
+    canonicalPath: '/community-circle/community-support-team/resources',
     image: WEBSITE_ASSET_URLS.communitySupportTeamLogo,
     lang: locale,
   })
