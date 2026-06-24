@@ -91,6 +91,11 @@ const LivingHistoryHubPage = lazy(() =>
     default: module.LivingHistoryHubPage,
   })),
 )
+const LivingHistoryBlogPage = lazy(() =>
+  import('./pages/LivingHistoryBlogPage').then((module) => ({
+    default: module.LivingHistoryBlogPage,
+  })),
+)
 const CommunityCirclePage = lazy(() =>
   import('./pages/CommunityCirclePage').then((module) => ({
     default: module.CommunityCirclePage,
@@ -169,8 +174,16 @@ function App() {
               element={withSuspense(<LivingHistoryHubPage />)}
             />
             <Route
+              path="/living-history-hub/:blogSlug"
+              element={withSuspense(<LivingHistoryBlogPage />)}
+            />
+            <Route
               path="/our-story/living-history-hub"
               element={withSuspense(<LivingHistoryHubPage />)}
+            />
+            <Route
+              path="/our-story/living-history-hub/:blogSlug"
+              element={withSuspense(<LivingHistoryBlogPage />)}
             />
             <Route
               path="/community-circle"
