@@ -1,4 +1,5 @@
 import { API_ROUTES, resolveApiUrl } from '../constants/api'
+import { slugifyBlogHeading } from '../lib/blogSlug'
 import { apiClient } from './apiClient'
 
 export type BlogActionType = 'link' | 'video'
@@ -118,5 +119,16 @@ export const blogsApi = {
       skipErrorToast: true,
     })
     return response.data
+  },
+
+  // The API addresses blogs by numeric id, but the site routes them by a slug
+  // derived from the heading. Resolve the slug against the list, then fetch.
+  async getBlogBySlug(slug: string) {
+    const items = await blogsApi.listBlogs()
+    const match = items.find((item) => slugifyBlogHeading(item.heading) === slug)
+    if (!match) {
+      return null
+    }
+    return blogsApi.getBlog(match.id)
   },
 }

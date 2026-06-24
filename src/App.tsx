@@ -80,9 +80,20 @@ const BooksTestPage = lazy(() =>
   }))
 )
 
+const CookbookSandboxPage = lazy(() =>
+  import('./pages/CookbookSandboxPage').then((module) => ({
+    default: module.CookbookSandboxPage,
+  }))
+)
+
 const LivingHistoryHubPage = lazy(() =>
   import('./pages/LivingHistoryHubPage').then((module) => ({
     default: module.LivingHistoryHubPage,
+  })),
+)
+const LivingHistoryBlogPage = lazy(() =>
+  import('./pages/LivingHistoryBlogPage').then((module) => ({
+    default: module.LivingHistoryBlogPage,
   })),
 )
 const CommunityCirclePage = lazy(() =>
@@ -157,13 +168,22 @@ function App() {
             />
             <Route path="/test-book" element={withSuspense(<BooksTestPage />)} />
             <Route path="/test-books" element={withSuspense(<BooksTestPage />)} />
+            <Route path="/community-cookbook" element={withSuspense(<CookbookSandboxPage />)} />
             <Route
               path="/living-history-hub"
               element={withSuspense(<LivingHistoryHubPage />)}
             />
             <Route
+              path="/living-history-hub/:blogSlug"
+              element={withSuspense(<LivingHistoryBlogPage />)}
+            />
+            <Route
               path="/our-story/living-history-hub"
               element={withSuspense(<LivingHistoryHubPage />)}
+            />
+            <Route
+              path="/our-story/living-history-hub/:blogSlug"
+              element={withSuspense(<LivingHistoryBlogPage />)}
             />
             <Route
               path="/community-circle"

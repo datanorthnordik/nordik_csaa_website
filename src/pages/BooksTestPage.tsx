@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { booksApi, type PublicBookDetail, type PublicBookField, type PublicBookSummary } from '../api/booksApi'
 import { RichTextEditor } from '../components/cms/RichTextEditor'
 import { DocumentFlipbook } from '../components/flipbook/DocumentFlipbook'
+import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
+import { SITE_NAME, usePageSeo } from '../lib/usePageSeo'
 import styles from './BooksTestPage.module.css'
 
 type SubmissionValuesState = Record<number, string>
@@ -20,6 +22,23 @@ export function BooksTestPage() {
   const [loadErrorMessage, setLoadErrorMessage] = useState('')
   const [formErrorMessage, setFormErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
+  const viewerRef = useRef<HTMLElement>(null)
+
+  function scrollToViewer() {
+    viewerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  usePageBreadcrumbs([
+    { label: 'Community Circle', href: '/community-circle' },
+    { label: 'Community Cookbook' },
+  ])
+
+  usePageSeo({
+    title: `Community Cookbook | ${SITE_NAME}`,
+    description:
+      'Browse our growing community cookbook and share a family recipe — a place to pass down the food, stories, and traditions that gather us together.',
+    canonicalPath: '/test-book',
+  })
 
   useEffect(() => {
     void (async () => {
@@ -181,16 +200,33 @@ export function BooksTestPage() {
         </section>
       ) : selectedBook && flipbookSource ? (
         <>
-          <section className={styles.header}>
-            <h1 className={styles.title}>{selectedBook.title}</h1>
-            <button type="button" className={styles.addButton} onClick={openModal}>
-              Add your receipe
-            </button>
+          <section className={styles.intro}>
+            <CookbookMotifs />
+            <div className={styles.introInner}>
+              <p className={styles.eyebrow}>Community Cookbook</p>
+              <h1 className={styles.introTitle}>{selectedBook.title}</h1>
+              <img src="/cookbook/1.png" alt="" aria-hidden="true" className={styles.ruleImg} />
+              <p className={styles.introLead}>
+                Every recipe here carries a story — a grandmother's bannock, a feast
+                shared after a gathering, the dish that tastes like home. Flip through
+                the pages, then add your own family recipe so it can be passed on.
+              </p>
+              <div className={styles.introActions}>
+                <button type="button" className={styles.addButton} onClick={openModal}>
+                  Add your recipe
+                </button>
+                <button type="button" className={styles.viewButton} onClick={scrollToViewer}>
+                  View cookbook
+                </button>
+              </div>
+            </div>
           </section>
+
+          <CookbookRibbon />
 
           {successMessage ? <p className={styles.successBox}>{successMessage}</p> : null}
 
-          <section className={styles.viewerCard}>
+          <section ref={viewerRef} className={styles.viewerCard}>
             <DocumentFlipbook source={flipbookSource} title={selectedBook.title} />
           </section>
 
@@ -208,11 +244,11 @@ export function BooksTestPage() {
                 className={styles.modalPanel}
                 role="dialog"
                 aria-modal="true"
-                aria-label="Add your receipe"
+                aria-label="Add your recipe"
               >
                 <div className={styles.modalHeader}>
                   <div className={styles.modalHeading}>
-                    <h2>Add your receipe</h2>
+                    <h2>Add your recipe</h2>
                   </div>
                   <button
                     type="button"
@@ -231,7 +267,7 @@ export function BooksTestPage() {
                     <div className={styles.formSidebar}>
                       <section className={`${styles.formCard} ${styles.sidebarIntro}`}>
                         <p className={styles.sidebarLabel}>{selectedBook.title}</p>
-                        <h3>Add your receipe</h3>
+                        <h3>Add your recipe</h3>
                         <p className={styles.sidebarText}>
                           Choose where it should go, then add your story and details on the right.
                         </p>
@@ -252,7 +288,7 @@ export function BooksTestPage() {
                       <section className={styles.formCard}>
                         <div className={styles.cardHeader}>
                           <h3>Placement</h3>
-                          <p>Choose where this receipe should appear in the book.</p>
+                          <p>Choose where this recipe should appear in the book.</p>
                         </div>
 
                         <div className={styles.toggleRow}>
@@ -280,7 +316,7 @@ export function BooksTestPage() {
                               <span className={styles.radioText}>
                                 <span className={styles.radioTitle}>New section</span>
                                 <span className={styles.radioHint}>
-                                  Create a fresh section name for this receipe.
+                                  Create a fresh section name for this recipe.
                                 </span>
                               </span>
                             </label>
@@ -322,7 +358,7 @@ export function BooksTestPage() {
                         <section className={styles.formCard}>
                           <div className={styles.cardHeader}>
                             <h3>Image</h3>
-                            <p>Add a photo if you want this receipe to include an image.</p>
+                            <p>Add a photo if you want this recipe to include an image.</p>
                           </div>
 
                           <label className={`${styles.field} ${styles.fileField}`}>
@@ -354,8 +390,8 @@ export function BooksTestPage() {
                     <div className={styles.formMain}>
                       <section className={styles.formCard}>
                         <div className={styles.cardHeader}>
-                          <h3>Your receipe</h3>
-                          <p>Write your receipe details here.</p>
+                          <h3>Your recipe</h3>
+                          <p>Write your recipe details here.</p>
                         </div>
 
                         <div className={styles.dynamicFields}>
@@ -403,6 +439,62 @@ export function BooksTestPage() {
         </section>
       )}
     </main>
+  )
+}
+
+/**
+ * Ribbon order — every illustration except #1 (used as the header underline),
+ * arranged so no two neighbours repeat the same subject (e.g. the duplicate
+ * nut illustrations 15 and 16 are kept apart, and the loop seam never matches).
+ */
+const RIBBON_ART = [
+  2, 8, 11, 14, 3, 17, 6, 20, 9, 15, 4, 18, 7, 21, 10, 16, 5, 23, 12, 24, 13, 19, 22,
+].map((n) => `/cookbook/${n}.png`)
+
+/** A few illustrations scattered as soft accents around the hero band. */
+const HERO_MOTIFS = [
+  { src: '/cookbook/7.png', className: 'motifTopLeft' },
+  { src: '/cookbook/2.png', className: 'motifTopLeft2' },
+  { src: '/cookbook/11.png', className: 'motifTopRight' },
+  { src: '/cookbook/10.png', className: 'motifTopRight2' },
+  { src: '/cookbook/22.png', className: 'motifBottomLeft' },
+  { src: '/cookbook/20.png', className: 'motifBottomLeft2' },
+  { src: '/cookbook/18.png', className: 'motifBottomRight' },
+  { src: '/cookbook/8.png', className: 'motifBottomRight2' },
+] as const
+
+function CookbookMotifs() {
+  return (
+    <div className={styles.motifs} aria-hidden="true">
+      {HERO_MOTIFS.map((motif) => (
+        <img
+          key={motif.className}
+          src={motif.src}
+          alt=""
+          loading="lazy"
+          className={`${styles.motif} ${styles[motif.className]}`}
+        />
+      ))}
+    </div>
+  )
+}
+
+/** Full-color marquee that cycles through every illustration. */
+function CookbookRibbon() {
+  return (
+    <div className={styles.ribbon} aria-hidden="true">
+      <div className={styles.ribbonTrack}>
+        {[...RIBBON_ART, ...RIBBON_ART].map((src, index) => (
+          <img
+            key={`${src}-${index}`}
+            src={src}
+            alt=""
+            loading="lazy"
+            className={styles.ribbonImg}
+          />
+        ))}
+      </div>
+    </div>
   )
 }
 

@@ -1,6 +1,7 @@
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
 import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
+import { SITE_NAME, usePageSeo } from '../lib/usePageSeo'
 import styles from './CommunityCirclePage.module.css'
 
 export function CommunityCookbookPage() {
@@ -8,6 +9,14 @@ export function CommunityCookbookPage() {
     { label: 'Community Circle', href: '/community-circle' },
     { label: 'Community Cookbook' },
   ])
+
+  usePageSeo({
+    title: `Community Cookbook | ${SITE_NAME}`,
+    description:
+      'Recipes shared by our community — and a place to add your own family recipe to the community cookbook.',
+    canonicalPath: '/community-circle/cookbook',
+    image: WEBSITE_ASSET_URLS.gatheringsHeroStage,
+  })
 
   return (
     <div className={styles.page}>
