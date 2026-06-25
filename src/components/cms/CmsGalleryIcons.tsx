@@ -30,6 +30,8 @@ export function CmsGalleryIcons({ items }: CmsGalleryIconsProps) {
             href={item.linkUrl}
             className={styles.iconTileLink}
             aria-label={label}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             {content}
           </a>
