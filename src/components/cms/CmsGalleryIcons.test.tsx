@@ -29,9 +29,11 @@ describe('CmsGalleryIcons', () => {
   it('renders linked icon tiles without lightbox buttons', () => {
     render(<CmsGalleryIcons items={sampleItems} />)
 
-    expect(screen.getByRole('link', { name: /algoma steel/i }).getAttribute('href')).toBe(
-      'https://example.com/algoma',
-    )
+    const link = screen.getByRole('link', { name: /algoma steel/i })
+
+    expect(link.getAttribute('href')).toBe('https://example.com/algoma')
+    expect(link.getAttribute('target')).toBe('_blank')
+    expect(link.getAttribute('rel')).toBe('noopener noreferrer')
     expect(screen.queryByRole('button', { name: /algoma steel/i })).toBeNull()
     expect(screen.queryByRole('link', { name: /jays care foundation/i })).toBeNull()
     expect(screen.getByAltText(/jays care foundation logo/i)).toBeDefined()

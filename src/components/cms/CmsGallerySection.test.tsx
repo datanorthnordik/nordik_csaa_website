@@ -197,6 +197,8 @@ describe('CmsGallerySection', () => {
     const link = await screen.findByRole('link', { name: /jays care foundation/i })
 
     expect(link.getAttribute('href')).toBe('https://www.mlb.com/bluejays/community/jays-care')
+    expect(link.getAttribute('target')).toBe('_blank')
+    expect(link.getAttribute('rel')).toBe('noopener noreferrer')
     expect(screen.queryByRole('dialog')).toBeNull()
   })
 
