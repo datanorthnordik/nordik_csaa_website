@@ -1,43 +1,39 @@
-import { useEffect, useMemo, useState } from 'react'
-import { booksApi, type PublicBookDetail, type PublicBookSummary } from '../api/booksApi'
-import { DocumentFlipbook } from '../components/flipbook/DocumentFlipbook'
+import { useEffect, useState } from 'react'
+import {
+  publicBookshelfApi,
+  type PublicBookshelfEntry,
+  type PublicBookshelfListPageMeta,
+} from '../api/bookshelfApi'
+import { DocumentViewerModal } from '../components/documents/DocumentViewerModal'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { WEBSITE_ASSET_URLS } from '../constants/websiteAssetUrls'
+import { downloadPublicFile } from '../lib/fileDownload'
 import { SITE_NAME, usePageSeo } from '../lib/usePageSeo'
 import styles from './CommunityBookshelfPage.module.css'
 
-/**
- * Placeholder author/cover until the books API exposes those fields. When the
- * backend adds them, populate these from the summary in `toBookshelfItem`.
- */
-const PLACEHOLDER_AUTHOR = 'Author to be announced'
 const COVER_TONES = 5
+const PAGE_SIZE = 10
 
-type BookshelfItem = {
-  id: number
-  title: string
-  description: string
-  author: string
-  coverUrl: string | null
-}
-
-function toBookshelfItem(summary: PublicBookSummary): BookshelfItem {
-  return {
-    id: summary.id,
-    title: summary.title,
-    description: summary.description,
-    author: PLACEHOLDER_AUTHOR,
-    coverUrl: null,
-  }
+const defaultPagination: PublicBookshelfListPageMeta = {
+  page: 1,
+  pageSize: PAGE_SIZE,
+  totalItems: 0,
+  totalPages: 0,
+  hasNext: false,
+  hasPrev: false,
 }
 
 export function CommunityBookshelfPage() {
-  const [items, setItems] = useState<BookshelfItem[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [books, setBooks] = useState<PublicBookshelfEntry[]>([])
+  const [pagination, setPagination] =
+    useState<PublicBookshelfListPageMeta>(defaultPagination)
   const [searchTerm, setSearchTerm] = useState('')
-  const [previewIndex, setPreviewIndex] = useState<number | null>(null)
-  const [readingBook, setReadingBook] = useState<BookshelfItem | null>(null)
+  const [activeSearchTerm, setActiveSearchTerm] = useState('')
+  const [page, setPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedBook, setSelectedBook] = useState<PublicBookshelfEntry | null>(null)
 
   usePageBreadcrumbs([
     { label: 'Community Circle', href: '/community-circle' },
@@ -53,26 +49,47 @@ export function CommunityBookshelfPage() {
   })
 
   useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setPage(1)
+      setActiveSearchTerm(searchTerm.trim())
+    }, 250)
+
+    return () => window.clearTimeout(timeout)
+  }, [searchTerm])
+
+  useEffect(() => {
     let ignore = false
 
     async function loadBooks() {
+      setError(null)
+      setIsLoading(page === 1)
+      setIsLoadingMore(page > 1)
+
       try {
-        setIsLoading(true)
-        setError(null)
-        const books = await booksApi.listPublicBooks()
+        const response = await publicBookshelfApi.listBooks({
+          page,
+          pageSize: PAGE_SIZE,
+          searchTerm: activeSearchTerm,
+        })
+
         if (!ignore) {
-          setItems(books.map(toBookshelfItem))
+          setBooks((current) =>
+            page === 1 ? response.items : mergeBooks(current, response.items),
+          )
+          setPagination(response.pagination)
         }
       } catch (loadError) {
         if (!ignore) {
-          setError(
-            loadError instanceof Error ? loadError.message : 'Could not load the bookshelf.',
-          )
-          setItems([])
+          setError(getErrorMessage(loadError))
+          if (page === 1) {
+            setBooks([])
+            setPagination(defaultPagination)
+          }
         }
       } finally {
         if (!ignore) {
           setIsLoading(false)
+          setIsLoadingMore(false)
         }
       }
     }
@@ -82,27 +99,7 @@ export function CommunityBookshelfPage() {
     return () => {
       ignore = true
     }
-  }, [])
-
-  const filteredItems = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase()
-    if (!term) {
-      return items
-    }
-
-    return items.filter(
-      (item) =>
-        item.title.toLowerCase().includes(term) ||
-        item.author.toLowerCase().includes(term),
-    )
-  }, [items, searchTerm])
-
-  const previewItem = previewIndex === null ? null : filteredItems[previewIndex] ?? null
-
-  function openPreview(item: BookshelfItem) {
-    const index = filteredItems.findIndex((candidate) => candidate.id === item.id)
-    setPreviewIndex(index >= 0 ? index : 0)
-  }
+  }, [activeSearchTerm, page])
 
   return (
     <main className={styles.page}>
@@ -113,7 +110,7 @@ export function CommunityBookshelfPage() {
           <img src="/cookbook/1.png" alt="" aria-hidden="true" className={styles.ruleImg} />
           <p className={styles.introLead}>
             A shelf of books and writings that carry our history forward. Search by
-            title or author, take a closer look with a preview, then settle in and read.
+            title or author, open a book, and read directly in the shared viewer.
           </p>
 
           <form
@@ -143,9 +140,7 @@ export function CommunityBookshelfPage() {
             <h2 id="bookshelf-heading">Browse the collection</h2>
           </div>
           {!isLoading && !error ? (
-            <p className={styles.resultCount}>
-              {filteredItems.length} {filteredItems.length === 1 ? 'book' : 'books'}
-            </p>
+            <p className={styles.resultCount}>{formatResultCount(pagination.totalItems)}</p>
           ) : null}
         </div>
 
@@ -157,78 +152,163 @@ export function CommunityBookshelfPage() {
               <div key={index} className={styles.skeletonCard} aria-hidden="true" />
             ))}
           </div>
-        ) : filteredItems.length ? (
-          <div className={styles.cardGrid} aria-labelledby="bookshelf-heading">
-            {filteredItems.map((item, index) => (
-              <BookCard
-                key={item.id}
-                item={item}
-                toneIndex={index % COVER_TONES}
-                onPreview={() => openPreview(item)}
-                onRead={() => setReadingBook(item)}
-              />
-            ))}
-          </div>
+        ) : books.length ? (
+          <>
+            <div className={styles.cardGrid} aria-labelledby="bookshelf-heading">
+              {books.map((book, index) => (
+                <BookCard
+                  key={book.id}
+                  book={book}
+                  toneIndex={index % COVER_TONES}
+                  onOpen={() => setSelectedBook(book)}
+                />
+              ))}
+            </div>
+
+            {pagination.hasNext ? (
+              <div className={styles.loadMoreWrap}>
+                <button
+                  type="button"
+                  className={styles.loadMoreButton}
+                  disabled={isLoadingMore}
+                  onClick={() => setPage((current) => current + 1)}
+                >
+                  {isLoadingMore ? 'Loading...' : 'Show more'}
+                </button>
+              </div>
+            ) : null}
+          </>
         ) : (
-          <p className={styles.emptyState}>
-            {searchTerm.trim()
-              ? 'No books match your search. Try a different title or author.'
-              : 'No books are on the shelf yet. Please check back soon.'}
-          </p>
+          <div className={styles.emptyState}>
+            <h3>No books found</h3>
+            <p>
+              {activeSearchTerm
+                ? 'Try another title or author, or check back soon for more additions.'
+                : 'No books are on the shelf yet. Please check back soon.'}
+            </p>
+          </div>
         )}
       </section>
 
-      {previewItem ? (
-        <PreviewCarousel
-          items={filteredItems}
-          index={previewIndex ?? 0}
-          onIndexChange={setPreviewIndex}
-          onClose={() => setPreviewIndex(null)}
-          onRead={(item) => {
-            setPreviewIndex(null)
-            setReadingBook(item)
-          }}
-        />
-      ) : null}
+      {selectedBook ? (
+        <DocumentViewerModal
+          title={selectedBook.title}
+          eyebrow="The Bookshelf"
+          description={buildViewerDescription(selectedBook)}
+          previewUrl={selectedBook.bookContentUrl}
+          mimeType={selectedBook.bookMimeType || 'application/pdf'}
+          onClose={() => setSelectedBook(null)}
+          sidebar={
+            <div className={styles.modalSidebar}>
+              <BookCover
+                book={selectedBook}
+                toneIndex={Number(selectedBook.id) % COVER_TONES}
+                className={styles.modalCover}
+              />
 
-      {readingBook ? (
-        <BookReader book={readingBook} onClose={() => setReadingBook(null)} />
+              <p className={styles.modalDocumentMeta}>{buildDocumentMeta(selectedBook)}</p>
+
+              <div className={styles.modalAuthorRow}>
+                {selectedBook.hasAuthorImage ? (
+                  <img
+                    src={selectedBook.authorImageContentUrl}
+                    alt={`Portrait of ${selectedBook.author}`}
+                    className={styles.modalAuthorImage}
+                  />
+                ) : (
+                  <div className={styles.modalAuthorFallback} aria-hidden="true">
+                    {getAuthorInitials(selectedBook.author)}
+                  </div>
+                )}
+
+                <div className={styles.modalAuthorMeta}>
+                  <p className={styles.modalMetaLabel}>Author</p>
+                  <h3>{selectedBook.author || 'Unknown author'}</h3>
+                </div>
+              </div>
+
+              {selectedBook.description.trim() ? (
+                <section className={styles.modalSection}>
+                  <h3>About this book</h3>
+                  <p>{selectedBook.description.trim()}</p>
+                </section>
+              ) : null}
+
+              {selectedBook.authorBio.trim() ? (
+                <section className={styles.modalSection}>
+                  <h3>About the author</h3>
+                  <p>{selectedBook.authorBio.trim()}</p>
+                </section>
+              ) : null}
+            </div>
+          }
+          controls={
+            <>
+              {selectedBook.bookLink.trim() ? (
+                <a
+                  href={selectedBook.bookLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={styles.modalSecondaryAction}
+                >
+                  Visit book link
+                </a>
+              ) : null}
+              <button
+                type="button"
+                onClick={() =>
+                  downloadPublicFile(
+                    selectedBook.bookContentUrl,
+                    getBookFileName(selectedBook),
+                  )
+                }
+              >
+                Download book
+              </button>
+            </>
+          }
+        />
       ) : null}
     </main>
   )
 }
 
 type BookCardProps = {
-  item: BookshelfItem
+  book: PublicBookshelfEntry
   toneIndex: number
-  onPreview: () => void
-  onRead: () => void
+  onOpen: () => void
 }
 
-function BookCard({ item, toneIndex, onPreview, onRead }: BookCardProps) {
+function BookCard({ book, toneIndex, onOpen }: BookCardProps) {
+  const canOpen = Boolean(book.bookContentUrl)
+
   return (
     <article className={styles.card}>
-      <BookCover item={item} toneIndex={toneIndex} />
+      <button
+        type="button"
+        className={styles.coverButton}
+        onClick={onOpen}
+        disabled={!canOpen}
+        aria-label={`Open book: ${book.title}`}
+      >
+        <BookCover book={book} toneIndex={toneIndex} />
+      </button>
+
       <div className={styles.cardBody}>
-        <h3 className={styles.cardTitle}>{item.title}</h3>
-        <p className={styles.cardAuthor}>{item.author}</p>
+        <p className={styles.cardAuthor}>{book.author || 'Unknown author'}</p>
+        <h3 className={styles.cardTitle}>{book.title}</h3>
+        <p className={styles.cardTeaser}>{getBookLead(book)}</p>
       </div>
+
       <div className={styles.cardActions}>
         <button
           type="button"
-          className={styles.previewButton}
-          onClick={onPreview}
-          aria-label={`Preview ${item.title}`}
+          className={styles.primaryAction}
+          onClick={onOpen}
+          disabled={!canOpen}
+          aria-label={`Open book: ${book.title}`}
         >
-          Preview
-        </button>
-        <button
-          type="button"
-          className={styles.readButton}
-          onClick={onRead}
-          aria-label={`Read ${item.title}`}
-        >
-          Read
+          {canOpen ? 'Open book' : 'Unavailable'}
         </button>
       </div>
     </article>
@@ -236,20 +316,25 @@ function BookCard({ item, toneIndex, onPreview, onRead }: BookCardProps) {
 }
 
 function BookCover({
-  item,
+  book,
   toneIndex,
   className,
 }: {
-  item: BookshelfItem
+  book: PublicBookshelfEntry
   toneIndex: number
   className?: string
 }) {
   const coverClassName = className ? `${styles.cover} ${className}` : styles.cover
 
-  if (item.coverUrl) {
+  if (book.hasCoverImage && book.coverImageContentUrl) {
     return (
       <div className={coverClassName}>
-        <img src={item.coverUrl} alt={`Cover of ${item.title}`} className={styles.coverImg} loading="lazy" />
+        <img
+          src={book.coverImageContentUrl}
+          alt={`Cover of ${book.title}`}
+          className={styles.coverImg}
+          loading="lazy"
+        />
       </div>
     )
   }
@@ -258,220 +343,107 @@ function BookCover({
     <div className={coverClassName}>
       <div className={`${styles.coverPlaceholder} ${styles[`tone${toneIndex}`]}`}>
         <span className={styles.coverPlaceholderLabel}>The Bookshelf</span>
-        <span className={styles.coverPlaceholderTitle}>{item.title}</span>
+        <span className={styles.coverPlaceholderTitle}>{book.title}</span>
+        <span className={styles.coverPlaceholderAuthor}>{book.author}</span>
       </div>
     </div>
   )
 }
 
-type PreviewCarouselProps = {
-  items: BookshelfItem[]
-  index: number
-  onIndexChange: (index: number) => void
-  onClose: () => void
-  onRead: (item: BookshelfItem) => void
+function mergeBooks(
+  current: PublicBookshelfEntry[],
+  next: PublicBookshelfEntry[],
+) {
+  const seen = new Set(current.map((item) => item.id))
+  return [...current, ...next.filter((item) => !seen.has(item.id))]
 }
 
-function PreviewCarousel({ items, index, onIndexChange, onClose, onRead }: PreviewCarouselProps) {
-  const canPrev = index > 0
-  const canNext = index < items.length - 1
-
-  useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        onClose()
-      } else if (event.key === 'ArrowLeft' && index > 0) {
-        onIndexChange(index - 1)
-      } else if (event.key === 'ArrowRight' && index < items.length - 1) {
-        onIndexChange(index + 1)
-      }
-    }
-
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    window.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.body.style.overflow = previousOverflow
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [index, items.length, onClose, onIndexChange])
-
+function getBookLead(book: PublicBookshelfEntry) {
   return (
-    <div
-      className={styles.modalOverlay}
-      role="presentation"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) {
-          onClose()
-        }
-      }}
-    >
-      <section
-        className={styles.carouselPanel}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Book preview"
-      >
-        <button type="button" className={styles.modalClose} onClick={onClose} aria-label="Close preview">
-          <CloseIcon />
-        </button>
-
-        <button
-          type="button"
-          className={`${styles.carouselNav} ${styles.navPrev}`}
-          onClick={() => onIndexChange(index - 1)}
-          disabled={!canPrev}
-          aria-label="Previous book"
-        >
-          <ChevronIcon direction="left" />
-        </button>
-
-        <div className={styles.carouselViewport}>
-          <div className={styles.carouselTrack} style={{ transform: `translateX(-${index * 100}%)` }}>
-            {items.map((item, itemIndex) => (
-              <div key={item.id} className={styles.carouselSlide} aria-hidden={itemIndex !== index}>
-                <BookCover item={item} toneIndex={itemIndex % COVER_TONES} className={styles.carouselCover} />
-                <div className={styles.carouselInfo}>
-                  <p className={styles.carouselEyebrow}>From the bookshelf</p>
-                  <h2 className={styles.carouselTitle}>{item.title}</h2>
-                  <p className={styles.carouselAuthor}>{item.author}</p>
-                  <p className={styles.carouselDesc}>
-                    {item.description?.trim() || 'A description for this book is coming soon.'}
-                  </p>
-                  <button
-                    type="button"
-                    className={`${styles.readButton} ${styles.carouselReadButton}`}
-                    onClick={() => onRead(item)}
-                  >
-                    Read this book
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <button
-          type="button"
-          className={`${styles.carouselNav} ${styles.navNext}`}
-          onClick={() => onIndexChange(index + 1)}
-          disabled={!canNext}
-          aria-label="Next book"
-        >
-          <ChevronIcon direction="right" />
-        </button>
-
-        <p className={styles.carouselCounter}>
-          {index + 1} of {items.length}
-        </p>
-      </section>
-    </div>
+    book.bookTeaser.trim() ||
+    book.description.trim() ||
+    book.authorBio.trim() ||
+    'Open this title to read more from the community bookshelf.'
   )
 }
 
-function BookReader({ book, onClose }: { book: BookshelfItem; onClose: () => void }) {
-  const [detail, setDetail] = useState<PublicBookDetail | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    let ignore = false
-
-    async function loadDetail() {
-      try {
-        setIsLoading(true)
-        setError(null)
-        const result = await booksApi.getPublicBook(book.id)
-        if (!ignore) {
-          setDetail(result)
-        }
-      } catch (loadError) {
-        if (!ignore) {
-          setError(
-            loadError instanceof Error ? loadError.message : 'This book could not be opened.',
-          )
-        }
-      } finally {
-        if (!ignore) {
-          setIsLoading(false)
-        }
-      }
-    }
-
-    void loadDetail()
-
-    return () => {
-      ignore = true
-    }
-  }, [book.id])
-
-  useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        onClose()
-      }
-    }
-
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    window.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.body.style.overflow = previousOverflow
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [onClose])
-
-  const flipbookSource = useMemo(() => {
-    if (!detail) {
-      return null
-    }
-
-    return {
-      kind: 'pdf' as const,
-      url: booksApi.resolveContentUrl(detail.version.pdfContentUrl),
-      fileName: `${detail.title}.pdf`,
-    }
-  }, [detail])
-
+function buildViewerDescription(book: PublicBookshelfEntry) {
   return (
-    <div
-      className={styles.modalOverlay}
-      role="presentation"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) {
-          onClose()
-        }
-      }}
-    >
-      <section
-        className={styles.readerPanel}
-        role="dialog"
-        aria-modal="true"
-        aria-label={`Reading ${book.title}`}
-      >
-        <button type="button" className={styles.modalClose} onClick={onClose} aria-label="Close reader">
-          <CloseIcon />
-        </button>
-
-        <div className={styles.readerHeader}>
-          <h2>{book.title}</h2>
-          <p className={styles.readerAuthor}>{book.author}</p>
-        </div>
-
-        {isLoading ? (
-          <div className={styles.readerLoading}>Opening book...</div>
-        ) : error ? (
-          <div className={styles.readerError}>{error}</div>
-        ) : detail && flipbookSource ? (
-          <DocumentFlipbook source={flipbookSource} title={detail.title} />
-        ) : (
-          <div className={styles.readerError}>This book is not available right now.</div>
-        )}
-      </section>
-    </div>
+    book.bookTeaser.trim() ||
+    book.description.trim() ||
+    `Read ${book.title} from the community bookshelf.`
   )
+}
+
+function getBookFileName(book: PublicBookshelfEntry) {
+  const trimmedFileName = book.bookFileName.trim()
+  const trimmedTitle = book.title.trim()
+
+  return trimmedFileName || `${trimmedTitle || 'bookshelf-book'}.pdf`
+}
+
+function buildDocumentMeta(book: PublicBookshelfEntry) {
+  const parts = [getDocumentLabel(book)]
+  const sizeLabel = formatFileSize(book.bookFileSize)
+
+  if (sizeLabel) {
+    parts.push(sizeLabel)
+  }
+
+  return parts.join(' · ')
+}
+
+function getDocumentLabel(book: PublicBookshelfEntry) {
+  const mimeType = book.bookMimeType.trim().toLowerCase()
+  if (mimeType === 'application/pdf') {
+    return 'PDF'
+  }
+  if (mimeType.startsWith('image/')) {
+    return mimeType.replace('image/', '').toUpperCase()
+  }
+
+  const ext = book.bookFileName.trim().split('.').pop()?.trim()
+  return ext ? ext.toUpperCase() : 'Document'
+}
+
+function formatFileSize(bytes: number) {
+  if (!Number.isFinite(bytes) || bytes <= 0) {
+    return ''
+  }
+
+  const units = ['B', 'KB', 'MB', 'GB']
+  let value = bytes
+  let unitIndex = 0
+
+  while (value >= 1024 && unitIndex < units.length - 1) {
+    value /= 1024
+    unitIndex += 1
+  }
+
+  const digits = value >= 10 || unitIndex === 0 ? 0 : 1
+  return `${value.toFixed(digits)} ${units[unitIndex]}`
+}
+
+function formatResultCount(totalItems: number) {
+  return `${totalItems} ${totalItems === 1 ? 'book' : 'books'}`
+}
+
+function getAuthorInitials(author: string) {
+  const words = author
+    .split(/\s+/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .slice(0, 2)
+
+  if (!words.length) {
+    return 'BK'
+  }
+
+  return words.map((part) => part[0]?.toUpperCase() ?? '').join('')
+}
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : 'Could not load the bookshelf.'
 }
 
 function SearchIcon() {
@@ -479,28 +451,6 @@ function SearchIcon() {
     <svg viewBox="0 0 16 16" width="18" height="18" fill="none" aria-hidden="true">
       <circle cx="7" cy="7" r="4.8" stroke="currentColor" strokeWidth="1.4" />
       <path d="M10.8 10.8 14 14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function CloseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true">
-      <path d="m6 6 12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function ChevronIcon({ direction }: { direction: 'left' | 'right' }) {
-  return (
-    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
-      <path
-        d={direction === 'left' ? 'm15 6-6 6 6 6' : 'm9 6 6 6-6 6'}
-        stroke="currentColor"
-        strokeWidth="1.9"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
     </svg>
   )
 }

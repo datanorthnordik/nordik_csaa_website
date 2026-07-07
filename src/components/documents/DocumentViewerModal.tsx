@@ -8,6 +8,9 @@ type DocumentViewerModalProps = {
   mimeType: string
   onClose: () => void
   controls?: ReactNode
+  eyebrow?: string
+  description?: string
+  sidebar?: ReactNode
 }
 
 export function DocumentViewerModal({
@@ -16,6 +19,9 @@ export function DocumentViewerModal({
   mimeType,
   onClose,
   controls,
+  eyebrow,
+  description,
+  sidebar,
 }: DocumentViewerModalProps) {
   const { t } = useTranslation()
 
@@ -48,18 +54,30 @@ export function DocumentViewerModal({
     >
       <section className={styles.viewerPanel} role="dialog" aria-modal="true" aria-label={title}>
         <div className={styles.viewerHeader}>
-          <strong>{title}</strong>
-          <button type="button" onClick={onClose}>
+          <div className={styles.viewerHeaderCopy}>
+            {eyebrow ? <p className={styles.viewerEyebrow}>{eyebrow}</p> : null}
+            <strong>{title}</strong>
+            {description ? <p className={styles.viewerDescription}>{description}</p> : null}
+          </div>
+          <button
+            type="button"
+            className={styles.viewerCloseButton}
+            onClick={onClose}
+          >
             {t('common.close')}
           </button>
         </div>
 
-        <div className={styles.viewerStage}>
-          {isImageDocument(mimeType) ? (
-            <img src={previewUrl} alt={title} />
-          ) : (
-            <iframe title={title} src={previewUrl} />
-          )}
+        <div className={sidebar ? styles.viewerBodyWithSidebar : styles.viewerBody}>
+          {sidebar ? <aside className={styles.viewerSidebar}>{sidebar}</aside> : null}
+
+          <div className={styles.viewerStage}>
+            {isImageDocument(mimeType) ? (
+              <img src={previewUrl} alt={title} />
+            ) : (
+              <iframe title={title} src={previewUrl} />
+            )}
+          </div>
         </div>
 
         {controls ? <div className={styles.viewerControls}>{controls}</div> : null}

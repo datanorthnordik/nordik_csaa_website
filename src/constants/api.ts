@@ -67,6 +67,12 @@ export const API_ROUTES = {
   publicBookById: (id: number | string) => `/api/books/public/${id}`,
   publicBookPdfById: (id: number | string) => `/api/books/public/${id}/pdf/content`,
   publicBookSubmissionById: (id: number | string) => `/api/books/public/${id}/submissions`,
+  bookshelf: '/api/bookshelf',
+  bookshelfById: (id: number | string) => `/api/bookshelf/${id}`,
+  bookshelfBookContentById: (id: number | string) => `/api/bookshelf/${id}/book/content`,
+  bookshelfAuthorImageContentById: (id: number | string) =>
+    `/api/bookshelf/${id}/author-image/content`,
+  bookshelfCoverContentById: (id: number | string) => `/api/bookshelf/${id}/cover/content`,
   memorials: '/api/memorial',
   memorialById: (id: number | string) => `/api/memorial/${id}`,
   memorialPortraitById: (id: number | string) =>
