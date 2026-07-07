@@ -6,76 +6,165 @@
   place-items: center;
   padding: 24px;
   background: rgba(12, 14, 18, 0.72);
+  backdrop-filter: blur(10px);
 }
 
 .viewerPanel {
-  width: min(980px, 100%);
+  width: min(1220px, 100%);
   max-height: calc(100vh - 48px);
   display: grid;
-  gap: 14px;
-  border-radius: 8px;
-  background: var(--color-surface);
-  padding: 16px;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 18px;
+  border: 1px solid rgba(31, 31, 35, 0.08);
+  border-radius: 24px;
+  background: linear-gradient(180deg, #fffaf3 0%, var(--color-surface) 100%);
+  padding: 20px;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.28);
 }
 
-.viewerHeader,
-.viewerControls {
+.viewerHeader {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
+}
+
+.viewerHeaderCopy {
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.viewerEyebrow {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .viewerHeader strong {
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: var(--color-text);
+  font-size: clamp(1.28rem, 2vw, 1.72rem);
+  line-height: 1.12;
 }
 
-.viewerHeader button,
-.viewerControls button {
-  min-height: 38px;
-  border: 0;
-  border-radius: 3px;
-  padding: 0 14px;
+.viewerDescription {
+  max-width: 72ch;
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+}
+
+.viewerCloseButton {
+  min-height: 42px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0 18px;
   background: var(--color-primary);
   color: var(--color-on-primary);
   font-weight: 800;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
-.viewerHeader button:focus-visible,
-.viewerControls button:focus-visible {
-  outline: 3px solid rgba(122, 31, 36, 0.24);
-  outline-offset: 3px;
+.viewerBody,
+.viewerBodyWithSidebar {
+  min-height: 0;
+}
+
+.viewerBodyWithSidebar {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 18px;
+}
+
+.viewerSidebar {
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid rgba(31, 31, 35, 0.08);
+  border-radius: 20px;
+  background: #f8f3ec;
+  padding: 20px;
 }
 
 .viewerStage {
-  min-height: 360px;
+  min-height: 420px;
   display: grid;
   place-items: center;
   overflow: hidden;
-  border-radius: 8px;
+  border: 1px solid rgba(31, 31, 35, 0.08);
+  border-radius: 20px;
   background: var(--color-surface-alt);
 }
 
 .viewerStage img {
   max-width: 100%;
-  max-height: 70vh;
+  max-height: min(70vh, 860px);
   display: block;
   object-fit: contain;
 }
 
 .viewerStage iframe {
   width: 100%;
-  min-height: 70vh;
+  min-height: min(72vh, 860px);
   border: 0;
   background: var(--color-surface);
 }
 
 .viewerControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+.viewerControls > * {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
   justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0 18px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    opacity 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.viewerControls > *:hover {
+  transform: translateY(-1px);
+}
+
+.viewerCloseButton:focus-visible,
+.viewerControls > *:focus-visible {
+  outline: 3px solid rgba(122, 31, 36, 0.24);
+  outline-offset: 3px;
+}
+
+@media (max-width: 980px) {
+  .viewerBodyWithSidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .viewerSidebar {
+    max-height: 36vh;
+  }
 }
 
 @media (max-width: 768px) {
@@ -83,7 +172,24 @@
     padding: 12px;
   }
 
+  .viewerPanel {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .viewerHeader {
+    flex-direction: column;
+  }
+
+  .viewerCloseButton {
+    width: 100%;
+  }
+
   .viewerStage {
     min-height: 260px;
+  }
+
+  .viewerStage iframe {
+    min-height: 56vh;
   }
 }
