@@ -116,6 +116,11 @@ const CommunityBookshelfPage = lazy(() =>
     default: module.CommunityBookshelfPage,
   })),
 )
+const CsaaResearchArchivePage = lazy(() =>
+  import('./pages/CsaaResearchArchivePage').then((module) => ({
+    default: module.CsaaResearchArchivePage,
+  })),
+)
 
 function App() {
   return (
@@ -200,6 +205,14 @@ function App() {
             <Route
               path="/community-circle/bookshelf"
               element={withSuspense(<CommunityBookshelfPage />)}
+            />
+            <Route
+              path="/research-and-archive"
+              element={withSuspense(<CsaaResearchArchivePage />)}
+            />
+            <Route
+              path="/research-archive"
+              element={withSuspense(<CsaaResearchArchivePage />)}
             />
             <Route path="*" element={<CmsPageRoute />} />
           </Route>

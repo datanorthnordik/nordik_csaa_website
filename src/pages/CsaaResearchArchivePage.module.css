@@ -1,0 +1,351 @@
+.page {
+  display: grid;
+  gap: 0;
+  min-width: 0;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
+}
+
+/* Shared section rhythm */
+.intro,
+.offerings,
+.history,
+.cta {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding: clamp(56px, 7vw, 110px) clamp(24px, 6vw, 120px);
+}
+
+.eyebrow {
+  margin: 0 0 14px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #9c0000;
+}
+
+.rule {
+  width: 64px;
+  height: 4px;
+  background: #9c0000;
+  border-radius: 2px;
+  margin: 0 auto 22px;
+}
+
+/* ── Intro / partnership ── */
+.intro {
+  background: #ffffff;
+}
+
+.introHead {
+  max-width: 760px;
+  margin: 0 auto 44px;
+  text-align: center;
+}
+
+.introTitle {
+  margin: 0 0 18px;
+  font-size: clamp(1.9rem, 3.4vw, 2.9rem);
+  font-weight: 800;
+  color: #1a1208;
+  line-height: 1.12;
+}
+
+.introLead {
+  margin: 0;
+  font-size: clamp(0.98rem, 1.2vw, 1.12rem);
+  line-height: 1.9;
+  color: #4a3828;
+}
+
+.partners {
+  max-width: 820px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 5vw, 64px);
+  flex-wrap: wrap;
+}
+
+.partnerLogo {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  max-width: 240px;
+  text-align: center;
+}
+
+.partnerLogo img {
+  width: clamp(96px, 12vw, 132px);
+  height: auto;
+  filter: drop-shadow(0 10px 20px rgba(26, 18, 8, 0.14));
+}
+
+.partnerLogo span {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #1a1208;
+  line-height: 1.4;
+}
+
+.partnerJoin {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 300;
+  color: #9c0000;
+}
+
+/* ── Shared section heads ── */
+.sectionHead {
+  max-width: 760px;
+  margin: 0 auto 40px;
+  text-align: center;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: clamp(1.7rem, 3vw, 2.5rem);
+  font-weight: 800;
+  color: #1a1208;
+  line-height: 1.14;
+}
+
+/* ── Offerings ── */
+.offerings {
+  background: #fbf6ec;
+}
+
+.offeringGrid {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(16px, 2vw, 26px);
+}
+
+.offeringCard {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: clamp(22px, 2vw, 30px);
+  background: #ffffff;
+  border: 1px solid rgba(26, 18, 8, 0.1);
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.offeringCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(26, 18, 8, 0.12);
+  border-color: rgba(156, 0, 0, 0.35);
+}
+
+.offeringIcon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  background: color-mix(in srgb, #9c0000 10%, #ffffff);
+  color: #9c0000;
+}
+
+.offeringIcon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.offeringTitle {
+  margin: 0;
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  font-weight: 800;
+  color: #1a1208;
+  line-height: 1.2;
+}
+
+.offeringDesc {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: #4a3828;
+}
+
+/* ── History timeline ── */
+.history {
+  background: #ffffff;
+}
+
+.timeline {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0;
+}
+
+.timelineItem {
+  position: relative;
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: clamp(16px, 3vw, 34px);
+  padding: 0 0 30px 0;
+}
+
+/* Connecting line + node down the left edge of the body column */
+.timelineItem::before {
+  content: '';
+  position: absolute;
+  left: calc(120px + clamp(16px, 3vw, 34px) / 2 - 5px);
+  top: 8px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #9c0000;
+  box-shadow: 0 0 0 4px color-mix(in srgb, #9c0000 16%, transparent);
+  z-index: 1;
+}
+
+.timelineItem::after {
+  content: '';
+  position: absolute;
+  left: calc(120px + clamp(16px, 3vw, 34px) / 2 - 1px);
+  top: 14px;
+  bottom: -4px;
+  width: 2px;
+  background: rgba(156, 0, 0, 0.22);
+}
+
+.timelineItem:last-child::after {
+  display: none;
+}
+
+.timelineYear {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #9c0000;
+  text-align: right;
+  padding-top: 2px;
+}
+
+.timelineBody {
+  padding-left: 18px;
+}
+
+.timelineTitle {
+  margin: 0 0 6px;
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: #1a1208;
+  line-height: 1.25;
+}
+
+.timelineDesc {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.7;
+  color: #4a3828;
+}
+
+/* ── CTA band ── */
+.cta {
+  background:
+    radial-gradient(circle at 15% 0%, rgba(255, 255, 255, 0.08), transparent 40%),
+    linear-gradient(160deg, #7a0000, #9c0000 55%, #5e0000);
+  color: #fff5ee;
+}
+
+.ctaInner {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ctaEyebrow {
+  margin: 0 0 14px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #ffd9c7;
+}
+
+.ctaTitle {
+  margin: 0 0 16px;
+  font-size: clamp(1.8rem, 3.2vw, 2.7rem);
+  font-weight: 800;
+  line-height: 1.14;
+  color: #fff;
+}
+
+.ctaLead {
+  margin: 0 0 28px;
+  font-size: clamp(0.98rem, 1.2vw, 1.1rem);
+  line-height: 1.8;
+  color: rgba(255, 245, 238, 0.9);
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 30px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #9c0000;
+  font-weight: 800;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.24);
+}
+
+.ctaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.3);
+}
+
+.ctaSupport {
+  margin: 26px auto 0;
+  max-width: 560px;
+  font-size: 0.86rem;
+  line-height: 1.65;
+  color: rgba(255, 245, 238, 0.8);
+}
+
+.ctaSupport a {
+  color: #fff;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* ── Responsive ── */
+@media (max-width: 980px) {
+  .offeringGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .offeringGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .timelineItem {
+    grid-template-columns: 84px 1fr;
+    gap: 14px;
+  }
+
+  .timelineItem::before {
+    left: calc(84px + 14px / 2 - 5px);
+  }
+
+  .timelineItem::after {
+    left: calc(84px + 14px / 2 - 1px);
+  }
+
+  .timelineYear {
+    font-size: 0.82rem;
+  }
+}

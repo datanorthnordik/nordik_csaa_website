@@ -1,16 +1,26 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
+import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
   blogsApi,
   resolveBlogAssetUrl,
+  type BlogDetailResponse,
   type BlogListItem,
 } from '../api/blogsApi'
+import { booksApi, type PublicBookSummary } from '../api/booksApi'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
 import { buildAbsoluteUrl, SITE_NAME, usePageSeo } from '../lib/usePageSeo'
-import { blogDetailPath } from '../lib/blogSlug'
-import { ShareStoryForm } from '../components/blogs/ShareStoryForm'
+import {
+  LivingHistoryBlogLayout,
+  blogHasAnimations,
+  blogHasPostAnimationContent,
+} from '../components/blogs/LivingHistoryBlogLayout'
+import {
+  knowledgeCenterApi,
+  type KnowledgeCenterSubmissionType,
+} from '../api/knowledgeCenterApi'
 import {
   getVideoTeaserUrl,
   videosApi,
@@ -178,6 +188,76 @@ const FEATURE_BLOCKS = [
   },
 ]
 
+// ── Books (fetched from API) ─────────────────────────────────────────────────
+const SPINE_COLORS = ['#7c3d2e', '#2c4a3e', '#1a2c4a', '#4a3820', '#3b2a4a', '#5a2c1a', '#1a3a2c']
+const PLACEHOLDER_BOOKS = [
+  { id: -1, title: 'The CSAA Cookbook', description: 'Recipes, stories, and nourishment passed down through generations of the CSAA community.' },
+  { id: -2, title: 'Shingwauk Memories', description: 'Voices, letters, and testimonies gathered from survivors, their families, and those who remember.' },
+]
+const FLIP_FRAMES = [
+  '/bookflip/6.png',
+  '/bookflip/7.png',
+  '/bookflip/8.png',
+  '/bookflip/9.png',
+  '/bookflip/10.png',
+  '/bookflip/11.png',
+]
+const FLIP_MID = 3   // swap the book title/desc at this frame index (mid-flip)
+const FLIP_MS  = 72  // ms per frame
+
+// ── Radio recordings ────────────────────────────────────────────────────────
+type Recording = {
+  id: string
+  title: string
+  speaker: string
+  date: string
+  desc: string
+  src: string
+}
+
+const RECORDINGS: Recording[] = [
+  {
+    id: 'r1',
+    title: 'Shirley: A Residential School Story',
+    speaker: 'Dr. Shirley Horn',
+    date: 'March 2026',
+    desc: 'Shirley Horn shares her residential school story — healing, reconnecting with culture, and a longing for language preserved through generations.',
+    src: '',
+  },
+  {
+    id: 'r2',
+    title: 'Dan Pine & the Pine Trees',
+    speaker: 'Community Support Team',
+    date: 'June 2026',
+    desc: 'Little Pine\'s vision, Elder Dan Pine Sr., and the trees planted by Survivors as a living monument to the children who never made it home.',
+    src: '',
+  },
+  {
+    id: 'r3',
+    title: 'Voices from the Gathering',
+    speaker: 'Survivors & Elders',
+    date: 'May 2026',
+    desc: 'A collection of voices from the annual gathering — memories, songs, and words of renewal passed forward to the next generation.',
+    src: '',
+  },
+]
+
+type ContributionFormState = {
+  name: string
+  email: string
+  phone: string
+  type: KnowledgeCenterSubmissionType
+  message: string
+}
+
+const initialContributionForm: ContributionFormState = {
+  name: '',
+  email: '',
+  phone: '',
+  type: 'post',
+  message: '',
+}
+
 export function LivingHistoryHubPage() {
   const { t } = useTranslation()
 
@@ -192,9 +272,23 @@ export function LivingHistoryHubPage() {
   const blockRefs = useRef<(HTMLDivElement | null)[]>([])
   const [activeBlock, setActiveBlock] = useState(0)
 
-  const tvSlotARef = useRef<HTMLDivElement>(null)
-  const tvSlotBRef = useRef<HTMLDivElement>(null)
-  const tvFlyRef = useRef<HTMLDivElement>(null)
+  const [mediaTab, setMediaTab] = useState<'tapes' | 'recordings' | 'bookshelf'>('tapes')
+  const [recIndex, setRecIndex] = useState(0)
+  const [recPlaying, setRecPlaying] = useState(false)
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const activeRec = RECORDINGS[recIndex] ?? null
+  const [hubBooks, setHubBooks] = useState<PublicBookSummary[]>(PLACEHOLDER_BOOKS)
+  const [hubBooksStatus, setHubBooksStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [bookIndex, setBookIndex] = useState(0)
+  const activeBook = hubBooks[bookIndex] ?? null
+  const [flipFrame, setFlipFrame] = useState(0)
+  const [isFlipping, setIsFlipping] = useState(false)
+  const flipTimersRef = useRef<number[]>([])
+  const [recSearching, setRecSearching] = useState(false)
+  const [recArchiveOpen, setRecArchiveOpen] = useState(false)
+  const dialAngle = RECORDINGS.length > 1
+    ? -45 + (90 * recIndex / (RECORDINGS.length - 1))
+    : 0
 
   const videoRef = useRef<HTMLElement>(null)
   const [videoVisible, setVideoVisible] = useState(false)
@@ -216,10 +310,19 @@ export function LivingHistoryHubPage() {
   const [blogs, setBlogs] = useState<BlogListItem[]>([])
   const [blogsStatus, setBlogsStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [blogsError, setBlogsError] = useState<string | null>(null)
+  const [selectedBlogId, setSelectedBlogId] = useState<number | null>(null)
+  const [selectedBlog, setSelectedBlog] = useState<BlogDetailResponse | null>(null)
+  const [selectedBlogLoading, setSelectedBlogLoading] = useState(false)
+  const selectedBlogRequestRef = useRef(0)
+  const [contributeForm, setContributeForm] =
+    useState<ContributionFormState>(initialContributionForm)
+  const [isSubmittingContribution, setIsSubmittingContribution] = useState(false)
   const blogRef = useRef<HTMLDivElement>(null)
 
   const openTheatre = (videoUrlOrId: string) => {
     const id = extractYouTubeId(videoUrlOrId) || videoUrlOrId
+    setVideoPlaying(false)
+    setVideoLoading(false)
     setTheatreId(id)
     setTheatre(true)
   }
@@ -232,6 +335,29 @@ export function LivingHistoryHubPage() {
     requestAnimationFrame(() =>
       blogRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
     )
+  }
+
+  const showBlog = async (id: number) => {
+    const requestId = selectedBlogRequestRef.current + 1
+    selectedBlogRequestRef.current = requestId
+    setSelectedBlogId(id)
+    setSelectedBlog(null)
+    setSelectedBlogLoading(true)
+    requestAnimationFrame(() =>
+      blogRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+    )
+    try {
+      const detail = await blogsApi.getBlog(id)
+      if (selectedBlogRequestRef.current === requestId) {
+        setSelectedBlog(detail)
+      }
+    } catch {
+      toast.error('Unable to load this story right now.')
+    } finally {
+      if (selectedBlogRequestRef.current === requestId) {
+        setSelectedBlogLoading(false)
+      }
+    }
   }
 
   const playActive = () => {
@@ -355,6 +481,47 @@ export function LivingHistoryHubPage() {
   }, [])
 
   useEffect(() => {
+    if (mediaTab !== 'bookshelf' || hubBooksStatus !== 'idle') return
+    let cancelled = false
+
+    async function loadBooks() {
+      setHubBooksStatus('loading')
+      try {
+        const books = await booksApi.listPublicBooks()
+        if (!cancelled) {
+          setHubBooks(books)
+          setBookIndex(0)
+          setHubBooksStatus('success')
+        }
+      } catch {
+        if (!cancelled) {
+          setHubBooks([])
+          setHubBooksStatus('error')
+        }
+      }
+    }
+
+    void loadBooks()
+    return () => { cancelled = true }
+  }, [mediaTab, hubBooksStatus])
+
+  // Preload flip frames when bookshelf tab opens, clean up timers on unmount
+  useEffect(() => {
+    if (mediaTab !== 'bookshelf') return
+    FLIP_FRAMES.forEach((src) => { const img = new Image(); img.src = src })
+  }, [mediaTab])
+
+  useEffect(() => {
+    return () => { flipTimersRef.current.forEach(clearTimeout) }
+  }, [])
+
+  useEffect(() => {
+    if (videoIndex >= videos.length) {
+      setVideoIndex(0)
+    }
+  }, [videoIndex, videos.length])
+
+  useEffect(() => {
     if (videos.length < 2 || !videoVisible || videoPlaying || archiveOpen) {
       return
     }
@@ -369,55 +536,6 @@ export function LivingHistoryHubPage() {
   }, [videos.length, videoVisible, videoPlaying, archiveOpen])
 
   useEffect(() => {
-    const fly = tvFlyRef.current
-    const slotA = tvSlotARef.current
-    const slotB = tvSlotBRef.current
-    if (!fly || !slotA || !slotB) return
-
-    if (window.matchMedia('(max-width: 768px)').matches) return
-
-    const lerp = (a: number, b: number, f: number) => a + (b - a) * f
-
-    let raf = 0
-    const update = () => {
-      raf = 0
-      const aRect = slotA.getBoundingClientRect()
-      const bRect = slotB.getBoundingClientRect()
-
-      const vpCenter = window.innerHeight / 2
-      const aCenter = aRect.top + aRect.height / 2
-      const bCenter = bRect.top + bRect.height / 2
-      const span = aCenter - bCenter
-      const f =
-        span !== 0
-          ? Math.min(1, Math.max(0, (aCenter - vpCenter) / span))
-          : 0
-
-      fly.style.left = `${lerp(aRect.left, bRect.left, f)}px`
-      fly.style.top = `${lerp(aRect.top, bRect.top, f)}px`
-      fly.style.width = `${lerp(aRect.width, bRect.width, f)}px`
-      fly.style.height = `${lerp(aRect.height, bRect.height, f)}px`
-
-      const reveal = Math.max(0, Math.min(1, (f - 0.4) / 0.4))
-      fly.style.setProperty('--reveal', reveal.toFixed(3))
-    }
-
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update)
-    }
-
-    update()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
-
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-      if (raf) cancelAnimationFrame(raf)
-    }
-  }, [])
-
-  useEffect(() => {
     if (!theatre) return
 
     const onKey = (e: KeyboardEvent) => {
@@ -427,57 +545,6 @@ export function LivingHistoryHubPage() {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [theatre])
-
-  useEffect(() => {
-    const slotA = tvSlotARef.current
-    const slotB = tvSlotBRef.current
-    if (!slotA || !slotB) return
-    if (window.matchMedia('(max-width: 768px)').matches) return
-
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    let lastY = window.scrollY
-    let cooldownUntil = 0
-    let raf = 0
-
-    const snapTo = (el: HTMLElement) => {
-      cooldownUntil = performance.now() + 900
-      el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' })
-    }
-
-    const check = () => {
-      raf = 0
-      const now = performance.now()
-      const y = window.scrollY
-      const goingDown = y > lastY
-      lastY = y
-      if (now < cooldownUntil) return
-
-      const aR = slotA.getBoundingClientRect()
-      const bR = slotB.getBoundingClientRect()
-      const vc = window.innerHeight / 2
-      const aC = aR.top + aR.height / 2
-      const bC = bR.top + bR.height / 2
-      const span = aC - bC
-      if (span === 0) return
-
-      const f = (aC - vc) / span
-      if (f > 0.12 && f < 0.88) {
-        snapTo(goingDown ? slotB : slotA)
-      }
-    }
-
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(check)
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true })
-
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      if (raf) cancelAnimationFrame(raf)
-    }
-  }, [])
 
   useEffect(() => {
     const el = videoRef.current
@@ -581,6 +648,89 @@ export function LivingHistoryHubPage() {
     }
   }, [openPost])
 
+  async function handleContributionSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (isSubmittingContribution) {
+      return
+    }
+
+    try {
+      setIsSubmittingContribution(true)
+      const submittedType = contributionTypeNotificationLabel(contributeForm.type)
+
+      await knowledgeCenterApi.submitContribution(contributeForm)
+      setContributeForm(initialContributionForm)
+      toast.success(
+        `Your Living History submission for ${submittedType} has been received. Our team will be reaching out to you shortly for further details.`,
+      )
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : 'Unable to submit your story right now.',
+      )
+    } finally {
+      setIsSubmittingContribution(false)
+    }
+  }
+
+  const toggleRec = () => {
+    const audio = audioRef.current
+    if (!audio || !activeRec?.src) return
+    if (recPlaying) {
+      audio.pause()
+      setRecPlaying(false)
+    } else {
+      audio.play().catch(() => {})
+      setRecPlaying(true)
+    }
+  }
+
+  const goToRec = (i: number) => {
+    const audio = audioRef.current
+    if (audio) { audio.pause(); audio.currentTime = 0 }
+    setRecPlaying(false)
+    setRecSearching(true)
+    setRecArchiveOpen(false)
+    setRecIndex((i + RECORDINGS.length) % RECORDINGS.length)
+    setTimeout(() => setRecSearching(false), 1100)
+  }
+
+  const tuneRandom = () => {
+    if (RECORDINGS.length < 2) return
+    let next = recIndex
+    while (next === recIndex) next = Math.floor(Math.random() * RECORDINGS.length)
+    goToRec(next)
+  }
+
+  const goToBook = useCallback((nextIndex: number) => {
+    if (isFlipping || nextIndex === bookIndex) return
+    flipTimersRef.current.forEach(clearTimeout)
+    flipTimersRef.current = []
+    setIsFlipping(true)
+
+    // Forward: page flips right→left. Backward: page flips left→right (reverse frames).
+    const goingBack = nextIndex < bookIndex
+    const frameSeq = goingBack ? [5, 4, 3, 2, 1] : [1, 2, 3, 4, 5]
+    let step = 0
+
+    const advance = () => {
+      const f = frameSeq[step]
+      setFlipFrame(f)
+      if (f === FLIP_MID) setBookIndex(nextIndex)
+      step++
+      if (step < frameSeq.length) {
+        flipTimersRef.current.push(window.setTimeout(advance, FLIP_MS))
+      } else {
+        flipTimersRef.current.push(window.setTimeout(() => {
+          setFlipFrame(0)
+          setIsFlipping(false)
+        }, FLIP_MS))
+      }
+    }
+    flipTimersRef.current.push(window.setTimeout(advance, FLIP_MS))
+  }, [isFlipping, bookIndex])
+
   return (
     <div className={styles.page}>
       <SharedImageHero
@@ -592,19 +742,56 @@ export function LivingHistoryHubPage() {
         waveColor="#faf7f2"
       />
 
-      <section className={styles.tvSection}>
-        <div className={styles.tvIntro}>
-          <p className={styles.tvEyebrow}>Living Memory</p>
-          <h2 className={styles.tvIntroTitle}>Stories are better told together</h2>
-          <p className={styles.tvIntroBody}>
-            Some truths are carried not in textbooks, but in voices, in the
-            people who lived them. Pull up a chair and listen as Survivors and
-            Elders share the memories that keep this history alive.
-          </p>
-        </div>
-        <div ref={tvSlotARef} className={styles.tvSlot} aria-hidden="true" />
+      {/* ── Hub intro — sits above all three tabs ── */}
+      <section className={styles.hubIntro}>
+        <p className={styles.tvEyebrow}>Living Memory</p>
+        <h2 className={styles.tvIntroTitle}>Carried Forward, in Every Form</h2>
+        <p className={styles.tvIntroBody}>
+          Some truths can only be held by those who lived them. Through video conversations,
+          recorded voices, and books on the shelf, Survivors and Elders have chosen to share
+          pieces of what they experienced, what they carried, and what endured.
+          These stories are offered as gifts, received here with care and gratitude.
+        </p>
       </section>
 
+      {/* ── Media tab cards ── */}
+      <div className={styles.mediaTabBar}>
+        <button
+          type="button"
+          className={styles.mediaTab}
+          data-active={mediaTab === 'tapes'}
+          onClick={() => { setMediaTab('tapes') }}
+        >
+          <span className={styles.mediaTabImgWrap}>
+            <img src="/tab-tv.png" alt="" className={styles.mediaTabImg} />
+          </span>
+          <span className={styles.mediaTabLabel}>Archive Tapes</span>
+        </button>
+        <button
+          type="button"
+          className={styles.mediaTab}
+          data-active={mediaTab === 'recordings'}
+          onClick={() => { setMediaTab('recordings') }}
+        >
+          <span className={styles.mediaTabImgWrap}>
+            <img src="/tab-tapes.png" alt="" className={styles.mediaTabImg} />
+          </span>
+          <span className={styles.mediaTabLabel}>Recordings</span>
+        </button>
+        <button
+          type="button"
+          className={styles.mediaTab}
+          data-active={mediaTab === 'bookshelf'}
+          onClick={() => { setMediaTab('bookshelf') }}
+        >
+          <span className={styles.mediaTabImgWrap}>
+            <img src="/tab-bookshelf.png" alt="" className={styles.mediaTabImg} />
+          </span>
+          <span className={styles.mediaTabLabel}>Bookshelf</span>
+        </button>
+      </div>
+
+      {mediaTab === 'tapes' && (<>
       <section ref={videoRef} className={styles.tvLand} data-archive-open={archiveOpen}>
         <div className={styles.tvLandInner}>
           <div className={styles.tvLandText}>
@@ -766,8 +953,8 @@ export function LivingHistoryHubPage() {
             </div>
           </div>
 
-          <div ref={tvSlotBRef} className={styles.tvSlot}>
-            <div ref={tvFlyRef} className={styles.tvFly}>
+          <div className={styles.tvSlot}>
+            <div className={styles.tvFly}>
               <img src="/tv-model.svg" alt="Vintage television" className={styles.tvFrameImg} />
 
               <div className={styles.tvScreen}>
@@ -861,54 +1048,353 @@ export function LivingHistoryHubPage() {
           </div>
         </div>
       </section>
+      </>)}
 
-      <section ref={blogRef} className={styles.blog}>
+      {/* ── Radio / Recordings tab ── */}
+      {mediaTab === 'recordings' && (
+        <section className={styles.radioLand}>
+          <audio
+            ref={audioRef}
+            src={activeRec?.src ?? ''}
+            onEnded={() => setRecPlaying(false)}
+            preload="none"
+          />
+          <div className={styles.radioLandInner}>
+            {/* Left — text + controls */}
+            <div className={styles.radioLandText}>
+              {/* Archive list panel */}
+              <div className={styles.tvArchive} aria-hidden={!recArchiveOpen}>
+                <div className={styles.tvArchiveHead}>
+                  <p className={styles.tvEyebrow}>Recordings Archive</p>
+                  <button
+                    type="button"
+                    className={styles.tvArchiveClose}
+                    onClick={() => setRecArchiveOpen(false)}
+                    aria-label="Close list"
+                  >×</button>
+                </div>
+                <ul className={styles.recList}>
+                  {RECORDINGS.map((r, i) => (
+                    <li key={r.id} className={styles.recItem} data-active={i === recIndex}>
+                      <button type="button" className={styles.recItemBtn} onClick={() => goToRec(i)}>
+                        <span className={styles.archiveItemNo}>{String(i + 1).padStart(2, '0')}</span>
+                        <span className={styles.recItemTitle}>{r.title}</span>
+                        <span className={styles.recItemSpeaker}>{r.speaker}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Default: current recording details */}
+              <div className={styles.tvDefault} aria-hidden={recArchiveOpen}>
+                <p className={styles.tvEyebrow}>Listen · In Their Words</p>
+                {activeRec ? (
+                  <>
+                    <h2 key={recIndex} className={`${styles.featureTitle} ${styles.tvTitleFade}`}>
+                      {activeRec.title}
+                    </h2>
+                    <div className={styles.featureRule} aria-hidden="true" />
+                    <p className={styles.featureBody}>{activeRec.desc}</p>
+                    <p className={styles.radioMeta}>{activeRec.speaker} · {activeRec.date}</p>
+
+                    <button
+                      type="button"
+                      className={styles.radioPlayBtn}
+                      onClick={toggleRec}
+                      disabled={!activeRec.src}
+                      aria-label={recPlaying ? 'Pause recording' : 'Play recording'}
+                    >
+                      {!activeRec.src ? (
+                        'Coming soon'
+                      ) : recPlaying ? (
+                        <>
+                          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor">
+                            <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
+                          </svg>
+                          Pause
+                        </>
+                      ) : (
+                        <>
+                          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor">
+                            <path d="M8 5v14l11-7z"/>
+                          </svg>
+                          Play Recording
+                        </>
+                      )}
+                    </button>
+
+                    {RECORDINGS.length > 1 && (
+                      <div className={styles.tvControls}>
+                        <button type="button" className={styles.tvNav} onClick={() => goToRec(recIndex - 1)} aria-label="Previous recording">
+                          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        </button>
+                        <div className={styles.tvDots}>
+                          {RECORDINGS.map((r, i) => (
+                            <button key={r.id} type="button" className={styles.tvDot} data-active={i === recIndex} onClick={() => goToRec(i)} aria-label={`Go to ${r.title}`} />
+                          ))}
+                        </div>
+                        <button type="button" className={styles.tvNav} onClick={() => goToRec(recIndex + 1)} aria-label="Next recording">
+                          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        </button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <h2 className={styles.featureTitle}>No recordings found</h2>
+                    <div className={styles.featureRule} aria-hidden="true" />
+                    <p className={styles.featureBody}>There are no recordings available yet.</p>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Right — radio image */}
+            <div className={styles.radioSlot}>
+              <div
+                className={styles.radioFrame}
+                data-playing={recPlaying}
+                data-searching={recSearching}
+                style={{ '--dial-angle': `${dialAngle}deg` } as React.CSSProperties}
+              >
+                <img src="/radio-model.png" alt="Vintage radio" className={styles.radioFrameImg} />
+                <div className={styles.radioNeedle} aria-hidden="true">
+                  <div className={styles.radioNeedlePin} />
+                </div>
+                {recPlaying && (
+                  <div className={styles.radioWaves} aria-hidden="true">
+                    <span /><span /><span /><span /><span />
+                  </div>
+                )}
+                <div className={styles.radioBtnRow}>
+                  <button
+                    type="button"
+                    className={styles.tuneBtn}
+                    onClick={tuneRandom}
+                    disabled={RECORDINGS.length < 2}
+                    aria-label="Tune to a random recording"
+                  >
+                    <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
+                    </svg>
+                    Tune
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.archiveBtn}
+                    data-active={recArchiveOpen}
+                    onClick={() => setRecArchiveOpen((o) => !o)}
+                    aria-pressed={recArchiveOpen}
+                    aria-label="Toggle recordings archive"
+                  >
+                    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                      <path d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    Archive
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Bookshelf tab ── */}
+      {mediaTab === 'bookshelf' && (
+        <section className={styles.bookshelfLand}>
+          <div className={styles.bookshelfInner}>
+            {/* Left — featured book details */}
+            <div className={styles.bookshelfText}>
+              <p className={styles.tvEyebrow}>Read · In Their Words</p>
+
+              {hubBooksStatus === 'error' ? (
+                <>
+                  <h2 className={styles.featureTitle}>Bookshelf unavailable</h2>
+                  <div className={styles.featureRule} aria-hidden="true" />
+                  <p className={styles.featureBody}>Unable to load the bookshelf right now. Please try again later.</p>
+                </>
+              ) : activeBook ? (
+                <>
+                  <h2 key={bookIndex} className={`${styles.featureTitle} ${styles.tvTitleFade}`}>
+                    {activeBook.title}
+                  </h2>
+                  <div className={styles.featureRule} aria-hidden="true" />
+                  <p className={styles.featureBody}>{activeBook.description}</p>
+
+                  <Link to="/community-circle/bookshelf" className={styles.radioPlayBtn}>
+                    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                    Open Bookshelf
+                  </Link>
+
+                  {hubBooks.length > 1 && (
+                    <div className={styles.tvControls}>
+                      <button type="button" className={styles.tvNav} onClick={() => goToBook((bookIndex - 1 + hubBooks.length) % hubBooks.length)} aria-label="Previous book" disabled={isFlipping}>
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      </button>
+                      <div className={styles.tvDots}>
+                        {hubBooks.map((b, i) => (
+                          <button key={b.id} type="button" className={styles.tvDot} data-active={i === bookIndex} onClick={() => goToBook(i)} aria-label={`Go to ${b.title}`} disabled={isFlipping} />
+                        ))}
+                      </div>
+                      <button type="button" className={styles.tvNav} onClick={() => goToBook((bookIndex + 1) % hubBooks.length)} aria-label="Next book" disabled={isFlipping}>
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <h2 className={styles.featureTitle}>No books yet</h2>
+                  <div className={styles.featureRule} aria-hidden="true" />
+                  <p className={styles.featureBody}>The bookshelf is being curated. Check back soon.</p>
+                </>
+              )}
+            </div>
+
+            {/* Right — animated flip book */}
+            <div className={styles.bookshelfSlot}>
+              <img
+                src={FLIP_FRAMES[flipFrame]}
+                alt={activeBook ? activeBook.title : 'Open book'}
+                className={styles.bookFlipImg}
+                draggable={false}
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section
+        ref={blogRef}
+        className={styles.blog}
+        data-article={
+          selectedBlog && blogHasAnimations(selectedBlog)
+            ? 'immersive'
+            : selectedBlogId === null
+              ? ''
+              : String(selectedBlogId)
+        }
+      >
         <div className={styles.blogInner}>
           <p className={styles.tvEyebrow}>Living History Journal</p>
 
-          <h2 className={styles.blogHeading}>Stories &amp; Editions</h2>
-          <div className={styles.featureRule} aria-hidden="true" />
+          {selectedBlogId !== null ? (
+            selectedBlogLoading || !selectedBlog ? (
+              <div className={styles.blogLoading} role="status">
+                Loading story...
+              </div>
+            ) : (
+              <article className={styles.blogArticle}>
+                <button
+                  type="button"
+                  className={styles.blogBack}
+                  onClick={() => {
+                    selectedBlogRequestRef.current += 1
+                    setSelectedBlogId(null)
+                    setSelectedBlog(null)
+                    setSelectedBlogLoading(false)
+                  }}
+                >
+                  &larr; All stories
+                </button>
 
-          {blogsStatus === 'loading' ? (
-            <div className={styles.blogLoading} role="status">
-              Loading stories...
-            </div>
-          ) : blogsError ? (
-            <p className={styles.blogPara}>{blogsError}</p>
-          ) : blogs.length ? (
-            <div className={styles.blogGrid}>
-              {blogs.map((blog) => {
-                const imageUrl = resolveBlogAssetUrl(
-                  blog.cover_image_fetch_url || blog.cover_image_url,
-                )
-                return (
-                  <Link
-                    key={blog.id}
-                    to={blogDetailPath(blog)}
-                    className={styles.blogCard}
-                  >
-                    <span
-                      className={styles.blogCardImg}
-                      style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
-                      aria-hidden="true"
-                    />
-                    <span className={styles.blogCardBody}>
-                      <span className={styles.blogCardDate}>
-                        {formatBlogDate(blog.publish_date)}
-                      </span>
-                      <span className={styles.blogCardTitle}>{blog.heading}</span>
-                      <span className={styles.blogCardExcerpt}>{blog.description}</span>
-                      <span className={styles.blogCardLink}>Read story &rarr;</span>
-                    </span>
-                  </Link>
-                )
-              })}
-            </div>
+                <h1 className={styles.blogArticleTitle}>{selectedBlog.heading}</h1>
+                <div className={styles.featureRule} aria-hidden="true" />
+
+                {!blogHasAnimations(selectedBlog) &&
+                  (selectedBlog.cover_image_fetch_url || selectedBlog.cover_image_url) && (
+                    <figure className={styles.blogHero}>
+                      <img
+                        src={resolveBlogAssetUrl(
+                          selectedBlog.cover_image_fetch_url || selectedBlog.cover_image_url,
+                        )}
+                        alt={selectedBlog.heading}
+                      />
+                    </figure>
+                  )}
+
+                <LivingHistoryBlogLayout
+                  blog={selectedBlog}
+                  phase="article"
+                  onOpenVideo={openTheatre}
+                />
+              </article>
+            )
           ) : (
-            <p className={styles.blogPara}>No stories have been published yet.</p>
+            <>
+              <h2 className={styles.blogHeading}>Stories &amp; Editions</h2>
+              <div className={styles.featureRule} aria-hidden="true" />
+
+              {blogsStatus === 'loading' ? (
+                <div className={styles.blogLoading} role="status">
+                  Loading stories...
+                </div>
+              ) : blogsError ? (
+                <p className={styles.blogPara}>{blogsError}</p>
+              ) : blogs.length ? (
+                <div className={styles.blogGrid}>
+                  {blogs.map((blog) => {
+                    const imageUrl = resolveBlogAssetUrl(
+                      blog.cover_image_fetch_url || blog.cover_image_url,
+                    )
+                    return (
+                      <button
+                        key={blog.id}
+                        type="button"
+                        className={styles.blogCard}
+                        onClick={() => {
+                          void showBlog(blog.id)
+                        }}
+                      >
+                        <span
+                          className={styles.blogCardImg}
+                          style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
+                          aria-hidden="true"
+                        />
+                        <span className={styles.blogCardBody}>
+                          <span className={styles.blogCardDate}>
+                            {formatBlogDate(blog.publish_date)}
+                          </span>
+                          <span className={styles.blogCardTitle}>{blog.heading}</span>
+                          <span className={styles.blogCardExcerpt}>{blog.description}</span>
+                          <span className={styles.blogCardLink}>Read story &rarr;</span>
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              ) : (
+                <p className={styles.blogPara}>No stories have been published yet.</p>
+              )}
+            </>
           )}
         </div>
       </section>
+
+      {selectedBlog && blogHasAnimations(selectedBlog) && (
+        <LivingHistoryBlogLayout
+          blog={selectedBlog}
+          phase="animations"
+          onOpenVideo={openTheatre}
+        />
+      )}
+
+      {selectedBlog && blogHasPostAnimationContent(selectedBlog) && (
+        <section className={`${styles.blog} ${styles.blogContinuation}`}>
+          <div className={styles.blogInner}>
+            <article className={styles.blogArticle}>
+              <LivingHistoryBlogLayout
+                blog={selectedBlog}
+                phase="after-animations"
+                onOpenVideo={openTheatre}
+              />
+            </article>
+          </div>
+        </section>
+      )}
 
       <section hidden className={styles.blog} data-article={openPost ?? ''}>
         <div className={styles.blogInner}>
@@ -1132,7 +1618,119 @@ export function LivingHistoryHubPage() {
         </div>
       )}
 
-      <ShareStoryForm />
+      <section className={styles.contribute}>
+        <div className={styles.contributeInner}>
+          <p className={styles.tvEyebrow}>Share Your Story</p>
+          <h2 className={styles.contributeTitle}>Add to the Living History</h2>
+          <div className={styles.featureRule} aria-hidden="true" />
+          <p className={styles.contributeLead}>
+            Have a story, a memory, or a video you'd like to share? Tell us a
+            little about it and our team will reach out to help you add it to
+            the Living History Hub.
+          </p>
+
+          <form
+            className={styles.contributeForm}
+            onSubmit={(event) => {
+              void handleContributionSubmit(event)
+            }}
+          >
+            <div className={styles.formRow}>
+              <label className={styles.formField}>
+                <span>Name</span>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  autoComplete="name"
+                  value={contributeForm.name}
+                  onChange={(event) =>
+                    setContributeForm((current) => ({
+                      ...current,
+                      name: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+              <label className={styles.formField}>
+                <span>Email</span>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  autoComplete="email"
+                  value={contributeForm.email}
+                  onChange={(event) =>
+                    setContributeForm((current) => ({
+                      ...current,
+                      email: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+            </div>
+
+            <div className={styles.formRow}>
+              <label className={styles.formField}>
+                <span>Phone (optional)</span>
+                <input
+                  type="tel"
+                  name="phone"
+                  autoComplete="tel"
+                  value={contributeForm.phone}
+                  onChange={(event) =>
+                    setContributeForm((current) => ({
+                      ...current,
+                      phone: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+              <label className={styles.formField}>
+                <span>I'd like to submit</span>
+                <select
+                  name="type"
+                  value={contributeForm.type}
+                  onChange={(event) =>
+                    setContributeForm((current) => ({
+                      ...current,
+                      type: event.target.value as KnowledgeCenterSubmissionType,
+                    }))
+                  }
+                >
+                  <option value="post">A written post / story</option>
+                  <option value="video">A video</option>
+                  <option value="both">Both a post and a video</option>
+                </select>
+              </label>
+            </div>
+
+            <label className={styles.formField}>
+              <span>Tell us about it</span>
+              <textarea
+                name="message"
+                rows={5}
+                required
+                value={contributeForm.message}
+                onChange={(event) =>
+                  setContributeForm((current) => ({
+                    ...current,
+                    message: event.target.value,
+                  }))
+                }
+              />
+            </label>
+
+            <button
+              type="submit"
+              className={styles.revealButton}
+              disabled={isSubmittingContribution}
+            >
+              {isSubmittingContribution ? 'Submitting...' : 'Submit'}
+            </button>
+          </form>
+        </div>
+      </section>
 
       {theatre &&
         (() => {
@@ -1140,6 +1738,7 @@ export function LivingHistoryHubPage() {
           const tTitle =
             videos.find((v) => v.youtubeId === tId)?.title ??
             BLOG_POSTS.find((p) => p.videoId === tId)?.title ??
+            selectedBlog?.heading ??
             ''
 
           if (!tId) {
@@ -1242,4 +1841,17 @@ function ArchiveItem({
       </div>
     </li>
   )
+}
+
+function contributionTypeNotificationLabel(value: KnowledgeCenterSubmissionType) {
+  switch (value) {
+    case 'post':
+      return 'a story'
+    case 'video':
+      return 'a video'
+    case 'both':
+      return 'a story and a video'
+    default:
+      return 'your contribution'
+  }
 }
