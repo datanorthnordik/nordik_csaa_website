@@ -666,5 +666,7 @@ function getFittedImageStyle(
   return {
     width: `${fittedWidth}px`,
     height: `${fittedHeight}px`,
+    maxWidth: 'none',
+    maxHeight: 'none',
   }
 }
