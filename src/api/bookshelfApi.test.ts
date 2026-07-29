@@ -46,6 +46,7 @@ describe('bookshelfApi', () => {
     const entry = publicBookshelfApiEntryToLocal(createApiEntry())
 
     expect(entry.id).toBe('3')
+    expect(entry.hasBookFile).toBe(true)
     expect(entry.bookContentUrl).toBe(`${API_BASE_URL}/api/bookshelf/3/book/content`)
     expect(entry.authorImageContentUrl).toBe(
       `${API_BASE_URL}/api/bookshelf/3/author-image/content`,
@@ -53,6 +54,20 @@ describe('bookshelfApi', () => {
     expect(entry.coverImageContentUrl).toBe(
       `${API_BASE_URL}/api/bookshelf/3/cover/content`,
     )
+  })
+
+  it('marks link-only entries as not having an uploaded book', () => {
+    const entry = publicBookshelfApiEntryToLocal(
+      createApiEntry({
+        book_file_name: '',
+        book_mime_type: '',
+        book_file_size: 0,
+        book_content_url: '',
+      }),
+    )
+
+    expect(entry.hasBookFile).toBe(false)
+    expect(entry.bookLink).toBe('https://example.com/stories')
   })
 
   it('falls back to a stable public book content url when the api omits one', () => {

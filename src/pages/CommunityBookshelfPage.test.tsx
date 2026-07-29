@@ -132,6 +132,7 @@ function createBooks(start: number, end: number) {
       bookMimeType: 'application/pdf',
       bookFileSize: 4096,
       bookContentUrl: `${API_BASE_URL}/api/bookshelf/${id}/book/content`,
+      hasBookFile: true,
       authorImageFileName: `author-${id}.jpg`,
       authorImageMimeType: 'image/jpeg',
       authorImageFileSize: 1024,

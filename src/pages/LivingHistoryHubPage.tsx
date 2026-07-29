@@ -7,11 +7,15 @@ import {
   resolveBlogAssetUrl,
   type BlogListItem,
 } from '../api/blogsApi'
-import { booksApi, type PublicBookSummary } from '../api/booksApi'
+import {
+  publicBookshelfApi,
+  type PublicBookshelfEntry,
+} from '../api/bookshelfApi'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
 import { buildAbsoluteUrl, SITE_NAME, usePageSeo } from '../lib/usePageSeo'
 import { blogDetailPath } from '../lib/blogSlug'
+import { getBookshelfDestination } from '../lib/bookshelfNavigation'
 import {
   knowledgeCenterApi,
   type KnowledgeCenterSubmissionType,
@@ -184,10 +188,6 @@ const FEATURE_BLOCKS = [
 ]
 
 // ── Books (fetched from API) ─────────────────────────────────────────────────
-const PLACEHOLDER_BOOKS = [
-  { id: -1, title: 'The CSAA Cookbook', description: 'Recipes, stories, and nourishment passed down through generations of the CSAA community.' },
-  { id: -2, title: 'Shingwauk Memories', description: 'Voices, letters, and testimonies gathered from survivors, their families, and those who remember.' },
-]
 const FLIP_FRAMES = [
   '/bookflip/6.png',
   '/bookflip/7.png',
@@ -271,10 +271,13 @@ export function LivingHistoryHubPage() {
   const [recPlaying, setRecPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
   const activeRec = RECORDINGS[recIndex] ?? null
-  const [hubBooks, setHubBooks] = useState<PublicBookSummary[]>(PLACEHOLDER_BOOKS)
+  const [hubBooks, setHubBooks] = useState<PublicBookshelfEntry[]>([])
   const [hubBooksStatus, setHubBooksStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [bookIndex, setBookIndex] = useState(0)
   const activeBook = hubBooks[bookIndex] ?? null
+  const activeBookDestination = activeBook
+    ? getBookshelfDestination(activeBook)
+    : null
   const [flipFrame, setFlipFrame] = useState(0)
   const [isFlipping, setIsFlipping] = useState(false)
   const flipTimersRef = useRef<number[]>([])
@@ -448,15 +451,18 @@ export function LivingHistoryHubPage() {
   }, [])
 
   useEffect(() => {
-    if (mediaTab !== 'bookshelf' || hubBooksStatus !== 'idle') return
+    if (mediaTab !== 'bookshelf') return
     let cancelled = false
 
     async function loadBooks() {
       setHubBooksStatus('loading')
       try {
-        const books = await booksApi.listPublicBooks()
+        const response = await publicBookshelfApi.listBooks({
+          page: 1,
+          pageSize: 100,
+        })
         if (!cancelled) {
-          setHubBooks(books)
+          setHubBooks(response.items)
           setBookIndex(0)
           setHubBooksStatus('success')
         }
@@ -470,7 +476,7 @@ export function LivingHistoryHubPage() {
 
     void loadBooks()
     return () => { cancelled = true }
-  }, [mediaTab, hubBooksStatus])
+  }, [mediaTab])
 
   // Preload flip frames when bookshelf tab opens, clean up timers on unmount
   useEffect(() => {
@@ -1175,7 +1181,13 @@ export function LivingHistoryHubPage() {
             <div className={styles.bookshelfText}>
               <p className={styles.tvEyebrow}>Read · In Their Words</p>
 
-              {hubBooksStatus === 'error' ? (
+              {hubBooksStatus === 'idle' || hubBooksStatus === 'loading' ? (
+                <>
+                  <h2 className={styles.featureTitle}>Loading the bookshelf...</h2>
+                  <div className={styles.featureRule} aria-hidden="true" />
+                  <p className={styles.featureBody}>Featured books are being loaded.</p>
+                </>
+              ) : hubBooksStatus === 'error' ? (
                 <>
                   <h2 className={styles.featureTitle}>Bookshelf unavailable</h2>
                   <div className={styles.featureRule} aria-hidden="true" />
@@ -1187,14 +1199,28 @@ export function LivingHistoryHubPage() {
                     {activeBook.title}
                   </h2>
                   <div className={styles.featureRule} aria-hidden="true" />
-                  <p className={styles.featureBody}>{activeBook.description}</p>
+                  <p className={styles.featureBody}>
+                    {activeBook.bookTeaser.trim() ||
+                      activeBook.description.trim() ||
+                      activeBook.authorBio.trim()}
+                  </p>
 
-                  <Link to="/community-circle/bookshelf" className={styles.radioPlayBtn}>
-                    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                    </svg>
-                    Open Bookshelf
-                  </Link>
+                  {activeBookDestination?.kind === 'reader' ? (
+                    <Link to={activeBookDestination.href} className={styles.radioPlayBtn}>
+                      <BookIcon />
+                      Open book
+                    </Link>
+                  ) : activeBookDestination?.kind === 'external' ? (
+                    <a href={activeBookDestination.href} className={styles.radioPlayBtn}>
+                      <BookIcon />
+                      Open book
+                    </a>
+                  ) : (
+                    <button type="button" className={styles.radioPlayBtn} disabled>
+                      <BookIcon />
+                      Unavailable
+                    </button>
+                  )}
 
                   {hubBooks.length > 1 && (
                     <div className={styles.tvControls}>
@@ -1742,4 +1768,23 @@ function contributionTypeNotificationLabel(value: KnowledgeCenterSubmissionType)
     default:
       return 'your contribution'
   }
+}
+
+function BookIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    </svg>
+  )
 }
