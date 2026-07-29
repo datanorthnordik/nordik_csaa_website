@@ -96,6 +96,11 @@ const LivingHistoryBlogPage = lazy(() =>
     default: module.LivingHistoryBlogPage,
   })),
 )
+const LivingHistoryBookPage = lazy(() =>
+  import('./pages/LivingHistoryBookPage').then((module) => ({
+    default: module.LivingHistoryBookPage,
+  })),
+)
 const CommunityCirclePage = lazy(() =>
   import('./pages/CommunityCirclePage').then((module) => ({
     default: module.CommunityCirclePage,
@@ -109,11 +114,6 @@ const CommunityCookbookPage = lazy(() =>
 const CommunityGalleryPage = lazy(() =>
   import('./pages/CommunityGalleryPage').then((module) => ({
     default: module.CommunityGalleryPage,
-  })),
-)
-const CommunityBookshelfPage = lazy(() =>
-  import('./pages/CommunityBookshelfPage').then((module) => ({
-    default: module.CommunityBookshelfPage,
   })),
 )
 const CsaaResearchArchivePage = lazy(() =>
@@ -179,12 +179,20 @@ function App() {
               element={withSuspense(<LivingHistoryHubPage />)}
             />
             <Route
+              path="/living-history-hub/books/:bookId"
+              element={withSuspense(<LivingHistoryBookPage />)}
+            />
+            <Route
               path="/living-history-hub/:blogSlug"
               element={withSuspense(<LivingHistoryBlogPage />)}
             />
             <Route
               path="/our-story/living-history-hub"
               element={withSuspense(<LivingHistoryHubPage />)}
+            />
+            <Route
+              path="/our-story/living-history-hub/books/:bookId"
+              element={withSuspense(<LivingHistoryBookPage />)}
             />
             <Route
               path="/our-story/living-history-hub/:blogSlug"
@@ -204,7 +212,7 @@ function App() {
             />
             <Route
               path="/community-circle/bookshelf"
-              element={withSuspense(<CommunityBookshelfPage />)}
+              element={<Navigate to="/living-history-hub" replace />}
             />
             <Route
               path="/research-and-archive"

@@ -32,12 +32,6 @@ const CARDS: CircleCard[] = [
     desc: 'Explore stories, videos, and living history shared by Survivors and Elders.',
     href: '/living-history-hub',
   },
-  {
-    img: '/cc-bookshelf.png',
-    title: 'The Bookshelf',
-    desc: 'Read featured books and writings that carry our history forward.',
-    href: '/community-circle/bookshelf',
-  },
 ]
 
 export function CommunityCirclePage() {

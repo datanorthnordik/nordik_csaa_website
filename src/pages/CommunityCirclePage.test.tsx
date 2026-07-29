@@ -19,5 +19,6 @@ describe('CommunityCirclePage', () => {
     expect(galleryLink.getAttribute('rel')).toBe('noopener noreferrer')
     expect(cookbookLink.getAttribute('target')).toBeNull()
     expect(cookbookLink.getAttribute('rel')).toBeNull()
+    expect(screen.queryByRole('link', { name: /the bookshelf/i })).toBeNull()
   })
 })

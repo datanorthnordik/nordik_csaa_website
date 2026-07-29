@@ -13,6 +13,7 @@ export type PublicBookshelfEntry = {
   bookMimeType: string
   bookFileSize: number
   bookContentUrl: string
+  hasBookFile: boolean
   authorImageFileName: string
   authorImageMimeType: string
   authorImageFileSize: number
@@ -89,6 +90,11 @@ export type PublicBookshelfApiListResponse = {
   }
 }
 
+export type PublicBookshelfApiDetailResponse =
+  | PublicBookshelfApiEntry
+  | { item: PublicBookshelfApiEntry }
+  | { bookshelf: PublicBookshelfApiEntry }
+
 function buildListQuery(filters: PublicBookshelfListFilters) {
   const params = new URLSearchParams()
 
@@ -121,6 +127,12 @@ export function publicBookshelfApiEntryToLocal(
       id: entry.id,
       contentUrl: entry.book_content_url,
     }),
+    hasBookFile: Boolean(
+      entry.book_content_url.trim() ||
+        entry.book_file_name.trim() ||
+        entry.book_mime_type.trim() ||
+        entry.book_file_size > 0,
+    ),
     authorImageFileName: entry.author_image_file_name,
     authorImageMimeType: entry.author_image_mime_type,
     authorImageFileSize: entry.author_image_file_size,
@@ -177,6 +189,22 @@ export const publicBookshelfApi = {
         searchTerm: response.data.applied_filters.search_term,
       },
     }
+  },
+
+  async getBook(id: number | string) {
+    const response = await apiClient.get<PublicBookshelfApiDetailResponse>(
+      API_ROUTES.bookshelfById(id),
+      {
+        skipAuth: true,
+        skipErrorToast: true,
+      },
+    )
+
+    const data = response.data
+    const entry =
+      'item' in data ? data.item : 'bookshelf' in data ? data.bookshelf : data
+
+    return publicBookshelfApiEntryToLocal(entry)
   },
 }
 
