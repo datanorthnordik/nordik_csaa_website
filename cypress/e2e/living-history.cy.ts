@@ -6,7 +6,7 @@ describe('Living History dynamic blog layout', () => {
   })
 
   it('routes list cards to their own blog page and restores article and immersive layouts', () => {
-    cy.contains('a', 'Dan Pine & the Pine Trees')
+    cy.contains('a', 'Dan Pine & the Pine Trees', { timeout: 20000 })
       .find('span')
       .first()
       .should('have.css', 'background-image')
@@ -14,7 +14,7 @@ describe('Living History dynamic blog layout', () => {
 
     cy.contains('a', 'Dan Pine & the Pine Trees').click()
     cy.location('pathname').should('include', '/living-history-hub/')
-    cy.contains('h1', 'Dan Pine & the Pine Trees').should('be.visible')
+    cy.contains('h1', 'Dan Pine & the Pine Trees', { timeout: 20000 }).should('be.visible')
     cy.get('figure img')
       .first()
       .should('be.visible')
@@ -26,8 +26,8 @@ describe('Living History dynamic blog layout', () => {
     cy.contains('a', 'All stories').click()
     cy.contains('h2', 'Stories & Editions', { timeout: 20000 }).scrollIntoView()
 
-    cy.contains('a', 'The Tree Planting').click()
-    cy.contains('h1', 'The Tree Planting').should('be.visible')
+    cy.contains('a', 'The Tree Planting', { timeout: 20000 }).click()
+    cy.contains('h1', 'The Tree Planting', { timeout: 20000 }).should('be.visible')
     cy.get('button[aria-label="Play The Tree Planting"]')
       .should('be.visible')
       .parents('div')

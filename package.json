@@ -13,7 +13,7 @@
     "test:unit": "vitest",
     "test:unit:ci": "vitest --run --coverage",
     "cy:open": "cypress open",
-    "cy:run": "cypress run",
+    "cy:run": "node scripts/run-cypress.mjs",
     "test:e2e": "start-server-and-test dev http://localhost:5173 cy:run"
   },
   "dependencies": {
