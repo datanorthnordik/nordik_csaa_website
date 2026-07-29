@@ -5,18 +5,13 @@ import { useTranslation } from 'react-i18next'
 import {
   blogsApi,
   resolveBlogAssetUrl,
-  type BlogDetailResponse,
   type BlogListItem,
 } from '../api/blogsApi'
 import { booksApi, type PublicBookSummary } from '../api/booksApi'
 import { usePageBreadcrumbs } from '../components/SiteBreadcrumbs'
 import { SharedImageHero } from '../components/SharedImageHero'
 import { buildAbsoluteUrl, SITE_NAME, usePageSeo } from '../lib/usePageSeo'
-import {
-  LivingHistoryBlogLayout,
-  blogHasAnimations,
-  blogHasPostAnimationContent,
-} from '../components/blogs/LivingHistoryBlogLayout'
+import { blogDetailPath } from '../lib/blogSlug'
 import {
   knowledgeCenterApi,
   type KnowledgeCenterSubmissionType,
@@ -189,7 +184,6 @@ const FEATURE_BLOCKS = [
 ]
 
 // ── Books (fetched from API) ─────────────────────────────────────────────────
-const SPINE_COLORS = ['#7c3d2e', '#2c4a3e', '#1a2c4a', '#4a3820', '#3b2a4a', '#5a2c1a', '#1a3a2c']
 const PLACEHOLDER_BOOKS = [
   { id: -1, title: 'The CSAA Cookbook', description: 'Recipes, stories, and nourishment passed down through generations of the CSAA community.' },
   { id: -2, title: 'Shingwauk Memories', description: 'Voices, letters, and testimonies gathered from survivors, their families, and those who remember.' },
@@ -310,10 +304,6 @@ export function LivingHistoryHubPage() {
   const [blogs, setBlogs] = useState<BlogListItem[]>([])
   const [blogsStatus, setBlogsStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [blogsError, setBlogsError] = useState<string | null>(null)
-  const [selectedBlogId, setSelectedBlogId] = useState<number | null>(null)
-  const [selectedBlog, setSelectedBlog] = useState<BlogDetailResponse | null>(null)
-  const [selectedBlogLoading, setSelectedBlogLoading] = useState(false)
-  const selectedBlogRequestRef = useRef(0)
   const [contributeForm, setContributeForm] =
     useState<ContributionFormState>(initialContributionForm)
   const [isSubmittingContribution, setIsSubmittingContribution] = useState(false)
@@ -335,29 +325,6 @@ export function LivingHistoryHubPage() {
     requestAnimationFrame(() =>
       blogRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
     )
-  }
-
-  const showBlog = async (id: number) => {
-    const requestId = selectedBlogRequestRef.current + 1
-    selectedBlogRequestRef.current = requestId
-    setSelectedBlogId(id)
-    setSelectedBlog(null)
-    setSelectedBlogLoading(true)
-    requestAnimationFrame(() =>
-      blogRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-    )
-    try {
-      const detail = await blogsApi.getBlog(id)
-      if (selectedBlogRequestRef.current === requestId) {
-        setSelectedBlog(detail)
-      }
-    } catch {
-      toast.error('Unable to load this story right now.')
-    } finally {
-      if (selectedBlogRequestRef.current === requestId) {
-        setSelectedBlogLoading(false)
-      }
-    }
   }
 
   const playActive = () => {
@@ -1270,131 +1237,53 @@ export function LivingHistoryHubPage() {
       <section
         ref={blogRef}
         className={styles.blog}
-        data-article={
-          selectedBlog && blogHasAnimations(selectedBlog)
-            ? 'immersive'
-            : selectedBlogId === null
-              ? ''
-              : String(selectedBlogId)
-        }
       >
         <div className={styles.blogInner}>
           <p className={styles.tvEyebrow}>Living History Journal</p>
 
-          {selectedBlogId !== null ? (
-            selectedBlogLoading || !selectedBlog ? (
-              <div className={styles.blogLoading} role="status">
-                Loading story...
-              </div>
-            ) : (
-              <article className={styles.blogArticle}>
-                <button
-                  type="button"
-                  className={styles.blogBack}
-                  onClick={() => {
-                    selectedBlogRequestRef.current += 1
-                    setSelectedBlogId(null)
-                    setSelectedBlog(null)
-                    setSelectedBlogLoading(false)
-                  }}
-                >
-                  &larr; All stories
-                </button>
+          <h2 className={styles.blogHeading}>Stories &amp; Editions</h2>
+          <div className={styles.featureRule} aria-hidden="true" />
 
-                <h1 className={styles.blogArticleTitle}>{selectedBlog.heading}</h1>
-                <div className={styles.featureRule} aria-hidden="true" />
-
-                {!blogHasAnimations(selectedBlog) &&
-                  (selectedBlog.cover_image_fetch_url || selectedBlog.cover_image_url) && (
-                    <figure className={styles.blogHero}>
-                      <img
-                        src={resolveBlogAssetUrl(
-                          selectedBlog.cover_image_fetch_url || selectedBlog.cover_image_url,
-                        )}
-                        alt={selectedBlog.heading}
-                      />
-                    </figure>
-                  )}
-
-                <LivingHistoryBlogLayout
-                  blog={selectedBlog}
-                  phase="article"
-                  onOpenVideo={openTheatre}
-                />
-              </article>
-            )
+          {blogsStatus === 'loading' ? (
+            <div className={styles.blogLoading} role="status">
+              Loading stories...
+            </div>
+          ) : blogsError ? (
+            <p className={styles.blogPara}>{blogsError}</p>
+          ) : blogs.length ? (
+            <div className={styles.blogGrid}>
+              {blogs.map((blog) => {
+                const imageUrl = resolveBlogAssetUrl(
+                  blog.cover_image_fetch_url || blog.cover_image_url,
+                )
+                return (
+                  <Link
+                    key={blog.id}
+                    to={blogDetailPath(blog)}
+                    className={styles.blogCard}
+                  >
+                    <span
+                      className={styles.blogCardImg}
+                      style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
+                      aria-hidden="true"
+                    />
+                    <span className={styles.blogCardBody}>
+                      <span className={styles.blogCardDate}>
+                        {formatBlogDate(blog.publish_date)}
+                      </span>
+                      <span className={styles.blogCardTitle}>{blog.heading}</span>
+                      <span className={styles.blogCardExcerpt}>{blog.description}</span>
+                      <span className={styles.blogCardLink}>Read story &rarr;</span>
+                    </span>
+                  </Link>
+                )
+              })}
+            </div>
           ) : (
-            <>
-              <h2 className={styles.blogHeading}>Stories &amp; Editions</h2>
-              <div className={styles.featureRule} aria-hidden="true" />
-
-              {blogsStatus === 'loading' ? (
-                <div className={styles.blogLoading} role="status">
-                  Loading stories...
-                </div>
-              ) : blogsError ? (
-                <p className={styles.blogPara}>{blogsError}</p>
-              ) : blogs.length ? (
-                <div className={styles.blogGrid}>
-                  {blogs.map((blog) => {
-                    const imageUrl = resolveBlogAssetUrl(
-                      blog.cover_image_fetch_url || blog.cover_image_url,
-                    )
-                    return (
-                      <button
-                        key={blog.id}
-                        type="button"
-                        className={styles.blogCard}
-                        onClick={() => {
-                          void showBlog(blog.id)
-                        }}
-                      >
-                        <span
-                          className={styles.blogCardImg}
-                          style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
-                          aria-hidden="true"
-                        />
-                        <span className={styles.blogCardBody}>
-                          <span className={styles.blogCardDate}>
-                            {formatBlogDate(blog.publish_date)}
-                          </span>
-                          <span className={styles.blogCardTitle}>{blog.heading}</span>
-                          <span className={styles.blogCardExcerpt}>{blog.description}</span>
-                          <span className={styles.blogCardLink}>Read story &rarr;</span>
-                        </span>
-                      </button>
-                    )
-                  })}
-                </div>
-              ) : (
-                <p className={styles.blogPara}>No stories have been published yet.</p>
-              )}
-            </>
+            <p className={styles.blogPara}>No stories have been published yet.</p>
           )}
         </div>
       </section>
-
-      {selectedBlog && blogHasAnimations(selectedBlog) && (
-        <LivingHistoryBlogLayout
-          blog={selectedBlog}
-          phase="animations"
-          onOpenVideo={openTheatre}
-        />
-      )}
-
-      {selectedBlog && blogHasPostAnimationContent(selectedBlog) && (
-        <section className={`${styles.blog} ${styles.blogContinuation}`}>
-          <div className={styles.blogInner}>
-            <article className={styles.blogArticle}>
-              <LivingHistoryBlogLayout
-                blog={selectedBlog}
-                phase="after-animations"
-                onOpenVideo={openTheatre}
-              />
-            </article>
-          </div>
-        </section>
-      )}
 
       <section hidden className={styles.blog} data-article={openPost ?? ''}>
         <div className={styles.blogInner}>
@@ -1738,7 +1627,6 @@ export function LivingHistoryHubPage() {
           const tTitle =
             videos.find((v) => v.youtubeId === tId)?.title ??
             BLOG_POSTS.find((p) => p.videoId === tId)?.title ??
-            selectedBlog?.heading ??
             ''
 
           if (!tId) {
