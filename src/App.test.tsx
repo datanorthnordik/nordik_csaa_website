@@ -1222,11 +1222,13 @@ describe('App', () => {
     expect(within(breadcrumb).getByRole('link', { name: /^home$/i }).getAttribute('href')).toBe(
       '/home',
     )
-    expect(
-      within(breadcrumb)
-        .getByRole('link', { name: /community support team/i })
-        .getAttribute('href'),
-    ).toBe('/community-support-team')
+    await waitFor(() => {
+      expect(
+        within(breadcrumb)
+          .getByRole('link', { name: /community support team/i })
+          .getAttribute('href'),
+      ).toBe('/community-support-team')
+    })
     expect(await within(breadcrumb).findByText(/resources & support/i)).toBeDefined()
   })
 
