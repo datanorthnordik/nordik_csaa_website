@@ -7,7 +7,7 @@ import {
   buildVenueLabel,
   formatEventDateRange,
   formatEventTimeRange,
-  isAllDayEventType,
+  parseEventWallClockDate,
 } from '../lib/eventsDate'
 import styles from './EventCalendarPage.module.css'
 
@@ -512,32 +512,21 @@ function entryOverlapsRange(entry: CalendarEntry, rangeStart: Date, rangeEnd: Da
 }
 
 function getEntryStartDate(entry: CalendarEntry) {
-  return getCalendarDate(entry.startAt, entry.event.event_type) ?? startOfDay(new Date())
+  return getCalendarDate(entry.startAt) ?? startOfDay(new Date())
 }
 
 function getEntryEndDate(entry: CalendarEntry) {
   return (
-    getCalendarDate(entry.endAt ?? entry.startAt, entry.event.event_type) ??
+    getCalendarDate(entry.endAt ?? entry.startAt) ??
     getEntryStartDate(entry)
   )
 }
 
-function getCalendarDate(value: string, eventType: EventDetailResponse['event_type']) {
-  if (isAllDayEventType(eventType)) {
-    const matchedDate = value.match(/^(\d{4})-(\d{2})-(\d{2})/)
-    if (!matchedDate) {
-      return null
-    }
-
-    return new Date(
-      Number(matchedDate[1]),
-      Number(matchedDate[2]) - 1,
-      Number(matchedDate[3]),
-    )
-  }
-
-  const date = new Date(value)
-  return Number.isNaN(date.getTime()) ? null : startOfDay(date)
+function getCalendarDate(value: string) {
+  const date = parseEventWallClockDate(value)
+  return date
+    ? new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+    : null
 }
 
 function formatCompactEventRange(entry: CalendarEntry, locale: string) {

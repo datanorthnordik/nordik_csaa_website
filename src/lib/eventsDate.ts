@@ -18,14 +18,50 @@ export function isAllDayEventType(eventType: EventType) {
   return eventType === 'single_day_all_day' || eventType === 'multi_day_all_day'
 }
 
+export function parseEventWallClockDate(value: string | null | undefined) {
+  if (!value) {
+    return null
+  }
+
+  const matchedDateTime = value.match(
+    /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d+))?)?(?:Z|[+-]\d{2}:\d{2})?)?$/,
+  )
+  if (!matchedDateTime) {
+    return null
+  }
+
+  const year = Number(matchedDateTime[1])
+  const month = Number(matchedDateTime[2])
+  const day = Number(matchedDateTime[3])
+  const hours = Number(matchedDateTime[4] ?? 0)
+  const minutes = Number(matchedDateTime[5] ?? 0)
+  const seconds = Number(matchedDateTime[6] ?? 0)
+  const milliseconds = Number((matchedDateTime[7] ?? '').slice(0, 3).padEnd(3, '0'))
+  const date = new Date(
+    Date.UTC(year, month - 1, day, hours, minutes, seconds, milliseconds),
+  )
+
+  if (
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== month - 1 ||
+    date.getUTCDate() !== day ||
+    date.getUTCHours() !== hours ||
+    date.getUTCMinutes() !== minutes ||
+    date.getUTCSeconds() !== seconds
+  ) {
+    return null
+  }
+
+  return date
+}
+
 export function formatEventDateRange(
   startAt: string,
   endAt: string | null | undefined,
-  eventType: EventType,
+  _eventType: EventType,
   locale: string,
 ) {
-  const allDay = isAllDayEventType(eventType)
-  const start = getEventDate(startAt, allDay)
+  const start = parseEventWallClockDate(startAt)
   if (!start) {
     return startAt
   }
@@ -34,14 +70,14 @@ export function formatEventDateRange(
     month: 'long',
     day: 'numeric',
     year: 'numeric',
-    timeZone: allDay ? 'UTC' : undefined,
+    timeZone: 'UTC',
   })
 
   if (!endAt) {
     return dateFormatter.format(start)
   }
 
-  const end = getEventDate(endAt, allDay)
+  const end = parseEventWallClockDate(endAt)
   if (!end) {
     return `${dateFormatter.format(start)} - ${endAt}`
   }
@@ -60,26 +96,30 @@ export function formatEventTimeRange(
     return t('common.allDay')
   }
 
-  const start = new Date(startAt)
-  if (Number.isNaN(start.getTime())) {
+  const start = parseEventWallClockDate(startAt)
+  if (!start) {
     return t('common.timeTbd')
   }
 
   const timeFormatter = new Intl.DateTimeFormat(locale, {
     hour: 'numeric',
     minute: '2-digit',
+    timeZone: 'UTC',
   })
 
   if (!endAt) {
     return timeFormatter.format(start)
   }
 
-  const end = new Date(endAt)
-  if (Number.isNaN(end.getTime())) {
+  const end = parseEventWallClockDate(endAt)
+  if (!end) {
     return timeFormatter.format(start)
   }
 
-  const sameDay = start.toDateString() === end.toDateString()
+  const sameDay =
+    start.getUTCFullYear() === end.getUTCFullYear() &&
+    start.getUTCMonth() === end.getUTCMonth() &&
+    start.getUTCDate() === end.getUTCDate()
   if (sameDay) {
     return `${timeFormatter.format(start)} - ${timeFormatter.format(end)}`
   }
@@ -89,6 +129,7 @@ export function formatEventTimeRange(
     day: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
+    timeZone: 'UTC',
   })
 
   return `${dateTimeFormatter.format(start)} - ${dateTimeFormatter.format(end)}`
@@ -105,7 +146,7 @@ export function formatEventDateTime(
   }
 
   if (isAllDayEventType(eventType)) {
-    const date = getEventDate(value, true)
+    const date = parseEventWallClockDate(value)
     if (!date) {
       return value
     }
@@ -118,8 +159,8 @@ export function formatEventDateTime(
     }).format(date)
   }
 
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) {
+  const date = parseEventWallClockDate(value)
+  if (!date) {
     return value
   }
 
@@ -129,22 +170,23 @@ export function formatEventDateTime(
     year: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
+    timeZone: 'UTC',
   }).format(date)
 }
 
 export function formatEventBadgeMonth(
   startAt: string,
-  eventType: EventType,
+  _eventType: EventType,
   locale: string,
 ) {
-  const date = getEventDate(startAt, isAllDayEventType(eventType))
+  const date = parseEventWallClockDate(startAt)
   if (!date) {
     return '--'
   }
 
   return new Intl.DateTimeFormat(locale, {
     month: 'short',
-    timeZone: isAllDayEventType(eventType) ? 'UTC' : undefined,
+    timeZone: 'UTC',
   })
     .format(date)
     .toUpperCase()
@@ -152,17 +194,17 @@ export function formatEventBadgeMonth(
 
 export function formatEventBadgeDay(
   startAt: string,
-  eventType: EventType,
+  _eventType: EventType,
   locale: string,
 ) {
-  const date = getEventDate(startAt, isAllDayEventType(eventType))
+  const date = parseEventWallClockDate(startAt)
   if (!date) {
     return '--'
   }
 
   return new Intl.DateTimeFormat(locale, {
     day: '2-digit',
-    timeZone: isAllDayEventType(eventType) ? 'UTC' : undefined,
+    timeZone: 'UTC',
   }).format(date)
 }
 
@@ -256,7 +298,7 @@ export function getRegistrationState(
     } satisfies RegistrationState
   }
 
-  const now = new Date()
+  const now = toWallClockComparisonDate(new Date())
   const registrationStart = parseDate(event.registration_start_at)
   const registrationEnd = parseDate(event.registration_end_at)
   const eventStart = parseDate(event.start_at)
@@ -280,6 +322,7 @@ export function getRegistrationState(
         year: 'numeric',
         hour: 'numeric',
         minute: '2-digit',
+        timeZone: 'UTC',
       }).format(registrationStart),
       isOpen: false,
     } satisfies RegistrationState
@@ -305,6 +348,7 @@ export function getRegistrationState(
           year: 'numeric',
           hour: 'numeric',
           minute: '2-digit',
+          timeZone: 'UTC',
         }).format(registrationEnd),
       } as Record<string, unknown>),
       isOpen: true,
@@ -319,36 +363,20 @@ export function getRegistrationState(
   } satisfies RegistrationState
 }
 
-function getEventDate(value: string, preserveCalendarDate: boolean) {
-  if (preserveCalendarDate) {
-    return parseApiCalendarDate(value)
-  }
-
-  const date = new Date(value)
-  return Number.isNaN(date.getTime()) ? null : date
-}
-
-function parseApiCalendarDate(value: string) {
-  const matchedDate = value.match(/^(\d{4})-(\d{2})-(\d{2})/)
-  if (!matchedDate) {
-    return null
-  }
-
-  const year = Number(matchedDate[1])
-  const month = Number(matchedDate[2])
-  const day = Number(matchedDate[3])
-  if (!year || !month || !day) {
-    return null
-  }
-
-  return new Date(Date.UTC(year, month - 1, day))
-}
-
 function parseDate(value: string | null | undefined) {
-  if (!value) {
-    return null
-  }
+  return parseEventWallClockDate(value)
+}
 
-  const date = new Date(value)
-  return Number.isNaN(date.getTime()) ? null : date
+function toWallClockComparisonDate(value: Date) {
+  return new Date(
+    Date.UTC(
+      value.getFullYear(),
+      value.getMonth(),
+      value.getDate(),
+      value.getHours(),
+      value.getMinutes(),
+      value.getSeconds(),
+      value.getMilliseconds(),
+    ),
+  )
 }
