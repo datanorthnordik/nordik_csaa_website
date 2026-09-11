@@ -7,6 +7,7 @@ import {
   BreadcrumbOverrideProvider,
   SiteBreadcrumbs,
 } from '../components/SiteBreadcrumbs'
+import i18n from '../i18n'
 import type { BreadcrumbItem } from '../lib/breadcrumbs'
 import { LivingHistoryBookPage } from './LivingHistoryBookPage'
 
@@ -49,8 +50,9 @@ function BreadcrumbHarness({ children }: { children: ReactNode }) {
 }
 
 describe('LivingHistoryBookPage', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks()
+    await i18n.changeLanguage('en')
     getBook.mockResolvedValue({
       id: '42',
       author: 'Alice Archive',

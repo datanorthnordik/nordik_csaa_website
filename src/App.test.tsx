@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { Provider } from 'react-redux'
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -1174,7 +1174,9 @@ describe('App', () => {
         name: /digital newsletters/i,
       }),
     ).toBeDefined()
-    expect(listPublishedNewsletters).toHaveBeenCalled()
+    await waitFor(() => {
+      expect(listPublishedNewsletters).toHaveBeenCalled()
+    })
     expect(getNewsletter).not.toHaveBeenCalled()
     expect(
       (await findPrimaryNavigationLink(/news & media/i)).getAttribute('aria-current'),
@@ -1220,11 +1222,13 @@ describe('App', () => {
     expect(within(breadcrumb).getByRole('link', { name: /^home$/i }).getAttribute('href')).toBe(
       '/home',
     )
-    expect(
-      within(breadcrumb)
-        .getByRole('link', { name: /community support team/i })
-        .getAttribute('href'),
-    ).toBe('/community-support-team')
+    await waitFor(() => {
+      expect(
+        within(breadcrumb)
+          .getByRole('link', { name: /community support team/i })
+          .getAttribute('href'),
+      ).toBe('/community-support-team')
+    })
     expect(await within(breadcrumb).findByText(/resources & support/i)).toBeDefined()
   })
 
