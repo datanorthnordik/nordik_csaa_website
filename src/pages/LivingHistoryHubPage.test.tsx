@@ -5,12 +5,14 @@ import { LivingHistoryHubPage } from './LivingHistoryHubPage'
 
 const {
   submitContribution,
+  getRecordingCollectionByPlacementKey,
   getVideoPackage,
   toastSuccess,
   toastError,
   usePageBreadcrumbs,
 } = vi.hoisted(() => ({
   submitContribution: vi.fn(),
+  getRecordingCollectionByPlacementKey: vi.fn(),
   getVideoPackage: vi.fn(),
   toastSuccess: vi.fn(),
   toastError: vi.fn(),
@@ -20,6 +22,13 @@ const {
 vi.mock('../api/knowledgeCenterApi', () => ({
   knowledgeCenterApi: {
     submitContribution,
+  },
+}))
+
+vi.mock('../api/recordingsApi', () => ({
+  LIVING_HISTORY_RECORDINGS_PLACEMENT_KEY: 'living-history-recordings',
+  recordingsApi: {
+    getCollectionByPlacementKey: getRecordingCollectionByPlacementKey,
   },
 }))
 
@@ -73,6 +82,15 @@ describe('LivingHistoryHubPage', () => {
 
     getVideoPackage.mockResolvedValue({
       videos: [],
+    })
+    getRecordingCollectionByPlacementKey.mockResolvedValue({
+      id: 8,
+      name: 'Living History Recordings',
+      placement_key: 'living-history-recordings',
+      item_count: 0,
+      items: [],
+      created_at: '2026-09-22T10:00:00Z',
+      updated_at: '2026-09-22T10:00:00Z',
     })
 
     Object.defineProperty(window, 'matchMedia', {
@@ -189,5 +207,45 @@ describe('LivingHistoryHubPage', () => {
     expect(
       (screen.getByRole('button', { name: /^Submit$/i }) as HTMLButtonElement).disabled,
     ).toBe(false)
+  })
+
+  it('loads the configured recording collection when the Recordings tab opens', async () => {
+    getRecordingCollectionByPlacementKey.mockResolvedValue({
+      id: 8,
+      name: 'Living History Recordings',
+      placement_key: 'living-history-recordings',
+      item_count: 1,
+      items: [
+        {
+          id: 31,
+          recording_collection_id: 8,
+          title: 'A Life in the North',
+          description: 'An oral history recorded in Yellowknife.',
+          recording_url: '/api/recordings/8/items/31/content',
+          sort_order: 0,
+          created_at: '2026-09-22T10:00:00Z',
+          updated_at: '2026-09-22T10:00:00Z',
+        },
+      ],
+      created_at: '2026-09-22T10:00:00Z',
+      updated_at: '2026-09-22T10:00:00Z',
+    })
+
+    render(
+      <MemoryRouter>
+        <LivingHistoryHubPage />
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Recordings' }))
+
+    await waitFor(() => {
+      expect(getRecordingCollectionByPlacementKey).toHaveBeenCalledWith(
+        'living-history-recordings',
+      )
+    })
+    expect(await screen.findByRole('heading', { name: 'A Life in the North' })).toBeTruthy()
+    expect(screen.getAllByText('An oral history recorded in Yellowknife.')).toHaveLength(2)
+    expect(screen.getByRole('button', { name: /play recording/i })).toBeTruthy()
   })
 })

@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { apiClient } from './apiClient'
-import { recordingsApi } from './recordingsApi'
+import {
+  LIVING_HISTORY_RECORDINGS_PLACEMENT_KEY,
+  recordingsApi,
+} from './recordingsApi'
 
 vi.mock('./apiClient', () => ({
   apiClient: {
@@ -63,5 +66,28 @@ describe('recordingsApi', () => {
       skipAuth: true,
       skipErrorToast: true,
     })
+  })
+
+  it('fetches the Living History collection by its stable placement key', async () => {
+    const response = {
+      id: 8,
+      name: 'Living History Recordings',
+      placement_key: LIVING_HISTORY_RECORDINGS_PLACEMENT_KEY,
+      item_count: 0,
+      items: [],
+      created_at: '2026-09-22T10:00:00Z',
+      updated_at: '2026-09-22T10:00:00Z',
+    }
+    apiGet.mockResolvedValue({ data: response })
+
+    await expect(
+      recordingsApi.getCollectionByPlacementKey(
+        LIVING_HISTORY_RECORDINGS_PLACEMENT_KEY,
+      ),
+    ).resolves.toEqual(response)
+    expect(apiGet).toHaveBeenCalledWith(
+      '/api/recordings/placement/living-history-recordings',
+      { skipAuth: true, skipErrorToast: true },
+    )
   })
 })
