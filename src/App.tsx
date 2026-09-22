@@ -69,6 +69,11 @@ const PressArchivePage = lazy(() =>
     default: module.PressArchivePage,
   })),
 )
+const RecordingsPage = lazy(() =>
+  import('./pages/RecordingsPage').then((module) => ({
+    default: module.RecordingsPage,
+  })),
+)
 const CommunityResourcesPage = lazy(() =>
   import('./pages/ResourcesPage').then((module) => ({
     default: module.CommunityResourcesPage,
@@ -167,6 +172,7 @@ function App() {
               path="/news-media/press-archive"
               element={withSuspense(<PressArchivePage />)}
             />
+            <Route path="/recordings" element={withSuspense(<RecordingsPage />)} />
             <Route
               path="/community-circle/community-support-team/resources"
               element={withSuspense(<CommunityResourcesPage />)}
