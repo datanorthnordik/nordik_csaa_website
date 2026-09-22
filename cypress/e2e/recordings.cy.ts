@@ -70,7 +70,7 @@ describe('Recordings page', () => {
         updated_at: '2026-09-22T10:00:00Z',
       },
     })
-    cy.intercept('GET', '**/api/blogs*', {
+    cy.intercept('GET', /\/api\/blogs(?:\?.*)?$/, {
       statusCode: 200,
       body: { items: [] },
     })
