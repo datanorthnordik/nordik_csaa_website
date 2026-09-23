@@ -1200,7 +1200,9 @@ describe('App', () => {
     expect(
       within(breadcrumb).getByRole('link', { name: /digital newsletters/i }).getAttribute('href'),
     ).toBe('/news-media/digital-newsletter')
-    expect(within(breadcrumb).getByText(/community reunion highlights/i)).toBeDefined()
+    expect(
+      await within(breadcrumb).findByText(/community reunion highlights/i),
+    ).toBeDefined()
     expect(screen.getByText(/flipbook for community reunion highlights/i)).toBeDefined()
     expect(getNewsletter).toHaveBeenCalledWith(11)
     expect(
