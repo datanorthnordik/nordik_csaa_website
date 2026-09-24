@@ -82,7 +82,7 @@ describe('DigitalNewsletterDetailPage', () => {
         },
         {
           id: 602,
-          display_name: 'Edition PDF',
+          display_name: 'English Book',
           file_name: 'convocation.pdf',
           gcp_object_key: '',
           file_url: '/api/newsletters/24/media/602/content',
@@ -90,6 +90,19 @@ describe('DigitalNewsletterDetailPage', () => {
           file_size: 2048,
           media_role: 'attachment',
           sort_order: 1,
+          created_at: '',
+          updated_at: '',
+        },
+        {
+          id: 603,
+          display_name: 'French Book',
+          file_name: 'convocation-fr.pdf',
+          gcp_object_key: '',
+          file_url: '/api/newsletters/24/media/603/content',
+          mime_type: 'application/pdf',
+          file_size: 2048,
+          media_role: 'attachment',
+          sort_order: 2,
           created_at: '',
           updated_at: '',
         },
@@ -108,19 +121,59 @@ describe('DigitalNewsletterDetailPage', () => {
       screen.getByText(/community support team proudly celebrates a historic milestone/i),
     ).toBeDefined()
     expect(
-      screen.getByText(/flipbook for dr\. shirley horn convocation - june 2025 \(pdf\)/i),
+      screen.getByText(/flipbook for dr\. shirley horn convocation - june 2025: english book \(pdf\)/i),
     ).toBeDefined()
-    expect(screen.getByRole('button', { name: /download edition/i })).toBeDefined()
+    expect(screen.getByRole('button', { name: /download this version/i })).toBeDefined()
+    expect(screen.getAllByRole('tab')).toHaveLength(2)
+
+    fireEvent.click(screen.getByRole('tab', { name: 'French Book' }))
+    expect(
+      screen.getByText(/flipbook for dr\. shirley horn convocation - june 2025: french book \(pdf\)/i),
+    ).toBeDefined()
 
     downloadPublicFile.mockResolvedValue(undefined)
-    fireEvent.click(screen.getByRole('button', { name: /download edition/i }))
+    fireEvent.click(screen.getByRole('button', { name: /download this version/i }))
 
     await waitFor(() => {
       expect(downloadPublicFile).toHaveBeenCalledWith(
-        expect.stringContaining('/api/newsletters/24/media/602/content'),
-        'convocation.pdf',
+        expect.stringContaining('/api/newsletters/24/download'),
+        'Dr. Shirley Horn Convocation - June 2025.zip',
       )
     })
+  })
+
+  it('shows one flipbook by default without rendering a tab for a single book', async () => {
+    getNewsletter.mockResolvedValue({
+      id: 26,
+      title: 'Single Book Edition',
+      category: 'csaa',
+      send_date: '2026-01-01T00:00:00Z',
+      content_html: '',
+      status: 'published',
+      visibility: 'public',
+      publish_at: null,
+      created_at: '',
+      updated_at: '',
+      media: [
+        {
+          id: 701,
+          display_name: 'Only Book',
+          file_name: 'only.pdf',
+          file_url: '/api/newsletters/26/media/701/content',
+          mime_type: 'application/pdf',
+          file_size: 100,
+          media_role: 'attachment',
+          sort_order: 0,
+          created_at: '',
+          updated_at: '',
+        },
+      ],
+    })
+
+    renderPage('/news-media/digital-newsletter/26')
+
+    expect(await screen.findByText(/single book edition: only book \(pdf\)/i)).toBeDefined()
+    expect(screen.queryByRole('tab')).toBeNull()
   })
 
   it('shows the newsletter details without filler description copy when no previewable media exists', async () => {

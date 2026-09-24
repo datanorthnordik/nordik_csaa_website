@@ -10,7 +10,7 @@ import { NewsletterFlipbook } from '../components/newsletters/NewsletterFlipbook
 import {
   getNewsletterCategoryLabel,
   resolveNewsletterDownload,
-  resolveNewsletterFlipbook,
+  resolveNewsletterFlipbooks,
   resolveNewsletterPreview,
 } from '../lib/newsletterMedia'
 import { downloadPublicFile } from '../lib/fileDownload'
@@ -25,14 +25,14 @@ export function DigitalNewsletterDetailPage() {
   const [status, setStatus] = useState<LoadStatus>('loading')
   const [isDownloading, setIsDownloading] = useState(false)
   const [downloadError, setDownloadError] = useState<string | null>(null)
+  const [selectedFlipbookId, setSelectedFlipbookId] = useState<number | string | null>(null)
 
   const locale = i18n.resolvedLanguage ?? i18n.language
+  const numericNewsletterId = Number(newsletterId)
+  const hasValidNewsletterId = Number.isFinite(numericNewsletterId) && numericNewsletterId > 0
 
   useEffect(() => {
-    const id = Number(newsletterId)
-    if (!Number.isFinite(id) || id <= 0) {
-      setEntry(null)
-      setStatus('error')
+    if (!hasValidNewsletterId) {
       return
     }
 
@@ -42,7 +42,7 @@ export function DigitalNewsletterDetailPage() {
       setStatus('loading')
 
       try {
-        const response = await newslettersApi.getNewsletter(id)
+        const response = await newslettersApi.getNewsletter(numericNewsletterId)
         if (!ignore) {
           setEntry(response)
           setStatus('ready')
@@ -60,13 +60,18 @@ export function DigitalNewsletterDetailPage() {
     return () => {
       ignore = true
     }
-  }, [newsletterId])
+  }, [hasValidNewsletterId, numericNewsletterId])
 
   const preview = useMemo(() => (entry ? resolveNewsletterPreview(entry) : null), [entry])
-  const flipbookSource = useMemo(
-    () => (entry ? resolveNewsletterFlipbook(entry) : null),
+  const flipbooks = useMemo(
+    () => (entry ? resolveNewsletterFlipbooks(entry) : []),
     [entry],
   )
+  const activeFlipbook =
+    flipbooks.find((book) => book.id === selectedFlipbookId) ?? flipbooks[0] ?? null
+  const activeFlipbookIndex = activeFlipbook
+    ? flipbooks.findIndex((book) => book.id === activeFlipbook.id)
+    : -1
   const downloadTarget = useMemo(
     () => (entry ? resolveNewsletterDownload(entry) : null),
     [entry],
@@ -75,7 +80,7 @@ export function DigitalNewsletterDetailPage() {
     preview?.previewKind === 'image' && preview.previewUrl,
   )
   const hasInlineFramePreview = Boolean(
-    preview?.previewKind === 'iframe' && preview.previewUrl && !flipbookSource,
+    preview?.previewKind === 'iframe' && preview.previewUrl && !activeFlipbook,
   )
   const showHeroMedia = hasImagePreview || hasInlineFramePreview
   const contentHtml = entry?.content_html.trim() ?? ''
@@ -112,7 +117,7 @@ export function DigitalNewsletterDetailPage() {
     }
   }
 
-  if (status === 'loading') {
+  if (hasValidNewsletterId && status === 'loading') {
     return (
       <div className={styles.page}>
         <div className={styles.loadingCard} aria-busy="true">
@@ -123,7 +128,7 @@ export function DigitalNewsletterDetailPage() {
     )
   }
 
-  if (status === 'error' || !entry) {
+  if (!hasValidNewsletterId || status === 'error' || !entry) {
     return (
       <div className={styles.page}>
         <div className={styles.stateCard}>
@@ -173,6 +178,32 @@ export function DigitalNewsletterDetailPage() {
                   <span aria-hidden="true" className={styles.downloadIcon} />
                   {t('newslettersPage.detail.downloadEdition')}
                 </button>
+
+                {flipbooks.length > 1 ? (
+                  <div
+                    className={styles.flipbookTabs}
+                    role="tablist"
+                    aria-label={t('newslettersPage.detail.flipbookTabsLabel')}
+                  >
+                    {flipbooks.map((book, index) => {
+                      const isActive = book.id === activeFlipbook?.id
+                      return (
+                        <button
+                          key={book.id}
+                          id={`newsletter-flipbook-tab-${index}`}
+                          type="button"
+                          role="tab"
+                          aria-selected={isActive}
+                          aria-controls="newsletter-flipbook-reader"
+                          className={`${styles.flipbookTab} ${isActive ? styles.flipbookTabActive : ''}`}
+                          onClick={() => setSelectedFlipbookId(book.id)}
+                        >
+                          {book.displayName}
+                        </button>
+                      )
+                    })}
+                  </div>
+                ) : null}
               </div>
             ) : null}
 
@@ -201,9 +232,22 @@ export function DigitalNewsletterDetailPage() {
         </div>
       </section>
 
-      {flipbookSource ? (
-        <section className={styles.readerSection}>
-          <NewsletterFlipbook source={flipbookSource} title={entry.title} />
+      {activeFlipbook ? (
+        <section
+          id="newsletter-flipbook-reader"
+          className={styles.readerSection}
+          role={flipbooks.length > 1 ? 'tabpanel' : undefined}
+          aria-labelledby={
+            flipbooks.length > 1
+              ? `newsletter-flipbook-tab-${activeFlipbookIndex}`
+              : undefined
+          }
+        >
+          <NewsletterFlipbook
+            key={activeFlipbook.id}
+            source={activeFlipbook.source}
+            title={`${entry.title}: ${activeFlipbook.displayName}`}
+          />
         </section>
       ) : null}
     </div>

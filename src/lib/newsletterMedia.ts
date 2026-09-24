@@ -34,6 +34,12 @@ export type NewsletterDownloadTarget = {
   fileName: string
 }
 
+export type NewsletterFlipbook = {
+  id: number | string
+  displayName: string
+  source: NewsletterFlipbookSource
+}
+
 export function resolveNewsletterMediaUrl(
   entryId: number,
   media: Pick<NewsletterMediaResponse, 'id' | 'file_url'>,
@@ -184,49 +190,58 @@ export function resolveNewsletterPreview(entry: NewsletterDetailResponse): Newsl
 }
 
 export function resolveNewsletterFlipbook(entry: NewsletterDetailResponse): NewsletterFlipbookSource | null {
-  const media = getSortedNewsletterMedia(entry)
-  const pdfMedia = media.find((item) => isPdfNewsletterMedia(item))
+  return resolveNewsletterFlipbooks(entry)[0]?.source ?? null
+}
 
-  if (pdfMedia) {
-    return {
-      kind: 'pdf',
-      url: resolveNewsletterMediaUrl(entry.id, pdfMedia),
-      fileName: pdfMedia.file_name || pdfMedia.display_name || `${entry.title}.pdf`,
-    }
+export function resolveNewsletterFlipbooks(entry: NewsletterDetailResponse): NewsletterFlipbook[] {
+  const media = getSortedNewsletterMedia(entry)
+  const pdfMedia = media.filter((item) => isPdfNewsletterMedia(item))
+
+  if (pdfMedia.length) {
+    return pdfMedia.map((item, index) => ({
+      id: item.id,
+      displayName:
+        item.display_name.trim() || item.file_name.trim() || `${entry.title} ${index + 1}`,
+      source: {
+        kind: 'pdf',
+        url: resolveNewsletterMediaUrl(entry.id, item),
+        fileName: item.file_name || item.display_name || `${entry.title}.pdf`,
+      },
+    }))
   }
 
   const imagePages = media.filter((item) => isImageNewsletterMedia(item))
   if (!imagePages.length) {
-    return null
+    return []
   }
 
-  return {
-    kind: 'images',
-    pages: imagePages.map((item, index) => ({
-      id: item.id,
-      title: item.display_name || item.file_name || `${entry.title} ${index + 1}`,
-      altText: item.display_name || item.file_name || entry.title,
-      imageUrl: resolveNewsletterMediaUrl(entry.id, item),
-    })),
-  }
+
+  return [{
+    id: `images:${imagePages.map((item) => item.id).join(',')}`,
+    displayName: entry.title,
+    source: {
+      kind: 'images',
+      pages: imagePages.map((item, index) => ({
+        id: item.id,
+        title: item.display_name || item.file_name || `${entry.title} ${index + 1}`,
+        altText: item.display_name || item.file_name || entry.title,
+        imageUrl: resolveNewsletterMediaUrl(entry.id, item),
+      })),
+    },
+  }]
 }
 
 export function resolveNewsletterDownload(
   entry: NewsletterDetailResponse,
 ): NewsletterDownloadTarget | null {
   const media = getSortedNewsletterMedia(entry)
-  const preferredMedia = media.find((item) => isPdfNewsletterMedia(item)) ?? media[0] ?? null
-
-  if (!preferredMedia) {
+  if (!media.length) {
     return null
   }
 
   return {
-    url: resolveNewsletterMediaUrl(entry.id, preferredMedia),
-    fileName:
-      preferredMedia.file_name ||
-      preferredMedia.display_name ||
-      `${entry.title}.pdf`,
+    url: buildApiUrl(API_ROUTES.newsletterDownloadById(entry.id)),
+    fileName: `${entry.title.trim() || 'newsletter'}.zip`,
   }
 }
 
