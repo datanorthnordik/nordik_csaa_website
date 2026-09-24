@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { apiClient } from './apiClient'
 import {
-  LIVING_HISTORY_RECORDINGS_PLACEMENT_KEY,
+  LIVING_HISTORY_RECORDINGS_COLLECTION_TITLE,
   recordingsApi,
 } from './recordingsApi'
 
@@ -68,11 +68,10 @@ describe('recordingsApi', () => {
     })
   })
 
-  it('fetches the Living History collection by its stable placement key', async () => {
+  it('fetches the Living History collection by its exact CMS title', async () => {
     const response = {
       id: 8,
       name: 'Living History Recordings',
-      placement_key: LIVING_HISTORY_RECORDINGS_PLACEMENT_KEY,
       item_count: 0,
       items: [],
       created_at: '2026-09-22T10:00:00Z',
@@ -81,12 +80,12 @@ describe('recordingsApi', () => {
     apiGet.mockResolvedValue({ data: response })
 
     await expect(
-      recordingsApi.getCollectionByPlacementKey(
-        LIVING_HISTORY_RECORDINGS_PLACEMENT_KEY,
+      recordingsApi.getCollectionByTitle(
+        LIVING_HISTORY_RECORDINGS_COLLECTION_TITLE,
       ),
     ).resolves.toEqual(response)
     expect(apiGet).toHaveBeenCalledWith(
-      '/api/recordings/placement/living-history-recordings',
+      '/api/recordings/by-title?title=Living%20History%20Recordings',
       { skipAuth: true, skipErrorToast: true },
     )
   })

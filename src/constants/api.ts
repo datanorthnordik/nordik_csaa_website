@@ -88,6 +88,8 @@ export const API_ROUTES = {
     `/api/videos/${packageId}/items/${itemId}/teaser/content`,
   recordings: '/api/recordings',
   recordingById: (id: number | string) => `/api/recordings/${id}`,
+  recordingByTitle: (title: string) =>
+    `/api/recordings/by-title?title=${encodeURIComponent(title)}`,
   recordingByPlacementKey: (placementKey: string) =>
     `/api/recordings/placement/${encodeURIComponent(placementKey)}`,
   recordingItemContentById: (collectionId: number | string, itemId: number | string) =>

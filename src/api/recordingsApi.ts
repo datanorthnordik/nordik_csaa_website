@@ -1,8 +1,8 @@
 import { API_ROUTES } from '../constants/api'
 import { apiClient } from './apiClient'
 
-export const LIVING_HISTORY_RECORDINGS_PLACEMENT_KEY =
-  'living-history-recordings'
+export const LIVING_HISTORY_RECORDINGS_COLLECTION_TITLE =
+  'Living History Recordings'
 
 export type RecordingItemResponse = {
   id: number
@@ -10,8 +10,6 @@ export type RecordingItemResponse = {
   title: string
   description?: string | null
   recording_url?: string | null
-  storage_uri?: string
-  gcp_object_key?: string
   sort_order?: number
   created_at: string
   updated_at: string
@@ -53,6 +51,15 @@ export const recordingsApi = {
   async getCollection(id: number | string) {
     const response = await apiClient.get<RecordingCollectionDetailResponse>(
       API_ROUTES.recordingById(id),
+      { skipAuth: true, skipErrorToast: true },
+    )
+
+    return response.data
+  },
+
+  async getCollectionByTitle(title: string) {
+    const response = await apiClient.get<RecordingCollectionDetailResponse>(
+      API_ROUTES.recordingByTitle(title),
       { skipAuth: true, skipErrorToast: true },
     )
 

@@ -21,7 +21,7 @@ import {
   type KnowledgeCenterSubmissionType,
 } from '../api/knowledgeCenterApi'
 import {
-  LIVING_HISTORY_RECORDINGS_PLACEMENT_KEY,
+  LIVING_HISTORY_RECORDINGS_COLLECTION_TITLE,
   recordingsApi,
 } from '../api/recordingsApi'
 import {
@@ -465,8 +465,8 @@ export function LivingHistoryHubPage() {
     async function loadRecordings() {
       setRecordingsStatus('loading')
       try {
-        const collection = await recordingsApi.getCollectionByPlacementKey(
-          LIVING_HISTORY_RECORDINGS_PLACEMENT_KEY,
+        const collection = await recordingsApi.getCollectionByTitle(
+          LIVING_HISTORY_RECORDINGS_COLLECTION_TITLE,
         )
         if (!cancelled) {
           setRecordings(

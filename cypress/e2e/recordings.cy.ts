@@ -74,12 +74,11 @@ describe('Recordings page', () => {
       statusCode: 200,
       body: { items: [] },
     })
-    cy.intercept('GET', '**/api/recordings/placement/living-history-recordings', {
+    cy.intercept('GET', '**/api/recordings/by-title?title=Living%20History%20Recordings', {
       statusCode: 200,
       body: {
         id: 8,
         name: 'Living History Recordings',
-        placement_key: 'living-history-recordings',
         item_count: 1,
         items: [
           {
