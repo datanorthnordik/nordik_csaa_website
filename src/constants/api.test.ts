@@ -96,6 +96,12 @@ describe('API_ROUTES', () => {
     )
     expect(API_ROUTES.recordings).toBe('/api/recordings')
     expect(API_ROUTES.recordingById(3)).toBe('/api/recordings/3')
+    expect(API_ROUTES.recordingByTitle('Living History & Stories')).toBe(
+      '/api/recordings/by-title?title=Living%20History%20%26%20Stories',
+    )
+    expect(API_ROUTES.recordingByPlacementKey('living-history-recordings')).toBe(
+      '/api/recordings/placement/living-history-recordings',
+    )
     expect(API_ROUTES.recordingItemContentById(3, 8)).toBe(
       '/api/recordings/3/items/8/content',
     )

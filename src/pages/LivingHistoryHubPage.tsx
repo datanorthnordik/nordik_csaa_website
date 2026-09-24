@@ -21,10 +21,15 @@ import {
   type KnowledgeCenterSubmissionType,
 } from '../api/knowledgeCenterApi'
 import {
+  LIVING_HISTORY_RECORDINGS_COLLECTION_TITLE,
+  recordingsApi,
+} from '../api/recordingsApi'
+import {
   getVideoTeaserUrl,
   videosApi,
   type VideoItemResponse,
 } from '../api/videosApi'
+import { resolveApiUrl } from '../constants/api'
 import styles from './LivingHistoryHubPage.module.css'
 
 const danPineCoverImg = '/dan-pine-family-shingwauk.jpg'
@@ -201,40 +206,11 @@ const FLIP_MS  = 72  // ms per frame
 
 // ── Radio recordings ────────────────────────────────────────────────────────
 type Recording = {
-  id: string
+  id: number
   title: string
-  speaker: string
-  date: string
   desc: string
   src: string
 }
-
-const RECORDINGS: Recording[] = [
-  {
-    id: 'r1',
-    title: 'Shirley: A Residential School Story',
-    speaker: 'Dr. Shirley Horn',
-    date: 'March 2026',
-    desc: 'Shirley Horn shares her residential school story — healing, reconnecting with culture, and a longing for language preserved through generations.',
-    src: '',
-  },
-  {
-    id: 'r2',
-    title: 'Dan Pine & the Pine Trees',
-    speaker: 'Community Support Team',
-    date: 'June 2026',
-    desc: 'Little Pine\'s vision, Elder Dan Pine Sr., and the trees planted by Survivors as a living monument to the children who never made it home.',
-    src: '',
-  },
-  {
-    id: 'r3',
-    title: 'Voices from the Gathering',
-    speaker: 'Survivors & Elders',
-    date: 'May 2026',
-    desc: 'A collection of voices from the annual gathering — memories, songs, and words of renewal passed forward to the next generation.',
-    src: '',
-  },
-]
 
 type ContributionFormState = {
   name: string
@@ -267,10 +243,14 @@ export function LivingHistoryHubPage() {
   const [activeBlock, setActiveBlock] = useState(0)
 
   const [mediaTab, setMediaTab] = useState<'tapes' | 'recordings' | 'bookshelf'>('tapes')
+  const [recordings, setRecordings] = useState<Recording[]>([])
+  const [recordingsStatus, setRecordingsStatus] = useState<
+    'idle' | 'loading' | 'success' | 'error'
+  >('idle')
   const [recIndex, setRecIndex] = useState(0)
   const [recPlaying, setRecPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
-  const activeRec = RECORDINGS[recIndex] ?? null
+  const activeRec = recordings[recIndex] ?? null
   const [hubBooks, setHubBooks] = useState<PublicBookshelfEntry[]>([])
   const [hubBooksStatus, setHubBooksStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [bookIndex, setBookIndex] = useState(0)
@@ -283,8 +263,8 @@ export function LivingHistoryHubPage() {
   const flipTimersRef = useRef<number[]>([])
   const [recSearching, setRecSearching] = useState(false)
   const [recArchiveOpen, setRecArchiveOpen] = useState(false)
-  const dialAngle = RECORDINGS.length > 1
-    ? -45 + (90 * recIndex / (RECORDINGS.length - 1))
+  const dialAngle = recordings.length > 1
+    ? -45 + (90 * recIndex / (recordings.length - 1))
     : 0
 
   const videoRef = useRef<HTMLElement>(null)
@@ -478,6 +458,45 @@ export function LivingHistoryHubPage() {
     return () => { cancelled = true }
   }, [mediaTab])
 
+  useEffect(() => {
+    if (mediaTab !== 'recordings') return
+    let cancelled = false
+
+    async function loadRecordings() {
+      setRecordingsStatus('loading')
+      try {
+        const collection = await recordingsApi.getCollectionByTitle(
+          LIVING_HISTORY_RECORDINGS_COLLECTION_TITLE,
+        )
+        if (!cancelled) {
+          setRecordings(
+            (collection.items ?? []).map((item) => ({
+              id: item.id,
+              title: item.title,
+              desc: item.description?.trim() ?? '',
+              src: resolveApiUrl(item.recording_url),
+            })),
+          )
+          setRecIndex(0)
+          setRecPlaying(false)
+          setRecordingsStatus('success')
+        }
+      } catch {
+        if (!cancelled) {
+          setRecordings([])
+          setRecIndex(0)
+          setRecPlaying(false)
+          setRecordingsStatus('error')
+        }
+      }
+    }
+
+    void loadRecordings()
+    return () => {
+      cancelled = true
+    }
+  }, [mediaTab])
+
   // Preload flip frames when bookshelf tab opens, clean up timers on unmount
   useEffect(() => {
     if (mediaTab !== 'bookshelf') return
@@ -660,20 +679,19 @@ export function LivingHistoryHubPage() {
   }
 
   const goToRec = (i: number) => {
+    if (!recordings.length) return
     const audio = audioRef.current
     if (audio) { audio.pause(); audio.currentTime = 0 }
     setRecPlaying(false)
     setRecSearching(true)
     setRecArchiveOpen(false)
-    setRecIndex((i + RECORDINGS.length) % RECORDINGS.length)
+    setRecIndex((i + recordings.length) % recordings.length)
     setTimeout(() => setRecSearching(false), 1100)
   }
 
   const tuneRandom = () => {
-    if (RECORDINGS.length < 2) return
-    let next = recIndex
-    while (next === recIndex) next = Math.floor(Math.random() * RECORDINGS.length)
-    goToRec(next)
+    if (recordings.length < 2) return
+    goToRec(recIndex + 1)
   }
 
   const goToBook = useCallback((nextIndex: number) => {
@@ -1028,7 +1046,7 @@ export function LivingHistoryHubPage() {
         <section className={styles.radioLand}>
           <audio
             ref={audioRef}
-            src={activeRec?.src ?? ''}
+            src={activeRec?.src || undefined}
             onEnded={() => setRecPlaying(false)}
             preload="none"
           />
@@ -1047,12 +1065,12 @@ export function LivingHistoryHubPage() {
                   >×</button>
                 </div>
                 <ul className={styles.recList}>
-                  {RECORDINGS.map((r, i) => (
+                  {recordings.map((r, i) => (
                     <li key={r.id} className={styles.recItem} data-active={i === recIndex}>
                       <button type="button" className={styles.recItemBtn} onClick={() => goToRec(i)}>
                         <span className={styles.archiveItemNo}>{String(i + 1).padStart(2, '0')}</span>
                         <span className={styles.recItemTitle}>{r.title}</span>
-                        <span className={styles.recItemSpeaker}>{r.speaker}</span>
+                        <span className={styles.recItemSpeaker}>{r.desc}</span>
                       </button>
                     </li>
                   ))}
@@ -1062,14 +1080,25 @@ export function LivingHistoryHubPage() {
               {/* Default: current recording details */}
               <div className={styles.tvDefault} aria-hidden={recArchiveOpen}>
                 <p className={styles.tvEyebrow}>Listen · In Their Words</p>
-                {activeRec ? (
+                {recordingsStatus === 'loading' ? (
+                  <>
+                    <h2 className={styles.featureTitle}>Loading recordings</h2>
+                    <div className={styles.featureRule} aria-hidden="true" />
+                    <p className={styles.featureBody}>Opening the recordings archive...</p>
+                  </>
+                ) : recordingsStatus === 'error' ? (
+                  <>
+                    <h2 className={styles.featureTitle}>Recordings unavailable</h2>
+                    <div className={styles.featureRule} aria-hidden="true" />
+                    <p className={styles.featureBody}>Please try again later.</p>
+                  </>
+                ) : activeRec ? (
                   <>
                     <h2 key={recIndex} className={`${styles.featureTitle} ${styles.tvTitleFade}`}>
                       {activeRec.title}
                     </h2>
                     <div className={styles.featureRule} aria-hidden="true" />
                     <p className={styles.featureBody}>{activeRec.desc}</p>
-                    <p className={styles.radioMeta}>{activeRec.speaker} · {activeRec.date}</p>
 
                     <button
                       type="button"
@@ -1097,13 +1126,13 @@ export function LivingHistoryHubPage() {
                       )}
                     </button>
 
-                    {RECORDINGS.length > 1 && (
+                    {recordings.length > 1 && (
                       <div className={styles.tvControls}>
                         <button type="button" className={styles.tvNav} onClick={() => goToRec(recIndex - 1)} aria-label="Previous recording">
                           <svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                         </button>
                         <div className={styles.tvDots}>
-                          {RECORDINGS.map((r, i) => (
+                          {recordings.map((r, i) => (
                             <button key={r.id} type="button" className={styles.tvDot} data-active={i === recIndex} onClick={() => goToRec(i)} aria-label={`Go to ${r.title}`} />
                           ))}
                         </div>
@@ -1145,7 +1174,7 @@ export function LivingHistoryHubPage() {
                     type="button"
                     className={styles.tuneBtn}
                     onClick={tuneRandom}
-                    disabled={RECORDINGS.length < 2}
+                    disabled={recordings.length < 2}
                     aria-label="Tune to a random recording"
                   >
                     <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
