@@ -67,6 +67,7 @@ describe('API_ROUTES', () => {
     expect(API_ROUTES.blogById(4)).toBe('/api/blogs/4')
     expect(API_ROUTES.newsletters).toBe('/api/newsletters')
     expect(API_ROUTES.newsletterById(9)).toBe('/api/newsletters/9')
+    expect(API_ROUTES.newsletterDownloadById(9)).toBe('/api/newsletters/9/download')
     expect(API_ROUTES.newsletterMediaById(9, 2)).toBe(
       '/api/newsletters/9/media/2/content',
     )

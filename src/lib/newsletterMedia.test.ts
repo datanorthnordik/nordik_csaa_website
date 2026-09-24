@@ -4,6 +4,7 @@ import {
   getNewsletterCategoryLabel,
   resolveNewsletterDownload,
   resolveNewsletterFlipbook,
+  resolveNewsletterFlipbooks,
   resolveNewsletterPreview,
 } from './newsletterMedia'
 
@@ -145,6 +146,52 @@ describe('newsletterMedia', () => {
     })
   })
 
+  it('resolves every pdf as an independently named flipbook in sort order', () => {
+    const flipbooks = resolveNewsletterFlipbooks({
+      id: 22,
+      title: 'Bilingual edition',
+      category: 'cst',
+      send_date: '2025-06-01T00:00:00Z',
+      content_html: '',
+      status: 'published',
+      visibility: 'public',
+      publish_at: null,
+      created_at: '',
+      updated_at: '',
+      media: [
+        {
+          id: 402,
+          display_name: 'French',
+          file_name: 'fr.pdf',
+          file_url: '/api/newsletters/22/media/402/content',
+          mime_type: 'application/pdf',
+          file_size: 1,
+          media_role: 'attachment',
+          sort_order: 1,
+          created_at: '',
+          updated_at: '',
+        },
+        {
+          id: 401,
+          display_name: 'English',
+          file_name: 'en.pdf',
+          file_url: '/api/newsletters/22/media/401/content',
+          mime_type: 'application/pdf',
+          file_size: 1,
+          media_role: 'attachment',
+          sort_order: 0,
+          created_at: '',
+          updated_at: '',
+        },
+      ],
+    })
+
+    expect(flipbooks.map(({ id, displayName }) => ({ id, displayName }))).toEqual([
+      { id: 401, displayName: 'English' },
+      { id: 402, displayName: 'French' },
+    ])
+  })
+
   it('resolves image pages for the flipbook when only images are available', () => {
     const flipbook = resolveNewsletterFlipbook({
       id: 23,
@@ -206,7 +253,7 @@ describe('newsletterMedia', () => {
     })
   })
 
-  it('prefers the pdf as the newsletter download target', () => {
+  it('uses the version archive as the newsletter download target', () => {
     const downloadTarget = resolveNewsletterDownload({
       id: 31,
       title: 'Downloadable edition',
@@ -249,8 +296,8 @@ describe('newsletterMedia', () => {
     })
 
     expect(downloadTarget).toEqual({
-      url: expect.stringContaining('/api/newsletters/31/media/702/content'),
-      fileName: 'edition.pdf',
+      url: expect.stringContaining('/api/newsletters/31/download'),
+      fileName: 'Downloadable edition.zip',
     })
   })
 

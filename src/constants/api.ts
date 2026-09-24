@@ -61,6 +61,8 @@ export const API_ROUTES = {
   blogById: (id: number | string) => `/api/blogs/${id}`,
   newsletters: '/api/newsletters',
   newsletterById: (id: number | string) => `/api/newsletters/${id}`,
+  newsletterDownloadById: (id: number | string) =>
+    `/api/newsletters/${id}/download`,
   newsletterMediaById: (id: number | string, mediaId: number | string) =>
     `/api/newsletters/${id}/media/${mediaId}/content`,
   publicBooks: '/api/books/public',
