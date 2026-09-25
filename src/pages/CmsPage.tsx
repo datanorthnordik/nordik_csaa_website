@@ -13,6 +13,7 @@ import {
   resolvePageHeroImageUrl,
 } from '../components/cms/cmsPageMedia'
 import { CmsSectionRenderer } from '../components/cms/CmsSectionRenderer'
+import { LatestContentSection } from '../components/LatestContentSection'
 import { formatPathLabel, normalizeInternalPath } from '../lib/navigationMenu'
 import { buildAbsoluteUrl, SITE_NAME, usePageSeo } from '../lib/usePageSeo'
 import { ComingSoonPage } from './ComingSoonPage'
@@ -20,23 +21,33 @@ import styles from './CmsPage.module.css'
 
 type LoadStatus = 'loading' | 'ready' | 'not-found' | 'error'
 
+type PageLoadState = {
+  path: string
+  page: PageDetailResponse | null
+  status: LoadStatus
+}
+
 export function CmsPage() {
   const { pathname } = useLocation()
   const { i18n, t } = useTranslation()
   const normalizedPath = normalizeInternalPath(pathname)
-  const [page, setPage] = useState<PageDetailResponse | null>(() =>
-    pagesApi.peekPageBySlug(normalizedPath),
-  )
-  const [status, setStatus] = useState<LoadStatus>(() =>
-    resolveLoadStatus(pagesApi.peekPageBySlug(normalizedPath)),
-  )
+  const [loadState, setLoadState] = useState<PageLoadState>(() => {
+    const cachedPage = pagesApi.peekPageBySlug(normalizedPath)
+    return {
+      path: normalizedPath,
+      page: cachedPage,
+      status: resolveLoadStatus(cachedPage),
+    }
+  })
+  const activeLoadState =
+    loadState.path === normalizedPath
+      ? loadState
+      : loadStateFromCache(normalizedPath)
+  const { page, status } = activeLoadState
 
   useEffect(() => {
     let ignore = false
     const cachedPage = pagesApi.peekPageBySlug(normalizedPath)
-
-    setPage(cachedPage)
-    setStatus(resolveLoadStatus(cachedPage))
 
     if (cachedPage) {
       return () => {
@@ -45,27 +56,27 @@ export function CmsPage() {
     }
 
     async function loadPage() {
-      setStatus('loading')
-
       try {
         const response = await pagesApi.getPageBySlug(normalizedPath)
 
         if (!ignore) {
-          setPage(response)
-          setStatus(response.page_type === 'module' ? 'not-found' : 'ready')
+          setLoadState({
+            path: normalizedPath,
+            page: response,
+            status: response.page_type === 'module' ? 'not-found' : 'ready',
+          })
         }
       } catch (error) {
         if (ignore) {
           return
         }
 
-        setPage(null)
         if (isAxiosError(error) && error.response?.status === 404) {
-          setStatus('not-found')
+          setLoadState({ path: normalizedPath, page: null, status: 'not-found' })
           return
         }
 
-        setStatus('error')
+        setLoadState({ path: normalizedPath, page: null, status: 'error' })
       }
     }
 
@@ -157,8 +168,18 @@ export function CmsPage() {
           />
         ))}
       </div>
+      {normalizedPath === '/home' ? <LatestContentSection /> : null}
     </div>
   )
+}
+
+function loadStateFromCache(path: string): PageLoadState {
+  const cachedPage = pagesApi.peekPageBySlug(path)
+  return {
+    path,
+    page: cachedPage,
+    status: resolveLoadStatus(cachedPage),
+  }
 }
 
 function filterRenderableSections(sections: PageSection[]) {

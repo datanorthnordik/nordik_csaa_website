@@ -2,6 +2,23 @@
   "languageSwitcher": {
     "label": "Choisir la langue"
   },
+  "latestContent": {
+    "ariaLabel": "Dernieres nouvelles de la communaute",
+    "categories": {
+      "event": "Evenements a venir",
+      "newsletter": "Nouvelles communautaires",
+      "press": "Presse et medias"
+    },
+    "fallbacks": {
+      "event": "Consultez les details de cet evenement communautaire a venir.",
+      "newsletter": "Lisez les dernieres nouvelles et histoires de la communaute CSAA.",
+      "press": "Lisez la derniere nouvelle de presse et des medias de CSAA."
+    },
+    "links": {
+      "event": "En savoir plus...",
+      "news": "Lire la suite"
+    }
+  },
   "site": {
     "header": {
       "eyebrow": "Communaute CSAA",

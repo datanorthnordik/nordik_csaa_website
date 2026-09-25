@@ -55,6 +55,7 @@ describe('API_ROUTES', () => {
     expect(API_ROUTES.navigation).toBe('/api/navigation')
     expect(API_ROUTES.menus).toBe('/api/menus')
     expect(API_ROUTES.menuByKey('main')).toBe('/api/menus/main')
+    expect(API_ROUTES.latestContent).toBe('/api/latest-content')
     expect(API_ROUTES.events).toBe('/api/events')
     expect(API_ROUTES.eventById(42)).toBe('/api/events/42')
     expect(API_ROUTES.eventMediaById(42, 7)).toBe('/api/events/42/media/7/content')
