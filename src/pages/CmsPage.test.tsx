@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { latestContentApi } from '../api/latestContentApi'
 import { pagesApi, type PageDetailResponse } from '../api/pagesApi'
 import i18n from '../i18n'
 import { CmsPage } from './CmsPage'
@@ -12,8 +13,15 @@ vi.mock('../api/pagesApi', () => ({
   },
 }))
 
+vi.mock('../api/latestContentApi', () => ({
+  latestContentApi: {
+    listLatestContent: vi.fn(),
+  },
+}))
+
 const getPageBySlug = vi.mocked(pagesApi.getPageBySlug)
 const peekPageBySlug = vi.mocked(pagesApi.peekPageBySlug)
+const listLatestContent = vi.mocked(latestContentApi.listLatestContent)
 
 function createPage(overrides: Partial<PageDetailResponse> = {}): PageDetailResponse {
   return {
@@ -79,6 +87,8 @@ describe('CmsPage', () => {
     getPageBySlug.mockReset()
     peekPageBySlug.mockReset()
     peekPageBySlug.mockReturnValue(null)
+    listLatestContent.mockReset()
+    listLatestContent.mockResolvedValue([])
     await i18n.changeLanguage('en')
   })
 
@@ -112,5 +122,37 @@ describe('CmsPage', () => {
       expect(structuredData.name).toBe('Community Support Team')
       expect(structuredData.url).toBe(`${window.location.origin}/community-support-team`)
     })
+    expect(listLatestContent).not.toHaveBeenCalled()
+  })
+
+  it('adds the latest content cards after the CMS-managed home sections', async () => {
+    getPageBySlug.mockResolvedValue(
+      createPage({
+        page_title: 'Home',
+        url_slug: '/home',
+      }),
+    )
+    listLatestContent.mockResolvedValue([
+      {
+        id: 1,
+        sourceType: 'event',
+        sourceId: 42,
+        title: 'Traditional Storytelling Circle',
+        description: 'Join us for an evening of oral traditions.',
+        displayDate: '2026-10-24T00:00:00Z',
+        publishedAt: '2026-09-25T10:00:00Z',
+        detailPath: '/events/42',
+      },
+    ])
+
+    const { container } = renderPage('/home')
+
+    expect(await screen.findByText('Traditional Storytelling Circle')).toBeDefined()
+    expect(listLatestContent).toHaveBeenCalledWith(3)
+    const sections = container.querySelector('[class*="sections"]')
+    const latest = screen.getByRole('region', { name: 'Latest community updates' })
+    expect(
+      (sections?.compareDocumentPosition(latest) ?? 0) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
   })
 })

@@ -21,6 +21,7 @@ const {
   listUpcomingEvents,
   listArchivedEvents,
   listEventsByDateRange,
+  listLatestContent,
 } = vi.hoisted(() => ({
   getMainMenu: vi.fn(),
   getPageBySlug: vi.fn(),
@@ -35,7 +36,14 @@ const {
   listUpcomingEvents: vi.fn(),
   listArchivedEvents: vi.fn(),
   listEventsByDateRange: vi.fn(),
+  listLatestContent: vi.fn(),
   getEvent: vi.fn(),
+}))
+
+vi.mock('./api/latestContentApi', () => ({
+  latestContentApi: {
+    listLatestContent,
+  },
 }))
 
 vi.mock('./api/menusApi', () => ({
@@ -833,6 +841,7 @@ beforeEach(async () => {
   listUpcomingEvents.mockReset()
   listArchivedEvents.mockReset()
   listEventsByDateRange.mockReset()
+  listLatestContent.mockReset()
   getMainMenu.mockResolvedValue(sampleMenu)
   preloadPageBySlug.mockImplementation((slug: string) => getPageBySlug(slug))
   peekPageBySlug.mockImplementation(() => null)
@@ -866,6 +875,7 @@ beforeEach(async () => {
     return match
   })
   listPublishedPressEntries.mockResolvedValue(samplePressEntries)
+  listLatestContent.mockResolvedValue([])
   listResources.mockResolvedValue({
     items: [
       {

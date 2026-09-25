@@ -47,6 +47,7 @@ export const API_ROUTES = {
   navigation: '/api/navigation',
   menus: '/api/menus',
   menuByKey: (menuKey: string) => `/api/menus/${menuKey}`,
+  latestContent: '/api/latest-content',
   events: '/api/events',
   eventById: (id: number | string) => `/api/events/${id}`,
   eventMediaById: (id: number | string, mediaId: number | string) =>
